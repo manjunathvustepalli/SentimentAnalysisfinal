@@ -9,7 +9,7 @@ function Routes() {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path='/sentimentalanalysis/areachart' component={SentimentalAnalysis}  />
+                <Route path='/' component={SentimentalAnalysis}  />
                 <Route path='/sentimentalanalysis/piechart' component={SentimentalAnalysis2} />
                 <Route path='/moodanalysis/areachart' component={Moodanalysis} />
             </Switch>
