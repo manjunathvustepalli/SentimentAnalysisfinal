@@ -49,7 +49,7 @@ const Filter =(props)=>{
     return (    
         <>
         <div className="filter-div-root" style={{backgroundColor:'white'}}>
-                <Card>
+                {/* <Card>
                     <CardContent>
                         <Grid container>
                             <Grid xs={5} style={{padding:'20px 0'}}>
@@ -62,7 +62,7 @@ const Filter =(props)=>{
                             </Grid>
                         </Grid>
                     </CardContent>
-                </Card>
+                </Card> */}
                 <Grid container justify="space-between" className="grid-user">  
                     <Typography inline variant="h6" align="left" className="refresh-text"><FilterListIcon/>&nbsp;Filter</Typography>
                     <Typography inline variant="body1" align="right"><MoreHorizIcon/></Typography>
