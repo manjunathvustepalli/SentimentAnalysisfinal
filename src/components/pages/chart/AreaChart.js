@@ -5,7 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 
 function AreaChart(props) {
 
-    const [XaxiesData,negativeData,neutralData,positiveData] = props.data
+    const [XaxiesData,negativeData,neutralData,positiveData,source] = props.data
 
     let config =  {
         chart: {
@@ -15,7 +15,7 @@ function AreaChart(props) {
             text: 'Area chart'
         },
         subtitle: {
-            text: 'Source: Twitter'
+            text: `Source: ${source}`
         },
         xAxis: {
             categories: XaxiesData,

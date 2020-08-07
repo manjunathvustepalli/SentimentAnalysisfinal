@@ -16,6 +16,7 @@ import SideNav from '../navigation/sidebar'
 import { Redirect } from 'react-router-dom';
 import Filter from '../Filter';
 import Axios from 'axios';
+import moment from 'moment'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,8 +29,11 @@ const useStyles = makeStyles((theme) => ({
     filter: {
         color: "green",
     },
-    formControl:{
-        marginTop:'20px'
+    formControl: {
+        margin: '20px',
+        fullWidth: true,
+        display: 'flex',
+        wrap: 'nowrap'
     },
     bullet: {
         display: 'inline-block',
@@ -53,6 +57,8 @@ export default function SentimentalAnalysis2() {
     const [chartType, setChartType] = useState('pie chart')
     const [redirect, setRedirect] = useState(false)
     const [data, setData] = useState([])
+    const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [to, setTo] = useState(addMonths(new Date(),0))
     const classes = useStyles();
     const handleChange = (e) => {
         console.log(e.target.value)
@@ -60,6 +66,14 @@ export default function SentimentalAnalysis2() {
         if(e.target.value === 'pie chart'){
             setRedirect(true)
         }
+    }
+    function addMonths(date, months) {
+        var d = date.getDate();
+        date.setMonth(date.getMonth() + months);
+        if (date.getDate() !== d) {
+          date.setDate(0);
+        }
+        return moment(date).format('DD-MM-YYYY');
     }
 
     useEffect(() => {
@@ -70,7 +84,7 @@ export default function SentimentalAnalysis2() {
               "field": "CreatedAt",
               "format": "dd-MM-yyyy",
               "ranges": [
-                { "from": "01-08-2020", "to": "now" }
+                { "from": from, "to": to }
               ]
             },
             "aggs": {
@@ -109,7 +123,7 @@ export default function SentimentalAnalysis2() {
     .catch(err => {
         console.log(err)
     })
-    }, [])
+    }, [from,to])
 
     const fetchXaxiesData = (data) =>{
         let source = data.aggregations['date-based-range'].buckets[0].sources.buckets[0].key
@@ -119,7 +133,7 @@ export default function SentimentalAnalysis2() {
         let negativeData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[0].doc_count)
         let neutralData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[1].doc_count)
         let positiveData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[2].doc_count)
-        setData([XaxiesData,negativeData,neutralData,positiveData])
+        setData([XaxiesData,negativeData,neutralData,positiveData,source])
     }
 
     return (
@@ -137,7 +151,7 @@ export default function SentimentalAnalysis2() {
                             </Grid>
                             <Grid item sm={4}>
                             <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Age</InputLabel>
+                            <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
                             <Select
                                 labelId="demo-simple-select-outlined-label"
                                 id="demo-simple-select-outlined"
@@ -150,7 +164,7 @@ export default function SentimentalAnalysis2() {
                                     </MenuItem>
                                     <MenuItem value='pie chart'>pie chart</MenuItem>
                                     <MenuItem value='Area chart'>Area chart</MenuItem>
-                                </Select>
+                            </Select>
                             </FormControl>
                             </Grid>
                         </Grid>
@@ -162,8 +176,8 @@ export default function SentimentalAnalysis2() {
                 <Grid item xs={12} sm={4}>
                     <Card className={classes.filter}>
                         <CardContent>
-                            <Filter/>
-                    </CardContent>
+                            <Filter to={to} from={from} setFrom={setFrom} setTo={setTo} addMonths={addMonths}/>
+                        </CardContent>
                     </Card>
                 </Grid>
             </Grid>

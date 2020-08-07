@@ -154,7 +154,7 @@ function ResponsiveDrawer(props,{history}) {
    const drawer = (
     <div>
          <div className={classes.toolbar} id="userMenuHeader">
-         <Avatar alt="karthik" src="../../imgs/k.JPG" />
+         <Avatar alt="karthik" src={require('../../imgs/k.JPG')} />
           <Grid container justify="space-between" className="grid-user">  
   <Typography inline variant="body1" align="left">Welcome User</Typography>
   <Typography inline variant="body1" align="right"><ArrowDropDownIcon/></Typography>

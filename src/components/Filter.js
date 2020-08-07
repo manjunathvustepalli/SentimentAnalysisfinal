@@ -14,15 +14,13 @@ import Select from '@material-ui/core/Select';
 import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import CodeIcon from '@material-ui/icons/Code';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import { TextField } from '@material-ui/core';
+import { TextField, Card, CardContent } from '@material-ui/core';
+import ReplayIcon from '@material-ui/icons/Replay';
+import { IconButton } from '@material-ui/core';
 
-const Filter =()=>{
+const Filter =(props)=>{
 
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
-
-    const handleDateChange = (date) => {
-      setSelectedDate(date);
-    };
+    const { to,from,setFrom,setTo,addMonths } = props
 
     const [type, setType] = React.useState('');
     const handleChange = (event) => {
@@ -51,20 +49,33 @@ const Filter =()=>{
     return (    
         <>
         <div className="filter-div-root" style={{backgroundColor:'white'}}>
+                <Card>
+                    <CardContent>
+                        <Grid container>
+                            <Grid xs={5} style={{padding:'20px 0'}}>
+                                <Button>
+                                <ReplayIcon style={{}}/> Reload 
+                                </Button>
+                            </Grid>
+                            <Grid xs={7}>
 
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
                 <Grid container justify="space-between" className="grid-user">  
                     <Typography inline variant="h6" align="left" className="refresh-text"><FilterListIcon/>&nbsp;Filter</Typography>
                     <Typography inline variant="body1" align="right"><MoreHorizIcon/></Typography>
                 </Grid>
 
                 <FormControl variant="outlined" className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-outlined-label">Type</InputLabel>
+                    <InputLabel id="demo-simple-select-outlined-label">Keyword</InputLabel>
                     <Select
                     labelId="demo-simple-select-outlined-label"
                     id="demo-simple-select-outlined"
                     value={type}
                     onChange={handleChange}
-                    label="Type"
+                    label="Key Word"
                     className={classes.select}
                     >
                     <MenuItem value="">
@@ -86,7 +97,8 @@ const Filter =()=>{
     id="date"
     label="Start Date"
     type="date"
-    defaultValue="2017-05-24"
+    onChange={(e) => setFrom(addMonths(new Date(e.target.value),0))}
+    defaultValue={from}
     className={classes.textField}
     InputLabelProps={{
       shrink: true,
@@ -100,7 +112,8 @@ const Filter =()=>{
     id="date"
     label="End Date"
     type="date"
-    defaultValue="2017-05-24"
+    onChange={(e) => setTo(addMonths(new Date(e.target.value),0))}
+    defaultValue={to}
     className={classes.textField}
     InputLabelProps={{
       shrink: true,
