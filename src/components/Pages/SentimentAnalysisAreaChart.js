@@ -3,20 +3,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
-import './sentimental.scss'
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import AreaChart from './chart/AreaChart';
-import SideNav from '../navigation/sidebar'
+import AreaChart from '../charts/AreaChart';
+import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
-import Filter from '../Filter';
 import Axios from 'axios';
 import moment from 'moment'
+import FilterHeader from '../Filters/FilterHeader';
+import FilterWrapper from '../Filters/FilterWrapper';
+import AccordianFilters from '../Filters/AccordianFilters';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 16,
         fontWeight: "bold",
         color: "#CB0038",
-    },
-    filter: {
-        color: "green",
     },
     formControl: {
         margin: '20px',
@@ -53,9 +48,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SentimentalAnalysis2() {
-    const [chartType, setChartType] = useState('pie chart')
-    const [redirect, setRedirect] = useState(false)
+export default function SentimentalAnalysisAreaChart() {
+    const [chartType, setChartType] = useState('area')
     const [data, setData] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
@@ -63,9 +57,6 @@ export default function SentimentalAnalysis2() {
     const handleChange = (e) => {
         console.log(e.target.value)
         setChartType(e.target.value)
-        if(e.target.value === 'pie chart'){
-            setRedirect(true)
-        }
     }
     function addMonths(date, months) {
         var d = date.getDate();
@@ -138,8 +129,8 @@ export default function SentimentalAnalysis2() {
 
     return (
         <SideNav>
-            {redirect && (<Redirect to={'/sentimentalanalysis/piechart'} />)}
-            <div style={{ color: "green", fontSize: 20, backgroundColor: '#F7F7F7' }}> Sentimental Analysis
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}> Sentimental Analysis
+            {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Card className={classes.main}>
@@ -159,11 +150,8 @@ export default function SentimentalAnalysis2() {
                                 onChange={handleChange}
                                 label="Chart type"
                             >
-                                    <MenuItem value="">
-                                    <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value='pie chart'>pie chart</MenuItem>
-                                    <MenuItem value='Area chart'>Area chart</MenuItem>
+                                    <MenuItem value='pie'>pie chart</MenuItem>
+                                    <MenuItem value='area'>Area chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>
@@ -173,12 +161,21 @@ export default function SentimentalAnalysis2() {
                         </Grid>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={4}>
-                    <Card className={classes.filter}>
-                        <CardContent>
-                            <Filter to={to} from={from} setFrom={setFrom} setTo={setTo} addMonths={addMonths}/>
-                        </CardContent>
-                    </Card>
+                <Grid item sm={12} md={4}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Card>
+                                <CardContent>
+                                    <FilterHeader/>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FilterWrapper>
+                                <AccordianFilters toFromDatesHandlers={[to,from,setFrom,setTo,addMonths]} />
+                            </FilterWrapper>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>

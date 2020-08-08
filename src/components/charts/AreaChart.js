@@ -26,11 +26,11 @@ function AreaChart(props) {
         },
         yAxis: {
             title: {
-                text: 'Billions'
+                text: 'users'
             },
             labels: {
                 formatter: function () {
-                    return this.value / 1000;
+                    return this.value
                 }
             }
         },

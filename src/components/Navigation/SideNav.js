@@ -1,18 +1,16 @@
+import './sidebar.css';
 import React from 'react';
-import {Link, withRouter } from 'react-router-dom'
-import PropTypes from 'prop-types';
+import { Link, withRouter } from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -31,12 +29,7 @@ import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import HdrWeakIcon from '@material-ui/icons/HdrWeak';
 
-import './sidebar.scss';
-
-
-
-
-const drawerWidth = 300;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ResponsiveDrawer(props,{history}) {
-  const { window,children } = props;
+const SideNavBar = ( props) => {
+  const { window,children,history } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -89,12 +82,9 @@ function ResponsiveDrawer(props,{history}) {
         return {color:"#2ecc72"}
     }
     else{
-        return {color:"white"}
+        return {color:"black"}
     }
 }
-
-
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -107,73 +97,75 @@ function ResponsiveDrawer(props,{history}) {
     {
       name:'Sentimental Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimentalanalysis/areachart','/sentimentalanalysis/piechart'],
+      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart'],
     },
     {
       name:'Mood Analysis',
       icon:<ChildCareIcon/>,
-      path:['/moodanalysis/areachart'],
+      path:['/mood-analysis/areachart'],
     },
     {
       name:'influencer Analysis',
       icon:<EmojiPeopleIcon/>,
-      path:['/'],
+      path:['/influencer-analysis'],
     },
     {
       name:'Geo Hot Spot Analysis',
       icon:<PublicIcon/>,
-      path:['/'],
+      path:['/geo-hotspot'],
     },
     {
       name:'Word cloud',
       icon:<AppsIcon/>,
-      path:['/'],
+      path:['/word-cloud'],
     },
     {
       name:'Tranding Subject',
       icon:<TrendingUpIcon/>,
-      path:['/'],
+      path:['/trending-subject'],
     },
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/'],
+      path:['/trend-analysis'],
     },
     {
       name:'Demography',
       icon:<DeviceHubIcon/>,
-      path:['/'],
+      path:['/demography'],
     },    
     {
       name:'Behavior Analysis',
       icon:<HdrWeakIcon/>,
-      path:['/'],
+      path:['/behavior-analysis'],
     },
   ]
     
    const drawer = (
     <div>
-         <div className={classes.toolbar} id="userMenuHeader">
-         <Avatar alt="karthik" src={require('../../imgs/k.JPG')} />
-          <Grid container justify="space-between" className="grid-user">  
-  <Typography inline variant="body1" align="left">Welcome User</Typography>
-  <Typography inline variant="body1" align="right"><ArrowDropDownIcon/></Typography>
-</Grid>
-         </div>
+          <div className={classes.toolbar} id="userMenuHeader">
+            <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/k.JPG')} />
+            <Grid container justify="space-around" className='grid-user'>
+              <Grid item align="left">
+                <Typography > Welcome Karthik</Typography>
+              </Grid>
+              <Grid item align="right">
+                <Typography align="right"><ArrowDropDownIcon/></Typography>
+              </Grid>
+            </Grid>
+          </div>
       <Divider />
       <List>
-      <ListItem button key="blank"><ListItemIcon></ListItemIcon><ListItemText primary="" /></ListItem>
         {menus.map((menuItem, index) => (
-          <Link to={menuItem.path[0]} style={{textDecoration:'none',color:'black'}}>
-            <ListItem button key={index}>
-              <ListItemIcon> {menuItem.icon} </ListItemIcon>
-              <ListItemText primary={menuItem.name} />
+          <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
+            <ListItem  button key={index}>
+              <ListItemIcon style={currentTab(history,menuItem.path)}> {menuItem.icon} </ListItemIcon>
+              <ListItemText style={currentTab(history,menuItem.path)} primary={menuItem.name} />
             </ListItem>
-          </Link>       
+            <Divider/>      
+          </Link> 
         ))}
       </List>
-      <Divider />
-      
     </div>
   );
 
@@ -211,7 +203,7 @@ function ResponsiveDrawer(props,{history}) {
               paper: classes.drawerPaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              keepMounted: true,
             }}
           >
             {drawer}
@@ -237,8 +229,5 @@ function ResponsiveDrawer(props,{history}) {
   );
 }
 
-ResponsiveDrawer.propTypes = {
-  window: PropTypes.func,
-};
 
-export default ResponsiveDrawer;
+export default withRouter(SideNavBar);

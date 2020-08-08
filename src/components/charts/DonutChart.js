@@ -16,14 +16,13 @@ function DonutChart() {
                     innerSize: '60%'
                 }
             },
+            colors: ['rgba(255,0,0,0.8)','rgb(0,255,0,0.6)','rgba(235,255,0,0.1)'],
             series: [{
                 data: [
-                    ['44.2', 44.2],
-                    ['26.6', 26.6],
-                    ['20', 20],
-                    ['3.1', 3.1],
-                    ['5.4', 5.4]
-                    ]}]     
+                    ['negative', 44.2],
+                    ['positive', 26.6],
+                    ['neutral', 20]
+                    ]}]  
     }
           return(
             <div>
