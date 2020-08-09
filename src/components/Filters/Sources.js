@@ -1,23 +1,35 @@
 import React,{useState} from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import { Grid } from '@material-ui/core';
+import { Grid, Checkbox, makeStyles } from '@material-ui/core';
+import { capitalizeString } from '../../helpers'
 
+function Sources(props) {
+    const [ sources, setSources ] = props.sources
 
-function Sources() {
+    const useStyles = makeStyles({
+        root: {
+          "&$checked": {
+            color: "#43B02A"
+          },
+        },
+        checked: {}
+      })
 
-    const [sources, setSources] = useState(['Facebook','Twitter','Instagram','Youtube','Other Media'])
+    const classes = useStyles()
 
     return (
         <Grid container>
-            {sources.map((source,i) =>(
+            {sources[0] && (sources.map((source,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
-                control={<Switch name="checkedA" />}
-                label={source}
-              />
+                control={<Checkbox  name="checkedA" classes={{
+                    root: classes.root,
+                    checked: classes.checked
+                  }} checked={Object.values(source)[0]}  />}
+                label={capitalizeString(Object.keys(source)[0])}
+                />
                 </Grid>
-            ))}
+            )))}
         </Grid>
     )
 }

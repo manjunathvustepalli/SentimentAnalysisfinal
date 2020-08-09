@@ -7,19 +7,21 @@ import styled from 'styled-components';
 const IconWithText = styled.div`
   display: flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
+  font-size:20px;
+  color:white
 `;
 
 
 function FilterWrapper( {children} ) {
     return (
-        <Card>
+        <Card style={{backgroundColor:'#2C3335'}}>
             <CardContent>
                 <Grid container>
                     <Grid item xs={12}>
                         <IconWithText>
                             <FilterListIcon style={{margin:'0 20px'}} /> 
-                            <p> Filters </p>
+                            <p> FILTERS </p>
                         </IconWithText>
                     </Grid>
                     <Grid item xs={12}>

@@ -15,7 +15,7 @@ import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SentimentalAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
     const [showTable, setShowTable] = useState(false)
+    const [sources, setSources] = useState([])
     const classes = useStyles();
     const handleChange = (e) => {
         console.log(e.target.value)
@@ -60,10 +61,13 @@ export default function SentimentalAnalysisPieChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}> Sentimental Analysis
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
+                    <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
+                        Sentimental Analysis
+                    </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item sm={8}>
@@ -87,7 +91,7 @@ export default function SentimentalAnalysisPieChart() {
                             </FormControl>
                             </Grid>
                             {['Facebook','Twitter','Instagram','Youtube','Other Media'].map((chart,i) =>(
-                                <Grid align='center' item key={i} sm={6} xs={12}>
+                                <Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
                                     <DonutChart/>
                                     <Button variant='outlined' color='primary'>
                                         {chart}
@@ -105,18 +109,14 @@ export default function SentimentalAnalysisPieChart() {
                         </Grid>
                     </Card>
                 </Grid>
-                <Grid item sm={12} md={4}>
+                <Grid item sm={12} md={4} >
                     <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardContent>
-                                    <FilterHeader/>
-                                </CardContent>
-                            </Card>
+                        <Grid item xs={12} >
+                        <FilterHeader/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters singleDate={true} />
+                                <AccordianFilters singleDate={true} sources={[sources, setSources]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

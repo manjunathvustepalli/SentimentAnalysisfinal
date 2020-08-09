@@ -15,6 +15,7 @@ import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
+import { Typography } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +52,11 @@ const useStyles = makeStyles((theme) => ({
 export default function SentimentalAnalysisAreaChart() {
     const [chartType, setChartType] = useState('area')
     const [data, setData] = useState([])
+    const [dates, setDates] = useState([])
+    const [negativeData, setNegativeData] = useState([])
+    const [positiveData, setPositiveData] = useState([])
+    const [neutralData, setNeutralData] = useState([])
+    const [sources,setSources] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const classes = useStyles();
@@ -65,6 +71,14 @@ export default function SentimentalAnalysisAreaChart() {
           date.setDate(0);
         }
         return moment(date).format('DD-MM-YYYY');
+    }
+
+    const getDataArrayByKey = (dataArray,key) => {
+        for(var i=0; i<dataArray.length;i++){
+            if(dataArray[i].key === key){
+                return dataArray[i].doc_count
+            }
+        }
     }
 
     useEffect(() => {
@@ -103,36 +117,42 @@ export default function SentimentalAnalysisAreaChart() {
           }
         }
       },{
-           headers:{
+            headers:{
                'Content-Type':'application/json'
            }
        })
     .then((fetchedData)=>{
-        console.log(fetchedData.data)
-        fetchXaxiesData(fetchedData.data)
+        var sourceDrill = fetchedData.data.aggregations['date-based-range'].buckets[0].sources.buckets
+        setSources(sourceDrill.map((obj,i) => {
+            return {[obj.key]:i === 0}
+        }))
+        console.log(sourceDrill)
+        setDates(sourceDrill.map(source => source['per-day'].buckets.map(obj => obj.key_as_string)))
+        setNegativeData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
+            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'negative')
+        })))
+        setPositiveData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
+            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'positive')
+        })))
+        setNeutralData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
+            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'neutral')
+        }))) 
+        setData([dates,negativeData,positiveData,neutralData])
     })
     .catch(err => {
         console.log(err)
     })
     }, [from,to])
 
-    const fetchXaxiesData = (data) =>{
-        let source = data.aggregations['date-based-range'].buckets[0].sources.buckets[0].key
-        let bucket = data.aggregations['date-based-range'].buckets[0].sources.buckets[0]['per-day'].buckets
-        console.log(bucket,source)
-        let XaxiesData = bucket.map(obj => obj.key_as_string)
-        let negativeData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[0].doc_count)
-        let neutralData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[1].doc_count)
-        let positiveData =  bucket.map(obj => obj['Daily-Sentiment-Distro'].buckets[2].doc_count)
-        setData([XaxiesData,negativeData,neutralData,positiveData,source])
-    }
-
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}> Sentimental Analysis
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
+                    <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
+                        Sentimental Analysis
+                    </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item sm={8}>
@@ -148,7 +168,7 @@ export default function SentimentalAnalysisAreaChart() {
                                 id="demo-simple-select-outlined"
                                 value={chartType}
                                 onChange={handleChange}
-                                label="Chart type"
+                                label="Chart Type"
                             >
                                     <MenuItem value='pie'>pie chart</MenuItem>
                                     <MenuItem value='area'>Area chart</MenuItem>
@@ -157,22 +177,18 @@ export default function SentimentalAnalysisAreaChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <AreaChart data={data} />
+                            <AreaChart negativeData={negativeData} positiveData={positiveData} neutralData={neutralData} dates={dates} sources={sources}   />
                         </Grid>
                     </Card>
                 </Grid>
-                <Grid item sm={12} md={4}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardContent>
-                                    <FilterHeader/>
-                                </CardContent>
-                            </Card>
+                <Grid item sm={12} md={4}  >
+                    <Grid container spacing={3} >
+                        <Grid item xs={12} >
+                            <FilterHeader/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[to,from,setFrom,setTo,addMonths]} />
+                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources,setSources]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

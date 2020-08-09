@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import DateRangeIcon from '@material-ui/icons/DateRange';
@@ -41,7 +40,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate,toFromDatesHandlers} = props
+  const {singleDate, toFromDatesHandlers, sources} = props
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -100,7 +99,7 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          <Sources/>
+          <Sources  sources={sources}/>
         </AccordionDetails>
       </Accordion>
       <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>

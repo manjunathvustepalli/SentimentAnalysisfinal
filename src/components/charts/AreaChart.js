@@ -1,11 +1,10 @@
 import React from 'react'
-import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 
 function AreaChart(props) {
 
-    const [XaxiesData,negativeData,neutralData,positiveData,source] = props.data
+    const {dates,negativeData,neutralData,positiveData} = props
 
     let config =  {
         chart: {
@@ -15,10 +14,10 @@ function AreaChart(props) {
             text: 'Area chart'
         },
         subtitle: {
-            text: `Source: ${source}`
+            text: `Source:  `
         },
         xAxis: {
-            categories: XaxiesData,
+            categories: dates[0],
             tickmarkPlacement: 'on',
             title: {
                 enabled: false
@@ -48,16 +47,16 @@ function AreaChart(props) {
                 }
             }
         },
-        colors: ['rgba(255,0,0,0.8)','rgb(0,255,0,0.6)','rgba(235,255,0,0.1)'],
+        colors: ['rgba(255,0,0,0.5)','rgb(0,255,0,0.5)','rgba(235,255,0,0.5)'],
         series: [{
             name: 'Negative',
-            data: negativeData
+            data: negativeData[0]
         }, {
             name: 'Positive',
-            data: positiveData
+            data: positiveData[0]
         }, {
             name: 'Neutral',
-            data: neutralData
+            data: neutralData[0]
         }]
     }
     return <HighchartsReact  options={config}> </HighchartsReact>

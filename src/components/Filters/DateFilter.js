@@ -13,8 +13,8 @@ function DateFilter(props) {
     const time = new Date();
     const [startDate, setStartDate] = useState(time);
     const [endDate, setEndDate] = useState(time);
-    const [to,from,setTo,setFrom,addMonths] = props.toFromDatesHandlers;
-    const handleStartDateChange = (date) => {
+    const [setTo, setFrom, addMonths] = props.toFromDatesHandlers;
+    const handleStartDateChange = (date) => { 
         setTo(addMonths(date,0))
         setStartDate(date)
       };

@@ -9,13 +9,19 @@ function DonutChart() {
                 type: 'pie'
             },
             title: {
-              text: ''
+              text: 'pie chart'
             },
             plotOptions: {
-                pie: {
-                    innerSize: '60%'
-                }
-            },
+              pie: {
+                  innerSize: '80%',
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      distance: -50,
+                  }
+              }
+          },
             colors: ['rgba(255,0,0,0.8)','rgb(0,255,0,0.6)','rgba(235,255,0,0.1)'],
             series: [{
                 data: [
