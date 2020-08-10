@@ -15,6 +15,7 @@ import DateFilter from './DateFilter';
 import Sources from './Sources';
 import Languages from './Languages';
 import Sentiments from './Sentiments';
+import Moods from './Moods';
 import SingleDate from './SingleDate';
 
 
@@ -40,7 +41,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, toFromDatesHandlers, sources} = props
+  const {singleDate, toFromDatesHandlers, sources, sentiments, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -119,7 +120,8 @@ export default function ControlledAccordions(props) {
           <Languages/>
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+      {sentiments && (
+        <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel5bh-content"
@@ -136,6 +138,26 @@ export default function ControlledAccordions(props) {
           <Sentiments/>
         </AccordionDetails>
       </Accordion>
+      )}
+            {moods && (
+        <Accordion expanded={expanded === 'panel6'} onChange={handleChange('panel6')}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel5bh-content"
+          id="panel5bh-header"
+        >
+            <IconWithText>
+                <MoodIcon style={{marginRight:'10px'}} /> 
+                <p>
+                Moods
+                </p>
+            </IconWithText>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Moods/>
+        </AccordionDetails>
+      </Accordion>
+      )}
     </div>
   );
 }

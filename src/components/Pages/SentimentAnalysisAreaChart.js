@@ -16,6 +16,7 @@ import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
+import WordCloud from './WordCloud';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -188,7 +189,7 @@ export default function SentimentalAnalysisAreaChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources,setSources]} />
+                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources,setSources]} sentiments={true} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

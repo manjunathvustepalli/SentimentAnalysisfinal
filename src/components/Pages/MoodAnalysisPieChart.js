@@ -46,10 +46,16 @@ const useStyles = makeStyles((theme) => ({
         height: 140,
         width: 130,        
       },
+      buttonStyle:{
+        border:'1px solid green',
+        color:'green',
+        '&:hover': {
+            border:'1px solid green',
+        }
+    }
 }));
 
-
-export default function SentimentalAnalysisPieChart() {
+export default function MoodAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
     const [showTable, setShowTable] = useState(false)
     const [sources, setSources] = useState([])
@@ -62,17 +68,17 @@ export default function SentimentalAnalysisPieChart() {
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
-            {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
+            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Sentimental Analysis
+                        Mood Analysis
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item sm={8}>
                                 <CardContent>
-                                    Source wise Sentiment Wise Distribution of Post
+                                    Source wise Mood Wise Distribution of Post
                                 </CardContent>
                             </Grid>
                             <Grid item sm={4}>
@@ -92,14 +98,14 @@ export default function SentimentalAnalysisPieChart() {
                             </Grid>
                             {['Facebook','Twitter','Instagram','Youtube','Other Media'].map((chart,i) =>(
                                 <Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
-                                    <DonutChart/>
+                                    <DonutChart mood={true} />
                                     <Button variant='outlined' color='primary'>
                                         {chart}
                                     </Button>
                                 </Grid>
                             ))}
                             <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
+                                <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
                                 </Button>
                             </Grid>

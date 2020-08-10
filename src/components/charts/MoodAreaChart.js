@@ -31,6 +31,7 @@ function AreaChart() {
                 }
             }
         },
+        colors: ['rgba(255,0,0,0.5)','rgba(235,255,0,0.5)','rgba(0,255,0,0.5)','rgba(0, 0, 255,0.5)','rgba(255, 0, 255,0.5)','rgba(255, 102, 0,0.5)','rgba(0, 51, 0,0.5)','rgba(204, 204, 255,0.5)'],
         plotOptions: {
             area: {
                 marker: {

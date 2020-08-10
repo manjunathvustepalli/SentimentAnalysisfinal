@@ -3,9 +3,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Grid, Checkbox, makeStyles } from '@material-ui/core';
 
 
-function Languages() {
+function Sentiments() {
 
-    const [languages, setLanguages] = useState(['English','Bangla','All'])
+    const [sentiments, setSentiment] = useState(['Happy','Sad','Anger','Anticipation','Disgust','Surprise','Fear','Trust'])
     const useStyles = makeStyles({
         root: {
           "&$checked": {
@@ -14,20 +14,19 @@ function Languages() {
         },
         checked: {}
       })
-      const classes = useStyles()
+
+    const classes = useStyles()
 
     return (
         <Grid container>
-            {languages.map((language,i) =>(
+            {sentiments.map((sentiment,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
-                control={<Checkbox name="checkedA"
-                classes={{
+                control={<Checkbox classes={{
                     root: classes.root,
                     checked: classes.checked
-                  }}
-                />}
-                label={language}
+                  }}  name="checkedA" />}
+                label={sentiment}
               />
                 </Grid>
             ))}
@@ -35,4 +34,4 @@ function Languages() {
     )
 }
 
-export default Languages
+export default Sentiments
