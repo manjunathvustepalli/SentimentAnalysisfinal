@@ -15,7 +15,7 @@ function WordCloud(props) {
             name: 'Occurrences'
         }],
         title: {
-            text: 'Wordcloud of Lorem Ipsum'
+            text: 'Wordcloud of Latest Trends'
         }
     }
 

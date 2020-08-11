@@ -17,19 +17,23 @@ function Sources(props) {
 
     const classes = useStyles()
 
+    const handleSourceChange = (source) => {
+      setSources({...sources,[source]:!sources[source]})
+    }
+
     return (
         <Grid container>
-            {sources[0] && (sources.map((source,i) =>(
+            {Object.keys(sources).map((source,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
-                control={<Checkbox  name="checkedA" classes={{
+                control={<Checkbox  name={source} classes={{
                     root: classes.root,
                     checked: classes.checked
-                  }} checked={Object.values(source)[0]}  />}
-                label={capitalizeString(Object.keys(source)[0])}
+                  }} checked={sources[source]} onChange={() => handleSourceChange(source)}  />}
+                label={capitalizeString(source)}
                 />
                 </Grid>
-            )))}
+            ))}
         </Grid>
     )
 }

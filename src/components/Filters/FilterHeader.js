@@ -27,7 +27,9 @@ const styles = {
     },
   };
 
-function FilterHeader() {
+function FilterHeader(props) {
+
+    const [ refresh,setRefresh ] = props.refresh
 
     const useStyles = makeStyles({
         buttonStyle:{
@@ -54,7 +56,7 @@ function FilterHeader() {
                     </Grid>
                 <Grid xs={7} item align='right'>
                     <Typography style={{fontSize:'15px',marginTop:'15px',color:'white'}}>
-                        Last Refresh at 15:06:15
+                        Last Refresh at {new Date().toTimeString()}
                     </Typography>
                     <Button
                     style={{marginTop:'10px'}}
@@ -62,6 +64,7 @@ function FilterHeader() {
                     color="primary"
                     className={classes.buttonStyle}
                     startIcon={<RefreshIcon />}
+                    onClick = { () => setRefresh(prev => !prev) }
                     >
                     Refresh
                     </Button>

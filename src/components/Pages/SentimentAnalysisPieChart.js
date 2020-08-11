@@ -52,10 +52,12 @@ const useStyles = makeStyles((theme) => ({
 export default function SentimentalAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
     const [showTable, setShowTable] = useState(false)
-    const [sources, setSources] = useState([])
+    const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
+    const [sources, setSources] = useState({'Twitter':true,'Youtube':false,'Facebook':true,'Instagram':false})
+    const [languages, setLanguages] = useState({'English':true,'Bengali':false})
+    const [refresh, setRefresh] = useState(true)
     const classes = useStyles();
     const handleChange = (e) => {
-        console.log(e.target.value)
         setChartType(e.target.value)
     }
 
@@ -112,11 +114,11 @@ export default function SentimentalAnalysisPieChart() {
                 <Grid item sm={12} md={4} >
                     <Grid container spacing={3}>
                         <Grid item xs={12} >
-                        <FilterHeader/>
+                        <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters singleDate={true} sources={[sources, setSources]} sentiments={true} />
+                                <AccordianFilters singleDate={true} sources={[sources, setSources]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

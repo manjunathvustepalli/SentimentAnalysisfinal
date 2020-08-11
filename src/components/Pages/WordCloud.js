@@ -4,7 +4,6 @@ import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
-import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
@@ -14,7 +13,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-
+import {addMonths} from '../../helpers'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -162,23 +161,20 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MoodAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
-    const [sources, setSources] = useState([{'Twitter':true},{'Youtube':false},{'Facebook':true},{'Instagram':false}])
+    const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
+    const [moods, setMoods] = useState({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})
+    const [sources, setSources] = useState({'Twitter':true,'Youtube':false,'Facebook':true,'Instagram':false})
+    const [languages, setLanguages] = useState({'English':true,'Bengali':false})
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [value, setValue] = useState(0);
+    const [refresh, setRefresh] = useState(true)
+
     const classes = useStyles();
     const handleChange = (e) => {
-        console.log(e.target.value)
         setChartType(e.target.value)
     }
-    function addMonths(date, months) {
-        var d = date.getDate();
-        date.setMonth(date.getMonth() + months);
-        if (date.getDate() !== d) {
-          date.setDate(0);
-        }
-        return moment(date).format('DD-MM-YYYY');
-    }
+
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
       };
@@ -194,7 +190,7 @@ export default function MoodAnalysisPieChart() {
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
-                            <Grid item sm={4} xs={0}>
+                            <Grid item sm={4} xs={false}>
                             </Grid>
                             <Grid item sm={8} xs={12}>
                             <AppBar position="static" color="default">
@@ -230,11 +226,11 @@ export default function MoodAnalysisPieChart() {
                 <Grid item sm={12} md={4} >
                     <Grid container spacing={3}>
                         <Grid item xs={12} >
-                        <FilterHeader/>
+                        <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources, setSources]} moods={true} sentiments={true} />
+                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo]} sources={[sources, setSources]} moods={[moods,setMoods]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

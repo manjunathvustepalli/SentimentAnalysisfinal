@@ -41,7 +41,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, toFromDatesHandlers, sources, sentiments, moods} = props
+  const {singleDate, toFromDatesHandlers, sources, sentiments,languages, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -86,6 +86,23 @@ export default function ControlledAccordions(props) {
           
         </AccordionDetails>
       </Accordion>
+      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel4bh-content"
+          id="panel4bh-header"
+        >
+            <IconWithText>
+                <TranslateIcon style={{marginRight:'10px'}} /> 
+                <p>
+                Languages
+                </p>
+            </IconWithText>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Languages languages={languages} />
+        </AccordionDetails>
+      </Accordion>
       <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -103,23 +120,6 @@ export default function ControlledAccordions(props) {
           <Sources  sources={sources}/>
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel4bh-content"
-          id="panel4bh-header"
-        >
-            <IconWithText>
-                <TranslateIcon style={{marginRight:'10px'}} /> 
-                <p>
-                Languages
-                </p>
-            </IconWithText>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Languages/>
-        </AccordionDetails>
-      </Accordion>
       {sentiments && (
         <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
         <AccordionSummary
@@ -135,7 +135,7 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          <Sentiments/>
+          <Sentiments sentiments={sentiments} />
         </AccordionDetails>
       </Accordion>
       )}
@@ -154,7 +154,7 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          <Moods/>
+          <Moods moods={moods} />
         </AccordionDetails>
       </Accordion>
       )}

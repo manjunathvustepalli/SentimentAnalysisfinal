@@ -10,8 +10,6 @@ import Select from '@material-ui/core/Select';
 import DonutChart from '../charts/DonutChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
-import Axios from 'axios';
-import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
@@ -59,9 +57,12 @@ export default function MoodAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
     const [showTable, setShowTable] = useState(false)
     const [sources, setSources] = useState([])
+    const [refresh, setRefresh] = useState(true)
+    const [data, setData] = useState({})
+    const [languages,setLanguages] = useState([])
+    const [sentiments,setSentiments] = useState([])
     const classes = useStyles();
     const handleChange = (e) => {
-        console.log(e.target.value)
         setChartType(e.target.value)
     }
 
@@ -118,11 +119,11 @@ export default function MoodAnalysisPieChart() {
                 <Grid item sm={12} md={4} >
                     <Grid container spacing={3}>
                         <Grid item xs={12} >
-                        <FilterHeader/>
+                        <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters singleDate={true} sources={[sources, setSources]} sentiments={true} />
+                                <AccordianFilters singleDate={true} sources={[sources, setSources]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

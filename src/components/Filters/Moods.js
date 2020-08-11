@@ -1,11 +1,12 @@
 import React,{useState} from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Grid, Checkbox, makeStyles } from '@material-ui/core';
+import { capitalizeString } from '../../helpers';
 
 
-function Sentiments() {
+function Sentiments(props) {
 
-    const [sentiments, setSentiment] = useState(['Happy','Sad','Anger','Anticipation','Disgust','Surprise','Fear','Trust'])
+    const [moods, setMoods] = props.moods 
     const useStyles = makeStyles({
         root: {
           "&$checked": {
@@ -17,16 +18,23 @@ function Sentiments() {
 
     const classes = useStyles()
 
+    const handleMoodChange = (mood) => {
+      setMoods({...moods,[mood]:!moods[mood]})
+    }
+
     return (
         <Grid container>
-            {sentiments.map((sentiment,i) =>(
+            {Object.keys(moods).map((mood,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
+                    checked={moods[mood]}
                 control={<Checkbox classes={{
                     root: classes.root,
                     checked: classes.checked
-                  }}  name="checkedA" />}
-                label={sentiment}
+                  }} 
+                  onChange={() => handleMoodChange(mood)}
+                  name={mood} />}
+                label={capitalizeString(mood)}
               />
                 </Grid>
             ))}

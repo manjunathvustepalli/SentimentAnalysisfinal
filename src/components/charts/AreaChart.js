@@ -1,23 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HighchartsReact from 'highcharts-react-official';
 
 
 function AreaChart(props) {
 
-    const {dates,negativeData,neutralData,positiveData} = props
+    const [series, setseries] = useState([])
+
+    useEffect(() => {
+        let data = []
+        Object.keys(props.data).forEach(key => {
+            if(key !== 'dates')
+                data.push({name:key,data:props.data[key],color:props.colors[key]})
+        })
+        setseries(data)
+    },[props.data])
+
 
     let config =  {
         chart: {
             type: 'areaspline'
         },
-        title: {
-            text: 'Area chart'
-        },
-        subtitle: {
-            text: `Source:  `
-        },
         xAxis: {
-            categories: dates[0],
+            categories: props.data.dates,
             tickmarkPlacement: 'on',
             title: {
                 enabled: false
@@ -25,7 +29,7 @@ function AreaChart(props) {
         },
         yAxis: {
             title: {
-                text: 'users'
+                text: 'documents'
             },
             labels: {
                 formatter: function () {
@@ -47,17 +51,7 @@ function AreaChart(props) {
                 }
             }
         },
-        colors: ['rgba(255,0,0,0.5)','rgb(0,255,0,0.5)','rgba(235,255,0,0.5)'],
-        series: [{
-            name: 'Negative',
-            data: negativeData[0]
-        }, {
-            name: 'Positive',
-            data: positiveData[0]
-        }, {
-            name: 'Neutral',
-            data: neutralData[0]
-        }]
+        series
     }
     return <HighchartsReact  options={config}> </HighchartsReact>
 }

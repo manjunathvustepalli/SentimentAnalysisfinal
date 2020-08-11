@@ -3,9 +3,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Grid, Checkbox, makeStyles } from '@material-ui/core';
 
 
-function Sentiments() {
+function Sentiments(props) {
 
-    const [sentiments, setSentiment] = useState(['Positive','Negative','Neutral','All'])
+    const [sentiments, setSentiment] = props.sentiments
     const useStyles = makeStyles({
         root: {
           "&$checked": {
@@ -15,17 +15,23 @@ function Sentiments() {
         checked: {}
       })
 
+    const handleSentimentChange = (sentiment) => {
+      setSentiment({...sentiments,[sentiment]:!sentiments[sentiment]})
+    }
+
     const classes = useStyles()
 
     return (
         <Grid container>
-            {sentiments.map((sentiment,i) =>(
+            {Object.keys(sentiments).map((sentiment,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
-                control={<Checkbox classes={{
+                control={<Checkbox
+                  checked={sentiments[sentiment]}
+                  classes={{
                     root: classes.root,
                     checked: classes.checked
-                  }}  name="checkedA" />}
+                  }} onChange={() => handleSentimentChange(sentiment)} name={sentiment} />}
                 label={sentiment}
               />
                 </Grid>

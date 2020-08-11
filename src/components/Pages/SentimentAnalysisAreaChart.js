@@ -11,13 +11,12 @@ import AreaChart from '../charts/AreaChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
-import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
-import WordCloud from './WordCloud';
-
+import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
+import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -48,103 +47,116 @@ const useStyles = makeStyles((theme) => ({
         width: 130,        
       },
 }));
-
+var sortedData = {}
 
 export default function SentimentalAnalysisAreaChart() {
+    let colors = { 'positive':'rgb(0,255,0,0.5)','negative':'rgba(255,0,0,0.5)','neutral':'rgba(235,255,0,0.5)' } 
     const [chartType, setChartType] = useState('area')
-    const [data, setData] = useState([])
-    const [dates, setDates] = useState([])
-    const [negativeData, setNegativeData] = useState([])
-    const [positiveData, setPositiveData] = useState([])
-    const [neutralData, setNeutralData] = useState([])
+    const [refresh, setRefresh] = useState(true)
+    const [data, setData] = useState({})
     const [sources,setSources] = useState([])
+    const [languages,setLanguages] = useState([])
+    const [sentiments,setSentiments] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const classes = useStyles();
     const handleChange = (e) => {
-        console.log(e.target.value)
         setChartType(e.target.value)
-    }
-    function addMonths(date, months) {
-        var d = date.getDate();
-        date.setMonth(date.getMonth() + months);
-        if (date.getDate() !== d) {
-          date.setDate(0);
-        }
-        return moment(date).format('DD-MM-YYYY');
-    }
-
-    const getDataArrayByKey = (dataArray,key) => {
-        for(var i=0; i<dataArray.length;i++){
-            if(dataArray[i].key === key){
-                return dataArray[i].doc_count
-            }
-        }
     }
 
     useEffect(() => {
-       Axios.post('http://3.7.187.244:9200/analyzed-docs/_search?size=0',{
+       Axios.post('http://3.7.187.244:9200/analyzed-docs/_search?size=0',
+       {
         "aggs": {
           "date-based-range": {
             "date_range": {
               "field": "CreatedAt",
               "format": "dd-MM-yyyy",
               "ranges": [
-                { "from": from, "to": to }
+                { "from": from,"to": to}
               ]
             },
             "aggs": {
-              "sources": {
+              "lang": {
                 "terms": {
-                  "field": "Source.keyword"},
-                  "aggs": {
-                      "per-day": {
-                        "date_histogram": {
-                            "field": "CreatedAt",
-                            "format": "dd-MM-yyyy",
-                            "calendar_interval": "day"
-                        },
-                      "aggs": {
-                        "Daily-Sentiment-Distro": {
-                          "terms": {
-                            "field": "predictedSentiment.keyword"
+                  "field": "predictedLang.keyword"
+                },
+                "aggs": {
+                  "Source": {
+                    "terms": {
+                      "field": "Source.keyword"
+                    },
+                    "aggs": {
+                          "per-day": {
+                            "date_histogram": {
+                                "field": "CreatedAt",
+                                "format": "yyyy-MM-dd", 
+                                "calendar_interval": "day"
+                            },
+                          "aggs": {
+                            "Daily-Sentiment-Distro": {
+                              "terms": {
+                                "field": "predictedSentiment.keyword"
+                              }
+                            }
                           }
-                        }
+                          }
                       }
                       }
                   }
+                }
               }
             }
           }
-        }
-      },{
+        },{
             headers:{
                'Content-Type':'application/json'
            }
        })
-    .then((fetchedData)=>{
-        var sourceDrill = fetchedData.data.aggregations['date-based-range'].buckets[0].sources.buckets
-        setSources(sourceDrill.map((obj,i) => {
-            return {[obj.key]:i === 0}
-        }))
-        console.log(sourceDrill)
-        setDates(sourceDrill.map(source => source['per-day'].buckets.map(obj => obj.key_as_string)))
-        setNegativeData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
-            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'negative')
-        })))
-        setPositiveData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
-            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'positive')
-        })))
-        setNeutralData(sourceDrill.map(source => source['per-day'].buckets.map(obj => {
-            return getDataArrayByKey(obj['Daily-Sentiment-Distro'].buckets,'neutral')
-        }))) 
-        setData([dates,negativeData,positiveData,neutralData])
+    .then( fetchedData => {
+        var sourceKeys
+        var uniqueSourceKeys = []
+        let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+        var languageKeys = getKeyArray(languageBuckets)
+        languageKeys.forEach((key,i) =>{
+            let sourceBuckets = languageBuckets[i].Source.buckets
+            sourceKeys = getKeyArray(sourceBuckets)
+            sourceKeys.forEach(source => {
+                if(!uniqueSourceKeys.includes(source)){
+                    uniqueSourceKeys.push(source)
+                }
+            })
+            sortedData[key] ={}
+            sourceKeys.forEach((source,j) => {
+                sortedData[key][source] ={}
+                let perDayBuckets = sourceBuckets[j]['per-day'].buckets
+                let perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
+                sortedData[key][source]['dates'] = perDayKeys
+                sortedData[key][source]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))
+                sortedData[key][source]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))
+                sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))
+            });
+        })
+        console.log(sortedData)
+        uniqueSourceKeys.forEach(source =>{
+            setSources(prev => { return {...prev,[source]:true}})
+        })
+        languageKeys.forEach(lang =>{
+            setLanguages(prev => {return {...prev,[lang]:true}})
+        })
+        setSentiments({negative:true,positive:true,neutral:true})
+        setData(sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to))
     })
     .catch(err => {
         console.log(err)
     })
-    }, [from,to])
+    }, [from,to,refresh])
 
+
+    useEffect(() => {
+        console.log(sortedData)
+        setData(sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to))
+    }, [languages,sentiments,sources,to,from])
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
@@ -178,18 +190,18 @@ export default function SentimentalAnalysisAreaChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <AreaChart negativeData={negativeData} positiveData={positiveData} neutralData={neutralData} dates={dates} sources={sources}   />
+                             <AreaChart data={data} colors={colors} />
                         </Grid>
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
                     <Grid container spacing={3} >
                         <Grid item xs={12} >
-                            <FilterHeader/>
+                            <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources,setSources]} sentiments={true} />
+                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo]} sources={[sources,setSources]} sentiments={[sentiments,setSentiments]} languages={[languages,setLanguages]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

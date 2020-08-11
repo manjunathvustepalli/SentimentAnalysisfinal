@@ -24,19 +24,16 @@ function Keywords() {
     return (
         <div style={{width:'100%'}}>
             <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel id="demo-simple-select-outlined-label">Keyword</InputLabel>
+                <InputLabel id="select-type">Keyword</InputLabel>
                 <Select
-                    labelId="keyword-select-outlined-label"
+                    labelId="select-type-label"
                     id="select-outlined"
                     label="KeyWord"
                     className={classes.select}
                     >
-                <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Type 1</MenuItem>
-                    <MenuItem value={20}>Type 1</MenuItem>
-                    <MenuItem value={30}>Type 1</MenuItem>
+                    <MenuItem value={'type1'}>Type 1</MenuItem>
+                    <MenuItem value={'type2'}>Type 1</MenuItem>
+                    <MenuItem value={'type3'}>Type 1</MenuItem>
                     </Select>
             </FormControl>
 

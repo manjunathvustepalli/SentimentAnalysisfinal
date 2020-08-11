@@ -6,6 +6,7 @@ import {
     KeyboardDatePicker,
   } from "@material-ui/pickers";
   import { makeStyles } from '@material-ui/core/styles';
+import { addMonths } from '../../helpers';
 
 
 function DateFilter(props) {
@@ -13,7 +14,7 @@ function DateFilter(props) {
     const time = new Date();
     const [startDate, setStartDate] = useState(time);
     const [endDate, setEndDate] = useState(time);
-    const [setTo, setFrom, addMonths] = props.toFromDatesHandlers;
+    const [setTo, setFrom] = props.toFromDatesHandlers;
     const handleStartDateChange = (date) => { 
         setTo(addMonths(date,0))
         setStartDate(date)

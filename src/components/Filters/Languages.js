@@ -1,11 +1,11 @@
 import React,{useState} from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Grid, Checkbox, makeStyles } from '@material-ui/core';
+import { capitalizeString } from '../../helpers';
 
+function Languages(props) {
 
-function Languages() {
-
-    const [languages, setLanguages] = useState(['English','Bangla','All'])
+    const [languages, setLanguages] = props.languages
     const useStyles = makeStyles({
         root: {
           "&$checked": {
@@ -16,9 +16,13 @@ function Languages() {
       })
       const classes = useStyles()
 
+      const handleLanguageChange = (language) => {
+        setLanguages({...languages,[language]:!languages[language]})
+      }
+
     return (
         <Grid container>
-            {languages.map((language,i) =>(
+            {Object.keys(languages).map((language,i) =>(
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
                 control={<Checkbox name="checkedA"
@@ -26,8 +30,10 @@ function Languages() {
                     root: classes.root,
                     checked: classes.checked
                   }}
+                checked={languages[language]}
+                onChange={() => handleLanguageChange(language)}
                 />}
-                label={language}
+                label={capitalizeString(language)}
               />
                 </Grid>
             ))}
