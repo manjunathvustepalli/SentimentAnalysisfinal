@@ -9,6 +9,7 @@ import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';
+import { fi } from 'date-fns/locale'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -143,7 +144,10 @@ export default function MoodAnalysisAreaChart() {
             setLanguages(prev => {return {...prev,[lang]:true}})
         })
         setMoods({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})
-        setData(MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to))
+        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to)
+        if(finalData.dates){
+            setData(finalData)
+        }
      })
      .catch(err => {
          console.log(err)
