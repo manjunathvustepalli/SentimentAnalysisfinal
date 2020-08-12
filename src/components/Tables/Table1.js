@@ -8,7 +8,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Box from '@material-ui/core/Box';
 import { Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 
 
@@ -18,7 +17,6 @@ const columns = [
   {
     id: 'comment',
     label: 'Comment',
-    align: 'left',
   },
   {
     id: 'reply',

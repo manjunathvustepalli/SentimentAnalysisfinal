@@ -198,7 +198,12 @@ export default function MoodAnalysisAreaChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo,addMonths]} sources={[sources,setSources]} languages={[languages,setLanguages]} moods={[moods,setMoods]} />
+                                <AccordianFilters 
+                                    toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                                    sources={[sources,setSources]} 
+                                    languages={[languages,setLanguages]} 
+                                    moods={[moods,setMoods]} 
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

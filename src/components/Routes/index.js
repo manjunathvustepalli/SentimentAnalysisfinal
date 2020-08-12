@@ -6,6 +6,7 @@ import SideNavBar from '../Navigation/SideNav'
 import MoodAnalysisAreaChart from '../Pages/MoodAnalysisAreaChart'
 import MoodAnalysisPieChart from '../Pages/MoodAnalysisPieChart'
 import WordCloud from '../Pages/WordCloud'
+import InfluencerAnalysis from '../Pages/InfluencerAnalysis'
 
 
 function Routes() {
@@ -18,6 +19,7 @@ function Routes() {
                 <Route path='/mood-analysis/area-chart' exact component={MoodAnalysisAreaChart} />
                 <Route path='/mood-analysis/pie-chart' exact component={MoodAnalysisPieChart} />
                 <Route path='/word-cloud' exact component={WordCloud} />
+                <Route path='/influencer-analysis' exact component={InfluencerAnalysis} />
                 <Route component={SideNavBar}  />
             </Switch>
         </BrowserRouter>

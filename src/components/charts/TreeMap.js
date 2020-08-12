@@ -26,21 +26,17 @@ function TreeMap() {
             }],
             data: [{
                 id: 'A',
-                name: 'Apples',
+                name: 'Negative',
                 color: "#EC2500"
             }, {
                 id: 'B',
-                name: 'Bananas',
-                color: "#ECE100"
+                name: 'Positive',
+                color: "#9EDE00"
             }, {
                 id: 'O',
-                name: 'Oranges',
+                name: 'Neutral',
                 color: '#EC9800'
             },{
-                id: 'Rick',
-                name: '',
-                color: '#EC9800'
-            }, {
                 name: 'Anne',
                 parent: 'A',
                 value: 5
@@ -72,23 +68,14 @@ function TreeMap() {
                 name: 'Rick',
                 parent: 'O',
                 value: 3
-            },{
-                name: 'hey',
-                parent: 'Rick',
-                value: 3
             }, {
                 name: 'Peter',
                 parent: 'O',
                 value: 3
-            }, {
-                name: 'Susanne',
-                parent: 'Kiwi',
-                value: 2,
-                color: '#9EDE00'
             }]
         }],
         title: {
-            text: 'Fruit consumption'
+            text: 'Influencer Comparision'
         }
     }
     
