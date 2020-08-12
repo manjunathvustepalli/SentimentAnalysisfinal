@@ -145,7 +145,10 @@ export default function SentimentalAnalysisAreaChart() {
             setLanguages(prev => {return {...prev,[lang]:true}})
         })
         setSentiments({negative:true,positive:true,neutral:true})
-        setData(sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to))
+        let finalData  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to)
+        if(finalData.dates){
+            setData(finalData)
+        }
     })
     .catch(err => {
         console.log(err)
@@ -154,8 +157,8 @@ export default function SentimentalAnalysisAreaChart() {
 
 
     useEffect(() => {
-        console.log(sortedData)
-        setData(sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to))
+        let finalData  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to)
+            setData(finalData)
     }, [languages,sentiments,sources,to,from])
     return (
         <SideNav>
