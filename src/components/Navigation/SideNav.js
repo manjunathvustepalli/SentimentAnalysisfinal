@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
@@ -105,7 +104,7 @@ const SideNavBar = ( props) => {
       path:['/mood-analysis/area-chart','/mood-analysis/pie-chart'],
     },
     {
-      name:'influencer Analysis',
+      name:'Influencer Analysis',
       icon:<EmojiPeopleIcon/>,
       path:['/influencer-analysis'],
     },
@@ -185,7 +184,7 @@ const SideNavBar = ( props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar alt="Remy Sharp" src="../../imgs/k.JPG" />
+          <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
           <Typography variant="h6" noWrap>
           &nbsp; Amar Sarkar Sentiment Analysis
           </Typography>
