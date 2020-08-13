@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -43,7 +43,7 @@ const IconWithText = styled.div`
 export default function ControlledAccordions(props) {
   const {singleDate, toFromDatesHandlers, sources, sentiments,languages, moods} = props
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -82,7 +82,7 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          {singleDate ? (<SingleDate/>) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
+          {singleDate ? (<SingleDate singleDate={singleDate} />) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
           
         </AccordionDetails>
       </Accordion>

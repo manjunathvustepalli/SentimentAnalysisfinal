@@ -5,16 +5,17 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
   } from "@material-ui/pickers";
-  import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment'
 
 
-function SingleDate() {
+function SingleDate(props) {
 
-    const time = new Date();
-    const [date, setDate] = useState(time);
-
+    const setDate = props.singleDate
+    const [calender, setCalender] = useState(new Date())
     const handleDateChange = (date) => {
-        setDate(date);
+        setCalender(date)
+        setDate(moment(date).format('DD-MM-YYYY'));
       };
   
     const useStyles = makeStyles((theme) => ({
@@ -41,7 +42,7 @@ function SingleDate() {
               margin="normal"
               id="start-date-picker-dialog"
               label="Select Date"
-              value = {date}
+              value = {calender}
               onChange= {handleDateChange}
               format="dd-MM-yyyy"
               KeyboardButtonProps={{

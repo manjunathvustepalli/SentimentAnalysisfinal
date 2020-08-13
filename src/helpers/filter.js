@@ -59,7 +59,6 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
     return finalData
 }
 
-
 export const MoodAnalysisAreaChartFilter = (languages,moods,sources,data,from,to) => {
     let languageList = Object.keys(languages)
     let languageFilteredData = []
@@ -132,4 +131,29 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,data,from,to
         })
     })
     return finalData  
+}
+
+export const MoodAnalysisPieChartFilter = (languages,sentiments,sources,data) => {
+    let languageList = Object.keys(languages)
+    let languageFilteredData = []
+    languageList.forEach(language => {
+        if(languages[language]){
+            languageFilteredData.push(data[language])
+        }
+    })
+    if(languageFilteredData[0]){
+        let sourceList = Object.keys(sources)
+        let sourceFilteredData = []
+        languageFilteredData.forEach(sourceData =>{
+            sourceList.forEach(source => {
+                if(sources[source] && sourceData[source]){
+                    sourceData[source]['source'] = source
+                    sourceFilteredData.push(sourceData[source])
+                }
+            })
+        })
+        console.log(sourceFilteredData)
+    }else {
+        console.log('empty')
+    }
 }

@@ -9,12 +9,9 @@ import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';
-import { fi } from 'date-fns/locale'
-
 
 const useStyles = makeStyles((theme) => ({
     main: {
-
         fontSize: 16,
         fontWeight: "bold",
         color: "#CB0038",
@@ -59,7 +56,7 @@ export default function MoodAnalysisAreaChart() {
     }
 
     useEffect(() => {
-        Axios.post('http://3.7.187.244:9200/analyzed-docs/_search?size=0',
+        Axios.post(process.env.REACT_APP_URL,
         {
             "aggs": {
               "date-based-range": {
@@ -112,50 +109,52 @@ export default function MoodAnalysisAreaChart() {
          var uniqueSourceKeys = []
          let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
          var languageKeys = getKeyArray(languageBuckets)
-         languageKeys.forEach((key,i) =>{
-             let sourceBuckets = languageBuckets[i].source.buckets
-             sourceKeys = getKeyArray(sourceBuckets)
-             sourceKeys.forEach(source => {
-                 if(!uniqueSourceKeys.includes(source)){
-                     uniqueSourceKeys.push(source)
-                 }
+         if(languageKeys[0]){
+            languageKeys.forEach((key,i) =>{
+                let sourceBuckets = languageBuckets[i].source.buckets
+                sourceKeys = getKeyArray(sourceBuckets)
+                sortedData[key] ={}
+                sourceKeys.forEach((source,j) => {
+                   if(!uniqueSourceKeys.includes(source)){
+                       uniqueSourceKeys.push(source)
+                   } 
+                   sortedData[key][source] ={}
+                   let perDayBuckets = sourceBuckets[j]['per-day'].buckets
+                   let perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
+                   sortedData[key][source]['dates'] = perDayKeys
+                   sortedData[key][source]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
+                   sortedData[key][source]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
+                   sortedData[key][source]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
+                   sortedData[key][source]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
+                   sortedData[key][source]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
+                   sortedData[key][source]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
+                   sortedData[key][source]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
+                   sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))
+               });
+            })
+            console.log(sortedData)
+            uniqueSourceKeys.forEach(source =>{
+               setSources(prev => { return {...prev,[source]:true}})
+           })
+           languageKeys.forEach(lang =>{
+               setLanguages(prev => {return {...prev,[lang]:true}})
+           })
+           setMoods({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})   
+         } else {
+             setSources({})
+             setLanguages({})
+             setMoods({})
+             sortedData = {}
+         }
              })
-             sortedData[key] ={}
-             sourceKeys.forEach((source,j) => {
-                sortedData[key][source] ={}
-                let perDayBuckets = sourceBuckets[j]['per-day'].buckets
-                let perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
-                sortedData[key][source]['dates'] = perDayKeys
-                sortedData[key][source]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
-                sortedData[key][source]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
-                sortedData[key][source]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
-                sortedData[key][source]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
-                sortedData[key][source]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
-                sortedData[key][source]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
-                sortedData[key][source]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
-                sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))
-            });
-         })
-         console.log(sortedData)
-         uniqueSourceKeys.forEach(source =>{
-            setSources(prev => { return {...prev,[source]:true}})
-        })
-        languageKeys.forEach(lang =>{
-            setLanguages(prev => {return {...prev,[lang]:true}})
-        })
-        setMoods({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})
-        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to)
-        if(finalData.dates){
-            setData(finalData)
-        }
-     })
      .catch(err => {
          console.log(err)
      })
      }, [from,to,refresh])
  
      useEffect(() => {
-        setData(MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to))
+        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to)
+            setData(finalData)
     }, [languages,moods,sources,to,from])
 
     return (
