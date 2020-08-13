@@ -1,0 +1,24 @@
+.maleIcon {
+  position: absolute;
+  font-size: 60px;
+  color: #f02929;
+  z-index: 1;
+  top: 60%;
+  left: 28.5%;
+}
+.femaleIcon {
+  position: absolute;
+  font-size: 60px;
+  color: #0e59ed;
+  z-index: 1;
+  top: 60%;
+  left: 46%;
+}
+.transIcon {
+  position: absolute;
+  font-size: 60px;
+  color: #60656e;
+  z-index: 1;
+  top: 60%;
+  left: 63%;
+}

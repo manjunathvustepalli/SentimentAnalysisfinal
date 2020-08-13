@@ -2,29 +2,20 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-function DonutChart(props) {
-  let data = props.mood
-    ? [
-        ["Happy", 44.2],
-        ["Sad", 26.6],
-        ["Anger", 20],
-        ["Anticipation", 5],
-        ["Disgust", 40],
-        ["Surprise", 60],
-        ["Fear", 10],
-        ["Trust", 35],
-      ]
-    : [
-        ["negative", 44.2],
-        ["positive", 26.6],
-        ["neutral", 20],
-      ];
+function DemographyDonutChart(props) {
+  let data = [
+    ["", 35],
+    ["", 65],
+  ];
   const options = {
     chart: {
       type: "pie",
     },
     title: {
-      text: "pie chart",
+      text: "",
+    },
+    subtitle: {
+      text: "",
     },
     plotOptions: {
       pie: {
@@ -37,6 +28,7 @@ function DonutChart(props) {
         },
       },
     },
+    colors: [props.color1, props.color2],
     series: [
       {
         data,
@@ -50,4 +42,4 @@ function DonutChart(props) {
   );
 }
 
-export default DonutChart;
+export default DemographyDonutChart;

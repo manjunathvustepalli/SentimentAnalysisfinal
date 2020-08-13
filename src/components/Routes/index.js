@@ -9,6 +9,7 @@ import WordCloud from "../Pages/WordCloud";
 import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
+import TrendingSubjects from "../Pages/TrendingSubjects";
 
 function Routes() {
   return (
@@ -43,6 +44,7 @@ function Routes() {
         />
         <Route path="/trend-analysis" exact component={TrendAnalysis} />
         <Route path="/demography" exact component={Demography} />
+        <Route path="/trending-subject" exact component={TrendingSubjects} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

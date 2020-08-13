@@ -12,9 +12,11 @@ import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths } from "../../helpers";
 import TrendAnalysisChart from "../charts/TrendAnalysisChart";
-import DemographyAgeChart from "../charts/DemographyAgeChart";
+import DemographyAgeChart from "../charts/DemographyCharts/DemographyAgeChart";
 import DonutChart from "../charts/DonutChart";
 import TabbarMUI from "./TabbarMUI";
+import DemographyDonutChart from "../charts/DemographyCharts/DemographyDonutChart";
+import "./icons.css";
 function TrendAnalysis() {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState([]);
@@ -68,11 +70,50 @@ function TrendAnalysis() {
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
               <Grid container spacing={3}>
-                <Grid item xs={6}>
-                  <CardContent>Gender</CardContent>
-                  <TrendAnalysisChart />
+                <CardContent>Gender</CardContent>
+                <p
+                  style={{
+                    marginLeft: "200px",
+                    marginTop: "20px",
+                    color: "black",
+                  }}
+                >
+                  Gender Wise post
+                </p>
+                <p
+                  style={{
+                    marginLeft: "320px",
+                    marginTop: "-20px",
+                    color: "black",
+                  }}
+                >
+                  June 2020
+                </p>
+                <Grid container spacing={3}>
+                  <Grid item xs={4}>
+                    <i className="fas fa-male maleIcon"></i>
+                    <DemographyDonutChart
+                      color1="rgba(245, 12, 12)"
+                      color2="rgba(237, 230, 230)"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <i class="fas fa-female femaleIcon"></i>
+                    <DemographyDonutChart
+                      color1="#0e59ed"
+                      color2="rgba(237, 230, 230)"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <i class="fas fa-transgender transIcon"></i>
+                    <DemographyDonutChart
+                      color1="#60656e"
+                      color2="rgba(237, 230, 230)"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={6}>
+
+                <Grid item xs={12}>
                   <CardContent>Age</CardContent>
                   <DemographyAgeChart />
                 </Grid>
