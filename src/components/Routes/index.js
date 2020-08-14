@@ -12,6 +12,7 @@ import Demography from "../Pages/Demography";
 import TrendingSubjects from "../Pages/TrendingSubjects";
 import LiveAnalysis from "../Pages/LiveAnalysis";
 import SummaryDashBoard from "../Pages/SummaryDashBoard";
+import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
 
 function Routes() {
   return (
@@ -48,6 +49,7 @@ function Routes() {
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
+        <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>
