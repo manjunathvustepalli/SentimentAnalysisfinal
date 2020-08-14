@@ -1,0 +1,73 @@
+import React from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+
+function BarChart(props) {
+  const options = {
+    chart: {
+      type: "bar",
+    },
+    title: {
+      text: "",
+    },
+    subtitle: {
+      text: "",
+    },
+    // colors: ["#32a852", "#c2081a", "#ebc909", "#0f94db", "#cc14bd"],
+    xAxis: {
+      categories: [
+        "Open to experience",
+        "Conscientiousness",
+        "Extraversion",
+        "Agreebleness",
+        "Neuroticism",
+      ],
+      title: {
+        text: null,
+      },
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: "Population (millions)",
+        align: "high",
+      },
+      labels: {
+        overflow: "justify",
+      },
+    },
+    tooltip: {
+      valueSuffix: " millions",
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          enabled: true,
+        },
+      },
+    },
+    legend: {
+      layout: "vertical",
+      align: "right",
+      verticalAlign: "top",
+      x: -40,
+      y: 80,
+      floating: true,
+      borderWidth: 1,
+      backgroundColor:
+        Highcharts.defaultOptions.legend.backgroundColor || "#FFFFFF",
+      shadow: true,
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{ data: [500, 320, 647, 408, 400] }],
+  };
+  return (
+    <div>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
+  );
+}
+
+export default BarChart;

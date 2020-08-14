@@ -19,7 +19,8 @@ import DemographyDonutChart from "../charts/DemographyCharts/DemographyDonutChar
 import DemographyPieChart from "../charts/DemographyCharts/DemographyPieChart";
 import DemographyBubble from "../charts/DemographyCharts/DemographyBubble";
 import "./icons.css";
-function TrendAnalysis() {
+import BarChart from "../charts/BehaviorAnalysisCharts/BarChart";
+function BehaviorAnalysis() {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState([]);
   const [languages, setLanguages] = useState([]);
@@ -68,78 +69,47 @@ function TrendAnalysis() {
   return (
     <SideNav>
       <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Demography
+        Behavior Analysis
       </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
               <Grid container spacing={3}>
-                <CardContent>Gender</CardContent>
-                <p
-                  style={{
-                    marginLeft: "200px",
-                    marginTop: "20px",
-                    color: "black",
-                  }}
-                >
-                  Gender Wise post
-                </p>
-                <p
-                  style={{
-                    marginLeft: "320px",
-                    marginTop: "-20px",
-                    color: "black",
-                  }}
-                >
-                  June 2020
-                </p>
-
-                <Grid item xs={12}>
-                  <Grid container spacing={3} className={classes.gridposition}>
-                    <Grid item xs={4}>
-                      <i className="fas fa-male maleIcon"></i>
-                      <DemographyDonutChart
-                        color1="rgba(245, 12, 12)"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <i class="fas fa-female femaleIcon"></i>
-                      <DemographyDonutChart
-                        color1="#0e59ed"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <i class="fas fa-transgender transIcon"></i>
-                      <DemographyDonutChart
-                        color1="#60656e"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <CardContent>Age</CardContent>
-                  <DemographyAgeChart />
-                </Grid>
-
                 <Grid item xs={6}>
-                  <CardContent>Martial Status</CardContent>
+                  <CardContent>Account fake or real</CardContent>
                   <DemographyDonutChart color1="#f21649" color2="#349eeb" />
                 </Grid>
                 <Grid item xs={6}>
-                  <CardContent>Parental Status</CardContent>
-                  <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                  <BarChart />
                 </Grid>
-                <Grid item xs={12}>
-                  <CardContent>Professional Status</CardContent>
+
+                <CardContent>Disc Framework | Source Twitter</CardContent>
+                <Grid container spacing={1}>
+                  <Grid item xs={3}>
+                    <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6}>
+                  <CardContent>
+                    Audience Behavioral - Brand Affinities
+                  </CardContent>
                   <DemographyPieChart />
                 </Grid>
-                <Grid item xs={12}>
-                  <CardContent>Hobbies and Interest</CardContent>
-                  <DemographyBubble />
+                <Grid item xs={6}>
+                  <CardContent>
+                    Audience Behavior Analysis - The Media Consumption Habits
+                  </CardContent>
+                  <DemographyPieChart />
                 </Grid>
               </Grid>
             </Card>
@@ -168,4 +138,4 @@ function TrendAnalysis() {
   );
 }
 
-export default TrendAnalysis;
+export default BehaviorAnalysis;

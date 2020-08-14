@@ -10,6 +10,7 @@ import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
 import TrendingSubjects from "../Pages/TrendingSubjects";
+import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
 
 function Routes() {
   return (
@@ -45,6 +46,8 @@ function Routes() {
         <Route path="/trend-analysis" exact component={TrendAnalysis} />
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
+        <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
+
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

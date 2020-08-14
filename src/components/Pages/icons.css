@@ -3,22 +3,22 @@
   font-size: 60px;
   color: #f02929;
   z-index: 1;
-  top: 60%;
-  left: 28.5%;
+  top: 41%;
+  left: 15.5%;
 }
 .femaleIcon {
   position: absolute;
   font-size: 60px;
   color: #0e59ed;
   z-index: 1;
-  top: 60%;
-  left: 46%;
+  top: 41%;
+  left: 48%;
 }
 .transIcon {
   position: absolute;
   font-size: 60px;
   color: #60656e;
   z-index: 1;
-  top: 60%;
-  left: 63%;
+  top: 41%;
+  left: 81%;
 }
