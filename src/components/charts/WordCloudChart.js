@@ -2,6 +2,7 @@ import React from 'react'
 import Highcharts from 'highcharts'
 import highchartsWordCloud from "highcharts/modules/wordcloud";
 import HighchartsReact from 'highcharts-react-official';
+require('highcharts/modules/exporting')(Highcharts);
 
 
 function WordCloud(props) {
@@ -16,7 +17,21 @@ function WordCloud(props) {
         }],
         title: {
             text: 'Wordcloud of Latest Trends'
-        }
+        },
+        exporting: {
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                        
+                    }
+                }
+            },
+            scale: 3,
+            fallbackToExportServer: false
+        },
     }
 
     return <HighchartsReact  highcharts={Highcharts} options={config} />

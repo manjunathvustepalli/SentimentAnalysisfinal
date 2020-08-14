@@ -10,12 +10,14 @@ import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
 import TrendingSubjects from "../Pages/TrendingSubjects";
+import LiveAnalysis from "../Pages/LiveAnalysis";
+import SummaryDashBoard from "../Pages/SummaryDashBoard";
 
 function Routes() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/" exact component={SideNavBar} />
+        <Route path="/" exact component={SummaryDashBoard} />
         <Route
           path="/sentimental-analysis/area-chart"
           exact
@@ -45,6 +47,7 @@ function Routes() {
         <Route path="/trend-analysis" exact component={TrendAnalysis} />
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
+        <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

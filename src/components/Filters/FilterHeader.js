@@ -1,5 +1,4 @@
 import React from 'react'
-import FilterListIcon from '@material-ui/icons/FilterList';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Grid from '@material-ui/core/Grid';
 import { Typography, Box, Button, Card, CardContent } from '@material-ui/core';
@@ -56,7 +55,7 @@ function FilterHeader(props) {
                     </Grid>
                 <Grid xs={7} item align='right'>
                     <Typography style={{fontSize:'15px',marginTop:'15px',color:'white'}}>
-                        Last Refresh at {new Date().toTimeString()}
+                        Last Refresh at {new Date().toTimeString().split('GMT')[0]}
                     </Typography>
                     <Button
                     style={{marginTop:'10px'}}
