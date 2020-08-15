@@ -13,6 +13,11 @@ import MoodAreaChart from '../charts/MoodAreaChart';
 import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
 import WordCloud from "../charts/WordCloudChart";
 import TreeMap from "../charts/TreeMap";
+import { addMonths } from '../../helpers';
+import DateFilter from '../Filters/DateFilter';
+import GridTimeFilter from '../Filters/GridTimeFilter';
+import DonutChart from '../charts/DonutChart';
+import InlineFilter from '../Filters/InlineFilter';
 
 
 const IconWithText = styled.div`
@@ -20,7 +25,7 @@ const IconWithText = styled.div`
   align-items:center;
   justify-content:flex-start;
   font-size:15px;
-  color:white
+  color:black
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -32,26 +37,22 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
       marginTop: theme.spacing(2),
     },
-    root: {
-        background: "black"
-    },
-    input: {
-        color: "white"
-    }
   }));
 
 function SummaryDashBoard() {
     const classes = useStyles();
     const [refresh, setRefresh] = useState(false)
+    const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [to, setTo] = useState(addMonths(new Date(),0))
     return (
         <SideNav>    
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
-                <Typography style={{color:'green'}}>
+                <Typography style={{color:'green'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
-                        <Card style={{backgroundColor:'#2C3335'}}>
+                        <Card>
                             <IconWithText>
                                 <FilterListIcon style={{margin:'0 20px'}} /> 
                                 <p> FILTERS </p>
@@ -59,7 +60,7 @@ function SummaryDashBoard() {
                             <Grid container>    
                                 <Grid item xs={12} sm={6} md={3} >
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label" style={{color:"white"}}>Select keyword type</InputLabel>
+                                    <InputLabel id="demo-simple-select-helper-label">Select keyword type</InputLabel>
                                         <Select
                                         labelId="demo-simple-select-helper-label"
                                         id="demo-simple-select-helper"
@@ -73,42 +74,13 @@ function SummaryDashBoard() {
                                 <Grid item xs={12} sm={6} md={3} >
                                 <FormControl className={classes.formControl}>
                                         <TextField
-                                            labelId='type keyword'
+                                            label='type keyword'
                                             variant="standard"
                                         />
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label" sty>Select keyword type</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label">Select keyword type</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                    </FormControl>
+                                <Grid item xs={12} sm={6} md={6} >
+                                    <GridTimeFilter toFromDatesHandlers={[setFrom,setTo]} />
                                 </Grid>
                             </Grid>
                         </Card>
@@ -117,7 +89,7 @@ function SummaryDashBoard() {
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
                     <Grid item md={4} sm={12} xs={12}>
-
+                        <DonutChart mood={true} />
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
                         <Card>
@@ -130,9 +102,14 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>                   
                     <Grid item md={4} sm={12} xs={12}>
+                        <Card>
+                        <InlineFilter />
                         <TreeMap/>
+                        </Card>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
+                        <Card style={{padding:'10px'}}>
+                        <InlineFilter />
                         <WordCloud data={[{
                             name:'Covid-19',
                             weight:99,
@@ -162,6 +139,7 @@ function SummaryDashBoard() {
                             weight:45,
                             color:'rgb(0,255,0,0.5)'
                         }]} />
+                        </Card>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
 

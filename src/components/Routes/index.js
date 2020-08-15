@@ -13,12 +13,14 @@ import TrendingSubjects from "../Pages/TrendingSubjects";
 import LiveAnalysis from "../Pages/LiveAnalysis";
 import SummaryDashBoard from "../Pages/SummaryDashBoard";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
+import Login from "../Pages/Login";
 
 function Routes() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/" exact component={SummaryDashBoard} />
+        <Route path="/" exact component={Login} />
+        <Route path="/summary-dashboard" exact component={SummaryDashBoard} />
         <Route
           path="/sentimental-analysis/area-chart"
           exact

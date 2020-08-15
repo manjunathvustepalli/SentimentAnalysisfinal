@@ -17,7 +17,6 @@ function AreaChart(props) {
         setseries(data)
     },[props.data])
 
-
     let config =  {
         chart: {
             type: 'areaspline'

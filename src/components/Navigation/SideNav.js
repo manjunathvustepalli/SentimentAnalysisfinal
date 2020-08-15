@@ -95,7 +95,7 @@ const SideNavBar = ( props) => {
     {
       name:'Summary Dashboard',
       icon:<BallotIcon/>,
-      path:['/'],
+      path:['/summary-dashboard'],
     }, 
     {
       name:'Sentimental Analysis',
