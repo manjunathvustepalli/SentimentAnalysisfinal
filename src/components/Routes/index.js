@@ -14,6 +14,7 @@ import LiveAnalysis from "../Pages/LiveAnalysis";
 import SummaryDashBoard from "../Pages/SummaryDashBoard";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
 import Login from "../Pages/Login";
+import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
 
 function Routes() {
   return (
@@ -52,6 +53,8 @@ function Routes() {
         <Route path="/trending-subject" exact component={TrendingSubjects} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
+        <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
+
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>
