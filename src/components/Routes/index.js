@@ -11,6 +11,7 @@ import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
 import TrendingSubjects from "../Pages/TrendingSubjects";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
+import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
 
 function Routes() {
   return (
@@ -47,6 +48,7 @@ function Routes() {
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
+        <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
 
         <Route component={SideNavBar} />
       </Switch>
