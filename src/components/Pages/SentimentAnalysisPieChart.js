@@ -58,6 +58,7 @@ export default function SentimentalAnalysisPieChart() {
     const [sources, setSources] = useState({})
     const [languages, setLanguages] = useState({})
     const [refresh, setRefresh] = useState(true)
+    const [data, setData] = useState([])
     const [date, setDate] = useState(moment(new Date()).format('DD-MM-YYYY'))
     const classes = useStyles();
     const handleChange = (e) => {
@@ -159,7 +160,7 @@ export default function SentimentalAnalysisPieChart() {
     }, [date,refresh])
 
     useEffect(() => {
-        MoodAnalysisPieChartFilter(languages,sentiments,sources,sortedData)
+        setData(MoodAnalysisPieChartFilter(languages,sentiments,sources,sortedData)) 
     }, [languages,sentiments,sources])
 
     return (
@@ -189,11 +190,11 @@ export default function SentimentalAnalysisPieChart() {
                                 label="Chart type"
                             >
                                 <MenuItem value={chartType}>pie chart</MenuItem>
-                                <MenuItem value={'area'}>Area chart</MenuItem>
+                                <MenuItem value='area'>Area chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>
-                            {['Facebook','Twitter','Instagram','Youtube','Other Media'].map((chart,i) =>(
+                            {data.map((chart,i) => (
                                 <Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
                                     <DonutChart/>
                                     <Button variant='outlined' color='primary'>

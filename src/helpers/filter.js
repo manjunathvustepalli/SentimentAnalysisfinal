@@ -152,7 +152,14 @@ export const MoodAnalysisPieChartFilter = (languages,sentiments,sources,data) =>
                 }
             })
         })
-        console.log(sourceFilteredData)
+        let final ={}
+        sourceFilteredData.forEach(data => {
+            if (!final[data.source]){
+                let s = data.source 
+                final[s] = data
+            }
+        })
+        return final
     }else {
         console.log('empty')
     }

@@ -28,12 +28,17 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import HdrWeakIcon from '@material-ui/icons/HdrWeak';
+import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 
-const drawerWidth = 260;
+
+const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+  },
+  listItemText:{
+    fontSize:'0.7rem',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -58,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundColor:"white"
-    
   },
   AvatarBox:{
       backgroundColor:'green'
@@ -119,7 +123,7 @@ const SideNavBar = ( props) => {
       path:['/word-cloud'],
     },
     {
-      name:'Tranding Subject',
+      name:'Trending Subject',
       icon:<TrendingUpIcon/>,
       path:['/trending-subject'],
     },
@@ -137,6 +141,11 @@ const SideNavBar = ( props) => {
       name:'Behavior Analysis',
       icon:<HdrWeakIcon/>,
       path:['/behavior-analysis'],
+    },    
+    {
+      name:'Live Analysis',
+      icon:<CalendarViewDayIcon/>,
+      path:['/Live-analysis'],
     },
   ]
     
@@ -159,7 +168,7 @@ const SideNavBar = ( props) => {
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
             <ListItem  button key={index}>
               <ListItemIcon style={currentTab(history,menuItem.path)}> {menuItem.icon} </ListItemIcon>
-              <ListItemText style={currentTab(history,menuItem.path)} primary={menuItem.name} />
+              <ListItemText style={currentTab(history,menuItem.path)} classes={{primary:classes.listItemText}} primary={menuItem.name} />
             </ListItem>
             <Divider/>      
           </Link> 

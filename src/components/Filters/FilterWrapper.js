@@ -1,7 +1,6 @@
 import React from 'react'
-import { CardContent, Card, Grid, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
+import { CardContent, Card, Grid } from '@material-ui/core'
 import FilterListIcon from '@material-ui/icons/FilterList';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import styled from 'styled-components';
 
 const IconWithText = styled.div`

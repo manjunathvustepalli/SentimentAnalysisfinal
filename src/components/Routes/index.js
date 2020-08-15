@@ -10,6 +10,8 @@ import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
 import TrendingSubjects from "../Pages/TrendingSubjects";
+import LiveAnalysis from "../Pages/LiveAnalysis";
+import SummaryDashBoard from "../Pages/SummaryDashBoard";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
 import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
 
@@ -17,7 +19,7 @@ function Routes() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/" exact component={SideNavBar} />
+        <Route path="/" exact component={SummaryDashBoard} />
         <Route
           path="/sentimental-analysis/area-chart"
           exact
@@ -47,9 +49,13 @@ function Routes() {
         <Route path="/trend-analysis" exact component={TrendAnalysis} />
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
+        <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
+<<<<<<< HEAD
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
 
+=======
+>>>>>>> 3a1ff28d3c5d56a070483db282f17739c831cd4d
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

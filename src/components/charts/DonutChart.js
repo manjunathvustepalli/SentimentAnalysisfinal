@@ -1,6 +1,8 @@
 import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+require('highcharts/modules/exporting')(Highcharts);
+
 
 function DonutChart(props) {
   let data = props.mood
@@ -42,6 +44,20 @@ function DonutChart(props) {
         data,
       },
     ],
+    exporting: {
+      chartOptions: {
+          plotOptions: {
+              series: {
+                  dataLabels: {
+                      enabled: true
+                  }
+                  
+              }
+          }
+      },
+      scale: 3,
+      fallbackToExportServer: false
+  },
   };
   return (
     <div>

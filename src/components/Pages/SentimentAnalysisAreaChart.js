@@ -114,6 +114,7 @@ export default function SentimentalAnalysisAreaChart() {
            }
        })
     .then( fetchedData => {
+        console.log(fetchedData)
         var sourceKeys
         var uniqueSourceKeys = []
         let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets

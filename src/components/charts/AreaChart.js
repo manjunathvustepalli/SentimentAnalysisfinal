@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts'
+require('highcharts/modules/exporting')(Highcharts);
 
 
 function AreaChart(props) {
@@ -51,7 +53,21 @@ function AreaChart(props) {
                 }
             }
         },
-        series
+        series,
+        exporting: {
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                        
+                    }
+                }
+            },
+            scale: 3,
+            fallbackToExportServer: false
+        },
     }
     return <HighchartsReact  options={config}> </HighchartsReact>
 }
