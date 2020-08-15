@@ -9,7 +9,7 @@ function AreaChart() {
             type: 'areaspline'
         },
         title: {
-            text: 'Area chart'
+            text: 'Sentiment Analysis'
         },
         subtitle: {
             text: 'Source: Twitter'
@@ -23,7 +23,7 @@ function AreaChart() {
         },
         yAxis: {
             title: {
-                text: 'Billions'
+                text: 'Documents'
             },
             labels: {
                 formatter: function () {

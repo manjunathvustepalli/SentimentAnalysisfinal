@@ -142,7 +142,9 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
-
+                        <Card>
+                            <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="100%" />
+                        </Card>
                     </Grid>
                 </Grid>
             </div>

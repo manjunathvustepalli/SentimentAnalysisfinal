@@ -26,7 +26,7 @@ function DonutChart(props) {
       type: "pie",
     },
     title: {
-      text: "pie chart",
+      text: "Overall Analysis",
     },
     plotOptions: {
       pie: {
