@@ -17,6 +17,7 @@ import Languages from './Languages';
 import Sentiments from './Sentiments';
 import Moods from './Moods';
 import SingleDate from './SingleDate';
+import SubjectIcon from '@material-ui/icons/Subject';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,7 +42,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, toFromDatesHandlers, sources, sentiments,languages, moods} = props
+  const {singleDate, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -120,6 +121,25 @@ export default function ControlledAccordions(props) {
           <Sources  sources={sources}/>
         </AccordionDetails>
       </Accordion>
+      {subSources && (
+              <Accordion expanded={expanded === 'panel8'} onChange={handleChange('panel8')}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel3bh-content"
+                id="panel3bh-header"
+              >
+                  <IconWithText>
+                      <SubjectIcon style={{marginRight:'10px'}} /> 
+                      <p>
+                      Sub Sources
+                      </p>
+                  </IconWithText>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Sources  sources={subSources}/>
+              </AccordionDetails>
+            </Accordion>      
+      )}
       {sentiments && (
         <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
         <AccordionSummary

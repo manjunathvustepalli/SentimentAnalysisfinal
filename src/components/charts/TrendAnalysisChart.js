@@ -3,6 +3,9 @@ import Highcharts from "highcharts/";
 import HighchartsReact from "highcharts-react-official";
 
 function TrendAnalysisChart(props) {
+
+  const [ series,dates ] = props.data
+
   const options = {
     chart: {
       type: "column",
@@ -14,7 +17,7 @@ function TrendAnalysisChart(props) {
       text: "",
     },
     xAxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      categories: dates,
       crosshair: true,
     },
     yAxis: {
@@ -33,7 +36,7 @@ function TrendAnalysisChart(props) {
       headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
       pointFormat:
         '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+        '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
       footerFormat: "</table>",
       shared: true,
       useHTML: true,
@@ -44,24 +47,7 @@ function TrendAnalysisChart(props) {
         borderWidth: 0,
       },
     },
-    series: [
-      {
-        name: "Twitter",
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6],
-      },
-      {
-        name: "YouTube",
-        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0],
-      },
-      {
-        name: "Facebook",
-        data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0],
-      },
-      {
-        name: "Others",
-        data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4],
-      },
-    ],
+    series
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;

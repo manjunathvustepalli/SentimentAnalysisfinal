@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import DonutChart from '../charts/DonutChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
@@ -18,7 +17,8 @@ import AccordianFilters from '../Filters/AccordianFilters';
 import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 import { getKeyArray, getDocCountByKey } from '../../helpers';
-import { MoodAnalysisPieChartFilter } from '../../helpers/filter';
+import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
+import PieChart from '../charts/PieChart';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -132,26 +132,35 @@ export default function SentimentalAnalysisPieChart() {
                     sortedData[key][source] ={}
                     perDayBuckets = sourceBuckets[j]['per-day'].buckets
                     perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
-                    sortedData[key][source]['dates'] = perDayKeys[0]
                     sortedData[key][source]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))[0]
                     sortedData[key][source]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))[0]
                     sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))[0]
                 });
             })
-            uniqueSourceKeys.forEach(source =>{
-                setSources(prev => { return {...prev,[source]:true}})
+            console.log(sortedData)
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source => {
+                availableSourceKeys[source] = true
             })
+            setSources(availableSourceKeys)
+            let availableLanguageKeys = {}
             languageKeys.forEach(lang =>{
-                setLanguages(prev => {return {...prev,[lang]:true}})
+                availableLanguageKeys[lang] = true
             })
-            setSentiments({negative:true,positive:true,neutral:true})
+            setLanguages(availableLanguageKeys)
+            setSentiments(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {negative:true,positive:true,neutral:true}
+                }
+            })
         } else {
             setLanguages({})
             setSources({})
             setSentiments({})
             sortedData = {}
         }
-            console.log(sortedData)
         })
         .catch(err => {
             console.log(err)
@@ -160,7 +169,10 @@ export default function SentimentalAnalysisPieChart() {
     }, [date,refresh])
 
     useEffect(() => {
-        setData(MoodAnalysisPieChartFilter(languages,sentiments,sources,sortedData)) 
+        let tempData = sentimentAnalysisPieChartFilter(languages,sentiments,sources,sortedData)
+        if(tempData){
+            setData(tempData)
+        } 
     }, [languages,sentiments,sources])
 
     return (
@@ -194,14 +206,15 @@ export default function SentimentalAnalysisPieChart() {
                             </Select>
                             </FormControl>
                             </Grid>
-                            {data.map((chart,i) => (
-                                <Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
-                                    <DonutChart/>
-                                    <Button variant='outlined' color='primary'>
-                                        {chart}
-                                    </Button>
-                                </Grid>
-                            ))}
+                            {Object.keys(data).map((source,i) => {
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                <PieChart data ={data[source]}/>
+                                <Button variant='outlined' color='primary'>
+                                    {source}
+                                </Button>
+                            </Grid>)
+                            }
+                            )}
                             <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}

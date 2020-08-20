@@ -10,17 +10,24 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths } from "../../helpers";
+import { addMonths, getKeyArray } from "../../helpers";
 import TrendAnalysisChart from "../charts/TrendAnalysisChart";
 import TabbarMUI from "./TabbarMUI";
+import { useEffect } from "react";
+import Axios from "axios";
+import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../../helpers/filter";
+import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
+
+var sortedData = {}
+
 function TrendAnalysis() {
   const [refresh, setRefresh] = useState(true);
-  const [sources, setSources] = useState([]);
-  const [languages, setLanguages] = useState([]);
+  const [sources, setSources] = useState({});
+  const [languages, setLanguages] = useState({});
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
-  const [moods, setMoods] = useState({});
-  const [sentiments, setSentiments] = useState({});
+  const [barData, setBarData] = useState([])
+  const [lineData, setLineData] = useState([])
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -56,6 +63,97 @@ function TrendAnalysis() {
 
   const classes = useStyles();
 
+  useEffect(() => {
+    Axios.post(process.env.REACT_APP_URL,{
+      "aggs": {
+        "date-based-range": {
+          "date_range": {
+            "field": "CreatedAt",
+            "format": "dd-MM-yyyy",
+            "ranges": [
+              { "from": from, "to":to }
+            ]
+          },
+          "aggs": {
+            "per-day": {
+              "date_histogram": {
+                "field": "CreatedAt",
+                "calendar_interval": "day"
+              },
+              "aggs": {
+                "Source": {
+                  "terms": {
+                    "field": "Source.keyword"
+                  },
+                  "aggs": {
+                    "Lang": {
+                      "terms": {
+                          "field": "predictedLang.keyword"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }   
+        }
+      })
+    .then(fetchedData =>{
+      sortedData = {}
+      var sourceKeys,languageKeys
+      var uniqueSourceKeys = []
+      var uniqueLanguageKeys = []
+      var perDayBucket =  fetchedData.data.aggregations['date-based-range'].buckets[0]['per-day'].buckets
+      var perDayKeys =  perDayBucket.map(key => key.key_as_string.split('T')[0])
+      perDayKeys.forEach((dayKey,i) => {
+        sortedData[dayKey] = {}
+        let sourceBuckets = perDayBucket[i].Source.buckets
+        sourceKeys = getKeyArray(sourceBuckets)
+        sourceKeys.forEach((source,j) => {
+          if(!uniqueSourceKeys.includes(source)){
+            uniqueSourceKeys.push(source)
+          }
+          sortedData[dayKey][source] = {}
+          let languageBuckets = sourceBuckets[j].Lang.buckets
+          languageKeys = getKeyArray(languageBuckets)
+          languageKeys.forEach((language,k)=>{
+            if(!uniqueLanguageKeys.includes(language)){
+              uniqueLanguageKeys.push(language)
+            }
+            sortedData[dayKey][source][language] = languageBuckets[k].doc_count
+          })
+        })
+      })
+      let availableSourceKeys = {}
+      uniqueSourceKeys.forEach(source =>{
+          availableSourceKeys[source] = true
+      })
+      setSources(availableSourceKeys)
+
+      let availableLanguageKeys = {}
+      languageKeys.forEach(lang =>{
+          availableLanguageKeys[lang] = true
+      })
+      setLanguages(availableLanguageKeys)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+  }, [from,to,refresh])
+
+  useEffect(()=>{
+    setBarData(trendAnalysisBarGraphFilter(languages,sources,sortedData))
+  },[languages,sources])
+
+  useEffect(() => {
+    let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
+    console.log(temp)
+    if(temp){
+      setLineData(temp)
+    }
+  },[languages,sources])
+
   return (
     <SideNav>
       <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
@@ -70,10 +168,10 @@ function TrendAnalysis() {
                   <CardContent>Source wise Trend of Posts</CardContent>
                 </Grid>
                 <Grid item xs={12}>
-                  <TrendAnalysisChart />
+                  <TrendAnalysisChart data={barData} />
                 </Grid>
                 <Grid item xs={11}>
-                  <TabbarMUI className={classes.tabbar} />
+                    <TabbarMUI className={classes.tabbar} data={lineData} />
                 </Grid>
               </Grid>
             </Card>
@@ -89,8 +187,6 @@ function TrendAnalysis() {
                     toFromDatesHandlers={[setFrom, setTo, addMonths]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
-                    moods={[moods, setMoods]}
-                    sentiments={[sentiments, setSentiments]}
                   />
                 </FilterWrapper>
               </Grid>

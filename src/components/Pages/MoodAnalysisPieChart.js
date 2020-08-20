@@ -15,6 +15,11 @@ import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
+import Axios from 'axios';
+import { getKeyArray, getDocCountByKey } from '../../helpers';
+import moment from 'moment'
+import { moodAnalysisPieChartFilter, sentimentAnalysisPieChartFilter } from '../../helpers/filter';
+import PieChart from '../charts/PieChart';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -52,19 +57,126 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }));
-
+var sortedData = {}
 export default function MoodAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
     const [showTable, setShowTable] = useState(false)
     const [sources, setSources] = useState([])
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
+    const [date, setDate] = useState(moment(new Date()).format('DD-MM-YYYY'))
     const [languages,setLanguages] = useState([])
-    const [sentiments,setSentiments] = useState([])
+    const [moods, setMoods] = useState([])
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
+
+    useEffect(() => {
+
+        Axios.post(process.env.REACT_APP_URL,
+        {
+         "aggs": {
+           "date-based-range": {
+             "date_range": {
+                "field": "CreatedAt",
+                "format": "dd-MM-yyyy HH:mm",
+                "ranges": [
+                  { "from": `${date} 00:00`, "to": `${date} 23:59` }
+               ]
+             },
+             "aggs": {
+               "lang": {
+                 "terms": {
+                   "field": "predictedLang.keyword"
+                 },
+                 "aggs": {
+                   "Source": {
+                     "terms": {
+                       "field": "Source.keyword"
+                     },
+                     "aggs": {
+                           "per-day": {
+                             "date_histogram": {
+                                 "field": "CreatedAt",
+                                 "format": "yyyy-MM-dd", 
+                                 "calendar_interval": "day"
+                             },
+                           "aggs": {
+                             "Daily-Sentiment-Distro": {
+                               "terms": {
+                                 "field": "predictedMood.keyword"
+                               }
+                             }
+                           }
+                           }
+                       }
+                       }
+                   }
+                 }
+               }
+             }
+           }
+         },{
+             headers:{
+                'Content-Type':'application/json'
+            }
+        })
+        .then(fetchedData => {
+            var sourceKeys,sourceBuckets,perDayKeys,perDayBuckets
+            var uniqueSourceKeys = []
+            let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+            var languageKeys = getKeyArray(languageBuckets)
+            languageKeys.forEach((key,i) =>{
+                sourceBuckets = languageBuckets[i].Source.buckets
+                sourceKeys = getKeyArray(sourceBuckets)
+                sortedData[key] ={}
+                sourceKeys.forEach((source,j) => {
+                    if(!uniqueSourceKeys.includes(source)){
+                        uniqueSourceKeys.push(source)
+                    }
+                    sortedData[key][source] ={}
+                    perDayBuckets = sourceBuckets[j]['per-day'].buckets
+                    sortedData[key][source]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))[0]
+                    sortedData[key][source]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))[0]
+                    sortedData[key][source]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))[0]
+                    sortedData[key][source]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))[0]
+                    sortedData[key][source]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))[0]
+                    sortedData[key][source]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))[0]
+                    sortedData[key][source]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))[0]
+                    sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))[0]
+                });
+            })
+            console.log(sortedData)
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source => {
+                availableSourceKeys[source] = true
+            })
+            setSources(availableSourceKeys)
+            let availableLanguageKeys = {}
+            languageKeys.forEach(lang =>{
+                availableLanguageKeys[lang] = true
+            })
+            setLanguages(availableLanguageKeys)
+            setMoods(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                }
+            })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }, [date,refresh])
+
+    useEffect(()=>{
+        let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
+        if(temp){
+            setData(temp)
+        }
+    },[moods,languages,sources])
 
     return (
         <SideNav>
@@ -97,14 +209,15 @@ export default function MoodAnalysisPieChart() {
                             </Select>
                             </FormControl>
                             </Grid>
-                            {['Facebook','Twitter','Instagram','Youtube','Other Media'].map((chart,i) =>(
-                                <Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
-                                    <DonutChart mood={true} />
-                                    <Button variant='outlined' color='primary'>
-                                        {chart}
-                                    </Button>
-                                </Grid>
-                            ))}
+                            {Object.keys(data).map((source,i) => {
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                <PieChart data ={data[source]}/>
+                                <Button variant='outlined' color='primary'>
+                                    {source}
+                                </Button>
+                            </Grid>)
+                            }
+                            )}
                             <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
@@ -123,7 +236,7 @@ export default function MoodAnalysisPieChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters singleDate={true} sources={[sources, setSources]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
+                                <AccordianFilters singleDate={setDate}  sources={[sources, setSources]} languages={[languages,setLanguages]} moods={[moods,setMoods]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

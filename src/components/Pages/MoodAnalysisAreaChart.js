@@ -46,6 +46,7 @@ export default function MoodAnalysisAreaChart() {
     const [refresh, setRefresh] = useState(true)
     const [chartType, setChartType] = useState('area')
     const [sources,setSources] = useState([])
+    const [subSources,setSubSources] = useState([])
     const [data, setData] = useState({})
     const [languages,setLanguages] = useState([])
     const [moods,setMoods] = useState([])
@@ -57,89 +58,122 @@ export default function MoodAnalysisAreaChart() {
 
     useEffect(() => {
         Axios.post(process.env.REACT_APP_URL,
-        {
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from": from, "to":to }
-                  ]
-                },
+            {
                 "aggs": {
-                  "lang": {
-                    "terms": {
-                      "field": "predictedLang.keyword"
+                  "date-based-range": {
+                    "date_range": {
+                      "field": "CreatedAt",
+                      "format": "dd-MM-yyyy",
+                      "ranges": [
+                        { "from": from,"to": to}
+                      ]
                     },
                     "aggs": {
-                      "source": {
+                      "lang": {
                         "terms": {
-                          "field": "Source.keyword"
+                          "field": "predictedLang.keyword"
                         },
                         "aggs": {
-                              "per-day": {
-                                "date_histogram": {
-                                    "field": "CreatedAt",
-                                    "format": "yyyy-MM-dd", 
-                                    "calendar_interval": "day"
-                                },
-                              "aggs": {
-                                "Daily-Sentiment-Distro": {
-                                  "terms": {
-                                    "field": "predictedMood.keyword"
-                                  }
+                          "Source": {
+                            "terms": {
+                              "field": "Source.keyword"
+                            },
+                            "aggs":{
+                                "SubSource":{
+                                    "terms":{
+                                        "field": "SubSource.keyword"
+                                    },
+                                
+        
+                                "aggs": {
+                                    "per-day": {
+                                      "date_histogram": {
+                                          "field": "CreatedAt",
+                                          "format": "yyyy-MM-dd", 
+                                          "calendar_interval": "day"
+                                      },
+                                    "aggs": {
+                                      "Daily-Sentiment-Distro": {
+                                        "terms": {
+                                          "field": "predictedMood.keyword"
+                                        }
+                                      }
+                                    }
+                                    }
                                 }
                               }
-                              }
+                            }
+                            }
                           }
-                          }
+                        }
                       }
                     }
                   }
-                }
-              }
-            },{
+                },{
              headers:{
                 'Content-Type':'application/json'
             }
         })
      .then( fetchedData => {
-         var sourceKeys
+         var sourceKeys,subSourceKeys
          var uniqueSourceKeys = []
+         var uniqueSubSourceKeys = []
          let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
          var languageKeys = getKeyArray(languageBuckets)
          if(languageKeys[0]){
             languageKeys.forEach((key,i) =>{
-                let sourceBuckets = languageBuckets[i].source.buckets
+                let sourceBuckets = languageBuckets[i].Source.buckets
                 sourceKeys = getKeyArray(sourceBuckets)
                 sortedData[key] ={}
                 sourceKeys.forEach((source,j) => {
                    if(!uniqueSourceKeys.includes(source)){
                        uniqueSourceKeys.push(source)
-                   } 
+                   }
                    sortedData[key][source] ={}
-                   let perDayBuckets = sourceBuckets[j]['per-day'].buckets
-                   let perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
-                   sortedData[key][source]['dates'] = perDayKeys
-                   sortedData[key][source]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
-                   sortedData[key][source]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
-                   sortedData[key][source]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
-                   sortedData[key][source]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
-                   sortedData[key][source]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
-                   sortedData[key][source]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
-                   sortedData[key][source]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
-                   sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))
+                   let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+                   subSourceKeys = getKeyArray(subSourceBuckets)
+                   subSourceKeys.forEach((subSource,k) => {
+                    if(!uniqueSubSourceKeys.includes(subSource)){
+                        uniqueSubSourceKeys.push(subSource)
+                    }
+                    sortedData[key][source][subSource] = {}
+                    let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
+                    let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
+                   sortedData[key][source][subSource]['dates'] = perDayKeys
+                   sortedData[key][source][subSource]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
+                   sortedData[key][source][subSource]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
+                   sortedData[key][source][subSource]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
+                   sortedData[key][source][subSource]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
+                   sortedData[key][source][subSource]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
+                   sortedData[key][source][subSource]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
+                   sortedData[key][source][subSource]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
+                   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                })                  
                });
             })
-            console.log(sortedData)
+            let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
-               setSources(prev => { return {...prev,[source]:true}})
-           })
-           languageKeys.forEach(lang =>{
-               setLanguages(prev => {return {...prev,[lang]:true}})
-           })
-           setMoods({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})   
+                availableSourceKeys[source] = true
+            })
+            setSources(availableSourceKeys)
+
+            let availableLanguageKeys = {}
+            languageKeys.forEach(lang =>{
+                availableLanguageKeys[lang] = true
+            })
+            setLanguages(availableLanguageKeys)
+
+            let availableSubSourceKeys = {}
+            uniqueSubSourceKeys.forEach(subSource => {
+                availableSubSourceKeys[subSource] = true
+            })
+            setSubSources(availableSubSourceKeys)
+
+            setMoods(prev =>{
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                }})   
          } else {
              setSources({})
              setLanguages({})
@@ -153,9 +187,9 @@ export default function MoodAnalysisAreaChart() {
      }, [from,to,refresh])
  
      useEffect(() => {
-        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,sortedData,from,to)
+        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
             setData(finalData)
-    }, [languages,moods,sources,to,from])
+    }, [languages,moods,sources,subSources,to,from])
 
     return (
         <SideNav>
@@ -206,6 +240,7 @@ export default function MoodAnalysisAreaChart() {
                                     sources={[sources,setSources]} 
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]} 
+                                    subSources={[subSources,setSubSources]}
                                 />
                             </FilterWrapper>
                         </Grid>

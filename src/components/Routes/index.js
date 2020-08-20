@@ -5,7 +5,6 @@ import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
 import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
 import MoodAnalysisPieChart from "../Pages/MoodAnalysisPieChart";
-import WordCloud from "../Pages/WordCloud";
 import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
@@ -15,6 +14,8 @@ import SummaryDashBoard from "../Pages/SummaryDashBoard";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
 import Login from "../Pages/Login";
 import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
+import wordCloudSentiment from "../Pages/WordCloudSentiment";
+import WordCloudMood from "../Pages/WordCloudMood";
 
 function Routes() {
   return (
@@ -42,7 +43,8 @@ function Routes() {
           exact
           component={MoodAnalysisPieChart}
         />
-        <Route path="/word-cloud" exact component={WordCloud} />
+        <Route path="/word-cloud/sentiment" exact component={wordCloudSentiment} />
+        <Route path="/word-cloud/mood" exact component={WordCloudMood} />
         <Route
           path="/influencer-analysis"
           exact

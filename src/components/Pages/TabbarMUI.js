@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -50,13 +50,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TabbarMUI() {
+function TabbarMUI(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(()=>{
+    console.log(props.data[0])
+  },[props.data])
 
   return (
     <div className={classes.root}>
@@ -70,28 +74,24 @@ function TabbarMUI() {
           scrollButtons="auto"
           aria-label="scrollable auto tabs example"
         >
-          <Tab label="Twitter" {...a11yProps(0)} />
-          <Tab label="YouTube" {...a11yProps(1)} />
-          <Tab label="Facebook" {...a11yProps(2)} />
-          <Tab label="Instagram" {...a11yProps(3)} />
-          <Tab label="Other Electronic Media" {...a11yProps(4)} />
+          {
+            props.data[0] && (Object.keys(props.data[0]).map((source,i) => {
+              return <Tab label={source} {...a11yProps(i)} />
+            }))
+          }
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        <TrendAnalysisLineChart />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <TrendAnalysisLineChart />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <TrendAnalysisLineChart />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <TrendAnalysisLineChart />
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        <TrendAnalysisLineChart />
-      </TabPanel>
+      {
+        props.data[0] && (
+          Object.keys(props.data[0]).map((source,i) =>{
+            return (
+            <TabPanel value={value} index={i}>
+              <TrendAnalysisLineChart dates={props.data[1]} data={props.data[0][source]} />
+            </TabPanel>
+            )
+          }) 
+        )
+      }
     </div>
   );
 }

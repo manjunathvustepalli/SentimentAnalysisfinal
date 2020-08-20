@@ -55,6 +55,7 @@ export default function SentimentalAnalysisAreaChart() {
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
     const [sources,setSources] = useState([])
+    const [subSources,setSubSources] = useState([])
     const [languages,setLanguages] = useState([])
     const [sentiments,setSentiments] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
@@ -66,57 +67,66 @@ export default function SentimentalAnalysisAreaChart() {
 
     useEffect(() => {
        Axios.post(process.env.REACT_APP_URL,
-       {
-        "aggs": {
-          "date-based-range": {
-            "date_range": {
-              "field": "CreatedAt",
-              "format": "dd-MM-yyyy",
-              "ranges": [
-                { "from": from,"to": to}
-              ]
-            },
+        {
             "aggs": {
-              "lang": {
-                "terms": {
-                  "field": "predictedLang.keyword"
+              "date-based-range": {
+                "date_range": {
+                  "field": "CreatedAt",
+                  "format": "dd-MM-yyyy",
+                  "ranges": [
+                    { "from": from,"to": to}
+                  ]
                 },
                 "aggs": {
-                  "Source": {
+                  "lang": {
                     "terms": {
-                      "field": "Source.keyword"
+                      "field": "predictedLang.keyword"
                     },
                     "aggs": {
-                          "per-day": {
-                            "date_histogram": {
-                                "field": "CreatedAt",
-                                "format": "yyyy-MM-dd", 
-                                "calendar_interval": "day"
-                            },
-                          "aggs": {
-                            "Daily-Sentiment-Distro": {
-                              "terms": {
-                                "field": "predictedSentiment.keyword"
-                              }
+                      "Source": {
+                        "terms": {
+                          "field": "Source.keyword"
+                        },
+                        "aggs":{
+                            "SubSource":{
+                                "terms":{
+                                    "field": "SubSource.keyword"
+                                },
+                            
+    
+                            "aggs": {
+                                "per-day": {
+                                  "date_histogram": {
+                                      "field": "CreatedAt",
+                                      "format": "yyyy-MM-dd", 
+                                      "calendar_interval": "day"
+                                  },
+                                "aggs": {
+                                  "Daily-Sentiment-Distro": {
+                                    "terms": {
+                                      "field": "predictedSentiment.keyword"
+                                    }
+                                  }
+                                }
+                                }
                             }
                           }
-                          }
+                        }
+                        }
                       }
-                      }
+                    }
                   }
                 }
               }
-            }
-          }
-        },{
+            },{
             headers:{
                'Content-Type':'application/json'
            }
        })
-    .then( fetchedData => {
-        console.log(fetchedData)
-        var sourceKeys
+    .then(fetchedData => {
+        var sourceKeys,subSourceKeys
         var uniqueSourceKeys = []
+        var uniqueSubSourceKeys = []
         let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
         var languageKeys = getKeyArray(languageBuckets)
         if(languageKeys[0]){
@@ -128,26 +138,54 @@ export default function SentimentalAnalysisAreaChart() {
                     if(!uniqueSourceKeys.includes(source)){
                         uniqueSourceKeys.push(source)
                     }
-                    sortedData[key][source] ={}
-                    let perDayBuckets = sourceBuckets[j]['per-day'].buckets
-                    let perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
-                    sortedData[key][source]['dates'] = perDayKeys
-                    sortedData[key][source]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))
-                    sortedData[key][source]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))
-                    sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))
+                    let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+                    subSourceKeys = getKeyArray(subSourceBuckets)
+                    sortedData[key][source] = {}
+                    subSourceKeys.forEach((subSource,k) => {
+                        if(!uniqueSubSourceKeys.includes(subSource)){
+                            uniqueSubSourceKeys.push(subSource)
+                        }
+                        sortedData[key][source][subSource] = {}
+                        let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
+                        let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
+                        sortedData[key][source][subSource]['dates'] = perDayKeys
+                        sortedData[key][source][subSource]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))
+                        sortedData[key][source][subSource]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))
+                        sortedData[key][source][subSource]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))
+                    })
                 });
             })
             console.log(sortedData)
+            let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
-                setSources(prev => { return {...prev,[source]:true}})
+                availableSourceKeys[source] = true
             })
+            setSources(availableSourceKeys)
+
+            let availableLanguageKeys = {}
             languageKeys.forEach(lang =>{
-                setLanguages(prev => {return {...prev,[lang]:true}})
+                availableLanguageKeys[lang] = true
             })
-            setSentiments({negative:true,positive:true,neutral:true})    
+            setLanguages(availableLanguageKeys)
+
+            let availableSubSourceKeys = {}
+            uniqueSubSourceKeys.forEach(subSource =>{
+                availableSubSourceKeys[subSource]  = true
+            })
+            console.log(availableSubSourceKeys,uniqueSubSourceKeys)
+            setSubSources(availableSubSourceKeys)
+
+            setSentiments(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {negative:true,positive:true,neutral:true}
+                }
+            })
         } else {
             sortedData = {}
             setSources({})
+            setSubSources({})
             setLanguages({})
             setSentiments({})
         }
@@ -160,9 +198,9 @@ export default function SentimentalAnalysisAreaChart() {
 
 
     useEffect(() => {
-        let finalData  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,sortedData,from,to)
+        let finalData  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
             setData(finalData)
-    }, [languages,sentiments,sources])
+    }, [languages,sentiments,sources,subSources])
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
@@ -207,7 +245,7 @@ export default function SentimentalAnalysisAreaChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo]} sources={[sources,setSources]} sentiments={[sentiments,setSentiments]} languages={[languages,setLanguages]} />
+                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo]} sources={[sources,setSources]} sentiments={[sentiments,setSentiments]} languages={[languages,setLanguages]} subSources={[subSources,setSubSources]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

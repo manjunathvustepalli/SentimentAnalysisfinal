@@ -120,7 +120,7 @@ const SideNavBar = ( props) => {
     {
       name:'Word cloud',
       icon:<AppsIcon/>,
-      path:['/word-cloud'],
+      path:['/word-cloud/sentiment','/word-cloud/mood'],
     },
     {
       name:'Trending Subject',
