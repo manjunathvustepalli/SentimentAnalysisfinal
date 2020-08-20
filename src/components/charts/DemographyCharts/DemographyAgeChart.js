@@ -71,7 +71,7 @@ function DemographyAgeChart() {
       },
     ],
   };
-  return <HighchartsReact options={config}> </HighchartsReact>;
+  return <HighchartsReact options={config} > </HighchartsReact>;
 }
 
 export default DemographyAgeChart;

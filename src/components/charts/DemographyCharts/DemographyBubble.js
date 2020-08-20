@@ -12,7 +12,7 @@ function DemographyDonutChart(props) {
       height: "100%",
     },
     title: {
-      text: "Carbon emissions around the world (2014)",
+      text: "",
     },
     tooltip: {
       useHTML: true,

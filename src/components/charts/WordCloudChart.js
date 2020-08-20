@@ -16,7 +16,7 @@ function WordCloud(props) {
             name: 'Occurrences'
         }],
         title: {
-            text: 'Wordcloud of Latest Trends'
+            text: ''
         },
         exporting: {
             chartOptions: {

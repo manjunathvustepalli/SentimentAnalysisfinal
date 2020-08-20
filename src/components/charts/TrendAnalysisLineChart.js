@@ -8,7 +8,7 @@ function TrendAnalysisLineChart(props) {
 
   const options = {
     title: {
-      text: "Source wise language wise Trend of Posts",
+      text: "",
     },
     yAxis: {
       title: {

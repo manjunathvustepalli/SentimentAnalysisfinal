@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Typography, Grid, Card, TextField } from '@material-ui/core'
+import { Typography, Grid, Card, TextField, CardContent } from '@material-ui/core'
 import FilterHeader from '../Filters/FilterHeader'
 import styled from 'styled-components';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -29,6 +29,11 @@ const IconWithText = styled.div`
 `;
 
 const useStyles = makeStyles((theme) => ({
+    main: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#CB0038",
+    },
     formControl: {
       margin: theme.spacing(1),
       width:'90%',
@@ -37,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
       marginTop: theme.spacing(2),
     },
+    gridposition: {
+        position: "relative",
+    }
   }));
 
 function SummaryDashBoard() {
@@ -44,6 +52,7 @@ function SummaryDashBoard() {
     const [refresh, setRefresh] = useState(false)
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
+
     return (
         <SideNav>    
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
@@ -88,62 +97,95 @@ function SummaryDashBoard() {
                     <Grid item md={4} sm={12} xs={12}>
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
-                    <Grid item md={4} sm={12} xs={12}>
-                        <DonutChart mood={true} />
+                    <Grid item xl={4} md={6} xs={12}>
+                        <Card className={classes.main}>
+                            <CardContent >Overall Analysis</CardContent>
+                            <Grid container spacing={0} className={classes.gridposition}>
+                                <Grid item xs={6}>
+                                    <DonutChart mood={false} />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <DonutChart mood={true} />
+                                </Grid>
+                            </Grid>
+                        </Card>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
                         <Card>
                         <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} />
                         </Card>
                     </Grid>                    
-                    <Grid item md={4} sm={12} xs={12}>
-                        <Card>
-                        <MoodAreaChart />
+                    <Grid item xl={4} md={6} xs={12}>
+                        <Card className={classes.main} >
+                            <CardContent>Sentiment Analysis</CardContent>
+                            <MoodAreaChart />
                         </Card>
                     </Grid>                   
-                    <Grid item md={4} sm={12} xs={12}>
-                        <Card>
-                        <InlineFilter />
-                        <TreeMap/>
+                    <Grid item xl={4} md={6} xs={12}>
+                        <Card className={classes.main} >
+                            <Grid container>
+                                <Grid item xs={5}>
+                                    <CardContent>Influence Comparison</CardContent>
+                                </Grid>
+                                <Grid item xs={7}>
+                                    <InlineFilter />
+                                </Grid>
+                            </Grid>
+                            <TreeMap/>
                         </Card>
                     </Grid>
-                    <Grid item md={4} sm={12} xs={12}>
-                        <Card style={{padding:'10px'}}>
-                        <InlineFilter />
-                        <WordCloud data={[{
-                            name:'Covid-19',
-                            weight:99,
-                            color:'rgba(255,0,0,0.5)'
-                        },{
-                            name:'China',
-                            weight:54,
-                            color:'rgba(255,0,0,0.5)'
-                        },{
-                            name:'Sheikh Hasina',
-                            weight:45,
-                            color:'rgb(0,255,0,0.5)'
-                        },{
-                            name:'karthik',
-                            weight:45,
-                            color:'rgb(56,255,12,0.5)'
-                        },{
-                            name:'কোভিড 19',
-                            weight:99,
-                            color:'rgba(255,0,0,0.5)'
-                        },{
-                            name:'চীন',
-                            weight:54,
-                            color:'rgba(255,0,0,0.5)'
-                        },{
-                            name:'শেখ হাসিনা',
-                            weight:45,
-                            color:'rgb(0,255,0,0.5)'
-                        }]} />
+                    <Grid item xl={4} md={6} xs={12}>
+                        <Card className={classes.main} >
+                            <Grid container>
+                                <Grid item xs={5}>
+                                    <CardContent>Word Cloud</CardContent>
+                                </Grid>
+                                <Grid item xs={7}>
+                                    <InlineFilter />
+                                </Grid>
+                            </Grid>
+                           <WordCloud data={[{
+                                name:'Covid-19',
+                                weight:99,
+                                color:'rgba(255,0,0,0.5)'
+                            },{
+                                name:'China',
+                                weight:54,
+                                color:'rgba(255,0,0,0.5)'
+                            },{
+                                name:'Sheikh Hasina',
+                                weight:45,
+                                color:'rgb(0,255,0,0.5)'
+                            },{
+                                name:'karthik',
+                                weight:45,
+                                color:'rgb(56,255,12,0.5)'
+                            },{
+                                name:'কোভিড 19',
+                                weight:99,
+                                color:'rgba(255,0,0,0.5)'
+                            },{
+                                name:'চীন',
+                                weight:54,
+                                color:'rgba(255,0,0,0.5)'
+                            },{
+                                name:'শেখ হাসিনা',
+                                weight:45,
+                                color:'rgb(0,255,0,0.5)'
+                            }]} />
                         </Card>
                     </Grid>
-                    <Grid item md={4} sm={12} xs={12}>
-                        <Card>
-                            <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="100%" />
+                    <Grid item xl={4} md={6} xs={12}>
+                        <Card className={classes.main} >
+                            <Grid container>
+                                <Grid item xs={5}>
+                                    <CardContent>Geo Tagging Summary</CardContent>
+                                </Grid>
+                                <Grid item xs={7}>
+                                    <InlineFilter />
+                                </Grid>
+                            </Grid>
+                            <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
                         </Card>
                     </Grid>
                 </Grid>

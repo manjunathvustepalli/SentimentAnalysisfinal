@@ -72,8 +72,8 @@ function TabbarMUI() {
           aria-label="scrollable auto tabs example"
         >
           <Tab label="Geo Hot Spot - Sentiment" {...a11yProps(0)} />
-          <Tab label="Geo Hot Spot - Sentiment" {...a11yProps(1)} />
-          <Tab label="Spatio Temporl" {...a11yProps(2)} />
+          <Tab label="Geo Hot Spot - Mood" {...a11yProps(1)} />
+          <Tab label="Spatio Temporal" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>

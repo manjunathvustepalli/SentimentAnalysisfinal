@@ -3,14 +3,14 @@ import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 
 const Maps1 = (props) => {
   const mapStyles = {
-    width: "48%",
-    height: "80%",
-    marginLeft: "-10px",
+    width: "49.5%",
+    height: "52%",
+    marginLeft: "0px",
     marginTop: "20px",
-    borderRadius: "10px",
+    borderRadius: "10px"
   };
   return (
-    <div>
+    <div style={{height: '55vh', width: '100%'}}>
       <Map
         google={props.google}
         zoom={8}
