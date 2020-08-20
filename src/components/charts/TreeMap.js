@@ -75,7 +75,7 @@ function TreeMap() {
             }]
         }],
         title: {
-            text: 'Influencer Comparision'
+            text: ''
         }
     }
     

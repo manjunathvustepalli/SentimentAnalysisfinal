@@ -3,7 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 function DemographyDonutChart(props) {
-  let data = [
+  let data = props.data? props.data: [
     ["", 35],
     ["", 65],
   ];
@@ -24,7 +24,7 @@ function DemographyDonutChart(props) {
         cursor: "pointer",
         dataLabels: {
           enabled: true,
-          distance: -50,
+          distance: props.data? 30: -50
         },
       },
     },

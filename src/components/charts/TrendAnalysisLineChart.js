@@ -5,7 +5,7 @@ import HighchartsReact from "highcharts-react-official";
 function TrendAnalysisLineChart(props) {
   const options = {
     title: {
-      text: "Source wise language wise Trend of Posts",
+      text: "",
     },
 
     subtitle: {
@@ -19,6 +19,9 @@ function TrendAnalysisLineChart(props) {
     },
 
     xAxis: {
+      title: {
+        text: "Weekly Report | June 2020",
+      },
       accessibility: {
         rangeDescription: "Range: 2010 to 2017",
       },

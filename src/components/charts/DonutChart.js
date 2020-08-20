@@ -26,7 +26,7 @@ function DonutChart(props) {
       type: "pie",
     },
     title: {
-      text: "Overall Analysis",
+      text: '',
     },
     plotOptions: {
       pie: {
@@ -49,7 +49,7 @@ function DonutChart(props) {
           plotOptions: {
               series: {
                   dataLabels: {
-                      enabled: true
+                      enabled: false
                   }
                   
               }

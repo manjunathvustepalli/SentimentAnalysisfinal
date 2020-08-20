@@ -73,78 +73,86 @@ function TrendAnalysis() {
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-            <Card className={classes.main}>
-              <Grid container spacing={3}>
-                <CardContent>Gender</CardContent>
-                <p
-                  style={{
-                    marginLeft: "200px",
-                    marginTop: "20px",
-                    color: "black",
-                  }}
-                >
-                  Gender Wise post
-                </p>
-                <p
-                  style={{
-                    marginLeft: "320px",
-                    marginTop: "-20px",
-                    color: "black",
-                  }}
-                >
-                  June 2020
-                </p>
-
-                <Grid item xs={12}>
-                  <Grid container spacing={3} className={classes.gridposition}>
-                    <Grid item xs={4}>
-                      <i className="fas fa-male maleIcon"></i>
-                      <DemographyDonutChart
-                        color1="rgba(245, 12, 12)"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <i class="fas fa-female femaleIcon"></i>
-                      <DemographyDonutChart
-                        color1="#0e59ed"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <i class="fas fa-transgender transIcon"></i>
-                      <DemographyDonutChart
-                        color1="#60656e"
-                        color2="rgba(237, 230, 230)"
-                      />
-                    </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6} >
+              <Card className={classes.main} >
+              <CardContent>Gender
+              <p
+                style={{
+                  textAlign: "center",
+                  fontWeight: 'lighter',
+                  color: "black",
+                }}
+              >
+                Gender Wise post
+              </p>
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "black",
+                }}
+              >
+                June 2020
+              </p>
+              </CardContent>
+                <Grid container spacing={1} className={classes.gridposition}>
+                  <Grid item xs={4}>
+                    <i className="fas fa-male maleIcon"></i>
+                    <DemographyDonutChart
+                      color1="rgba(245, 12, 12)"
+                      color2="rgba(237, 230, 230)"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <i class="fas fa-female femaleIcon"></i>
+                    <DemographyDonutChart
+                      color1="#0e59ed"
+                      color2="rgba(237, 230, 230)"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <i class="fas fa-transgender transIcon"></i>
+                    <DemographyDonutChart
+                      color1="#60656e"
+                      color2="rgba(237, 230, 230)"
+                    />
                   </Grid>
                 </Grid>
-                <Grid item xs={12}>
+              </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.main}>
                   <CardContent>Age</CardContent>
                   <DemographyAgeChart />
-                </Grid>
-
-                <Grid item xs={6}>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.main}>
                   <CardContent>Martial Status</CardContent>
                   <DemographyDonutChart color1="#f21649" color2="#349eeb" />
-                </Grid>
-                <Grid item xs={6}>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.main}>
                   <CardContent>Parental Status</CardContent>
                   <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
-                </Grid>
-                <Grid item xs={12}>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.main}>
                   <CardContent>Professional Status</CardContent>
                   <DemographyPieChart />
-                </Grid>
-                <Grid item xs={12}>
-                  <CardContent>Hobbies and Interest</CardContent>
-                  <DemographyBubble />
-                </Grid>
+                </Card>
               </Grid>
-            </Card>
+              <Grid item xs={12} md={6}>
+                  <Card className={classes.main}>
+                    <CardContent>Hobbies and Interest</CardContent>
+                    <DemographyBubble />
+                  </Card>
+                </Grid>
+            </Grid>
           </Grid>
-          <Grid item sm={12} md={4}>
+          <Grid item md={4} sm={12} >
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />

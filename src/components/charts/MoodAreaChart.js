@@ -9,16 +9,17 @@ function AreaChart() {
             type: 'areaspline'
         },
         title: {
-            text: 'Sentiment Analysis'
+            text: ''
         },
         subtitle: {
-            text: 'Source: Twitter'
+            text: ''
         },
         xAxis: {
             categories: ['14-06-2020', '15-06-2020', '16-06-2020', '17-06-2020','18-6-2020','19-6-2020'],
             tickmarkPlacement: 'on',
             title: {
-                enabled: false
+                text: 'Weekly Report | June 2020',
+                enabled: true
             }
         },
         yAxis: {

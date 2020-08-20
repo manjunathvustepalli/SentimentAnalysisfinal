@@ -62,6 +62,14 @@ function BehaviorAnalysis() {
     gridposition: {
       position: "relative",
     },
+    discStyle:{
+      color: "black",
+      textAlign: "center",
+      fontWeight:"lighter",
+      position: "relative",
+      top:"50%",
+      zIndex: "10"
+    }
   }));
 
   const classes = useStyles();
@@ -74,45 +82,58 @@ function BehaviorAnalysis() {
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-            <Card className={classes.main}>
               <Grid container spacing={3}>
-                <Grid item xs={6}>
-                  <CardContent>Account fake or real</CardContent>
-                  <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                <Grid item xs={12} md={6}>
+                  <Card className={classes.main}>
+                    <CardContent>Account fake or real</CardContent>
+                    <DemographyDonutChart color1="#f21649" color2="#349eeb" data={ [
+                      ["Real", 35],
+                      ["Fake", 65],
+                    ]}/>
+                  </Card>
                 </Grid>
-                <Grid item xs={6}>
-                  <BarChart />
+                <Grid item xs={12} md={6}>
+                  <Card className={classes.main}>
+                    <CardContent>Big 5 Personality Framework | Twitter</CardContent>
+                    <BarChart />
+                  </Card>
                 </Grid>
-
-                <CardContent>Disc Framework | Source Twitter</CardContent>
-                <Grid container spacing={1}>
-                  <Grid item xs={3}>
-                    <DemographyDonutChart color1="#f21649" color2="#349eeb" />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <DemographyDonutChart color1="#f21649" color2="#349eeb" />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
-                  </Grid>
+                <Grid item xs={12}>
+                  <Card className={classes.main}>
+                    <CardContent>Disc Framework | Source Twitter</CardContent>
+                    <Grid container spacing={1}>
+                      <Grid item xs={6} md={3}>
+                        <p className={classes.discStyle}>Dominant</p>
+                        <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                      </Grid>
+                      <Grid item xs={6} md={3}>
+                        <p className={classes.discStyle}>Inspiring</p>
+                        <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                      </Grid>
+                      <Grid item xs={6} md={3}>
+                        <p className={classes.discStyle}>Supportive</p>
+                        <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                      </Grid>
+                      <Grid item xs={6} md={3}>
+                        <p className={classes.discStyle}>Cautious</p>
+                        <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                      </Grid>
+                    </Grid>
+                  </Card>
                 </Grid>
-                <Grid item xs={6}>
-                  <CardContent>
-                    Audience Behavioral - Brand Affinities
-                  </CardContent>
-                  <DemographyPieChart />
+                <Grid item xs={12} md={6}>
+                  <Card className={classes.main}>
+                    <CardContent>Audience Behaviour Analysis - Brand Affinities</CardContent>
+                    <DemographyPieChart />  
+                  </Card>
                 </Grid>
-                <Grid item xs={6}>
-                  <CardContent>
-                    Audience Behavior Analysis - The Media Consumption Habits
-                  </CardContent>
-                  <DemographyPieChart />
+                <Grid item xs={12} md={6}>
+                  <Card className={classes.main}>
+                    <CardContent>Audience Behavior Analysis - The Media Consumption Habits</CardContent>
+                    <DemographyPieChart />
+                  </Card>
                 </Grid>
               </Grid>
-            </Card>
           </Grid>
           <Grid item sm={12} md={4}>
             <Grid container spacing={3}>
