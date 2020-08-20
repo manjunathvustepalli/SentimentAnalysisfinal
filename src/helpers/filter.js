@@ -342,3 +342,29 @@ export const TrendAnalysisLineChartFilter = (languages,sources,sortedData) => {
     })
     return [series,dates]
 }
+
+export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedData) => {
+    console.log(sources,subSources,sentiments,sortedData)
+    let filteredData = {}
+    let languageKeys = Object.keys(sortedData)
+    languageKeys.forEach(language => {
+        filteredData[language] = []
+        let sourceKeys = Object.keys(sortedData[language])
+        sourceKeys.forEach(source => {
+            if(sources[source]){
+                let subSourceKeys = Object.keys(sortedData[language][source])
+                subSourceKeys.forEach(subSource => {
+                    if(subSources[subSource]){
+                        let sentimentKeys = Object.keys(sortedData[language][source][subSource])
+                        sentimentKeys.forEach(sentiment => {
+                            if(sentiments[sentiment]){
+                                filteredData[language] = filteredData[language].concat(sortedData[language][source][subSource][sentiment])
+                            }
+                        })
+                    }
+                })
+            }
+        })
+    })
+    return filteredData
+}

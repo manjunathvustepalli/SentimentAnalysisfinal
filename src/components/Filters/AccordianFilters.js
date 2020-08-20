@@ -87,7 +87,7 @@ export default function ControlledAccordions(props) {
           
         </AccordionDetails>
       </Accordion>
-      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+{languages && (      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel4bh-content"
@@ -103,7 +103,7 @@ export default function ControlledAccordions(props) {
         <AccordionDetails>
           <Languages languages={languages} />
         </AccordionDetails>
-      </Accordion>
+      </Accordion>)}
       <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

@@ -16,6 +16,7 @@ import WordCloud from '../charts/WordCloudChart';
 import {addMonths, getKeyArray} from '../../helpers'
 import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
+import {wordCloudSentimentFilter} from '../../helpers/filter';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -86,6 +87,8 @@ function TabPanel(props) {
     }
 }));
 
+var sortedData = {}
+
 function WordCloudSentiment() {
 
     const classes = useStyles();
@@ -99,13 +102,13 @@ function WordCloudSentiment() {
 
     const [chartType, setChartType] = useState('pie')
     const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
-    const [sources, setSources] = useState({'Twitter':true,'Youtube':false,'Facebook':true,'Instagram':false})
-    const [languages, setLanguages] = useState({'English':true,'Bengali':false})
+    const [sources, setSources] = useState({})
+    const [subSources,setSubSources] = useState({})
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
-
+    const [data, setData] = useState({})
 
     useEffect( () => {
         Axios.post(process.env.REACT_APP_URL,{
@@ -134,12 +137,6 @@ function WordCloudSentiment() {
                                             "terms":{
                                                 "field":"SubSource.keyword"
                                             },
-                                            "aggs":{
-                                                "per-day": {
-                                                    "date_histogram": {
-                                                        "field": "CreatedAt",
-                                                        "calendar_interval": "day"
-                                                    },
                                                     "aggs":{
                                                         "Daily-Sentiment-Distro": {
                                                             "terms": {
@@ -154,8 +151,6 @@ function WordCloudSentiment() {
                                                             }
                                                         }
                                                     }
-                                                }
-                                            }
                                         }
                                     }
                                 }
@@ -166,7 +161,7 @@ function WordCloudSentiment() {
             }
         })
           .then(fetchedData =>{
-            var sourceKeys,perDayBuckets,perDayKeys,subSourceKeys
+            var sourceKeys,subSourceKeys,sentimentKeys
             var uniqueSourceKeys = []
             var uniqueSubSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
@@ -174,28 +169,77 @@ function WordCloudSentiment() {
             languageKeys.forEach((key,i) => {
                 let sourceBuckets = languageBuckets[i].Source.buckets
                 sourceKeys = getKeyArray(sourceBuckets)
+                sortedData[key] = {}
                 sourceKeys.forEach((source,j) => {
                     if(!uniqueSourceKeys.includes(source)){
                         uniqueSourceKeys.push(source)
                     }
+                    sortedData[key][source] = {}
                     let subSourceBuckets = sourceBuckets[j].SubSource.buckets
                     subSourceKeys = getKeyArray(subSourceBuckets)
                     subSourceKeys.forEach((subSource,k)=>{
                         if(!uniqueSubSourceKeys.includes(subSource)){
                             uniqueSubSourceKeys.push(subSource)
                         }
-                        console.log(subSourceBuckets[k]['per-day'].buckets.map(senti =>{
-                            return senti['Daily-Sentiment-Distro'].buckets
-                        }))
+                        sortedData[key][source][subSource] = {}
+                        let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
+                        sentimentKeys = getKeyArray(sentimentBuckets)
+                        sentimentKeys.forEach((sentiment,l)=>{
+                            sortedData[key][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
+                                if(sentiment === 'negative'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(255,0,0)'
+                                    }
+                                } else if(sentiment === 'positive'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(0,255,0)'
+                                    }
+                                } else {
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(255,255,0)'
+                                    }
+                                }
+                            })
+                        })
                     })
-                });
+                })
             })
-            console.log(uniqueSubSourceKeys,uniqueSourceKeys)
+            console.log(sortedData)
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source =>{
+                availableSourceKeys[source] = true
+            })
+            setSources(availableSourceKeys)
+
+            let availableSubSourceKeys = {}
+            uniqueSubSourceKeys.forEach(subSource =>{
+                availableSubSourceKeys[subSource]  = true
+            })
+            setSubSources(availableSubSourceKeys)
+
+            setSentiments(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {negative:true,positive:true,neutral:true}
+                }
+            })
+
           })
-          .catch(err =>{
+          .catch(err => {
               console.log(err.response)
           })
     },[to,from,refresh])
+
+    useEffect(() => {
+        setData(wordCloudSentimentFilter(sources,subSources,sentiments,sortedData))
+    },[sources,subSources,sentiments])
 
     return (
         <SideNav>
@@ -240,22 +284,22 @@ function WordCloudSentiment() {
                                 scrollButtons="auto"
                                 aria-label="scrollable auto tabs example"
                                 >
-                                    <Tab label="All" {...a11yProps(0)} />
-                                    <Tab label="English" {...a11yProps(1)} />
-                                    <Tab label="Bengali" {...a11yProps(2)} />
+                                    {
+                                        Object.keys(data).map((lang,i)=> <Tab label={lang} {...a11yProps(i)} />)
+                                    }
                                 </Tabs>
                             </AppBar>
                             </Grid>
                             <Grid item xs={12}>
-                            <TabPanel value={value} index={0}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
-                            <TabPanel value={value} index={1}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
-                            <TabPanel value={value} index={2}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
+                                {
+                                    Object.keys(data).map((lang,i) => {
+                                        return (
+                                            <TabPanel value={value} index={i}>
+                                                <WordCloud data={data[lang]} />
+                                            </TabPanel>
+                                        )
+                                    })
+                                }
                             </Grid>
                         </Grid>
                     </Card>
@@ -267,7 +311,12 @@ function WordCloudSentiment() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo]} sources={[sources, setSources]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
+                                <AccordianFilters  
+                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    sources={[sources, setSources]} 
+                                    sentiments={[sentiments,setSentiments]}
+                                    subSources={[subSources,setSubSources]}
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

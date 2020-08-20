@@ -93,7 +93,7 @@ function SummaryDashBoard() {
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
                         <Card>
-                        <TrendAnalysisLineChart />
+                        <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} />
                         </Card>
                     </Grid>                    
                     <Grid item md={4} sm={12} xs={12}>

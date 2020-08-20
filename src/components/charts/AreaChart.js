@@ -21,12 +21,12 @@ function AreaChart(props) {
         chart: {
             type: 'areaspline'
         },
+        title: {
+            text:'',
+        },
         xAxis: {
             categories: props.data.dates,
             tickmarkPlacement: 'on',
-            title: {
-                enabled: false
-            }
         },
         yAxis: {
             title: {

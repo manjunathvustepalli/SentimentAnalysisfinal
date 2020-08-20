@@ -1,12 +1,30 @@
 import React, { useState,useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Card, Grid, TextField } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
+import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
+    },
+  }));
 
 function LiveAnalysis() {
 
+    const classes = useStyles();
     const [data, setData] = useState([])
+    const [liveReloading, setLiveReloading] = useState(false)
+    const [reloadInterval, setReloadInterval] = useState(10000)
 
     function fetchData(){
         Axios.post('http://3.7.187.244:9200/analyzed-docs/_search',{
@@ -14,7 +32,7 @@ function LiveAnalysis() {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
+                  "format": "dd-MMM-yyyy",
                   "ranges": [
                     { "from":"now-1d/d", "to": "now" }
                   ]
@@ -44,27 +62,48 @@ function LiveAnalysis() {
     useEffect(() => {
         fetchData()
         const interval = setInterval(() => {
-            fetchData()
-          }, 10000);
+            if(liveReloading){
+                fetchData()
+            }
+          }, reloadInterval);
           return () => clearInterval(interval);
-    }, [])
+    }, [reloadInterval,liveReloading])
 
     return (
         <SideNav>
             <Card>
-                <Grid container spacing={5} style={{margin:'20px 0'}}>
-                    <Grid item lg={3} md={2} sm={1} xs={false}>
-
+                <Grid container spacing={5} style={{padding:'20px'}}>
+                    <Grid item xs={6} align="left">
+                            <FormControlLabel
+                                control={<Switch 
+                                    color="primary"
+                                    checked={liveReloading}
+                                    onChange={(e) => setLiveReloading(e.target.checked)}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />}
+                                label="Live Reload"
+                                labelPlacement="end"
+                            />
                     </Grid>
-                    <Grid item lg={6} md={8} sm={10} xs={12} align='center'>
-                        <TextField 
-                            type='text'
-                            fullWidth
-                            variant='standard'
-                            label='Enter Keyword'
-                        />
-                    </Grid>
-                    <Grid item lg={3} md={2} sm={1} xs={false}>
+                    <Grid item xs={6} align="right">
+                        {
+                            liveReloading && (
+                                <FormControl variant="outlined" className={classes.formControl}>
+                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
+                                            value={reloadInterval}
+                                            onChange={(e) => setReloadInterval(e.target.value)}
+                                            label="Reload Interval "
+                                        >
+                                    <MenuItem value={10000}>10 Seconds</MenuItem>
+                                    <MenuItem value={20000}>20 Seconds</MenuItem>
+                                    <MenuItem value={30000}>30 Seconds</MenuItem>
+                                    </Select>
+      </FormControl>
+                            )
+                        }
                     </Grid>
                     <Grid item xs={12}>
                         <MaterialTable 
@@ -80,7 +119,7 @@ function LiveAnalysis() {
                             ]}
                             data={data}
                             options={{
-                                grouping:true
+                                grouping:!liveReloading
                             }}
                         />
                     </Grid>
