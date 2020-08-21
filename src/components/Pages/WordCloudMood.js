@@ -13,8 +13,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import {addMonths} from '../../helpers'
+import {addMonths, getKeyArray} from '../../helpers'
 import { green } from '@material-ui/core/colors';
+import Axios from 'axios';
+import {wordCloudSentimentFilter, wordCloudMoodFilter} from '../../helpers/filter';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -85,7 +87,9 @@ function TabPanel(props) {
     }
 }));
 
-function WordCloudMood() {
+var sortedData = {}
+
+function WordCloudSentiment() {
 
     const classes = useStyles();
     const handleChange = (e) => {
@@ -97,13 +101,173 @@ function WordCloudMood() {
       };
 
     const [chartType, setChartType] = useState('pie')
-    const [moods, setMoods] = useState({'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true})
-    const [sources, setSources] = useState({'Twitter':true,'Youtube':false,'Facebook':true,'Instagram':false})
-    const [languages, setLanguages] = useState({'English':true,'Bengali':false})
+    const [moods, setMoods] = useState({})
+    const [sources, setSources] = useState({})
+    const [subSources,setSubSources] = useState({})
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
+    const [data, setData] = useState({})
+
+    useEffect( () => {
+        Axios.post(process.env.REACT_APP_URL,{
+            "aggs": {
+                "date-based-range": {
+                    "date_range": {
+                        "field": "CreatedAt",
+                        "format": "dd-MM-yyyy",
+                        "ranges": [{
+                            "from": from,
+                            "to": to
+                        }]
+                    },
+                    "aggs": {
+                        "lang": {
+                            "terms": {
+                                "field": "predictedLang.keyword"
+                            },
+                            "aggs": {
+                                "Source": {
+                                    "terms": {
+                                        "field": "Source.keyword"
+                                    },
+                                    "aggs":{
+                                        "SubSource":{
+                                            "terms":{
+                                                "field":"SubSource.keyword"
+                                            },
+                                                    "aggs":{
+                                                        "Daily-Sentiment-Distro": {
+                                                            "terms": {
+                                                              "field": "predictedMood.keyword"
+                                                            },
+                                                            "aggs":{
+                                                                "Words":{
+                                                                    "terms":{
+                                                                        "field":"HashtagEntities.Text.keyword"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+          .then(fetchedData =>{
+            var sourceKeys,subSourceKeys,moodKeys
+            var uniqueSourceKeys = []
+            var uniqueSubSourceKeys = []
+            let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+            var languageKeys = getKeyArray(languageBuckets)
+            languageKeys.forEach((key,i) => {
+                let sourceBuckets = languageBuckets[i].Source.buckets
+                sourceKeys = getKeyArray(sourceBuckets)
+                sortedData[key] = {}
+                sourceKeys.forEach((source,j) => {
+                    if(!uniqueSourceKeys.includes(source)){
+                        uniqueSourceKeys.push(source)
+                    }
+                    sortedData[key][source] = {}
+                    let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+                    subSourceKeys = getKeyArray(subSourceBuckets)
+                    subSourceKeys.forEach((subSource,k)=>{
+                        if(!uniqueSubSourceKeys.includes(subSource)){
+                            uniqueSubSourceKeys.push(subSource)
+                        }
+                        sortedData[key][source][subSource] = {}
+                        let moodBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
+                        moodKeys = getKeyArray(moodBuckets)
+                        moodKeys.forEach((mood,l)=>{
+                            sortedData[key][source][subSource][mood] = moodBuckets[l].Words.buckets.map(wordObj => {
+                                if(mood === 'joy'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(17, 237, 24)'
+                                    }
+                                } else if(mood === 'anticipation'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(46, 190, 230)'
+                                    }
+                                }else if(mood === 'surprise'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(237, 147, 74)'
+                                    }
+                                }else if(mood === 'disgust'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(237, 74, 204)'
+                                    }
+                                }else if(mood === 'sad'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(237, 226, 74)'
+                                    }
+                                }else if(mood === 'fear'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(255,255,255)'
+                                    }
+                                }else if(mood === 'trust'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(181, 180, 163)'
+                                    }
+                                }else if(mood === 'anger'){
+                                    return {
+                                        name:wordObj.key,
+                                        weight:wordObj.doc_count,
+                                        color:'rgb(217, 30, 52)'
+                                    }
+                                }
+                            })
+                        })
+                    })
+                })
+            })
+            console.log(sortedData)
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source =>{
+                availableSourceKeys[source] = true
+            })
+            setSources(availableSourceKeys)
+
+            let availableSubSourceKeys = {}
+            uniqueSubSourceKeys.forEach(subSource =>{
+                availableSubSourceKeys[subSource]  = true
+            })
+            setSubSources(availableSubSourceKeys)
+
+            setMoods(prev =>{
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                }}) 
+          })
+          .catch(err => {
+              console.log(err.response)
+          })
+    },[to,from,refresh])
+
+    useEffect(() => {
+        setData(wordCloudSentimentFilter(sources,subSources,moods,sortedData)) 
+    },[sources,subSources,moods])
 
     return (
         <SideNav>
@@ -117,24 +281,23 @@ function WordCloudMood() {
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item xs={12} align='right'>
-                                <Button
-                                    variant="contained"
-                                    style={{margin:"10px"}}
-                                    color={green[400]}
-                                    className={classes.buttonStyle}
-                                    component={Link}
-                                    to='/word-cloud/mood'
-                                >
-                                    Mood
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    style={{textDecoration:'none',color:'black',margin:"10px"}}
-                                    component={Link}
-                                    to='/word-cloud/sentiment'
-                                >                                    
-                                    Sentiment                                                                       
-                                </Button>
+                                    <Button
+                                            variant="contained"
+                                            style={{margin:"10px"}}
+                                            component={Link}
+                                            className={classes.buttonStyle}
+                                            to="/word-cloud/mood"
+                                        >
+                                        Mood
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        style={{margin:"10px"}}
+                                        component={Link}
+                                        to="/word-cloud/sentiment"
+                                    >
+                                        Sentiment                                                                       
+                                    </Button>
                             </Grid>
                             <Grid item sm={4} xs={false}>
                             </Grid>
@@ -149,22 +312,22 @@ function WordCloudMood() {
                                 scrollButtons="auto"
                                 aria-label="scrollable auto tabs example"
                                 >
-                                    <Tab label="All" {...a11yProps(0)} />
-                                    <Tab label="English" {...a11yProps(1)} />
-                                    <Tab label="Bengali" {...a11yProps(2)} />
+                                    {
+                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
+                                    }
                                 </Tabs>
                             </AppBar>
                             </Grid>
                             <Grid item xs={12}>
-                            <TabPanel value={value} index={0}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
-                            <TabPanel value={value} index={1}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
-                            <TabPanel value={value} index={2}>
-                                <WordCloud data={[]} />
-                            </TabPanel>
+                                {
+                                    Object.keys(data).map((lang,i) => {
+                                        return (
+                                            <TabPanel value={value} index={i}>
+                                                <WordCloud data={data[lang]} />
+                                            </TabPanel>
+                                        )
+                                    })
+                                }
                             </Grid>
                         </Grid>
                     </Card>
@@ -176,7 +339,12 @@ function WordCloudMood() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo]} sources={[sources, setSources]} moods={[moods,setMoods]} languages={[languages,setLanguages]} />
+                                <AccordianFilters  
+                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    sources={[sources, setSources]} 
+                                    subSources={[subSources,setSubSources]}
+                                    moods={[moods,setMoods]}
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>
@@ -187,4 +355,4 @@ function WordCloudMood() {
     )
 }
 
-export default WordCloudMood
+export default WordCloudSentiment
