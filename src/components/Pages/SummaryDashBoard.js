@@ -10,14 +10,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import MoodAreaChart from '../charts/MoodAreaChart';
-import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
 import WordCloud from "../charts/WordCloudChart";
 import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
-import DateFilter from '../Filters/DateFilter';
 import GridTimeFilter from '../Filters/GridTimeFilter';
 import DonutChart from '../charts/DonutChart';
 import InlineFilter from '../Filters/InlineFilter';
+import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
+import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 
 
 const IconWithText = styled.div`
@@ -111,14 +111,15 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} sm={12} xs={12}>
-                        <Card>
-                        <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} data={[{name:"happy",data:[20,30,20,10,34,34]},{name:"sad",data:[10,10,30,20,40,4]},{name:"anticipation",data:[0,0,40,20,4,24]},{name:"happy",data:[2,31,30,90,32,34]}]} />
+                        <Card className={classes.main} >
+                            <CardContent>Mood Analysis</CardContent> 
+                            <MoodAnalysis dates={[from,to]} />
                         </Card>
                     </Grid>                    
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Sentiment Analysis</CardContent>
-                            <MoodAreaChart />
+                            <SentimentAnalysis  dates={[from,to]} />
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>

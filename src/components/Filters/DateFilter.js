@@ -10,10 +10,10 @@ import { addMonths } from '../../helpers';
 
 
 function DateFilter(props) {
-
-    const time = new Date();
-    const [startDate, setStartDate] = useState(time);
-    const [endDate, setEndDate] = useState(time);
+  const Stime = new Date();
+  const [startDate, setStartDate] = useState(Stime.setMonth(Stime.getMonth() - 1));
+  const Etime = new Date();
+  const [endDate, setEndDate] = useState(Etime);
     const [setTo, setFrom] = props.toFromDatesHandlers;
     const handleStartDateChange = (date) => { 
         setTo(addMonths(date,0))

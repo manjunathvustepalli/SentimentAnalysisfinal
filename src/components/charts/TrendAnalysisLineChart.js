@@ -12,7 +12,7 @@ function TrendAnalysisLineChart(props) {
     },
     yAxis: {
       title: {
-        text: "Data (%)",
+        text: "Data",
       },
     },
     xAxis: {
@@ -20,27 +20,11 @@ function TrendAnalysisLineChart(props) {
       crosshair: true,
     },
     legend: {
-      layout: "vertical",
-      align: "right",
-      verticalAlign: "middle",
+      layout: "horizontal",
+      align: "center",
+      verticalAlign: "bottom",
     },
-    series: data,
-    responsive: {
-      rules: [
-        {
-          condition: {
-            maxWidth: 500,
-          },
-          chartOptions: {
-            legend: {
-              layout: "horizontal",
-              align: "center",
-              verticalAlign: "bottom",
-            },
-          },
-        },
-      ],
-    },
+    series: data
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;

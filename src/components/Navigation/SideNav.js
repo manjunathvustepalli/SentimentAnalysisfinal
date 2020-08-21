@@ -29,7 +29,7 @@ import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
 import HdrWeakIcon from '@material-ui/icons/HdrWeak';
 import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
-
+import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 
 const drawerWidth = 220;
 
@@ -147,15 +147,20 @@ const SideNavBar = ( props) => {
       icon:<CalendarViewDayIcon/>,
       path:['/Live-analysis'],
     },
+    {
+      name:'Export Data',
+      icon:<MoveToInboxIcon/>,
+      path:['/export-data'],
+    },
   ]
     
    const drawer = (
     <div>
           <div className={classes.toolbar} id="userMenuHeader">
-            <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/k.JPG')} />
+            <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
             <Grid container justify="space-around" className='grid-user'>
               <Grid item align="left">
-                <Typography > Welcome Karthik</Typography>
+                <Typography > Welcome User</Typography>
               </Grid>
               <Grid item align="right">
                 <Typography align="right"><ArrowDropDownIcon/></Typography>
