@@ -227,7 +227,7 @@ export default function SentimentalAnalysisAreaChart() {
                                 onChange={handleChange}
                                 label="Chart Type"
                             >
-                                    <MenuItem value='pie'>pie chart</MenuItem>
+                                    <MenuItem value='pie'>Pie chart</MenuItem>
                                     <MenuItem value='area'>Area chart</MenuItem>
                             </Select>
                             </FormControl>

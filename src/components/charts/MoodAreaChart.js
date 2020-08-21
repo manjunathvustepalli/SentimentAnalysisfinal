@@ -24,7 +24,7 @@ function AreaChart() {
         },
         yAxis: {
             title: {
-                text: 'Documents'
+                text: 'Data %'
             },
             labels: {
                 formatter: function () {

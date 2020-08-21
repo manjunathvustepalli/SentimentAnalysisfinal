@@ -69,7 +69,7 @@ function SummaryDashBoard() {
                             <Grid container>    
                                 <Grid item xs={12} sm={6} md={3} >
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label">Select keyword type</InputLabel>
+                                    <InputLabel id="demo-simple-select-helper-label">Keyword type</InputLabel>
                                         <Select
                                         labelId="demo-simple-select-helper-label"
                                         id="demo-simple-select-helper"
