@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-function LiveAnalysis() {
+function ExportData() {
 
     const classes = useStyles();
     const [data, setData] = useState([])
@@ -85,7 +85,7 @@ function LiveAnalysis() {
     return (
         <SideNav>
             <Card>
-                <Grid container spacing={2} style={{padding:'20px'}}>
+                <Grid container spacing={5} style={{padding:'20px'}}>
                     <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
@@ -143,6 +143,7 @@ function LiveAnalysis() {
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
+                                exportButton: true,
                                 maxBodyHeight:500
                             }}
                         />
@@ -153,4 +154,4 @@ function LiveAnalysis() {
     )
 }
 
-export default LiveAnalysis
+export default ExportData

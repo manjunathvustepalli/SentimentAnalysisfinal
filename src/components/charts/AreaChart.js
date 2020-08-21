@@ -10,10 +10,15 @@ function AreaChart(props) {
 
     useEffect(() => {
         let data = []
-        Object.keys(props.data).forEach(key => {
-            if(key !== 'dates')
-                data.push({name:key,data:props.data[key],color:props.colors[key]})
-        })
+        if(!props.sorted){
+            Object.keys(props.data).forEach(key => {
+                if(key !== 'dates')
+                    data.push({name:key,data:props.data[key],color:props.colors[key]})
+            })
+        } else {
+            data = props.data
+        }
+        
         setseries(data)
     },[props.data])
 
@@ -25,7 +30,7 @@ function AreaChart(props) {
             text:'',
         },
         xAxis: {
-            categories: props.data.dates,
+            categories: props.data.dates || props.dates,
             tickmarkPlacement: 'on',
         },
         yAxis: {

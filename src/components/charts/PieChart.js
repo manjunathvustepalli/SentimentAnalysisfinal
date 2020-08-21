@@ -14,7 +14,7 @@ export default class PieChart extends Component {
                 type: 'pie'
             },
             title: {
-                text: 'Sample chart'
+                text: ''
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

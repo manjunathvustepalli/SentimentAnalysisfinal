@@ -16,6 +16,7 @@ import Login from "../Pages/Login";
 import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
 import wordCloudSentiment from "../Pages/WordCloudSentiment";
 import WordCloudMood from "../Pages/WordCloudMood";
+import ExportData from "../Pages/ExportData";
 
 function Routes() {
   return (
@@ -54,6 +55,7 @@ function Routes() {
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject" exact component={TrendingSubjects} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
+        <Route path="/export-data" exact component={ExportData} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
 

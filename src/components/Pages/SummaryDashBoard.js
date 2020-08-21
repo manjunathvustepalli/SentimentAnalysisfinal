@@ -10,14 +10,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import MoodAreaChart from '../charts/MoodAreaChart';
-import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
 import WordCloud from "../charts/WordCloudChart";
 import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
-import DateFilter from '../Filters/DateFilter';
 import GridTimeFilter from '../Filters/GridTimeFilter';
 import DonutChart from '../charts/DonutChart';
 import InlineFilter from '../Filters/InlineFilter';
+import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
+import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 
 
 const IconWithText = styled.div`
@@ -102,7 +102,7 @@ function SummaryDashBoard() {
                             <CardContent >Overall Analysis</CardContent>
                             <Grid container spacing={0} className={classes.gridposition}>
                                 <Grid item xs={6}>
-                                    <DonutChart mood={false} />
+                                    <DonutChart mood={false} data={[['negative',16],['positive',11],['check',30]]} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <DonutChart mood={true} />
@@ -110,15 +110,16 @@ function SummaryDashBoard() {
                             </Grid>
                         </Card>
                     </Grid>
-                    <Grid item md={4} sm={12} xs={12}>
-                        <Card>
-                        <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} />
+                    <Grid item xl={4} md={6} sm={12} xs={12}>
+                        <Card className={classes.main} >
+                            <CardContent>Mood Analysis</CardContent> 
+                            <MoodAnalysis dates={[from,to]} />
                         </Card>
                     </Grid>                    
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Sentiment Analysis</CardContent>
-                            <MoodAreaChart />
+                            <SentimentAnalysis  dates={[from,to]} />
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
@@ -184,8 +185,10 @@ function SummaryDashBoard() {
                                 <Grid item xs={7}>
                                     <InlineFilter />
                                 </Grid>
+                                <Grid item xs={12} align="center">
+                                <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
+                                </Grid>
                             </Grid>
-                            <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
                         </Card>
                     </Grid>
                 </Grid>

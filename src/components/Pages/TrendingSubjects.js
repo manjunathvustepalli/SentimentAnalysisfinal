@@ -14,8 +14,6 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import Table2 from "../Tables/Table2";
-import TreeMap from "../charts/TreeMap";
 import { addMonths } from "../../helpers";
 import TrendingSubjectsTable from "../Tables/TrendingSubjectsTable";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
@@ -64,7 +62,7 @@ function InfluencerAnalysis() {
   return (
     <SideNav>
       <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Influencer Analysis
+        Trending Subjects
       </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
