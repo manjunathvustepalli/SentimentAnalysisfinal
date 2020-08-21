@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockRoundedIcon from '@material-ui/icons/LockRounded';
 import green from '@material-ui/core/colors/green';
+import { Link } from 'react-router-dom';
 
 const styles = {
     background:{
@@ -36,7 +37,9 @@ const useStyles = makeStyles((theme) => ({
       },
     button:{
         margin: theme.spacing(1),
-        color:'black',
+        color:'white',
+        display:'block',
+        textAlign:'center',
         backgroundColor:green[800],
         '&:hover': {
             backgroundColor:green[800],
@@ -83,10 +86,13 @@ function Login() {
                         </div>
                         <Button
                             className={classes.button}
+                            variant="contained"
+                            style={{margin:"10px"}}
+                            component={Link}
+                            to="/summary-dashboard"
                             fullWidth
-                            href='/summary-dashboard'
-                        >
-                            Enter
+                            >
+                            Enter                                                                       
                         </Button>
                     </Card>
                     </div>

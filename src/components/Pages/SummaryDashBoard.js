@@ -102,7 +102,7 @@ function SummaryDashBoard() {
                             <CardContent >Overall Analysis</CardContent>
                             <Grid container spacing={0} className={classes.gridposition}>
                                 <Grid item xs={6}>
-                                    <DonutChart mood={false} />
+                                    <DonutChart mood={false} data={[['negative',16],['positive',11],['check',30]]} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <DonutChart mood={true} />
@@ -110,9 +110,9 @@ function SummaryDashBoard() {
                             </Grid>
                         </Card>
                     </Grid>
-                    <Grid item md={4} sm={12} xs={12}>
+                    <Grid item xl={4} md={6} sm={12} xs={12}>
                         <Card>
-                        <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} />
+                        <TrendAnalysisLineChart dates={['15-08-2020','16-08-2020','17-08-2020','18-08-2020']} data={[{name:"happy",data:[20,30,20,10,34,34]},{name:"sad",data:[10,10,30,20,40,4]},{name:"anticipation",data:[0,0,40,20,4,24]},{name:"happy",data:[2,31,30,90,32,34]}]} />
                         </Card>
                     </Grid>                    
                     <Grid item xl={4} md={6} xs={12}>
@@ -184,8 +184,10 @@ function SummaryDashBoard() {
                                 <Grid item xs={7}>
                                     <InlineFilter />
                                 </Grid>
+                                <Grid item xs={12} align="center">
+                                <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
+                                </Grid>
                             </Grid>
-                            <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
                         </Card>
                     </Grid>
                 </Grid>
