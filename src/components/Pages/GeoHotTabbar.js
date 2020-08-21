@@ -5,8 +5,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
 import Maps1 from "../charts/Maps/Maps1";
+import GeoHotSpotMap from "../charts/Maps/GeoHotSpotMap";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -77,13 +77,13 @@ function TabbarMUI() {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <Maps1 />
+        <GeoHotSpotMap />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Maps1 />
+        <GeoHotSpotMap />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Maps1 />
+        <GeoHotSpotMap />
       </TabPanel>
     </div>
   );

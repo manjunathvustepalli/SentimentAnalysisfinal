@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles } from '@material-ui/core'
+import PropTypes from "prop-types";
+import {Box, Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles, Tab, Tabs } from '@material-ui/core'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import FilterHeader from '../Filters/FilterHeader'
@@ -8,6 +9,37 @@ import Table2 from '../Tables/Table2'
 import TreeMap from '../charts/TreeMap'
 import { addMonths } from '../../helpers'
 
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+    return (
+        <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`scrollable-auto-tabpanel-${index}`}
+        aria-labelledby={`scrollable-auto-tab-${index}`}
+        {...other}
+        >
+        {value === index && (
+            <Box>
+            <div>{children}</div>
+            </Box>
+        )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+      id: `scrollable-auto-tab-${index}`,
+      "aria-controls": `scrollable-auto-tabpanel-${index}`,
+    };
+}
 
 function InfluencerAnalysis() {
     const [refresh, setRefresh] = useState(true)
@@ -47,10 +79,22 @@ function InfluencerAnalysis() {
             height: 140,
             width: 130,        
           },
+        tabStyle: {
+            borderStyle: 'solid', 
+            borderWidth:'1px', 
+            borderColor: 'green', 
+            color:'green',
+            marginTop: '15px',
+            marginBottom: '10px'
+        }
     }));
 
-    const classes = useStyles()
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
 
+    const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
@@ -59,36 +103,72 @@ function InfluencerAnalysis() {
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
                         Influencer Analysis
                     </Typography>
-                    <Card className={classes.main}>
-                        <Grid container spacing={3}>
-                            <Grid item md={7} sm={5}>
-                                <CardContent>
-                                    Top Influencers
-                                </CardContent>
-                            </Grid>
-                            <Grid item md={5} sm={7}>
-                            <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="select-table">Select Table Type</InputLabel>
-                            <Select
-                                labelId="select-table"
-                                id="demo-simple-select-outlined"
-                                varient={'standard'}
-                            >
-                                <MenuItem selected value='top 15 influencers'>Top 15 Influencers</MenuItem>
-                                <MenuItem value='top 30 influencers'>Top 30 influencers</MenuItem>
-                            </Select>
-                            </FormControl>
-                            </Grid>
+                    <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <Table2 />
+                            <Card className={classes.main}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={8}>
+                                        <CardContent>
+                                            Top Influencers
+                                        </CardContent>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <FormControl variant="outlined" className={classes.formControl}>
+                                            <InputLabel id="select-table"></InputLabel>
+                                            <Select
+                                                labelId="select-table"
+                                                id="demo-simple-select-outlined"
+                                                varient={'standard'}
+                                                defaultValue={'top 15 influencers'}
+                                                style={{borderColor: '#13A0FF', borderWidth: '2px', borderStyle: 'solid', color: '#13A0FF'}}
+                                            >
+                                                <MenuItem selected value='top 15 influencers'>Top 15 Influencers</MenuItem>
+                                                <MenuItem value='top 30 influencers'>Top 30 influencers</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Table2 />
+                                    </Grid>
+                                </Grid>
+                            </Card>
                         </Grid>
-                        <Grid item xs={11}>
-                            <TreeMap />
+                        <Grid item xs={12}>
+                            <Card className={classes.main}>
+                                <Grid item xs={12}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={7}>
+                                            <CardContent>Influncers Comparison</CardContent>
+                                        </Grid>
+                                        <Grid item xs={5}>
+                                            <Tabs
+                                                value={value}
+                                                onChange={handleChange}
+                                                indicatorColor="primary"
+                                                textColor="primary"
+                                                variant="scrollable"
+                                                scrollButtons="auto"
+                                                aria-label="scrollable auto tabs example"
+                                            >
+                                                <Tab label="Sentiment" {...a11yProps(0)} />
+                                                <Tab label="Mood" {...a11yProps(1)} />
+                                            </Tabs>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={11}>
+                                    <TabPanel value={value} index={0}>
+                                        <TreeMap />
+                                    </TabPanel>
+                                    <TabPanel value={value} index={1}>
+                                        <TreeMap />
+                                    </TabPanel>
+                                </Grid>
+                            </Card>
                         </Grid>
-                        </Grid>
-                    </Card>
+                    </Grid>
                 </Grid>
-                <Grid item sm={12} md={4}  >
+                <Grid item md={4} sm={12} >
                     <Grid container spacing={3} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]} />

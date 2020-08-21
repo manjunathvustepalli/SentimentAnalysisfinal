@@ -246,34 +246,32 @@ function WordCloudSentiment() {
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             <Grid container spacing={2} >
-                <Grid item md={8} sm={12}>
+                <Grid item sm={12} md={8}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
                         Word Cloud
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item xs={12} align='right'>
-                                    <Button
-                                            variant="contained"
-                                            style={{margin:"10px"}}
-                                            component={Link}
-                                            to="/word-cloud/mood"
-                                        >
-                                        Mood
-                                    </Button>
-                                    <Button
+                                <Button
                                         variant="contained"
                                         style={{margin:"10px"}}
-                                        className={classes.buttonStyle}
                                         component={Link}
-                                        to="/word-cloud/sentiment"
+                                        to="/word-cloud/mood"
                                     >
-                                        Sentiment                                                                       
-                                    </Button>
+                                    Mood
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    style={{margin:"10px"}}
+                                    className={classes.buttonStyle}
+                                    component={Link}
+                                    to="/word-cloud/sentiment"
+                                >
+                                    Sentiment                                                                       
+                                </Button>
                             </Grid>
-                            <Grid item sm={4} xs={false}>
-                            </Grid>
-                            <Grid item sm={8} xs={12}>
+                            <Grid item xs={12} align='right'>
                             <AppBar position="static" color="default">
                                 <Tabs
                                 value={value}
