@@ -30,6 +30,7 @@ import WhatshotIcon from '@material-ui/icons/Whatshot';
 import HdrWeakIcon from '@material-ui/icons/HdrWeak';
 import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
+import { Button } from '@material-ui/core';
 
 const drawerWidth = 220;
 
@@ -202,6 +203,7 @@ const SideNavBar = ( props) => {
           <Typography variant="h6" noWrap>
           &nbsp; Amar Sarkar Sentiment Analysis
           </Typography>
+          <Button color="inherit">Logout</Button>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
