@@ -9,8 +9,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
-import MoodAreaChart from '../charts/MoodAreaChart';
-import WordCloud from "../charts/WordCloudChart";
 import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
 import GridTimeFilter from '../Filters/GridTimeFilter';
@@ -18,7 +16,7 @@ import DonutChart from '../charts/DonutChart';
 import InlineFilter from '../Filters/InlineFilter';
 import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
 import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
-
+import WordCloud from '../SummaryDashBoardCharts/WordCloud'
 
 const IconWithText = styled.div`
   display: flex;
@@ -137,43 +135,7 @@ function SummaryDashBoard() {
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
-                            <Grid container>
-                                <Grid item xs={5}>
-                                    <CardContent>Word Cloud</CardContent>
-                                </Grid>
-                                <Grid item xs={7}>
-                                    <InlineFilter />
-                                </Grid>
-                            </Grid>
-                           <WordCloud data={[{
-                                name:'Covid-19',
-                                weight:99,
-                                color:'rgba(255,0,0,0.5)'
-                            },{
-                                name:'China',
-                                weight:54,
-                                color:'rgba(255,0,0,0.5)'
-                            },{
-                                name:'Sheikh Hasina',
-                                weight:45,
-                                color:'rgb(0,255,0,0.5)'
-                            },{
-                                name:'karthik',
-                                weight:45,
-                                color:'rgb(56,255,12,0.5)'
-                            },{
-                                name:'কোভিড 19',
-                                weight:99,
-                                color:'rgba(255,0,0,0.5)'
-                            },{
-                                name:'চীন',
-                                weight:54,
-                                color:'rgba(255,0,0,0.5)'
-                            },{
-                                name:'শেখ হাসিনা',
-                                weight:45,
-                                color:'rgb(0,255,0,0.5)'
-                            }]} />
+                           <WordCloud to={to} from={from} />
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>

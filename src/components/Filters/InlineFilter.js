@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{ useEffect } from 'react'
 import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function InlineFilter() {
+function InlineFilter(props) {
 
     const classes = useStyles();
 
@@ -25,16 +25,15 @@ function InlineFilter() {
                 <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
                     <Select 
                     labelId="select-source"
-                    id="demo-simple-select-helper"
+                    id="select-source-main"
                     fullWidth
                     className={classes.filterDefault}
-                    defaultValue={'all'}
+                    value = {props.source}
+                    onChange = { (e) => props.setSource(e.target.value) }
                     >
-                    <MenuItem value={'all'} >All</MenuItem>
-                    <MenuItem value={'twitter'} >Twitter</MenuItem>
-                    <MenuItem value={'Instagram'}>Instagram</MenuItem>
-                    <MenuItem value={'Newspaper'}>Newspaper</MenuItem>
-                    <MenuItem value={'Facebook'}>Facebook</MenuItem>
+                        {
+                           props.sources && props.sources.length && (props.sources.map((source,i) => <MenuItem value={source} key={i} >{source}</MenuItem>))
+                        }                    
                     </Select>
             </Grid>
             <Grid item xs={4}>
@@ -43,13 +42,13 @@ function InlineFilter() {
                     labelId="demo-simple-select-helper-label"
                     id="demo-simple-select-helper"
                     fullWidth
+                    value={props.sentiment}
+                    onChange = {(e) => props.setSentiment(e.target.value)}
                     className={classes.filterDefault}
-                    defaultValue={'all'}
                     >
-                    <MenuItem value={'all'} >All</MenuItem>
-                    <MenuItem value={'Negative'}>Negative</MenuItem>
-                    <MenuItem value={'Positive'}>Positive</MenuItem>
-                    <MenuItem value={'Neutral'}>Neutral</MenuItem>
+                    <MenuItem value={'negative'}>Negative</MenuItem>
+                    <MenuItem value={'positive'}>Positive</MenuItem>
+                    <MenuItem value={'neutral'}>Neutral</MenuItem>
                         
                     </Select>
             </Grid>
@@ -59,14 +58,19 @@ function InlineFilter() {
                     labelId="demo-simple-select-helper-label"
                     id="demo-simple-select-helper"
                     fullWidth
+                    value = {props.mood}
+                    onChange = {(e) => props.setMood(e.target.value)}
                     className={classes.filterDefault}
-                    defaultValue={'all'}
                     >
-                    <MenuItem value={'all'} selected >All</MenuItem>
-                    <MenuItem >Joy</MenuItem>
-                    <MenuItem >Sad</MenuItem>
-                    <MenuItem >Anticipation</MenuItem>
-                    <MenuItem >Anger</MenuItem>
+                    <MenuItem value={'joy'}>Joy</MenuItem>
+                    <MenuItem value={'anticipation'}>Anticipation</MenuItem>
+                    <MenuItem value={'surprise'}>Surprise</MenuItem>
+                    <MenuItem value={'anger'}>Anger</MenuItem>
+                    <MenuItem value={'trust'}>Trust</MenuItem>
+                    <MenuItem value={'fear'}>Fear</MenuItem>
+                    <MenuItem value={'sad'}>Sad</MenuItem>
+                    <MenuItem value={'disgust'}>Disgust</MenuItem>
+
                     </Select>
             </Grid>
         </Grid>

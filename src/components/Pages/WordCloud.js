@@ -236,7 +236,7 @@ export default function MoodAnalysisPieChart() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>

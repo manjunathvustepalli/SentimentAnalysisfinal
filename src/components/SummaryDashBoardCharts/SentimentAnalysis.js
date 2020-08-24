@@ -47,7 +47,6 @@ function SentimentAnalysis(props) {
      .then( fetchedData => {
          let perDayBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0]['per-day'].buckets
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
-         console.log(perDayBuckets,perDayKeys)
          let sortedData = []
          let sentiments = ['positive','negative','neutral']
          let colors = ['rgb(0,255,0)','rgb(255,0,0)','rgb(255,255,0)']

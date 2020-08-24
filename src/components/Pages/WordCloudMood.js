@@ -299,10 +299,8 @@ function WordCloudSentiment() {
                                         Sentiment                                                                       
                                     </Button>
                             </Grid>
-                            <Grid item sm={4} xs={false}>
-                            </Grid>
-                            <Grid item sm={8} xs={12}>
-                            <AppBar position="static" color="default">
+                            <Grid item xs={12}>
+                            <AppBar position="static" color="white">
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -333,7 +331,7 @@ function WordCloudSentiment() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>

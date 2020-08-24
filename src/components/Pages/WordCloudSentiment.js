@@ -272,7 +272,7 @@ function WordCloudSentiment() {
                                 </Button>
                             </Grid>
                             <Grid item xs={12} align='right'>
-                            <AppBar position="static" color="default">
+                            <AppBar position="static" color="white">
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -283,7 +283,7 @@ function WordCloudSentiment() {
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=> <Tab label={lang} {...a11yProps(i)} />)
+                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>
@@ -303,7 +303,7 @@ function WordCloudSentiment() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>

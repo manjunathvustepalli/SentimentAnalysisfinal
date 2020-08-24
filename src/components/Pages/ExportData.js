@@ -127,6 +127,34 @@ function ExportData() {
                             )
                         }
                     </Grid>
+                    <Grid item md={3} xs={12}>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-outlined-label">Sentiment</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    label="Reload Interval "
+                                >
+                                    <MenuItem value={'positive'}>Positive</MenuItem>
+                                    <MenuItem value={'negative'}>Negative</MenuItem>
+                                    <MenuItem value={'neutral'}>Neutral</MenuItem>
+                                </Select>
+                        </FormControl>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-outlined-label">Mood</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    label="Reload Interval "
+                                >
+                                    <MenuItem value={'positive'}>Joy</MenuItem>
+                                    <MenuItem value={'negative'}>Sad</MenuItem>
+                                    <MenuItem value={'neutral'}>Anticipation</MenuItem>
+                                    <MenuItem value={'neutral'}>Disgust</MenuItem>
+                                    <MenuItem value={'neutral'}>Anticipation</MenuItem>
+                                </Select>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={12}>
                         <MaterialTable 
                             title='Live Analysis'

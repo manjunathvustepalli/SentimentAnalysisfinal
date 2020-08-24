@@ -38,9 +38,10 @@ function LiveAnalysis() {
     const [reloadInterval, setReloadInterval] = useState(10000)
     const [to, setTo] = useState(new Date())
     const [from, setFrom] = useState(new Date())
+    const [keyword, setKeyword] = useState('')
 
     function fetchData(){
-        Axios.post('http://3.7.187.244:9200/analyzed-docs/_search',{
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "aggs": {
               "date-based-range": {
                 "date_range": {
@@ -72,6 +73,39 @@ function LiveAnalysis() {
 
     }
 
+    function fetchFromKeyword(){
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            "query": {
+              "multi_match": {
+                "query": keyword,
+                "type": "phrase", 
+                "fields": ["bn", "en", "Source.keyword", "SubSource.keyword", "User.ScreenName.keyword"]
+              }
+            }
+          })
+          .then(fetchedData =>{
+              console.log(fetchedData)
+              let final =  fetchedData.data.hits.hits.map(user => {
+                let obj = {}
+                obj.name =  user._source.User.Name
+                obj.screenName =  user._source.User.ScreenName
+                obj.tweet =  user._source.Text
+                obj.followersCount =  user._source.User.FollowersCount
+                obj.retweetCount =  user._source.RetweetCount
+                obj.mood = user._source.predictedMood
+                obj.sentiment = user._source.predictedSentiment
+                console.log(obj.name)
+                return obj
+            })
+            setData(final)
+          })
+          .catch(err => {
+              console.log(err)
+          })
+    }
+
+
+
     useEffect(() => {
         fetchData()
         const interval = setInterval(() => {
@@ -99,8 +133,8 @@ function LiveAnalysis() {
                             />
                     </Grid>
                     <Grid item xs={4} align='right' direction='row'>
-                    <TextField label="Enter Keyword" />
-                    <Button style={{transform:"translateY(5px)"}} className={classes.button} >
+                    <TextField label="Enter Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+                    <Button style={{transform:"translateY(5px)"}} className={classes.button} onClick={() => fetchFromKeyword()} >
                         Search
                     </Button>
                     </Grid>
