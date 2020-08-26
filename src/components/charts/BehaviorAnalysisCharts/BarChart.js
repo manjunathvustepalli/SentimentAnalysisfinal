@@ -63,11 +63,7 @@ function BarChart(props) {
     },
     series: [{ data: [500, 320, 647, 408, 400] }],
   };
-  return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
-  );
+  return  <HighchartsReact highcharts={Highcharts} options={options} />
 }
 
 export default BarChart;

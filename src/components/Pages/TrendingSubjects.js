@@ -14,9 +14,12 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths } from "../../helpers";
+import { addMonths, getKeyArray } from "../../helpers";
 import TrendingSubjectsTable from "../Tables/TrendingSubjectsTable";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
+import Axios from "axios";
+
+var sortedData = {}
 
 function InfluencerAnalysis() {
   const [refresh, setRefresh] = useState(true);
@@ -59,6 +62,108 @@ function InfluencerAnalysis() {
 
   const classes = useStyles();
 
+  Axios.post(process.env.REACT_APP_URL,{
+    "aggs": {
+        "date-based-range": {
+            "date_range": {
+                "field": "CreatedAt",
+                "format": "dd-MM-yyyy",
+                "ranges": [{
+                    "from": from,
+                    "to": to
+                }]
+            },
+            "aggs": {
+                "lang": {
+                    "terms": {
+                        "field": "predictedLang.keyword"
+                    },
+                    "aggs": {
+                        "Source": {
+                            "terms": {
+                                "field": "Source.keyword"
+                            },
+                            "aggs":{
+                                "SubSource":{
+                                    "terms":{
+                                        "field":"SubSource.keyword"
+                                    },
+                                            "aggs":{
+                                                "Daily-Sentiment-Distro": {
+                                                    "terms": {
+                                                      "field": "predictedSentiment.keyword"
+                                                    },
+                                                    "aggs":{
+                                                      "Daily-Mood-Distro":{
+                                                        "terms":{
+                                                          "field":"predictedMood.keyword"
+                                                        },
+                                                        "aggs":{
+                                                          "Words":{
+                                                            "terms":{
+                                                              "field":"HashtagEntities.Text.keyword"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                }
+                                            }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+})
+.then(fetchedData =>{
+  let uniqueSources = []
+  let uniqueSubSources = []
+  let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+  let languageKeys = getKeyArray(languageBuckets)
+  console.log(languageKeys)
+  languageKeys.forEach((language,i) => {
+    sortedData[language] = {}
+    let sourceBuckets = languageBuckets[i].Source.buckets
+    let sourceKeys = getKeyArray(sourceBuckets)
+    sourceKeys.forEach((source,j) =>{
+      if(!uniqueSources.includes(source)){
+        uniqueSources.push(source)
+      }
+      sortedData[language][source] = {}
+      let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+      let subSourceKeys = getKeyArray(subSourceBuckets)
+      subSourceKeys.forEach((subSource,k) => {
+        if(!uniqueSubSources.includes(subSource)){
+          uniqueSubSources.push(subSource)
+        }
+        sortedData[language][source][subSource] = {}
+        let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
+        let sentimentKeys = getKeyArray(sentimentBuckets)
+        sentimentKeys.forEach((sentiment,l)=>{
+          sortedData[language][source][subSource][sentiment] = {}
+          let moodBuckets  = sentimentBuckets[l]['Daily-Mood-Distro'].buckets
+          let moodKeys = getKeyArray(moodBuckets)
+          moodKeys.forEach((mood,m)=>{
+            sortedData[language][source][subSource][sentiment][mood] = moodBuckets[m].Words.buckets.map(wordObj => {
+              return {
+                name:wordObj.key,
+                y:wordObj.doc_count
+              }
+            })
+          })
+        })
+      })
+    })
+  })
+  console.log(sortedData,uniqueSources,uniqueSubSources)
+})
+.catch(err=>{
+  console.log(err)
+})
+
   return (
     <SideNav>
       <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
@@ -71,17 +176,16 @@ function InfluencerAnalysis() {
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6}>
                   <FormControl
-                    variant="outlined"
                     className={classes.formControl}
                   >
-                    <InputLabel id="select-table">Select Type</InputLabel>
+                    <InputLabel id="select-table">Select Sentiment</InputLabel>
                     <Select
                       labelId="select-table"
                       id="demo-simple-select-outlined"
                       varient={"standard"}
                     >
-                      <MenuItem selected value="Postitive">
-                        Postitive
+                      <MenuItem value="Positive">
+                        Positive
                       </MenuItem>
                       <MenuItem value="Negative">Negative</MenuItem>
                       <MenuItem value="Neutral">Neutral</MenuItem>
@@ -90,25 +194,24 @@ function InfluencerAnalysis() {
                 </Grid>
                 <Grid item md={6} sm={6}>
                   <FormControl
-                    variant="outlined"
                     className={classes.formControl}
                   >
-                    <InputLabel id="select-table">Select Type</InputLabel>
+                    <InputLabel id="select-table">Select Mood</InputLabel>
                     <Select
                       labelId="select-table"
                       id="demo-simple-select-outlined"
                       varient={"standard"}
                     >
-                      <MenuItem selected value="Happy">
+                      <MenuItem value="happy">
                         Happy
                       </MenuItem>
-                      <MenuItem value="Sad">Sad</MenuItem>
-                      <MenuItem value="Anger">Anger</MenuItem>
-                      <MenuItem value="Anticipation">Anticipation</MenuItem>
-                      <MenuItem value="Disgust">Disgust</MenuItem>
-                      <MenuItem value="Suprice">Suprice</MenuItem>
-                      <MenuItem value="Fear">Fear</MenuItem>
-                      <MenuItem value="Trust">Trust</MenuItem>
+                      <MenuItem value="sad">Sad</MenuItem>
+                      <MenuItem value="anger">Anger</MenuItem>
+                      <MenuItem value="anticipation">Anticipation</MenuItem>
+                      <MenuItem value="disgust">Disgust</MenuItem>
+                      <MenuItem value="suprice">Suprice</MenuItem>
+                      <MenuItem value="fear">Fear</MenuItem>
+                      <MenuItem value="trust">Trust</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

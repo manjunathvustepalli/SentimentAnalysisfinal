@@ -137,9 +137,13 @@ function WordCloud(props) {
     useEffect(() => {
         setData(prev => {
             if(Object.keys(sortedData).length){
-                if(sortedData[source][sentiment]){
-                    if(sortedData[source][sentiment][mood]){
-                        return sortedData[source][sentiment][mood]
+                if(sortedData[source]){
+                    if(sortedData[source][sentiment]){
+                        if(sortedData[source][sentiment][mood]){
+                            return sortedData[source][sentiment][mood]
+                        } else {
+                            return []
+                        }
                     } else {
                         return []
                     }

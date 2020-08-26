@@ -13,10 +13,13 @@ import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
 import GridTimeFilter from '../Filters/GridTimeFilter';
 import DonutChart from '../charts/DonutChart';
+import SemiDonutChart from '../charts/SemiDonutChart';
 import InlineFilter from '../Filters/InlineFilter';
 import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
 import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 import WordCloud from '../SummaryDashBoardCharts/WordCloud'
+import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
+
 
 const IconWithText = styled.div`
   display: flex;
@@ -95,14 +98,41 @@ function SummaryDashBoard() {
                     <Grid item md={4} sm={12} xs={12}>
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
-                    <Grid item xl={4} md={6} xs={12}>
+                    <Grid item xl={4} md={12} xs={12}>
                         <Card className={classes.main}>
                             <CardContent >Overall Analysis</CardContent>
                             <Grid container spacing={0} className={classes.gridposition}>
-                                <Grid item xs={6}>
-                                    <DonutChart mood={false} data={[['negative',16],['positive',11],['check',30]]} />
+                                <Grid item xs={3}>
+                                <FormControl className={classes.formControl} style={{margin:'20px 0',padding:'10px'}} >
+                                    <InputLabel id="demo-simple-select-helper-label">Source</InputLabel>
+                                        <Select
+                                        labelId="demo-simple-select-helper-label"
+                                        id="demo-simple-select-helper"
+                                        >
+                                        <MenuItem value={'Twitter'}>Twitter</MenuItem>
+                                        <MenuItem value={'Facebook'}>Facebook</MenuItem>
+                                        <MenuItem value={'Newspaper'}>News paper</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                    <Card style={{backgroundColor:'black',color:'white'}} align='center'>
+                                        <Typography variant='subtitle1' >
+                                            40K+ Twitter mentions
+                                        </Typography>
+                                        <Typography variant='subtitle1'>
+                                            40+ positive sentiment
+                                        </Typography>
+                                        <Typography variant='subtitle1'>
+                                            35+ Positive mood
+                                        </Typography>
+                                    </Card>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={3} >
+                                    <SemiDonutChart />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <DonutChart mood={false} data={[['anger',20],['sad',34],['joy',23],['anticipation',9]]} />
+                                </Grid>
+                                <Grid item xs={3}>
                                     <DonutChart mood={true} />
                                 </Grid>
                             </Grid>
@@ -148,7 +178,7 @@ function SummaryDashBoard() {
                                     <InlineFilter />
                                 </Grid>
                                 <Grid item xs={12} align="center">
-                                <img src={require('../../imgs/bangladesh.svg')} alt="bangladesh" width="71%" />
+                                    <GeoHotSpotMap />
                                 </Grid>
                             </Grid>
                         </Card>

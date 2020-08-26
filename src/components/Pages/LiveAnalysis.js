@@ -87,10 +87,12 @@ function LiveAnalysis() {
               console.log(fetchedData)
               let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
-                obj.name =  user._source.User.Name
-                obj.screenName =  user._source.User.ScreenName
+                if(user._source.User){
+                    obj.name =  user._source.User.Name
+                    obj.screenName =  user._source.User.ScreenName
+                    obj.followersCount =  user._source.User.FollowersCount
+                }
                 obj.tweet =  user._source.Text
-                obj.followersCount =  user._source.User.FollowersCount
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment

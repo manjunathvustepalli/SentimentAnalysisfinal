@@ -51,10 +51,6 @@ export default class PieChart extends Component {
                 fallbackToExportServer: false
             },
         }
-        return(
-            <div>
-            <ReactHighcharts config = {config} />
-            </div>
-        )
+        return <ReactHighcharts config = {config} />
     }
 }

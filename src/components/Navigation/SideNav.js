@@ -30,7 +30,10 @@ import WhatshotIcon from '@material-ui/icons/Whatshot';
 import HdrWeakIcon from '@material-ui/icons/HdrWeak';
 import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
-import { Button } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SearchIcon from '@material-ui/icons/Search';
+
 
 const drawerWidth = 220;
 
@@ -53,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
+  },
+  title: {
+    flexGrow: 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -203,7 +209,13 @@ const SideNavBar = ( props) => {
           <Typography variant="h6" noWrap>
           &nbsp; Amar Sarkar Sentiment Analysis
           </Typography>
-          <Button color="inherit">Logout</Button>
+          <span style={{marginLeft:'auto'}}>
+          <Tooltip title={'Logout'}>
+          <Button color="inherit" >
+            <ExitToAppIcon/>
+          </Button>
+          </Tooltip>
+          </span>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">

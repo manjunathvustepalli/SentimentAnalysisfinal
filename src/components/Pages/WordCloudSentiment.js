@@ -7,7 +7,7 @@ import { Redirect, Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, MenuItem, Select, InputLabel, FormControl } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -109,6 +109,8 @@ function WordCloudSentiment() {
     const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
+    const [wordCount, setWordCount] = useState(30)
+
 
     useEffect( () => {
         Axios.post(process.env.REACT_APP_URL,{
@@ -238,8 +240,17 @@ function WordCloudSentiment() {
     },[to,from,refresh])
 
     useEffect(() => {
-        setData(wordCloudSentimentFilter(sources,subSources,sentiments,sortedData))
-    },[sources,subSources,sentiments])
+        console.log(wordCount)
+        let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
+        console.log({...temp})
+        Object.keys(temp).forEach(language => {
+            temp[language] = temp[language].sort((a,b)=>{
+                return b.weight - a.weight
+            }).slice(0,wordCount)
+        })
+        console.log(temp)
+        setData(temp) 
+    },[sources,subSources,sentiments,wordCount])
 
     return (
         <SideNav>
@@ -252,7 +263,27 @@ function WordCloudSentiment() {
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} align='right'>
+                        <Grid item xs={12} sm={6} align='left'>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
+                                            value={wordCount}
+                                            onChange={(e) => setWordCount(e.target.value)}
+                                            label="Reload Interval "
+                                        >
+                                    <MenuItem value={10}>10 Words</MenuItem>
+                                    <MenuItem value={20}>20 Words</MenuItem>
+                                    <MenuItem value={30}>30 Words</MenuItem>
+                                    <MenuItem value={40}>40 Words</MenuItem>
+                                    <MenuItem value={50}>50 Words</MenuItem>
+                                    <MenuItem value={75}>75 Words</MenuItem>
+                                    <MenuItem value={100}>100 Words</MenuItem>
+                                    </Select>
+                            </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={6} align='right'>
                                 <Button
                                         variant="contained"
                                         style={{margin:"10px"}}

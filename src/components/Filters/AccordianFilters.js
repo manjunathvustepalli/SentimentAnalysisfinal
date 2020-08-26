@@ -18,6 +18,7 @@ import Sentiments from './Sentiments';
 import Moods from './Moods';
 import SingleDate from './SingleDate';
 import SubjectIcon from '@material-ui/icons/Subject';
+import SubSourceAutoComplete from './SubSourceAutoComplete';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -121,25 +122,27 @@ export default function ControlledAccordions(props) {
           <Sources  sources={sources}/>
         </AccordionDetails>
       </Accordion>
-      {subSources && (
-              <Accordion expanded={expanded === 'panel8'} onChange={handleChange('panel8')}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3bh-content"
-                id="panel3bh-header"
-              >
-                  <IconWithText>
-                      <SubjectIcon style={{marginRight:'10px'}} /> 
-                      <p>
-                      Sub Sources
-                      </p>
-                  </IconWithText>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Sources  sources={subSources}/>
-              </AccordionDetails>
-            </Accordion>      
-      )}
+      {
+        subSources && (
+          <Accordion expanded={expanded === 'panel8'} onChange={handleChange('panel8')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3bh-content"
+            id="panel3bh-header"
+          >
+              <IconWithText>
+                  <SubjectIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                  Sub Sources
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            <SubSourceAutoComplete subSources={subSources} />
+          </AccordionDetails>
+        </Accordion>
+        )
+      }
       {sentiments && (
         <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
         <AccordionSummary
