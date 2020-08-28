@@ -59,7 +59,7 @@ function GeoHotSpotAnalysis() {
   return (
     <SideNav>
       <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Trend Analysis
+        Geo Hotspot Analysis
       </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>

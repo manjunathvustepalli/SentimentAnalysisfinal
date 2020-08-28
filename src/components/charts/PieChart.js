@@ -13,6 +13,9 @@ export default class PieChart extends Component {
                 plotShadow: false,
                 type: 'pie'
             },
+            credits: {
+                enabled: false
+            },
             title: {
                 text: ''
             },

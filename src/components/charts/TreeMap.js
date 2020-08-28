@@ -8,6 +8,9 @@ function TreeMap() {
     HighchartsTreeMap(Highcharts)
 
     let config = {
+        credits: {
+            enabled: false
+        },
         series: [{
             type: "treemap",
             layoutAlgorithm: 'stripes',

@@ -186,10 +186,21 @@ export default function MoodAnalysisAreaChart() {
      })
      }, [from,to,refresh])
  
-     useEffect(() => {
-        let finalData = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
+    useEffect(() => {
+        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
             setData(finalData)
-    }, [languages,moods,sources,subSources,to,from])
+    }, [languages,moods,subSources])
+
+    useEffect(() => {
+        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
+            setData(finalData)
+            let availableSubSourceKeys = {}
+            availableSubSources.forEach(subSource =>{
+                availableSubSourceKeys[subSource]  = true
+            })
+            setSubSources(availableSubSourceKeys)
+    }, [sources])
+
 
     return (
         <SideNav>

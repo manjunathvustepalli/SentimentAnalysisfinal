@@ -18,6 +18,9 @@ function WordCloud(props) {
         title: {
             text: ''
         },
+        credits: {
+            enabled: false
+        },
         exporting: {
             chartOptions: {
                 plotOptions: {

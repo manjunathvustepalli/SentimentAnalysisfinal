@@ -43,6 +43,9 @@ function AreaChart(props) {
                 }
             }
         },
+        credits: {
+            enabled: false
+        },
         plotOptions: {
             area: {
                 marker: {

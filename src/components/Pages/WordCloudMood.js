@@ -14,9 +14,8 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
 import {addMonths, getKeyArray} from '../../helpers'
-import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
-import {wordCloudSentimentFilter, wordCloudMoodFilter} from '../../helpers/filter';
+import { wordCloudSentimentFilter } from '../../helpers/filter';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -138,20 +137,20 @@ function WordCloudSentiment() {
                                             "terms":{
                                                 "field":"SubSource.keyword"
                                             },
+                                            "aggs":{
+                                                "Daily-Sentiment-Distro": {
+                                                    "terms": {
+                                                      "field": "predictedMood.keyword"
+                                                    },
                                                     "aggs":{
-                                                        "Daily-Sentiment-Distro": {
-                                                            "terms": {
-                                                              "field": "predictedMood.keyword"
-                                                            },
-                                                            "aggs":{
-                                                                "Words":{
-                                                                    "terms":{
-                                                                        "field":"HashtagEntities.Text.keyword"
-                                                                    }
-                                                                }
+                                                        "Words":{
+                                                            "terms":{
+                                                                "field":"HashtagEntities.Text.keyword"
                                                             }
                                                         }
                                                     }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -241,7 +240,6 @@ function WordCloudSentiment() {
                     })
                 })
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
                 availableSourceKeys[source] = true
@@ -267,13 +265,7 @@ function WordCloudSentiment() {
     },[to,from,refresh])
 
     useEffect(() => {
-        let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
-        Object.keys(temp).forEach(language => {
-            temp[language] = temp[language].sort((a,b)=>{
-                return b.weight - a.weight
-            }).slice(0,wordCount)
-        })
-        setData(temp) 
+        setData(wordCloudSentimentFilter(sources,subSources,moods,sortedData,wordCount)) 
     },[sources,subSources,moods,wordCount])
 
     return (
@@ -309,11 +301,11 @@ function WordCloudSentiment() {
                             </Grid>
                             <Grid item xs={12} sm={6} align='right'>
                                     <Button
-                                            variant="contained"
-                                            style={{margin:"10px"}}
-                                            component={Link}
-                                            className={classes.buttonStyle}
-                                            to="/word-cloud/mood"
+                                        variant="contained"
+                                        style={{margin:"10px"}}
+                                        component={Link}
+                                        className={classes.buttonStyle}
+                                        to="/word-cloud/mood"
                                         >
                                         Mood
                                     </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideNav from "../Navigation/SideNav";
 import {
   Grid,
@@ -27,8 +27,9 @@ function InfluencerAnalysis() {
   const [languages, setLanguages] = useState([]);
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
-  const [moods, setMoods] = useState({});
-  const [sentiments, setSentiments] = useState({});
+  const [sentiments, setSentiments] = useState();
+  const [moods, setMoods] = useState([]);
+
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -62,6 +63,8 @@ function InfluencerAnalysis() {
 
   const classes = useStyles();
 
+
+useEffect(()=>{
   Axios.post(process.env.REACT_APP_URL,{
     "aggs": {
         "date-based-range": {
@@ -88,27 +91,27 @@ function InfluencerAnalysis() {
                                     "terms":{
                                         "field":"SubSource.keyword"
                                     },
+                                    "aggs":{
+                                        "Daily-Sentiment-Distro": {
+                                            "terms": {
+                                              "field": "predictedSentiment.keyword"
+                                            },
                                             "aggs":{
-                                                "Daily-Sentiment-Distro": {
-                                                    "terms": {
-                                                      "field": "predictedSentiment.keyword"
-                                                    },
-                                                    "aggs":{
-                                                      "Daily-Mood-Distro":{
-                                                        "terms":{
-                                                          "field":"predictedMood.keyword"
-                                                        },
-                                                        "aggs":{
-                                                          "Words":{
-                                                            "terms":{
-                                                              "field":"HashtagEntities.Text.keyword"
-                                                            }
-                                                          }
-                                                        }
-                                                      }
+                                              "Daily-Mood-Distro":{
+                                                "terms":{
+                                                  "field":"predictedMood.keyword"
+                                                },
+                                                "aggs":{
+                                                  "Words":{
+                                                    "terms":{
+                                                      "field":"HashtagEntities.Text.keyword"
                                                     }
+                                                  }
                                                 }
+                                              }
                                             }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -118,7 +121,7 @@ function InfluencerAnalysis() {
         }
     }
 })
-.then(fetchedData =>{
+.then(fetchedData => {
   let uniqueSources = []
   let uniqueSubSources = []
   let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
@@ -163,6 +166,7 @@ function InfluencerAnalysis() {
 .catch(err=>{
   console.log(err)
 })
+},[from,to,refresh])
 
   return (
     <SideNav>

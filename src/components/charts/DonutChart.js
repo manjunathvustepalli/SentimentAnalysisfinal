@@ -31,6 +31,9 @@ function DonutChart(props) {
           data
         }
       ],
+      credits: {
+        enabled: false
+    },
       exporting: {
         chartOptions: {
             plotOptions: {

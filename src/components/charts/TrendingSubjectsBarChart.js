@@ -18,6 +18,9 @@ function TrendingSubjectsBarChart(props) {
         enabled: true,
       },
     },
+    credits: {
+      enabled: false
+  },
     xAxis: {
       type: "category",
     },

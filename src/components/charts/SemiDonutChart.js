@@ -19,6 +19,9 @@ function SemiDonutChart(props) {
             verticalAlign: 'middle',
             y: 60
         },
+        credits: {
+            enabled: false
+        },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },

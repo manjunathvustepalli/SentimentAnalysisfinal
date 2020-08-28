@@ -198,9 +198,20 @@ export default function SentimentalAnalysisAreaChart() {
 
 
     useEffect(() => {
-        let finalData  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
+        const [finalData,availableSubSources]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
             setData(finalData)
-    }, [languages,sentiments,sources,subSources])
+    }, [languages,sentiments,subSources])
+
+    useEffect(() => {
+        const [finalData,availableSubSources]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
+            setData(finalData)
+            let availableSubSourceKeys = {}
+            availableSubSources.forEach(subSource =>{
+                availableSubSourceKeys[subSource]  = true
+            })
+            setSubSources(availableSubSourceKeys)
+    }, [sources])
+
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>

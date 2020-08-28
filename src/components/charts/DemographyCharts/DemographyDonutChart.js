@@ -17,6 +17,9 @@ function DemographyDonutChart(props) {
     subtitle: {
       text: "",
     },
+    credits: {
+      enabled: false
+  },
     plotOptions: {
       pie: {
         innerSize: "80%",

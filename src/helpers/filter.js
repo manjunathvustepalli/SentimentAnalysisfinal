@@ -1,6 +1,7 @@
 
 import { getDatesArray } from './index'
 export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,subSources,data,from,to) => {
+    let availableSubSources = []
     let languageList = Object.keys(languages)
     let languageFilteredData = []
     languageList.forEach(language =>{
@@ -13,11 +14,15 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
     languageFilteredData.forEach(sourceData =>{
         sourceList.forEach(source =>{
             if(sources[source] && sourceData[source]){
+                Object.keys(sourceData[source]).forEach(availableSubSource =>{
+                    if(!availableSubSources.includes(availableSubSource)){
+                        availableSubSources.push(availableSubSource)
+                    }
+                })
                 sourceFilteredData.push(sourceData[source])
             }
         })
     })
-    console.log(sourceFilteredData)
     let subSourceList = Object.keys(subSources)
     let subSourceFilteredData = []
     sourceFilteredData.forEach(subSourceData =>{
@@ -27,7 +32,6 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
             }
         })
     })
-    console.log(subSourceFilteredData)
     let dataArray = []
     subSourceFilteredData.forEach(item => {
         let obj = {}
@@ -67,10 +71,11 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
             }
         })
     })
-    return finalData
+    return [finalData,availableSubSources]
 }
 
 export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,data,from,to) => {
+    let availableSubSources = []
     let languageList = Object.keys(languages)
     let languageFilteredData = []
     languageList.forEach(language =>{
@@ -83,11 +88,15 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
     languageFilteredData.forEach(sourceData =>{
         sourceList.forEach(source =>{
             if(sources[source] && sourceData[source]){
+                Object.keys(sourceData[source]).forEach(availableSubSource =>{
+                    if(!availableSubSources.includes(availableSubSource)){
+                        availableSubSources.push(availableSubSource)
+                    }
+                })
                 sourceFilteredData.push(sourceData[source])
             }
         })
     })
-    console.log(sourceFilteredData)
     let subSourceList = Object.keys(subSources)
     let subSourceFilteredData = []
     sourceFilteredData.forEach(subSourceData =>{
@@ -152,8 +161,7 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
             }
         })
     })
-    console.log(finalData)
-    return finalData  
+    return [finalData,availableSubSources]  
 }
 
 export const sentimentAnalysisPieChartFilter = (languages,sentiments,sources,data) => {
@@ -343,8 +351,7 @@ export const TrendAnalysisLineChartFilter = (languages,sources,sortedData) => {
     return [series,dates]
 }
 
-export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedData) => {
-    console.log(sources,subSources,sentiments,sortedData)
+export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedData,wordCount) => {
     let filteredData = {}
     let languageKeys = Object.keys(sortedData)
     languageKeys.forEach(language => {
@@ -358,6 +365,9 @@ export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedDat
                         let sentimentKeys = Object.keys(sortedData[language][source][subSource])
                         sentimentKeys.forEach(sentiment => {
                             if(sentiments[sentiment]){
+                                sortedData[language][source][subSource][sentiment] = sortedData[language][source][subSource][sentiment].sort((a,b)=>{
+                                    return b.weight - a.weight
+                                })
                                 filteredData[language] = filteredData[language].concat(sortedData[language][source][subSource][sentiment])
                             }
                         })
@@ -366,5 +376,12 @@ export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedDat
             }
         })
     })
+    Object.keys(filteredData).forEach(language => {
+
+        filteredData[language] = filteredData[language].sort((a,b)=>{
+            return b.weight - a.weight
+        }).slice(0,wordCount)
+    })
+    console.log(filteredData)
     return filteredData
 }

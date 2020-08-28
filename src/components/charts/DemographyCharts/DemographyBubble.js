@@ -14,6 +14,9 @@ function DemographyDonutChart(props) {
     title: {
       text: "",
     },
+    credits: {
+      enabled: false
+    },
     tooltip: {
       useHTML: true,
       pointFormat: "<b>{point.name}:</b> {point.value}m CO<sub>2</sub>",

@@ -24,6 +24,9 @@ function TrendAnalysisLineChart(props) {
       align: "center",
       verticalAlign: "bottom",
     },
+    credits: {
+      enabled: false
+  },
     series: data
   };
 

@@ -16,6 +16,9 @@ function DemographyDonutChart(props) {
     tooltip: {
       pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>",
     },
+    credits: {
+      enabled: false
+    },
     accessibility: {
       point: {
         valueSuffix: "%",

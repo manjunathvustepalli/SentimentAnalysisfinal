@@ -13,6 +13,9 @@ function DemographyAgeChart() {
     subtitle: {
       text: "",
     },
+    credits: {
+      enabled: false
+    },
     xAxis: {
       categories: [
         "14-06-2020",

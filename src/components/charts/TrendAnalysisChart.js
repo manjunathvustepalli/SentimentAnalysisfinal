@@ -26,6 +26,9 @@ function TrendAnalysisChart(props) {
         text: "Data (%)",
       },
     },
+    credits: {
+      enabled: false
+  },
     colors: [
       "rgba(3, 240, 252)",
       "rgba(252, 3, 65)",
