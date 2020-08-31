@@ -103,7 +103,7 @@ function SummaryDashBoard() {
                             <CardContent >Overall Analysis</CardContent>
                             <Grid container spacing={0} className={classes.gridposition}>
                                 <Grid item xs={3}>
-                                <FormControl className={classes.formControl} style={{margin:'20px 0',padding:'10px'}} >
+                                <FormControl className={classes.formControl} style={{margin:'30px'}} >
                                     <InputLabel id="demo-simple-select-helper-label">Source</InputLabel>
                                         <Select
                                         labelId="demo-simple-select-helper-label"

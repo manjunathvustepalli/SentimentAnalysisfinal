@@ -265,7 +265,13 @@ function WordCloudSentiment() {
     },[to,from,refresh])
 
     useEffect(() => {
-        setData(wordCloudSentimentFilter(sources,subSources,moods,sortedData,wordCount)) 
+        let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
+        Object.keys(temp).forEach(language => {
+            temp[language] = temp[language].sort((a,b)=>{
+                return b.weight - a.weight
+            }).slice(0,wordCount)
+        })
+        setData(temp)
     },[sources,subSources,moods,wordCount])
 
     return (
@@ -281,7 +287,7 @@ function WordCloudSentiment() {
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} align='left'>
                             <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                    <InputLabel id="demo-simple-select-outlined-label">Word Count</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-outlined-label"
                                             id="demo-simple-select-outlined"

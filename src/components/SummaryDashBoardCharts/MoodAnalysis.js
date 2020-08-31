@@ -20,21 +20,21 @@ function MoodAnalysis(props) {
                         { "from": from,"to": to}
                       ]
                     },
-                                "aggs": {
-                                    "per-day": {
-                                      "date_histogram": {
-                                          "field": "CreatedAt",
-                                          "format": "yyyy-MM-dd", 
-                                          "calendar_interval": "day"
-                                      },
-                                    "aggs": {
-                                      "Daily-Sentiment-Distro": {
-                                        "terms": {
-                                          "field": "predictedMood.keyword"
-                                        }
-                                      }
-                                    }
-                                    }
+                      "aggs": {
+                        "per-day": {
+                          "date_histogram": {
+                              "field": "CreatedAt",
+                              "format": "yyyy-MM-dd", 
+                              "calendar_interval": "day"
+                          },
+                        "aggs": {
+                          "Daily-Sentiment-Distro": {
+                            "terms": {
+                              "field": "predictedMood.keyword"
+                            }
+                          }
+                        }
+                        }
                       }
                     }
                   }

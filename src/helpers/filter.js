@@ -1,4 +1,3 @@
-
 import { getDatesArray } from './index'
 export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,subSources,data,from,to) => {
     let availableSubSources = []
@@ -11,7 +10,7 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
     })
     let sourceList = Object.keys(sources)
     let sourceFilteredData = []
-    languageFilteredData.forEach(sourceData =>{
+    languageFilteredData.forEach(sourceData => {
         sourceList.forEach(source =>{
             if(sources[source] && sourceData[source]){
                 Object.keys(sourceData[source]).forEach(availableSubSource =>{
@@ -351,7 +350,8 @@ export const TrendAnalysisLineChartFilter = (languages,sources,sortedData) => {
     return [series,dates]
 }
 
-export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedData,wordCount) => {
+export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedData) => {
+    let availableSubSources = []
     let filteredData = {}
     let languageKeys = Object.keys(sortedData)
     languageKeys.forEach(language => {
@@ -362,6 +362,9 @@ export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedDat
                 let subSourceKeys = Object.keys(sortedData[language][source])
                 subSourceKeys.forEach(subSource => {
                     if(subSources[subSource]){
+                        if(!availableSubSources.includes(subSource)){
+                            availableSubSources.push(subSource)
+                        }
                         let sentimentKeys = Object.keys(sortedData[language][source][subSource])
                         sentimentKeys.forEach(sentiment => {
                             if(sentiments[sentiment]){
@@ -376,12 +379,69 @@ export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedDat
             }
         })
     })
-    Object.keys(filteredData).forEach(language => {
-
-        filteredData[language] = filteredData[language].sort((a,b)=>{
-            return b.weight - a.weight
-        }).slice(0,wordCount)
-    })
-    console.log(filteredData)
+    console.log(availableSubSources)
     return filteredData
+}
+
+export const sentimentAnalysisLineChartFilter = (languages,subSources,sources,sentiments,sortedData,from,to) => {
+    var uniqueSubSources = []
+    var dataArray = []
+    Object.keys(languages).forEach((language) =>{
+        if(languages[language]){
+            Object.keys(sortedData[language]).forEach(source => {
+                if(sources[source])
+                Object.keys(sortedData[language][source]).forEach(subSource => {
+                    if(!uniqueSubSources.includes(subSource)){
+                        uniqueSubSources.push(subSource)
+                    }
+                    if(subSources[subSource]){
+                        dataArray.push(sortedData[language][source][subSource])
+                    }
+                })
+            })
+        }
+    })
+    let allDates = getDatesArray(from,to)
+    var negativeData = [];
+    for (var i = 0; i < allDates.length; i++) negativeData[i] = 0;
+    var positiveData = [...negativeData]
+    var neutralData = [...negativeData]
+        dataArray.forEach(item => {
+            item.dates.forEach((date,i) => {
+                let index = allDates.indexOf(date)
+                if(sentiments['positive']){
+                    positiveData[index] = positiveData[index] + item.positive[i]
+                }
+                if(sentiments['negative']){
+                    negativeData[index] = negativeData[index] + item.negative[i]
+                }
+                if(sentiments['neutral']){
+                    neutralData[index] = neutralData[index] + item.neutral[i]
+                }
+            })
+        })
+        let finalData = []
+        if(sentiments['positive']){
+            finalData.push({
+                name:'positive',
+                color:'rgb(0,255,0)',
+                data:positiveData
+            })
+        }
+        if(sentiments['negative']){
+            finalData.push({
+                name:'negative',
+                color:'rgb(255,0,0)',
+                data:negativeData
+            })
+        }
+        if(sentiments['neutral']){
+            finalData.push({
+                name:'neutral',
+                color:'rgb(235,255,0)',
+                data:neutralData
+            })
+        }
+        console.log(finalData,allDates,uniqueSubSources)
+        return[finalData,allDates,uniqueSubSources]
 }

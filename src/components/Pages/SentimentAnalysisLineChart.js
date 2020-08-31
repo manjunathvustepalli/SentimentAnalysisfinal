@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import AreaChart from '../charts/AreaChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
@@ -16,8 +15,9 @@ import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
 import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
-import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
+import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
+import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 var sortedData = {}
 
-export default function SentimentalAnalysisAreaChart() {
-    let colors = { 'positive':'rgb(0,255,0)','negative':'rgb(255,0,0)','neutral':'rgb(235,255,0)' } 
-    const [chartType, setChartType] = useState('area')
+export default function SentimentalAnalysisLineChart() {
+    const [chartType, setChartType] = useState('line')
     const [refresh, setRefresh] = useState(true)
-    const [data, setData] = useState({})
+    const [data, setData] = useState([])
+    const [dates, setDates] = useState([])
     const [sources,setSources] = useState([])
     const [subSources,setSubSources] = useState([])
     const [languages,setLanguages] = useState([])
@@ -159,6 +159,7 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                 });
             })
+            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
                 availableSourceKeys[source] = true
@@ -175,9 +176,7 @@ export default function SentimentalAnalysisAreaChart() {
             uniqueSubSourceKeys.forEach(subSource =>{
                 availableSubSourceKeys[subSource]  = true
             })
-            console.log(availableSubSourceKeys,uniqueSubSourceKeys)
             setSubSources(availableSubSourceKeys)
-
             setSentiments(prev => {
                 if(Object.keys(prev).length){
                     return prev
@@ -202,28 +201,29 @@ export default function SentimentalAnalysisAreaChart() {
     })
     }, [from,to,refresh])
 
+    useEffect(() => {
+        const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
+        setData(finalData)
+        setDates(allDates)
+    },[languages,subSources,sentiments])
 
     useEffect(() => {
-        const [finalData]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
-            setData(finalData)
-    }, [languages,sentiments,subSources])
-
-    useEffect(() => {
-        const [finalData,availableSubSources]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
-            setData(finalData)
-            let availableSubSourceKeys = {}
-            availableSubSources.forEach(subSource =>{
+        const [ finalData,allDates,uniqueSubSources ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
+        setData(finalData)
+        setDates(allDates)
+        let availableSubSourceKeys = {}
+            uniqueSubSources.forEach(subSource =>{
                 availableSubSourceKeys[subSource]  = true
             })
-            setSubSources(availableSubSourceKeys)
-    }, [sources])
+        setSubSources(availableSubSourceKeys)
+    },[sources])
 
     return (
         <SideNav>
             <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
-            {chartType === 'line' && <Redirect to='/sentimental-analysis/line-chart' />}
+            {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -254,7 +254,7 @@ export default function SentimentalAnalysisAreaChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                             <AreaChart data={data} colors={colors} />
+                            <TrendAnalysisLineChart dates={dates} data={data} />
                         </Grid>
                     </Card>
                 </Grid>
@@ -265,7 +265,13 @@ export default function SentimentalAnalysisAreaChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo]} sources={[sources,setSources]} sentiments={[sentiments,setSentiments]} languages={[languages,setLanguages]} subSources={[subSources,setSubSources]} />
+                                <AccordianFilters 
+                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    sources={[sources,setSources]} 
+                                    sentiments={[sentiments,setSentiments]} 
+                                    languages={[languages,setLanguages]} 
+                                    subSources={[subSources,setSubSources]} 
+                                    />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

@@ -139,20 +139,20 @@ function WordCloudSentiment() {
                                             "terms":{
                                                 "field":"SubSource.keyword"
                                             },
+                                            "aggs":{
+                                                "Daily-Sentiment-Distro": {
+                                                    "terms": {
+                                                      "field": "predictedSentiment.keyword"
+                                                    },
                                                     "aggs":{
-                                                        "Daily-Sentiment-Distro": {
-                                                            "terms": {
-                                                              "field": "predictedSentiment.keyword"
-                                                            },
-                                                            "aggs":{
-                                                                "Words":{
-                                                                    "terms":{
-                                                                        "field":"HashtagEntities.Text.keyword"
-                                                                    }
-                                                                }
+                                                        "Words":{
+                                                            "terms":{
+                                                                "field":"HashtagEntities.Text.keyword"
                                                             }
                                                         }
                                                     }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -265,7 +265,7 @@ function WordCloudSentiment() {
                         <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} align='left'>
                             <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                    <InputLabel id="demo-simple-select-outlined-label">Word Count</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-outlined-label"
                                             id="demo-simple-select-outlined"

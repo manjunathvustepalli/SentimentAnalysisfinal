@@ -24,11 +24,16 @@ var sortedData = {}
 function InfluencerAnalysis() {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState([]);
+  const [source, setSource] = useState('');
+  const [subSources,setSubSources] = useState([]);
+  const [subSource, setSubSource] = useState('');
   const [languages, setLanguages] = useState([]);
+  const [language, setLanguage] = useState('');
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
-  const [sentiments, setSentiments] = useState();
-  const [moods, setMoods] = useState([]);
+  const [sentiment, setSentiment] = useState('positive');
+  const [mood, setMood] = useState('joy');
+  const [data, setData] = useState([])
 
 
   const useStyles = makeStyles((theme) => ({
@@ -161,12 +166,29 @@ useEffect(()=>{
       })
     })
   })
-  console.log(sortedData,uniqueSources,uniqueSubSources)
+  console.log(sortedData,languageKeys,uniqueSources,uniqueSubSources)
+  setLanguages(languageKeys)
+  setLanguage(languageKeys[0])
+  setSources(uniqueSources)
+  setSource(uniqueSources[0])
+  setSubSources(uniqueSubSources)
+  setSubSource(uniqueSubSources[0])
 })
 .catch(err=>{
   console.log(err)
 })
 },[from,to,refresh])
+
+useEffect(() => {
+   try{
+     if(sortedData[language][source][subSource][sentiment][mood]){
+       setData(sortedData[language][source][subSource][sentiment][mood])
+     }
+   }
+   catch(err){
+    console.log(err)
+   }
+}, [language,source,subSource,sentiment,mood])
 
   return (
     <SideNav>
@@ -187,12 +209,14 @@ useEffect(()=>{
                       labelId="select-table"
                       id="demo-simple-select-outlined"
                       varient={"standard"}
+                      value={sentiment}
+                      onChange={(e) => setSentiment(e.target.value)}
                     >
-                      <MenuItem value="Positive">
+                      <MenuItem value="positive">
                         Positive
                       </MenuItem>
-                      <MenuItem value="Negative">Negative</MenuItem>
-                      <MenuItem value="Neutral">Neutral</MenuItem>
+                      <MenuItem value="negative">Negative</MenuItem>
+                      <MenuItem value="neutral">Neutral</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -205,10 +229,13 @@ useEffect(()=>{
                       labelId="select-table"
                       id="demo-simple-select-outlined"
                       varient={"standard"}
+                      value={mood}
+                      onChange={(e) => setMood(e.target.value)}
                     >
                       <MenuItem value="happy">
                         Happy
                       </MenuItem>
+                      <MenuItem value="joy">Joy</MenuItem>
                       <MenuItem value="sad">Sad</MenuItem>
                       <MenuItem value="anger">Anger</MenuItem>
                       <MenuItem value="anticipation">Anticipation</MenuItem>
@@ -220,7 +247,7 @@ useEffect(()=>{
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} className={classes.tablecenter}>
-                  <TrendingSubjectsBarChart />
+                  <TrendingSubjectsBarChart data={data} />
                 </Grid>
                 <Grid item xs={11}>
                   <TrendingSubjectsTable />
@@ -236,11 +263,10 @@ useEffect(()=>{
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
-                    sources={[sources, setSources]}
-                    languages={[languages, setLanguages]}
-                    moods={[moods, setMoods]}
-                    sentiments={[sentiments, setSentiments]}
+                    toFromDatesHandlers={[setFrom, setTo]}
+                    radioSources={[source,setSource,sources]}
+                    radioLanguages={[language,setLanguage,languages]}
+                    AutoCompleteSubSources={[subSource,setSubSource,subSources]}
                   />
                 </FilterWrapper>
               </Grid>

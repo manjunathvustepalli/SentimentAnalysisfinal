@@ -33,7 +33,7 @@ function Languages(props) {
                 checked={languages[language]}
                 onChange={() => handleLanguageChange(language)}
                 />}
-                label={capitalizeString(language)}
+                label={capitalizeString(language==='unknown' ? ('Others') : (language) )}
               />
                 </Grid>
             ))}

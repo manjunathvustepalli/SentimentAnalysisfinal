@@ -35,14 +35,14 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchIcon from '@material-ui/icons/Search';
 
 
-const drawerWidth = 220;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
   listItemText:{
-    fontSize:'0.7rem',
+    fontSize:'16px',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -107,7 +107,7 @@ const SideNavBar = ( props) => {
     {
       name:'Sentimental Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart'],
+      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart'],
     },
     {
       name:'Mood Analysis',
@@ -120,7 +120,7 @@ const SideNavBar = ( props) => {
       path:['/influencer-analysis'],
     },
     {
-      name:'Geo Hot Spot Analysis',
+      name:'Geo HotSpot Analysis',
       icon:<PublicIcon/>,
       path:['/geo-hotspot'],
     },

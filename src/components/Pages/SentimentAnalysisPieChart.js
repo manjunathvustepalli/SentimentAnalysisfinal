@@ -116,7 +116,7 @@ export default function SentimentalAnalysisPieChart() {
             }
         })
         .then(fetchedData => {
-            var sourceKeys,sourceBuckets,perDayKeys,perDayBuckets
+            var sourceKeys,sourceBuckets,perDayBuckets,perDayKeys
             var uniqueSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
             var languageKeys = getKeyArray(languageBuckets)
@@ -179,6 +179,7 @@ export default function SentimentalAnalysisPieChart() {
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
+            {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -199,10 +200,11 @@ export default function SentimentalAnalysisPieChart() {
                                 id="demo-simple-select-outlined"
                                 value={chartType}
                                 onChange={handleChange}
-                                label="Chart type"
+                                label="Change Chart type"
                             >
                                 <MenuItem value={chartType}>Pie chart</MenuItem>
                                 <MenuItem value='area'>Area chart</MenuItem>
+                                <MenuItem value='line'>Line chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>

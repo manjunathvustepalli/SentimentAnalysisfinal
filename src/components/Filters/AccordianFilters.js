@@ -19,6 +19,8 @@ import Moods from './Moods';
 import SingleDate from './SingleDate';
 import SubjectIcon from '@material-ui/icons/Subject';
 import SubSourceAutoComplete from './SubSourceAutoComplete';
+import RadioButtons from './RadioButtons';
+import SubSourceSingleAutoComplete from './SubSourceSingleAutoComplete';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +45,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
+  const {singleDate, radioSources, radioSubSources, radioLanguages, AutoCompleteSubSources, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -105,23 +107,27 @@ export default function ControlledAccordions(props) {
           <Languages languages={languages} />
         </AccordionDetails>
       </Accordion>)}
-      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-        <AccordionSummary
+      {
+        sources && (
+        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+          <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel3bh-content"
           id="panel3bh-header"
-        >
+          >
             <IconWithText>
                 <CodeIcon style={{marginRight:'10px'}} /> 
                 <p>
                 Sources
                 </p>
             </IconWithText>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Sources  sources={sources}/>
-        </AccordionDetails>
-      </Accordion>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Sources  sources={sources}/>
+          </AccordionDetails>
+        </Accordion>
+        )
+      }
       {
         subSources && (
           <Accordion expanded={expanded === 'panel8'} onChange={handleChange('panel8')}>
@@ -181,6 +187,90 @@ export default function ControlledAccordions(props) {
         </AccordionDetails>
       </Accordion>
       )}
+      {
+        radioSources && (
+          <Accordion expanded={expanded === 'panel7'} onChange={handleChange('panel7')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel7bh-content"
+            id="panel7bh-header"
+          >
+              <IconWithText>
+                  <CodeIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                    Select Source
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RadioButtons radio={radioSources}  />
+          </AccordionDetails>
+        </Accordion>
+        )
+      }
+      {
+        radioSubSources && (
+          <Accordion expanded={expanded === 'panel10'} onChange={handleChange('panel10')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel10bh-content"
+            id="panel9bh-header"
+          >
+              <IconWithText>
+                  <SubjectIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                    Select sub Source
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RadioButtons radio={radioSubSources}  />
+          </AccordionDetails>
+        </Accordion>
+        )
+      }
+      {
+        radioLanguages && (
+          <Accordion expanded={expanded === 'panel9'} onChange={handleChange('panel9')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel7bh-content"
+            id="panel9bh-header"
+          >
+              <IconWithText>
+                  <TranslateIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                    Select Language
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RadioButtons radio={radioLanguages}  />
+          </AccordionDetails>
+        </Accordion>  
+        )
+      }
+      {
+        AutoCompleteSubSources && (
+          <Accordion expanded={expanded === 'panel11'} onChange={handleChange('panel11')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel11bh-content"
+            id="panel11bh-header"
+          >
+              <IconWithText>
+                  <TranslateIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                    Select Sub Source
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            <SubSourceSingleAutoComplete subSources={AutoCompleteSubSources}  />
+          </AccordionDetails>
+        </Accordion>  
+        )
+      }
     </div>
   );
 }

@@ -3,6 +3,20 @@ import Highcharts from "highcharts/";
 import HighchartsReact from "highcharts-react-official";
 
 function TrendingSubjectsBarChart(props) {
+  Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
+    var path = [
+        'M', x + w * 0.5, y,
+        'L', x + w * 0.5, y + h * 0.7,
+        'M', x + w * 0.3, y + h * 0.5,
+        'L', x + w * 0.5, y + h * 0.7,
+        'L', x + w * 0.7, y + h * 0.5,
+        'M', x, y + h * 0.9,
+        'L', x, y + h,
+        'L', x + w, y + h,
+        'L', x + w, y + h * 0.9
+    ];
+    return path;
+};
   const options = {
     chart: {
       type: "column",
@@ -37,10 +51,29 @@ function TrendingSubjectsBarChart(props) {
         borderWidth: 0,
         dataLabels: {
           enabled: true,
-          format: "{point.y:.1f}%",
+          format: "{point.y}",
         },
       },
     },
+    exporting: {
+      chartOptions: {
+          plotOptions: {
+              series: {
+                  dataLabels: {
+                      enabled: true
+                  }
+                  
+              }
+          }
+      },
+      scale: 3,
+      fallbackToExportServer: false,
+      buttons: {
+          contextButton: {
+              symbol: 'download'
+          }
+      }
+  },
 
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
@@ -52,48 +85,7 @@ function TrendingSubjectsBarChart(props) {
       {
         name: "Words",
         colorByPoint: true,
-        data: [
-          {
-            name: "#Covid-19",
-            y: 62.74,
-          },
-          {
-            name: "#Deaths",
-            y: 10.57,
-          },
-          {
-            name: "#Monsoon",
-            y: 7.23,
-          },
-          {
-            name: "#India",
-            y: 5.58,
-          },
-          {
-            name: "#Dakha",
-            y: 4.02,
-          },
-          {
-            name: "#Sheikh Hasinad",
-            y: 1.92,
-          },
-          {
-            name: "#Oxford",
-            y: 1.92,
-          },
-          {
-            name: "#Hospital",
-            y: 1.92,
-          },
-          {
-            name: "#Expot",
-            y: 1.92,
-          },
-          {
-            name: "#Vaccine",
-            y: 1.92,
-          },
-        ],
+        data:props.data
       },
     ],
   };

@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import SentimentalAnalysisAreaChart from "../Pages/SentimentAnalysisAreaChart";
+import SentimentalAnalysisLineChart from "../Pages/SentimentAnalysisLineChart";
 import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
 import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
@@ -33,6 +34,11 @@ function Routes() {
           path="/sentimental-analysis/pie-chart"
           exact
           component={SentimentalAnalysisPieChart}
+        />
+        <Route
+          path="/sentimental-analysis/line-chart"
+          exact
+          component={SentimentalAnalysisLineChart}
         />
         <Route
           path="/mood-analysis/area-chart"
