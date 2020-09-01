@@ -3,9 +3,11 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import SentimentalAnalysisAreaChart from "../Pages/SentimentAnalysisAreaChart";
 import SentimentalAnalysisLineChart from "../Pages/SentimentAnalysisLineChart";
 import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
+import SentimentalAnalysisSemiDonutChart from "../Pages/SentimentAnalysisSemiDonutChart";
 import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
 import MoodAnalysisPieChart from "../Pages/MoodAnalysisPieChart";
+import MoodAnalysisLineChart from "../Pages/MoodAnalysisLineChart";
 import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
@@ -36,6 +38,11 @@ function Routes() {
           component={SentimentalAnalysisPieChart}
         />
         <Route
+          path="/sentimental-analysis/semi-donut-chart"
+          exact
+          component={SentimentalAnalysisSemiDonutChart}
+        />
+        <Route
           path="/sentimental-analysis/line-chart"
           exact
           component={SentimentalAnalysisLineChart}
@@ -49,6 +56,11 @@ function Routes() {
           path="/mood-analysis/pie-chart"
           exact
           component={MoodAnalysisPieChart}
+        />
+        <Route
+          path="/mood-analysis/line-chart"
+          exact
+          component={MoodAnalysisLineChart}
         />
         <Route path="/word-cloud/sentiment" exact component={wordCloudSentiment} />
         <Route path="/word-cloud/mood" exact component={WordCloudMood} />

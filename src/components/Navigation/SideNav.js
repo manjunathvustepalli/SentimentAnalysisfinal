@@ -112,7 +112,7 @@ const SideNavBar = ( props) => {
     {
       name:'Mood Analysis',
       icon:<ChildCareIcon/>,
-      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart'],
+      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
     },
     {
       name:'Influencer Analysis',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React,{useState} from 'react'
 import SideNav from '../Navigation/SideNav'
 import { Grid, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
@@ -7,8 +7,10 @@ import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
-import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
-import AreaChart from '../charts/AreaChart';
+import { moodAnalysisLineChartFilter } from '../../helpers/filter';
+import { useEffect } from 'react'
+import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -40,14 +42,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 var sortedData = {}
 
-export default function MoodAnalysisAreaChart() {
+
+function MoodAnalysisLineChart() {
     var colors = {'joy':'rgba(0,255,0,0.5)','sad':'rgba(236, 240, 22,0.5)','anger':'rgba(240, 22, 37,0.5)','anticipation':'rgba(29, 180, 240,0.5)','disgust':'rgba(226, 29, 240,0.5)','surprise':'rgba(240, 124, 29,0.5)','fear':'rgba(0, 0, 0,0.5)','trust':'rgba(217, 202, 202,0.5)'}
     const classes = useStyles()
     const [refresh, setRefresh] = useState(true)
-    const [chartType, setChartType] = useState('area')
+    const [chartType, setChartType] = useState('line')
     const [sources,setSources] = useState([])
     const [subSources,setSubSources] = useState([])
-    const [data, setData] = useState({})
+    const [data, setData] = useState([])
+    const [dates,setDates] = useState([])
     const [languages,setLanguages] = useState([])
     const [moods,setMoods] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
@@ -147,120 +151,124 @@ export default function MoodAnalysisAreaChart() {
                    sortedData[key][source][subSource]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
                    sortedData[key][source][subSource]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
                    sortedData[key][source][subSource]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
-                   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                })                  
-               });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+                   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                
+                })                  
+            });
+        })
+        let availableSourceKeys = {}
+        uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = true
+        })
+        setSources(availableSourceKeys)
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
+        let availableLanguageKeys = {}
+        languageKeys.forEach(lang =>{
+            availableLanguageKeys[lang] = true
+        })
+        setLanguages(availableLanguageKeys)
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource => {
-                availableSubSourceKeys[subSource] = true
-            })
-            setSubSources(availableSubSourceKeys)
+        let availableSubSourceKeys = {}
+        uniqueSubSourceKeys.forEach(subSource => {
+            availableSubSourceKeys[subSource] = true
+        })
+        setSubSources(availableSubSourceKeys)
 
-            setMoods(prev =>{
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                }})   
-         } else {
-             setSources({})
-             setLanguages({})
-             setMoods({})
-             sortedData = {}
-         }
-             })
+        setMoods(prev =>{
+            if(Object.keys(prev).length){
+                return prev
+        } else {
+            return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+            }})   
+        } else {
+            setSources({})
+            setLanguages({})
+            setMoods({})
+            sortedData = {}
+        }
+    })
      .catch(err => {
          console.log(err)
      })
      }, [from,to,refresh])
- 
-    useEffect(() => {
-        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
-            setData(finalData)
-    }, [languages,moods,subSources])
 
-    useEffect(() => {
-        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
-            setData(finalData)
-            let availableSubSourceKeys = {}
-            availableSubSources.forEach(subSource =>{
+     useEffect(() => {
+        const [finalData,allDates] = moodAnalysisLineChartFilter(languages,subSources,sources,moods,sortedData,from,to)
+        setData(finalData)
+        setDates(allDates)
+     },[languages,subSources,moods])
+
+     useEffect(() => {
+        const [ finalData,allDates,uniqueSubSources ] = moodAnalysisLineChartFilter(languages,subSources,sources,moods,sortedData,from,to)
+        setData(finalData)
+        setDates(allDates)
+        let availableSubSourceKeys = {}
+            uniqueSubSources.forEach(subSource => {
                 availableSubSourceKeys[subSource]  = true
             })
-            setSubSources(availableSubSourceKeys)
-    }, [sources])
-
-
+        setSubSources(availableSubSourceKeys)
+    },[sources])
+ 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7' }}>
-            {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
-            {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
-            <Grid container spacing={2} >
-                <Grid item md={8} sm={12}>
-                    <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Mood Analysis
-                    </Typography>
-                    <Card className={classes.main}>
-                        <Grid container spacing={3}>
-                            <Grid item sm={8}>
-                                <CardContent>
-                                    Mood Wise Trend
-                                </CardContent>
-                            </Grid>
-                            <Grid item sm={4}>
-                            <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                value={chartType}
-                                onChange={handleChange}
-                                label="Change Chart Type"
-                            >
-                                <MenuItem value='pie'>Pie chart</MenuItem>
-                                <MenuItem value='area'>Area chart</MenuItem>
-                                <MenuItem value='line'>Line chart</MenuItem>
-                            </Select>
-                            </FormControl>
-                            </Grid>
+        <div style={{ backgroundColor: '#F7F7F7' }}>
+        {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
+        {chartType === 'area' && <Redirect to='/mood-analysis/area-chart' />}
+        <Grid container spacing={2} >
+            <Grid item md={8} sm={12}>
+                <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
+                    Mood Analysis
+                </Typography>
+                <Card className={classes.main}>
+                    <Grid container spacing={3}>
+                        <Grid item sm={8}>
+                            <CardContent>
+                                Mood Wise Trend
+                            </CardContent>
                         </Grid>
-                        <Grid item xs={12}>
-                            <AreaChart data={data} colors={colors} />
+                        <Grid item sm={4}>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={chartType}
+                            onChange={handleChange}
+                            label="Change Chart Type"
+                        >
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                        </Select>
+                        </FormControl>
                         </Grid>
-                    </Card>
-                </Grid>
-                <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
-                        <Grid item xs={12} >
-                            <FilterHeader refresh={[refresh,setRefresh]} />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FilterWrapper>
-                                <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo,addMonths]} 
-                                    sources={[sources,setSources]} 
-                                    languages={[languages,setLanguages]} 
-                                    moods={[moods,setMoods]} 
-                                    subSources={[subSources,setSubSources]}
-                                />
-                            </FilterWrapper>
-                        </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TrendAnalysisLineChart dates={dates} data={data} />
+                    </Grid>
+                </Card>
+            </Grid>
+            <Grid item sm={12} md={4}  >
+                <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid item xs={12} >
+                        <FilterHeader refresh={[refresh,setRefresh]} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <FilterWrapper>
+                            <AccordianFilters 
+                                toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                                sources={[sources,setSources]} 
+                                languages={[languages,setLanguages]} 
+                                moods={[moods,setMoods]} 
+                                subSources={[subSources,setSubSources]}
+                            />
+                        </FilterWrapper>
                     </Grid>
                 </Grid>
             </Grid>
-        </div>       
-        </SideNav>
+        </Grid>
+    </div>       
+    </SideNav>
     )
 }
+
+export default MoodAnalysisLineChart

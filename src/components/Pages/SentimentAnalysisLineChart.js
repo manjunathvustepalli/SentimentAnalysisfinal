@@ -212,7 +212,7 @@ export default function SentimentalAnalysisLineChart() {
         setData(finalData)
         setDates(allDates)
         let availableSubSourceKeys = {}
-            uniqueSubSources.forEach(subSource =>{
+            uniqueSubSources.forEach(subSource => {
                 availableSubSourceKeys[subSource]  = true
             })
         setSubSources(availableSubSourceKeys)
@@ -223,6 +223,7 @@ export default function SentimentalAnalysisLineChart() {
             <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
+            {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
@@ -246,9 +247,10 @@ export default function SentimentalAnalysisLineChart() {
                                 onChange={handleChange}
                                 label="Change Chart Type"
                             >
-                                    <MenuItem value='pie'>Pie chart</MenuItem>
-                                    <MenuItem value='area'>Area chart</MenuItem>
-                                    <MenuItem value='line'>Line chart</MenuItem>
+                                <MenuItem value='area'>Area chart</MenuItem>
+                                <MenuItem value='line'>Line chart</MenuItem>
+                                <MenuItem value='pie'>Pie chart</MenuItem>
+                                <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>

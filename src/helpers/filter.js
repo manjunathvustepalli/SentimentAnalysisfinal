@@ -204,6 +204,7 @@ export const sentimentAnalysisPieChartFilter = (languages,sentiments,sources,dat
                 }
             })
         })
+        console.log(sourceFilteredData)
         return sourceFilteredData
     }else {
         console.log('empty')
@@ -444,4 +445,121 @@ export const sentimentAnalysisLineChartFilter = (languages,subSources,sources,se
         }
         console.log(finalData,allDates,uniqueSubSources)
         return[finalData,allDates,uniqueSubSources]
+}
+
+export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,sortedData,from,to) => {
+    var uniqueSubSources = []
+    var dataArray = []
+    Object.keys(languages).forEach((language) =>{
+        if(languages[language]){
+            Object.keys(sortedData[language]).forEach(source => {
+                if(sources[source])
+                Object.keys(sortedData[language][source]).forEach(subSource => {
+                    if(!uniqueSubSources.includes(subSource)){
+                        uniqueSubSources.push(subSource)
+                    }
+                    if(subSources[subSource]){
+                        dataArray.push(sortedData[language][source][subSource])
+                    }
+                })
+            })
+        }
+    })
+    let allDates = getDatesArray(from,to)
+    var joyData = [];
+    for (var i = 0; i < allDates.length; i++) joyData[i] = 0;
+    var anticipationData = [...joyData]
+    var fearData = [...joyData]
+    var disgustData = [...joyData]
+    var sadData = [...joyData]
+    var surpriseData = [...joyData]
+    var trustData = [...joyData]
+    var angerData = [...joyData]
+        dataArray.forEach(item => {
+            item.dates.forEach((date,i) => {
+                let index = allDates.indexOf(date)
+                if(moods['joy']){
+                    joyData[index] = joyData[index] + item.joy[i]
+                }
+                if(moods['anticipation']){
+                    anticipationData[index] = anticipationData[index] + item.anticipation[i]
+                }
+                if(moods['fear']){
+                    fearData[index] = fearData[index] + item.fear[i]
+                }
+                if(moods['disgust']){
+                    disgustData[index] = disgustData[index] + item.disgust[i]
+                }
+                if(moods['sad']){
+                    sadData[index] = sadData[index] + item.sad[i]
+                }
+                if(moods['surprise']){
+                    surpriseData[index] = surpriseData[index] + item.surprise[i]
+                }
+                if(moods['trust']){
+                    trustData[index] = trustData[index] + item.trust[i]
+                }
+                if(moods['anger']){
+                    angerData[index] = angerData[index] + item.anger[i]
+                }
+            })
+        })
+        let finalData = []
+        if(moods['joy']){
+            finalData.push({
+                name:'joy',
+                color:'rgb(0,255,0)',
+                data:joyData
+            })
+        }
+        if(moods['anticipation']){
+            finalData.push({
+                name:'anticipation',
+                color:'rgb(29, 180, 240)',
+                data:anticipationData
+            })
+        }
+        if(moods['fear']){
+            finalData.push({
+                name:'fear',
+                color:'rgba(0, 0, 0)',
+                data:fearData
+            })
+        }
+        if(moods['disgust']){
+            finalData.push({
+                name:'disgust',
+                color:'rgb(226, 29, 240)',
+                data:disgustData
+            })
+        }
+        if(moods['sad']){
+            finalData.push({
+                name:'sad',
+                color:'rgb(236, 240, 22)',
+                data:sadData
+            })
+        }
+        if(moods['surprise']){
+            finalData.push({
+                name:'surprise',
+                color:'rgb(240, 124, 29)',
+                data:surpriseData
+            })
+        }
+        if(moods['trust']){
+            finalData.push({
+                name:'trust',
+                color:'rgb(217, 202, 202)',
+                data:trustData
+            })
+        }
+        if(moods['anger']){
+            finalData.push({
+                name:'anger',
+                color:'rgb(240, 22, 37)',
+                data:angerData
+            })
+        }
+        return [finalData,allDates,uniqueSubSources] 
 }

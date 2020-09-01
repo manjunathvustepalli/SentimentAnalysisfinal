@@ -222,8 +222,9 @@ export default function SentimentalAnalysisAreaChart() {
         <SideNav>
             <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
-            {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
-            {chartType === 'line' && <Redirect to='/sentimental-analysis/line-chart' />}
+            {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
+            {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
+            {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -246,9 +247,10 @@ export default function SentimentalAnalysisAreaChart() {
                                 onChange={handleChange}
                                 label="Change Chart Type"
                             >
-                                    <MenuItem value='pie'>Pie chart</MenuItem>
-                                    <MenuItem value='area'>Area chart</MenuItem>
-                                    <MenuItem value='line'>Line chart</MenuItem>
+                                <MenuItem value='area'>Area chart</MenuItem>
+                                <MenuItem value='line'>Line chart</MenuItem>
+                                <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
+                                <MenuItem value='pie'>Pie chart</MenuItem>                
                             </Select>
                             </FormControl>
                             </Grid>
