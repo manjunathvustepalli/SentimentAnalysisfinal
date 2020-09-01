@@ -45,12 +45,14 @@ export default class PieChart extends Component {
                         format: '{point.percentage:.1f} %',
                         distance: -50,
                     }
-                }
+                },
+                "series": {
+                    "animation": true
+                  }
             },
             series: [{
                 name:this.props.name,
-                colorByPoint: true,
-                data: this.props.data
+                data: this.props.data,
             }],
             exporting: {
                 chartOptions: {

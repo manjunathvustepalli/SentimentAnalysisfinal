@@ -210,9 +210,10 @@ function MoodAnalysisLineChart() {
  
     return (
         <SideNav>
-        <div style={{ backgroundColor: '#F7F7F7' }}>
-        {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
-        {chartType === 'area' && <Redirect to='/mood-analysis/area-chart' />}
+        <div style={{ backgroundColor: '#F7F7F7' }}>            
+            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
+            {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
+            {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
         <Grid container spacing={2} >
             <Grid item md={8} sm={12}>
                 <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -235,9 +236,11 @@ function MoodAnalysisLineChart() {
                             onChange={handleChange}
                             label="Change Chart Type"
                         >
-                            <MenuItem value='pie'>Pie chart</MenuItem>
                             <MenuItem value='area'>Area chart</MenuItem>
                             <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>
+
                         </Select>
                         </FormControl>
                         </Grid>

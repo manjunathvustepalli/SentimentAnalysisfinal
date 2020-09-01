@@ -1,6 +1,6 @@
 import React from "react";
 import highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
+import PieChart from "highcharts-react-official";
 require('highcharts/modules/exporting')(highcharts);
 
 
@@ -67,7 +67,7 @@ function DonutChart(props) {
     },
     }
 
-  return <HighchartsReact highcharts={highcharts} options={options} />
+  return <PieChart highcharts={highcharts} options={options} />
 }
 
 export default DonutChart;

@@ -20,6 +20,7 @@ import GeoHotSpotAnalysis from "../Pages/GeoHotSpotAnalysis";
 import wordCloudSentiment from "../Pages/WordCloudSentiment";
 import WordCloudMood from "../Pages/WordCloudMood";
 import ExportData from "../Pages/ExportData";
+import MoodAnalysisSemiDonutChart from "../Pages/MoodAnalysisSemiDonutChart";
 
 function Routes() {
   return (
@@ -62,6 +63,11 @@ function Routes() {
           exact
           component={MoodAnalysisLineChart}
         />
+        <Route
+          path="/mood-analysis/semi-donut-chart"
+          exact
+          component={MoodAnalysisSemiDonutChart}
+        />
         <Route path="/word-cloud/sentiment" exact component={wordCloudSentiment} />
         <Route path="/word-cloud/mood" exact component={WordCloudMood} />
         <Route
@@ -76,7 +82,6 @@ function Routes() {
         <Route path="/export-data" exact component={ExportData} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
-
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>
