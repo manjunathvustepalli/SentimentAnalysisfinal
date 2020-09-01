@@ -56,13 +56,9 @@ function Login() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>
                     <div style={styles.wrapper}>
-                    <Card style={{minHeight:'300px',padding:'30px',display:'flex',flexDirection:'column',alignItems:'center'}} >
-                        <Avatar src={require('../../imgs/logo.png')} className={classes.large} />
+                    <Card style={{minHeight:'200px',padding:'30px',display:'flex',flexDirection:'column',alignItems:'center'}} >
                         <Typography variant='h6'>
                             SOCIAL MEDIA SENTIMENT ANALYSIS
-                        </Typography>
-                        <Typography variant='h6' style={{color:'orange'}}>
-                            FOR GOVT. OF BANGLADESH
                         </Typography>
                         <div className={classes.margin}>
                             <Grid container spacing={3} alignItems="flex-end">

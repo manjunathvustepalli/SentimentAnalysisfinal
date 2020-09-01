@@ -205,9 +205,8 @@ const SideNavBar = ( props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
           <Typography variant="h6" noWrap>
-          &nbsp; Amar Sarkar Sentiment Analysis
+          &nbsp; Social Media Sentiment Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>
