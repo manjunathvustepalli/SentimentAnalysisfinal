@@ -212,7 +212,6 @@ function WordCloudSentiment() {
                     })
                 })
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
                 availableSourceKeys[source] = true
@@ -240,15 +239,12 @@ function WordCloudSentiment() {
     },[to,from,refresh])
 
     useEffect(() => {
-        console.log(wordCount)
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
-        console.log({...temp})
         Object.keys(temp).forEach(language => {
             temp[language] = temp[language].sort((a,b)=>{
                 return b.weight - a.weight
             }).slice(0,wordCount)
         })
-        console.log(temp)
         setData(temp) 
     },[sources,subSources,sentiments,wordCount])
 

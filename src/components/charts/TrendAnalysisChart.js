@@ -62,6 +62,7 @@ function TrendAnalysisChart(props) {
       column: {
         pointPadding: 0,
         borderWidth: 0,
+        stacking:props.stacking || ''
       },
     },
     series,

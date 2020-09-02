@@ -4,6 +4,7 @@ import SentimentalAnalysisAreaChart from "../Pages/SentimentAnalysisAreaChart";
 import SentimentalAnalysisLineChart from "../Pages/SentimentAnalysisLineChart";
 import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
 import SentimentalAnalysisSemiDonutChart from "../Pages/SentimentAnalysisSemiDonutChart";
+import SentimentAnalysisBarChart from "../Pages/SentimentAnalysisBarChart";
 import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
 import MoodAnalysisPieChart from "../Pages/MoodAnalysisPieChart";
@@ -47,6 +48,16 @@ function Routes() {
           path="/sentimental-analysis/line-chart"
           exact
           component={SentimentalAnalysisLineChart}
+        />
+        <Route
+          path="/sentimental-analysis/bar-chart"
+          exact
+          component={SentimentAnalysisBarChart}
+        />
+        <Route
+          path="/sentimental-analysis/stack-chart"
+          exact
+          component={() => <SentimentAnalysisBarChart stack={true} />}
         />
         <Route
           path="/mood-analysis/area-chart"

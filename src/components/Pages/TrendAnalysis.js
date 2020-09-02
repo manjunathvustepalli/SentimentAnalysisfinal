@@ -6,6 +6,10 @@ import {
   Card,
   CardContent,
   makeStyles,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
@@ -23,6 +27,7 @@ var sortedData = {}
 function TrendAnalysis() {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState({});
+  const [stacking, setStacking] = useState(false)
   const [languages, setLanguages] = useState({});
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
@@ -148,7 +153,6 @@ function TrendAnalysis() {
 
   useEffect(() => {
     let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
-    console.log(temp)
     if(temp){
       setLineData(temp)
     }
@@ -164,11 +168,26 @@ function TrendAnalysis() {
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
               <Grid container spacing={3}>
-                <Grid item md={7} sm={5}>
+                <Grid item md={7} sm={6}>
                   <CardContent>Source wise Trend of Posts</CardContent>
                 </Grid>
+                <Grid item md={5} sm={6}>
+                <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={stacking}
+                                onChange={(e) => setStacking(e.target.value)}
+                                label="Change Chart Type"
+                            >
+                            <MenuItem value={false}>Bar chart</MenuItem>
+                            <MenuItem value={true}>Stacked Bar chart</MenuItem>                            
+                            </Select>
+                            </FormControl>
+                </Grid>
                 <Grid item xs={12}>
-                  <TrendAnalysisChart data={barData} />
+                  <TrendAnalysisChart data={barData} stacking={stacking} />
                 </Grid>
                 <Grid item xs={11}>
                     <TabbarMUI className={classes.tabbar} data={lineData} />

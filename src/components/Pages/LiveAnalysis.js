@@ -65,7 +65,6 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)
@@ -84,7 +83,6 @@ function LiveAnalysis() {
             }
           })
           .then(fetchedData =>{
-              console.log(fetchedData)
               let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -96,7 +94,6 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)

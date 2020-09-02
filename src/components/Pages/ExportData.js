@@ -64,7 +64,6 @@ function ExportData() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)

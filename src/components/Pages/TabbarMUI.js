@@ -58,10 +58,6 @@ function TabbarMUI(props) {
     setValue(newValue);
   };
 
-  useEffect(()=>{
-    console.log(props.data[0])
-  },[props.data])
-
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">

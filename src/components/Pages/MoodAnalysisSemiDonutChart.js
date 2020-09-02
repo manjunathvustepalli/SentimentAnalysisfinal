@@ -147,7 +147,6 @@ export default function MoodAnalysisSemiDonutChart() {
                     sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))[0]
                 });
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source => {
                 availableSourceKeys[source] = true

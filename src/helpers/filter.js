@@ -105,7 +105,6 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
             }
         })
     })
-    console.log(subSourceFilteredData)
     let dataArray = []
     subSourceFilteredData.forEach(item => {
         let obj = {}
@@ -171,7 +170,6 @@ export const sentimentAnalysisPieChartFilter = (languages,sentiments,sources,dat
             languageFilteredData.push(data[language])
         }
     })
-    console.log(languageFilteredData)
     if(languageFilteredData[0]){
         let sourceFilteredData = {}
         languageFilteredData.forEach(sourceObj => {
@@ -204,10 +202,9 @@ export const sentimentAnalysisPieChartFilter = (languages,sentiments,sources,dat
                 }
             })
         })
-        console.log(sourceFilteredData)
         return sourceFilteredData
     }else {
-        console.log('empty')
+        return []
     }
 }
 
@@ -219,7 +216,6 @@ export const moodAnalysisPieChartFilter = (languages,moods,sources,data) =>{
             languageFilteredData.push(data[language])
         }
     })
-    console.log(languageFilteredData)
     if(languageFilteredData[0]){
         let sourceFilteredData = {}
         languageFilteredData.forEach(sourceObj =>{
@@ -285,7 +281,7 @@ export const moodAnalysisPieChartFilter = (languages,moods,sources,data) =>{
         })
         return sourceFilteredData
     } else {
-        console.log('empty')
+        return []
     }
 }
 
@@ -318,7 +314,6 @@ export const trendAnalysisBarGraphFilter = (languages,sources,sortedData) => {
 }
 
 export const TrendAnalysisLineChartFilter = (languages,sources,sortedData) => {
-    console.log(languages,sources,sortedData)
     let languageKeys = []
     Object.keys(languages).forEach(language => {
         if(languages[language]){
@@ -380,7 +375,6 @@ export const wordCloudSentimentFilter = (sources,subSources,sentiments,sortedDat
             }
         })
     })
-    console.log(availableSubSources)
     return filteredData
 }
 
@@ -443,7 +437,6 @@ export const sentimentAnalysisLineChartFilter = (languages,subSources,sources,se
                 data:neutralData
             })
         }
-        console.log(finalData,allDates,uniqueSubSources)
         return[finalData,allDates,uniqueSubSources]
 }
 

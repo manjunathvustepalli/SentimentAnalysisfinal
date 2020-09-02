@@ -137,7 +137,6 @@ function SentimentAnalysisSemiDonutChart() {
                     sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))[0]
                 });
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source => {
                 availableSourceKeys[source] = true
@@ -181,6 +180,8 @@ function SentimentAnalysisSemiDonutChart() {
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
+            {chartType === 'bar' && <Redirect to='/sentimental-analysis/bar-chart' />}
+            {chartType === 'stack' && (<Redirect to='/sentimental-analysis/stack-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -203,10 +204,12 @@ function SentimentAnalysisSemiDonutChart() {
                                 onChange={handleChange}
                                 label="Change Chart type"
                             >
-                                <MenuItem value='area'>Area chart</MenuItem>
-                                <MenuItem value='line'>Line chart</MenuItem>
-                                <MenuItem value='pie'>Pie chart</MenuItem>
-                                <MenuItem value={chartType}>Semi Pie chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>

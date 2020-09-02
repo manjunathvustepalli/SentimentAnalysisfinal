@@ -131,7 +131,6 @@ useEffect(()=>{
   let uniqueSubSources = []
   let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
   let languageKeys = getKeyArray(languageBuckets)
-  console.log(languageKeys)
   languageKeys.forEach((language,i) => {
     sortedData[language] = {}
     let sourceBuckets = languageBuckets[i].Source.buckets
@@ -166,7 +165,6 @@ useEffect(()=>{
       })
     })
   })
-  console.log(sortedData,languageKeys,uniqueSources,uniqueSubSources)
   setLanguages(languageKeys)
   setLanguage(languageKeys[0])
   setSources(uniqueSources)

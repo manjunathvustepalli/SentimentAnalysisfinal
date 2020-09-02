@@ -127,7 +127,6 @@ function WordCloud(props) {
                     })
                 })
             })    
-            console.log(sortedData)
         })
         .catch(err => {
             console.log(err)
