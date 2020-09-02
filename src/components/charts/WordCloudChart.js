@@ -29,9 +29,6 @@ function WordCloud(props) {
                 type: 'wordcloud',
                 data: props.data,
                 name: 'Occurrences',
-                style:{
-                    fontFamily:`Baloo Da 2`
-                }
             }],
             title: {
                 text: ''

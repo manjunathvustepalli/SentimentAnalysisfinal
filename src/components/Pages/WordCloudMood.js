@@ -267,9 +267,7 @@ function WordCloudSentiment() {
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
         Object.keys(temp).forEach(language => {
-            temp[language] = temp[language].sort((a,b)=>{
-                return b.weight - a.weight
-            }).slice(0,wordCount)
+            temp[language] = temp[language].slice(0,wordCount)
         })
         setData(temp)
     },[sources,subSources,moods,wordCount])
@@ -336,7 +334,7 @@ function WordCloudSentiment() {
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=>(<Tab label={lang} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>
