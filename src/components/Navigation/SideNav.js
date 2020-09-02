@@ -109,11 +109,11 @@ const SideNavBar = ( props) => {
       icon:<SentimentVerySatisfiedIcon/>,
       path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart'],
     },
-    {
-      name:'Mood Analysis',
-      icon:<ChildCareIcon/>,
-      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
-    },
+    // {
+    //   name:'Mood Analysis',
+    //   icon:<ChildCareIcon/>,
+    //   path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
+    // },
     {
       name:'Influencer Analysis',
       icon:<EmojiPeopleIcon/>,
@@ -127,7 +127,7 @@ const SideNavBar = ( props) => {
     {
       name:'Word cloud',
       icon:<AppsIcon/>,
-      path:['/word-cloud/sentiment','/word-cloud/mood'],
+      path:['/word-cloud/sentiment'/*,'/word-cloud/mood'*/],
     },
     {
       name:'Trending Subject',

@@ -138,12 +138,12 @@ function SummaryDashBoard() {
                             </Grid>
                         </Card>
                     </Grid>
-                    <Grid item xl={4} md={6} sm={12} xs={12}>
+                    {/* <Grid item xl={4} md={6} sm={12} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Mood Analysis</CardContent> 
                             <MoodAnalysis dates={[from,to]} />
                         </Card>
-                    </Grid>                    
+                    </Grid>                     */}
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Sentiment Analysis</CardContent>
