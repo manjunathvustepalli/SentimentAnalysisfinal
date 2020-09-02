@@ -310,7 +310,7 @@ function WordCloudSentiment() {
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=> (<Tab label={lang} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>

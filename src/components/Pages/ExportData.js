@@ -158,13 +158,13 @@ function ExportData() {
                         <MaterialTable 
                             title='Live Analysis'
                             columns={[
-                                {title:'Name',field:'name'},
-                                {title:'Screen Name',field:'screenName'},
-                                {title:'Tweet',field:'tweet'},
-                                {title:'Followers Count',field:'followersCount'},
-                                {title:'Retweet Count',field:'retweetCount'},
-                                {title:'Mood',field:'mood'},
-                                {title:'Sentiment',field:'sentiment'},
+                                {title:'Name',field:'name',editable:'never'},
+                                {title:'Screen Name',field:'screenName',editable:'never'},
+                                {title:'Tweet',field:'tweet',editable:'never'},
+                                {title:'Followers Count',field:'followersCount',editable:'never'},
+                                {title:'Retweet Count',field:'retweetCount',editable:'never'},
+                                {title:'Mood',field:'mood', lookup:{'joy':'Joy','anger':'Anger','surprise':'Surprise','anticipation':'Anticipation','trust':'Trust','sad':'Sad','disgust':'Disgust','fear':'Fear'} },
+                                {title:'Sentiment',field:'sentiment',lookup:{'positive':'Positive','negative':'Negative','neutral':'Neutral'}},
                             ]}
                             data={data}
                             options={{
@@ -172,6 +172,19 @@ function ExportData() {
                                 paging:false,
                                 exportButton: true,
                                 maxBodyHeight:500
+                            }}
+                            editable={{
+                                onRowUpdate: (newData, oldData) =>
+                                    new Promise((resolve, reject) => {
+                                        setTimeout(() => {
+                                            const dataUpdate = [...data];
+                                            const index = oldData.tableData.id;
+                                            dataUpdate[index] = newData;
+                                            setData([...dataUpdate]);
+                        
+                                            resolve();
+                                        }, 1000);
+                                    })
                             }}
                         />
                     </Grid>
