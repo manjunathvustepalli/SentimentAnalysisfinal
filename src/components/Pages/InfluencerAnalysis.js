@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
 import PropTypes from "prop-types";
 import {Box, Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles, Tab, Tabs } from '@material-ui/core'
@@ -6,8 +6,10 @@ import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import FilterHeader from '../Filters/FilterHeader'
 import Table2 from '../Tables/Table2'
+import Table3 from '../Tables/Table3'
 import TreeMap from '../charts/TreeMap'
 import { addMonths } from '../../helpers'
+import Axios from 'axios';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -43,13 +45,14 @@ function a11yProps(index) {
 
 function InfluencerAnalysis() {
     const [refresh, setRefresh] = useState(true)
-    const [sources,setSources] = useState([])
+    const [sources,setSources] = useState(['Twitter','Newspaper'])
+    const [source,setSource] = useState('Twitter')
     const [languages,setLanguages] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [moods, setMoods] = useState({})
     const [sentiments, setSentiments] = useState({})
-
+    const [data, setData] = useState([])
 
     const useStyles = makeStyles((theme) => ({
         main: {
@@ -91,10 +94,137 @@ function InfluencerAnalysis() {
 
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
-
     const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if(source === 'Twitter'){
+        Axios.post(process.env.REACT_APP_URL,
+            {
+            "query": {
+              "terms": {
+                "Source.keyword": ["twitter", "new-twitter"]
+              }
+            },
+              "aggs": {
+                "date-based-range": {
+                  "date_range": {
+                    "field": "CreatedAt",
+                    "format": "dd-MM-yyyy",
+                    "ranges": [
+                      { "from": from, "to":to }
+                    ]
+                  },
+                  "aggs": {
+                    "Users": {
+                      "terms": {
+                        "field": "User.ScreenName.keyword"
+                      },
+                      "aggs": {
+                        "Followers": {
+                          "max": {
+                            "field": "User.FollowersCount"
+                          }
+                        },
+                        "Posts": {
+                          "value_count": {
+                            "field": "Id"
+                          }
+                        },
+                        "influenceWeight": {
+                          "bucket_script": {
+                            "buckets_path": {
+                              "postCount": "Posts",
+                              "followers": "Followers"
+                            },
+                            "script": "params.followers * params.postCount"
+                          }
+                        },
+                        "influence_sort" : {
+                          "bucket_sort": {
+                            "sort": [
+                              {
+                                "influenceWeight": {"order": "desc"}
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            })
+            .then(res => {
+                setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
+                    return {
+                        influencer: doc.key,
+                        posts:doc.Posts.value,
+                        followers:doc.Followers.value,
+                        engagement:doc.influenceWeight.value
+                    }
+                }))
+            })
+            .catch(err => {
+                console.log(err)
+            })    
+    } else {
+        Axios.post(process.env.REACT_APP_URL,{
+            "query": {
+              "terms": {
+                "Source.keyword": ["newspaper"]
+              }
+            },
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                  "field": "CreatedAt",
+                  "format": "dd-MM-yyyy",
+                  "ranges": [
+                    { "from": from,"to":to }
+                  ]
+                },
+                "aggs": {
+                  "newspaperInfluencers": {
+                    "terms": {
+                      "field": "SubSource.keyword"
+                    },
+                    "aggs": {
+                      "ArticleCount": {
+                        "value_count": {
+                          "field": "Id"
+                        }
+                      },
+                      "influence_sort" : {
+                        "bucket_sort": {
+                          "sort": [
+                            {
+                              "ArticleCount": {"order": "desc"}
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          })
+          .then(res => {
+              setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+                  return {
+                      newspaper:doc.key,
+                      articles:doc.ArticleCount.value
+                  }
+              }))
+          })
+          .catch(err => {
+              console.log(err)
+          })
+    }
+      },[from,to,source])
+  
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
@@ -128,7 +258,10 @@ function InfluencerAnalysis() {
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Table2 />
+                                        {
+                                            source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} />)
+                                        }
+                                        
                                     </Grid>
                                 </Grid>
                             </Card>
@@ -177,10 +310,7 @@ function InfluencerAnalysis() {
                             <FilterWrapper>
                             <AccordianFilters 
                                     toFromDatesHandlers={[setFrom,setTo,addMonths]} 
-                                    sources={[sources,setSources]} 
-                                    languages={[languages,setLanguages]} 
-                                    moods={[moods,setMoods]} 
-                                    sentiments={[sentiments,setSentiments]}
+                                    radioSources={[source,setSource,sources]}
                                 />
                             </FilterWrapper>
                         </Grid>

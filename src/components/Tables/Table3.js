@@ -15,18 +15,8 @@ import ShareIcon from '@material-ui/icons/Share';
 import { green } from '@material-ui/core/colors';
 
 const columns = [
-  { id: 'influencer', label: 'Influencer',align:'center' },
-  { id: 'posts', label: 'Total Posts',align:'center' },
-  {
-    id: 'engagement',
-    label: 'Engagement',
-    align:'center'
-  },
-  {
-    id: 'followers',
-    label: 'Total Followers',
-    align:'center'
-  }
+  { id: 'newspaper', label: 'News Paper',align:'center' },
+  { id: 'articles', label: 'Articles',align:'center' },
 ];
 
 
