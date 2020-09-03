@@ -46,14 +46,14 @@ function LiveAnalysis() {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "format": "dd-MMM-yyyy",
+                  "time_zone": "+05:30",
+                  "format": "dd-MMM-yyyy-hh:mm",
                   "ranges": [
-                    { "from":"now-1d/d", "to": "now" }
+                    { "from": "now-1d/d", "to": "now"}
                   ]
                 }
               }
-            },
-            "from": 1000
+            }
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
