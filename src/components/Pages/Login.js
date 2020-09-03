@@ -80,7 +80,7 @@ function Login() {
                                 <LockRoundedIcon />
                             </Grid>
                             <Grid item>
-                                <TextField id="password" fullWidth label="Password" />
+                                <TextField id="password" type="password" fullWidth label="Password" />
                             </Grid>
                             </Grid>
                         </div>
