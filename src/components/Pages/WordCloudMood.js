@@ -334,20 +334,20 @@ function WordCloudSentiment() {
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=>(<Tab label={lang} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>
                             </Grid>
                             <Grid item xs={12}>
                                 {
-                                    Object.keys(data).map((lang,i) => {
-                                        return (
+                                    Object.keys(data).map((lang,i) => 
+                                         data[lang] && (
                                             <TabPanel value={value} index={i}>
                                                 <WordCloud data={data[lang]} />
                                             </TabPanel>
                                         )
-                                    })
+                                    )
                                 }
                             </Grid>
                         </Grid>

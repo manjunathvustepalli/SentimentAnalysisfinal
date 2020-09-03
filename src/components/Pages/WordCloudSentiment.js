@@ -244,11 +244,14 @@ function WordCloudSentiment() {
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
         console.log({...temp})
         Object.keys(temp).forEach(language => {
+
             temp[language] = temp[language].sort((a,b)=>{
                 return b.weight - a.weight
             }).slice(0,wordCount)
         })
-        console.log(temp)
+        if(temp.hindi && !temp.hindi.length){
+            delete temp.hindi
+        }
         setData(temp) 
     },[sources,subSources,sentiments,wordCount])
 
@@ -321,13 +324,11 @@ function WordCloudSentiment() {
                             </Grid>
                             <Grid item xs={12}>
                                 {
-                                    Object.keys(data).map((lang,i) => {
-                                        return (
-                                            <TabPanel value={value} index={i}>
-                                                <WordCloud data={data[lang]} />
-                                            </TabPanel>
-                                        )
-                                    })
+                                    Object.keys(data).map((lang,i) => (
+                                        <TabPanel value={value} index={i}>
+                                            <WordCloud data={data[lang]} />
+                                        </TabPanel>
+                                    ))
                                 }
                             </Grid>
                         </Grid>

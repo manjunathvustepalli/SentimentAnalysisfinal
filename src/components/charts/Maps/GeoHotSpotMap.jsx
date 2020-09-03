@@ -58,7 +58,7 @@ const GeoHotSpotMap = () => {
       center={[78.9629,20.5937]}
       zoom={[4]}
       containerStyle={{
-        height: '80vh'
+        height: '400px'
       }}
     >
       <Marker

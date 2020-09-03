@@ -58,10 +58,12 @@ function LiveAnalysis() {
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
-                obj.name =  user._source.User.Name
-                obj.screenName =  user._source.User.ScreenName
+                if(user._source.User){
+                    obj.name =  user._source.User.Name
+                    obj.screenName =  user._source.User.ScreenName
+                    obj.followersCount =  user._source.User.FollowersCount
+                }
                 obj.tweet =  user._source.Text
-                obj.followersCount =  user._source.User.FollowersCount
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
@@ -75,14 +77,20 @@ function LiveAnalysis() {
 
     function fetchFromKeyword(){
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "query": {
-              "multi_match": {
-                "query": keyword,
-                "type": "phrase", 
-                "fields": ["bn", "en", "Source.keyword", "SubSource.keyword", "User.ScreenName.keyword"]
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                  "field": "CreatedAt",
+                  "time_zone": "+05:30",
+                  "format": "dd-MMM-yyyy-hh:mm",
+                  "ranges": [
+                    { "from": "now-1d/d", "to": "now"}
+                  ]
+                }
               }
             }
-          })
+        }
+          )
           .then(fetchedData =>{
               console.log(fetchedData)
               let final =  fetchedData.data.hits.hits.map(user => {

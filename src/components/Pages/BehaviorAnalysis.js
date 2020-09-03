@@ -122,13 +122,13 @@ function BehaviorAnalysis() {
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Card className={classes.main}>
+                  <Card className={classes.main}  style={{height:'500px'}}>
                     <CardContent>Audience Behaviour Analysis - Brand Affinities</CardContent>
                     <DemographyPieChart />  
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <Card className={classes.main}>
+                <Grid item xs={12} md={6} >
+                  <Card className={classes.main} style={{height:'500px'}}>
                     <CardContent>Audience Behavior Analysis - The Media Consumption Habits</CardContent>
                     <DemographyPieChart />
                   </Card>

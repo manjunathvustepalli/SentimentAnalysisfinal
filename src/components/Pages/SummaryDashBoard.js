@@ -144,14 +144,14 @@ function SummaryDashBoard() {
                             <MoodAnalysis dates={[from,to]} />
                         </Card>
                     </Grid>                     */}
-                    <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
+                    <Grid item xl={4} md={6} xs={12} >
+                        <Card className={classes.main} style={{height:'500px'}} >
                             <CardContent>Sentiment Analysis</CardContent>
                             <SentimentAnalysis  dates={[from,to]} />
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
+                        <Card className={classes.main} style={{height:'500px'}} >
                             <Grid container>
                                 <Grid item xs={5}>
                                     <CardContent>Influence Comparison</CardContent>
@@ -164,12 +164,12 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
+                        <Card className={classes.main} style={{height:'500px'}} >
                            <WordCloud to={to} from={from} />
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
+                        <Card className={classes.main} style={{height:'500px'}}>
                             <Grid container>
                                 <Grid item xs={5}>
                                     <CardContent>Geo Tagging Summary</CardContent>
