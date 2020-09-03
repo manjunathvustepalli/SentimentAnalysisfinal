@@ -18,6 +18,7 @@ import { addMonths, getKeyArray } from "../../helpers";
 import TrendingSubjectsTable from "../Tables/TrendingSubjectsTable";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
 import Axios from "axios";
+import Alert from '@material-ui/lab/Alert';
 
 var sortedData = {}
 
@@ -34,7 +35,7 @@ function InfluencerAnalysis() {
   const [sentiment, setSentiment] = useState('positive');
   const [mood, setMood] = useState('joy');
   const [data, setData] = useState([])
-
+  const [noData, setNoData] = useState(false)
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -184,8 +185,11 @@ useEffect(() => {
      if(sortedData[language][source][subSource][sentiment][mood]){
        setData(sortedData[language][source][subSource][sentiment][mood])
      }
+     setNoData(false)
    }
    catch(err){
+    setNoData(true)
+    setData([])
     console.log(err)
    }
 }, [language,source,subSource,sentiment,mood])
@@ -260,6 +264,16 @@ useEffect(() => {
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
+              {
+                noData && (
+              <Grid item xs={12}>
+                <Alert variant="filled" severity="error">
+                    No Data available for Specified Filters
+                </Alert>
+              </Grid>
+                )
+              }
+              
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
