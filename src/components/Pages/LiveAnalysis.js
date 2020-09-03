@@ -142,25 +142,27 @@ function LiveAnalysis() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                    <Grid item xs={4} align='right' direction='row'>
+                    <Grid item xs={2} align='right' direction='row'>
                     <TextField label="Enter Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
-                    <Button style={{transform:"translateY(5px)"}} className={classes.button} onClick={() => fetchFromKeyword()} >
-                        Search
-                    </Button>
                     </Grid>
                     <Grid item xs={4} align="left">
                         <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                    </Grid>
+                    <Grid item xs={2} align={'left'}>
+                    <Button style={{transform:"translateY(5px)"}} className={classes.button} onClick={() => fetchFromKeyword()} >
+                        Search
+                    </Button>
                     </Grid>
                     <Grid item xs={2} align="right">
                         {
                             liveReloading && (
                                 <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                    <InputLabel id="reload">Reload Interval</InputLabel>
                                         <Select
-                                            labelId="demo-simple-select-outlined-label"
-                                            id="demo-simple-select-outlined"
+                                            labelId="reload"
+                                            id="reload"
                                             value={reloadInterval}
-                                            onChange={(e) => setReloadInterval(e.target.value)}
+                                            onChange = {(e) => setReloadInterval(e.target.value)}
                                             label="Reload Interval "
                                         >
                                     <MenuItem value={10000}>10 Seconds</MenuItem>

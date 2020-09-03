@@ -98,14 +98,16 @@ function ExportData() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                    <Grid item xs={4} align='right' direction='row'>
+                    <Grid item xs={2} align='right' direction='row'>
                     <TextField label="Enter Keyword" />
-                    <Button style={{transform:"translateY(5px)"}} className={classes.button} >
-                        Search
-                    </Button>
                     </Grid>
                     <Grid item xs={4} align="left">
                         <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                    </Grid>
+                    <Grid item xs={2} align="left">
+                    <Button style={{transform:"translateY(5px)"}} className={classes.button} >
+                        Search
+                    </Button>
                     </Grid>
                     <Grid item xs={2} align="right">
                         {
