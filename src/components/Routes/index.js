@@ -22,6 +22,7 @@ import wordCloudSentiment from "../Pages/WordCloudSentiment";
 import WordCloudMood from "../Pages/WordCloudMood";
 import ExportData from "../Pages/ExportData";
 import MoodAnalysisSemiDonutChart from "../Pages/MoodAnalysisSemiDonutChart";
+import MoodAnalysisBarChart from "../Pages/MoodAnalysisBarChart";
 
 function Routes() {
   return (
@@ -78,6 +79,16 @@ function Routes() {
           path="/mood-analysis/semi-donut-chart"
           exact
           component={MoodAnalysisSemiDonutChart}
+        />
+        <Route
+          path="/mood-analysis/bar-chart"
+          exact
+          component={MoodAnalysisBarChart}
+        />
+        <Route
+          path="/mood-analysis/stack-chart"
+          exact
+          component={() => <MoodAnalysisBarChart stack={true} />}
         />
         <Route path="/word-cloud/sentiment" exact component={wordCloudSentiment} />
         <Route path="/word-cloud/mood" exact component={WordCloudMood} />

@@ -88,7 +88,9 @@ function BarChart(props) {
     series: props.data
   };
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return(
+      <HighchartsReact highcharts={Highcharts} options={options} />
+  )
 }
 
 export default BarChart;

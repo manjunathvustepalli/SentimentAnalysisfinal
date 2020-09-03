@@ -171,6 +171,7 @@ export default function MoodAnalysisPieChart() {
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
+        console.log(temp)
         if(temp){
             setData(temp)
         }
@@ -179,9 +180,12 @@ export default function MoodAnalysisPieChart() {
     return (
         <SideNav>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
-            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
+            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
+            {chartType === 'bar' && <Redirect to='/mood-analysis/bar-chart' />}
+            {chartType === 'stack' && <Redirect to='/mood-analysis/stack-chart' />}
+        
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -204,10 +208,12 @@ export default function MoodAnalysisPieChart() {
                                 onChange={handleChange}
                                 label="Change Chart type"
                             >
-                                    <MenuItem value={'area'}>Area chart</MenuItem>
-                                    <MenuItem value={'line'}>Line chart</MenuItem>
-                                    <MenuItem value={chartType}>Pie chart</MenuItem>
-                                    <MenuItem value={'semi pie'}>Semi Pie chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem> 
                             </Select>
                             </FormControl>
                             </Grid>

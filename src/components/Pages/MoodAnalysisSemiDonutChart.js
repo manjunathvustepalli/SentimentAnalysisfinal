@@ -183,6 +183,8 @@ export default function MoodAnalysisSemiDonutChart() {
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
+            {chartType === 'bar' && <Redirect to='/mood-analysis/bar-chart' />}
+            {chartType === 'stack' && <Redirect to='/mood-analysis/stack-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -204,12 +206,13 @@ export default function MoodAnalysisSemiDonutChart() {
                                 value={chartType}
                                 onChange={handleChange}
                                 label="Change Chart type"
-                            >
-                                    <MenuItem value={'area'}>Area chart</MenuItem>
-                                    <MenuItem value={'line'}>Line chart</MenuItem>
-                                    <MenuItem value={'pie'}>Pie chart</MenuItem>
-                                    <MenuItem value={chartType}>Semi Pie chart</MenuItem>
-
+                            >                            
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>  
                             </Select>
                             </FormControl>
                             </Grid>

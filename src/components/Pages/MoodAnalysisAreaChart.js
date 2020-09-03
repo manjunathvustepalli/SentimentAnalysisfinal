@@ -9,6 +9,7 @@ import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';
+import LollipopChart from '../charts/LollipopChart'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -208,6 +209,8 @@ export default function MoodAnalysisAreaChart() {
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
+            {chartType === 'bar' && <Redirect to='/mood-analysis/bar-chart' />}
+            {chartType === 'stack' && <Redirect to='/mood-analysis/stack-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -230,10 +233,12 @@ export default function MoodAnalysisAreaChart() {
                                 onChange={handleChange}
                                 label="Change Chart Type"
                             >
-                                <MenuItem value='pie'>Pie chart</MenuItem>
-                                <MenuItem value='area'>Area chart</MenuItem>
-                                <MenuItem value='line'>Line chart</MenuItem>
-                                <MenuItem value='semi pie'>Semi Pie chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>
