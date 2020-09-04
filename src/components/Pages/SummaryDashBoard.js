@@ -12,13 +12,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
 import GridTimeFilter from '../Filters/GridTimeFilter';
-import DonutChart from '../charts/DonutChart';
-import SemiDonutChart from '../charts/SemiDonutChart';
 import InlineFilter from '../Filters/InlineFilter';
 import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
 import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 import WordCloud from '../SummaryDashBoardCharts/WordCloud'
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
+import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 
 
 const IconWithText = styled.div`
@@ -99,44 +98,7 @@ function SummaryDashBoard() {
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
                     <Grid item xl={4} md={12} xs={12}>
-                        <Card className={classes.main}>
-                            <CardContent >Overall Analysis</CardContent>
-                            <Grid container spacing={0} className={classes.gridposition}>
-                                <Grid item xs={3}>
-                                <FormControl className={classes.formControl} style={{margin:'30px'}} >
-                                    <InputLabel id="demo-simple-select-helper-label">Source</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value={'Twitter'}>Twitter</MenuItem>
-                                        <MenuItem value={'Facebook'}>Facebook</MenuItem>
-                                        <MenuItem value={'Newspaper'}>News paper</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <Card style={{backgroundColor:'black',color:'white'}} align='center'>
-                                        <Typography variant='subtitle1' >
-                                            40K+ Twitter mentions
-                                        </Typography>
-                                        <Typography variant='subtitle1'>
-                                            40+ positive sentiment
-                                        </Typography>
-                                        <Typography variant='subtitle1'>
-                                            35+ Positive mood
-                                        </Typography>
-                                    </Card>
-                                </Grid>
-                                <Grid item xs={3} >
-                                    <SemiDonutChart />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <DonutChart mood={false} data={[['anger',20],['sad',34],['joy',23],['anticipation',9]]} />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <DonutChart mood={true} />
-                                </Grid>
-                            </Grid>
-                        </Card>
+                        <OverallAnalysis to={to} from={from}/>
                     </Grid>
                     <Grid item xl={4} md={6} sm={12} xs={12}>
                         <Card className={classes.main} >

@@ -17,6 +17,16 @@ import { green } from '@material-ui/core/colors';
 const columns = [
   { id: 'newspaper', label: 'News Paper',align:'center' },
   { id: 'articles', label: 'Articles',align:'center' },
+  {
+    id: 'mood',
+    label: 'Mood',
+    align:'center'
+  },
+  {
+    id: 'sentiment',
+    label: 'Sentiment',
+    align:'center'
+  }
 ];
 
 

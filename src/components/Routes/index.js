@@ -12,7 +12,8 @@ import MoodAnalysisLineChart from "../Pages/MoodAnalysisLineChart";
 import InfluencerAnalysis from "../Pages/InfluencerAnalysis";
 import TrendAnalysis from "../Pages/TrendAnalysis";
 import Demography from "../Pages/Demography";
-import TrendingSubjects from "../Pages/TrendingSubjects";
+import TrendingSubjectsSentiment from "../Pages/TrendingSubjectsSentiment";
+import TrendingSubjectsMood from "../Pages/TrendingSubjectsMood";
 import LiveAnalysis from "../Pages/LiveAnalysis";
 import SummaryDashBoard from "../Pages/SummaryDashBoard";
 import BehaviorAnalysis from "../Pages/BehaviorAnalysis";
@@ -99,7 +100,8 @@ function Routes() {
         />
         <Route path="/trend-analysis" exact component={TrendAnalysis} />
         <Route path="/demography" exact component={Demography} />
-        <Route path="/trending-subject" exact component={TrendingSubjects} />
+        <Route path="/trending-subject/sentiment" exact component={TrendingSubjectsSentiment} />
+        <Route path="/trending-subject/mood" exact component={TrendingSubjectsMood} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />

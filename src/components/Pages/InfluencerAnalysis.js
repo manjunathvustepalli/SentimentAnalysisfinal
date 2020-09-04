@@ -50,9 +50,12 @@ function InfluencerAnalysis() {
     const [languages,setLanguages] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
-    const [moods, setMoods] = useState({})
-    const [sentiments, setSentiments] = useState({})
+    const [moods, setMoods] = useState({'joy':true,'sad':true,'anger':true,'anticipation':true,'disgust':true,'surprise':true,'fear':true,'trust':true})
+    const [sentiments, setSentiments] = useState({'negative':true,'positive':true,'neutral':true})
     const [data, setData] = useState([])
+    const [moodData, setMoodData] = useState([])
+    const [sentimentData, setSentimentData] = useState([])
+
 
     const useStyles = makeStyles((theme) => ({
         main: {
@@ -92,6 +95,52 @@ function InfluencerAnalysis() {
         }
     }));
 
+    const parentSentiment = [{
+      id: 'negative',
+      name: 'Negative',
+      color: "#EC2500"
+  }, {
+      id: 'positive',
+      name: 'Positive',
+      color: "#9EDE00"
+  }, {
+      id: 'neutral',
+      name: 'Neutral',
+      color: '#EC9800'
+  }]
+  const parentMood = [{
+    id:'joy',
+    name:'Joy',
+    color:"rgb(0,255,0)"
+  },{
+    id:'sad',
+    name:'sad',
+    color:"rgb(236,240,22)"
+  },{
+    id:'anger',
+    name:'anger',
+    color:"rgb(240,22,37)"
+  },{
+    id:'anticipation',
+    name:'anticipation',
+    color:"rgb(29, 180, 240)"
+  },{
+    id:'disgust',
+    name:'disgust',
+    color:"rgb(226, 29, 240)"
+  },{
+    id:'surprise',
+    name:'surprise',
+    color:"rgb(240,124,29)"
+  },{
+    id:'fear',
+    name:'fear',
+    color:"rgb(0,0,0)"
+  },{
+    id:'trust',
+    name:'trust',
+    color:"rgb(217, 202, 202)"
+  }]
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
     const handleChange = (event, newValue) => {
@@ -101,79 +150,10 @@ function InfluencerAnalysis() {
   useEffect(() => {
     if(source === 'Twitter'){
         Axios.post(process.env.REACT_APP_URL,
-            {
+          {
             "query": {
               "terms": {
                 "Source.keyword": ["twitter", "new-twitter"]
-              }
-            },
-              "aggs": {
-                "date-based-range": {
-                  "date_range": {
-                    "field": "CreatedAt",
-                    "format": "dd-MM-yyyy",
-                    "ranges": [
-                      { "from": from, "to":to }
-                    ]
-                  },
-                  "aggs": {
-                    "Users": {
-                      "terms": {
-                        "field": "User.ScreenName.keyword"
-                      },
-                      "aggs": {
-                        "Followers": {
-                          "max": {
-                            "field": "User.FollowersCount"
-                          }
-                        },
-                        "Posts": {
-                          "value_count": {
-                            "field": "Id"
-                          }
-                        },
-                        "influenceWeight": {
-                          "bucket_script": {
-                            "buckets_path": {
-                              "postCount": "Posts",
-                              "followers": "Followers"
-                            },
-                            "script": "params.followers * params.postCount"
-                          }
-                        },
-                        "influence_sort" : {
-                          "bucket_sort": {
-                            "sort": [
-                              {
-                                "influenceWeight": {"order": "desc"}
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            })
-            .then(res => {
-                setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
-                    return {
-                        influencer: doc.key,
-                        posts:doc.Posts.value,
-                        followers:doc.Followers.value,
-                        engagement:doc.influenceWeight.value
-                    }
-                }))
-            })
-            .catch(err => {
-                console.log(err)
-            })    
-    } else {
-        Axios.post(process.env.REACT_APP_URL,{
-            "query": {
-              "terms": {
-                "Source.keyword": ["newspaper"]
               }
             },
             "aggs": {
@@ -182,27 +162,51 @@ function InfluencerAnalysis() {
                   "field": "CreatedAt",
                   "format": "dd-MM-yyyy",
                   "ranges": [
-                    { "from": from,"to":to }
+                    { "from": from, "to":to }
                   ]
                 },
                 "aggs": {
-                  "newspaperInfluencers": {
+                  "Users": {
                     "terms": {
-                      "field": "SubSource.keyword"
+                      "field": "User.ScreenName.keyword"
                     },
                     "aggs": {
-                      "ArticleCount": {
+                      "Followers": {
+                        "max": {
+                          "field": "User.FollowersCount"
+                        }
+                      },
+                      "Posts": {
                         "value_count": {
                           "field": "Id"
+                        }
+                      },
+                      "influenceWeight": {
+                        "bucket_script": {
+                          "buckets_path": {
+                            "postCount": "Posts",
+                            "followers": "Followers"
+                          },
+                          "script": "params.followers * params.postCount"
                         }
                       },
                       "influence_sort" : {
                         "bucket_sort": {
                           "sort": [
                             {
-                              "ArticleCount": {"order": "desc"}
+                              "influenceWeight": {"order": "desc"}
                             }
                           ]
+                        }
+                      },
+                      "Sentiment": {
+                        "terms": {
+                          "field": "predictedSentiment.keyword"
+                        }
+                      },
+                      "Moods": {
+                        "terms": {
+                          "field": "predictedMood.keyword"
                         }
                       }
                     }
@@ -211,13 +215,116 @@ function InfluencerAnalysis() {
               }
             }
           })
+            .then(res => {
+              console.log(res)
+                setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
+                    return {
+                        influencer: doc.key,
+                        posts:doc.Posts.value,
+                        followers:doc.Followers.value,
+                        engagement:doc.influenceWeight.value,
+                        mood:doc.Moods.buckets[0].key,
+                        sentiment:doc.Sentiment.buckets[0].key
+                    }
+                }))
+                setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
+                  return {
+                    name: doc.key,
+                    posts:doc.Posts.value,
+                    followers:doc.Followers.value,
+                    parent:doc.Moods.buckets[0].key,
+                    value:doc.influenceWeight.value
+                }     
+              })))
+              setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
+                return {
+                    name: doc.key,
+                    posts:doc.Posts.value,
+                    followers:doc.Followers.value,
+                    parent:doc.Sentiment.buckets[0].key,
+                    value:doc.influenceWeight.value
+                }
+            })))
+            })
+            .catch(err => {
+                console.log(err)
+            })    
+    } else {
+        Axios.post(process.env.REACT_APP_URL,{
+          "query": {
+            "terms": {
+              "Source.keyword": ["newspaper"]
+            }
+          },
+          "aggs": {
+            "date-based-range": {
+              "date_range": {
+                "field": "CreatedAt",
+                "format": "dd-MM-yyyy",
+                "ranges": [
+                  { "from": from, "to":to }
+                ]
+              },
+              "aggs": {
+                "newspaperInfluencers": {
+                  "terms": {
+                    "field": "SubSource.keyword"
+                  },
+                  "aggs": {
+                    "ArticleCount": {
+                      "value_count": {
+                        "field": "Id"
+                      }
+                    },
+                    "influence_sort" : {
+                      "bucket_sort": {
+                        "sort": [
+                          {
+                            "ArticleCount": {"order": "desc"}
+                          }
+                        ]
+                      }
+                    },
+                    "Sentiment": {
+                      "terms": {
+                        "field": "predictedSentiment.keyword"
+                      }
+                    },
+                    "Mood": {
+                      "terms": {
+                        "field": "predictedMood.keyword"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        })
           .then(res => {
+            console.log(res)
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                   return {
                       newspaper:doc.key,
-                      articles:doc.ArticleCount.value
+                      articles:doc.ArticleCount.value,
+                      mood:doc.Mood.buckets[0].key,
+                      sentiment:doc.Sentiment.buckets[0].key
                   }
               }))
+              setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+                return {
+                    name:doc.key,
+                    value:doc.ArticleCount.value,
+                    parent:doc.Mood.buckets[0].key,
+                }
+            })))
+            setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+              return {
+                  name:doc.key,
+                  value:doc.ArticleCount.value,
+                  parent:doc.Sentiment.buckets[0].key,
+              }
+          })))
           })
           .catch(err => {
               console.log(err)
@@ -270,10 +377,10 @@ function InfluencerAnalysis() {
                             <Card className={classes.main}>
                                 <Grid item xs={12}>
                                     <Grid container spacing={2}>
-                                        <Grid item xs={7}>
+                                        <Grid item xs={5}>
                                             <CardContent>Influncers Comparison</CardContent>
                                         </Grid>
-                                        <Grid item xs={5}>
+                                        <Grid item xs={7}>
                                             <Tabs
                                                 value={value}
                                                 onChange={handleChange}
@@ -291,10 +398,10 @@ function InfluencerAnalysis() {
                                 </Grid>
                                 <Grid item xs={11}>
                                     <TabPanel value={value} index={0}>
-                                        <TreeMap />
+                                        <TreeMap data={sentimentData} />
                                     </TabPanel>
                                     <TabPanel value={value} index={1}>
-                                        <TreeMap />
+                                        <TreeMap data={moodData} />
                                     </TabPanel>
                                 </Grid>
                             </Card>
@@ -309,8 +416,8 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                             <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo,addMonths]} 
-                                    radioSources={[source,setSource,sources]}
+                              toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                              radioSources={[source,setSource,sources]}
                                 />
                             </FilterWrapper>
                         </Grid>

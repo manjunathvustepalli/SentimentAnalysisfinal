@@ -26,6 +26,16 @@ const columns = [
     id: 'followers',
     label: 'Total Followers',
     align:'center'
+  },
+  {
+    id: 'mood',
+    label: 'Mood',
+    align:'center'
+  },
+  {
+    id: 'sentiment',
+    label: 'Sentiment',
+    align:'center'
   }
 ];
 

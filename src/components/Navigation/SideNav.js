@@ -132,7 +132,7 @@ const SideNavBar = ( props) => {
     {
       name:'Trending Subject',
       icon:<TrendingUpIcon/>,
-      path:['/trending-subject'],
+      path:['/trending-subject/sentiment','/trending-subject/mood'],
     },
     {
       name:'Trend Analysis',
