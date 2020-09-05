@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{ useState, useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
 import { Grid, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
@@ -8,7 +8,6 @@ import AccordianFilters from '../Filters/AccordianFilters'
 import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { moodAnalysisLineChartFilter } from '../../helpers/filter';
-import { useEffect } from 'react'
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
 
 
@@ -56,64 +55,80 @@ function MoodAnalysisLineChart() {
     const [moods,setMoods] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
-        Axios.post(process.env.REACT_APP_URL,
-            {
+        let query = {
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                  "field": "CreatedAt",
+                  "format": "dd-MM-yyyy",
+                  "ranges": [
+                    { "from": from,"to": to}
+                  ]
+                },
                 "aggs": {
-                  "date-based-range": {
-                    "date_range": {
-                      "field": "CreatedAt",
-                      "format": "dd-MM-yyyy",
-                      "ranges": [
-                        { "from": from,"to": to}
-                      ]
+                  "lang": {
+                    "terms": {
+                      "field": "predictedLang.keyword"
                     },
                     "aggs": {
-                      "lang": {
+                      "Source": {
                         "terms": {
-                          "field": "predictedLang.keyword"
+                          "field": "Source.keyword"
                         },
-                        "aggs": {
-                          "Source": {
-                            "terms": {
-                              "field": "Source.keyword"
-                            },
-                            "aggs":{
-                                "SubSource":{
-                                    "terms":{
-                                        "field": "SubSource.keyword"
-                                    },
-                                
-        
+                        "aggs":{
+                            "SubSource":{
+                                "terms":{
+                                    "field": "SubSource.keyword"
+                                },
+                            
+    
+                            "aggs": {
+                                "per-day": {
+                                  "date_histogram": {
+                                      "field": "CreatedAt",
+                                      "format": "yyyy-MM-dd", 
+                                      "calendar_interval": "day"
+                                  },
                                 "aggs": {
-                                    "per-day": {
-                                      "date_histogram": {
-                                          "field": "CreatedAt",
-                                          "format": "yyyy-MM-dd", 
-                                          "calendar_interval": "day"
-                                      },
-                                    "aggs": {
-                                      "Daily-Sentiment-Distro": {
-                                        "terms": {
-                                          "field": "predictedMood.keyword"
-                                        }
-                                      }
+                                  "Daily-Sentiment-Distro": {
+                                    "terms": {
+                                      "field": "predictedMood.keyword"
                                     }
-                                    }
+                                  }
                                 }
-                              }
-                            }
+                                }
                             }
                           }
+                        }
                         }
                       }
                     }
                   }
-                },{
+                }
+              }
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
+        Axios.post(process.env.REACT_APP_URL,
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -189,7 +204,7 @@ function MoodAnalysisLineChart() {
      .catch(err => {
          console.log(err)
      })
-     }, [from,to,refresh])
+     }, [from,to,refresh,keywords,keywordType])
 
      useEffect(() => {
         const [finalData,allDates] = moodAnalysisLineChartFilter(languages,subSources,sources,moods,sortedData,from,to)
@@ -266,6 +281,8 @@ function MoodAnalysisLineChart() {
                                 languages={[languages,setLanguages]} 
                                 moods={[moods,setMoods]} 
                                 subSources={[subSources,setSubSources]}
+                                setKeywords={setKeywords}
+                                keywordTypes={[keywordType, setKeywordType]}
                             />
                         </FilterWrapper>
                     </Grid>

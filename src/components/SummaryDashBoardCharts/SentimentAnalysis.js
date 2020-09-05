@@ -49,7 +49,7 @@ function SentimentAnalysis(props) {
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
          let sortedData = []
          let sentiments = ['positive','negative','neutral']
-         let colors = ['rgb(0,255,0)','rgb(255,0,0)','rgb(255,255,0)']
+         let colors = ['rgba(0,255,0,0.5)','rgba(255,0,0,0.5)','rgba(255,255,0,0.5)']
 
          sentiments.forEach((sentiment,i) => {
              sortedData.push({

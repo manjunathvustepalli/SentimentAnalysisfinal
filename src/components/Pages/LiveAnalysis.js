@@ -10,11 +10,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
+import { addMonths } from '../../helpers'
+
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
+        fullWidth:true
     },
     selectEmpty: {
       marginTop: theme.spacing(2),
@@ -36,8 +37,8 @@ function LiveAnalysis() {
     const [data, setData] = useState([])
     const [liveReloading, setLiveReloading] = useState(false)
     const [reloadInterval, setReloadInterval] = useState(10000)
-    const [to, setTo] = useState(new Date())
-    const [from, setFrom] = useState(new Date())
+    const [to, setTo] = useState(addMonths(new Date(),0))
+    const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [keyword, setKeyword] = useState('')
 
     function fetchData(){
@@ -46,9 +47,9 @@ function LiveAnalysis() {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "format": "dd-MMM-yyyy",
+                  "format": "dd-MM-yyyy",
                   "ranges": [
-                    { "from":"now-1d/d", "to": "now" }
+                    { "from":from, "to": to }
                   ]
                 }
               }
@@ -57,11 +58,14 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
+                console.log(user._source.User.Name)
                 let obj = {}
-                obj.name =  user._source.User.Name
-                obj.screenName =  user._source.User.ScreenName
+                if(user._source.User){
+                    obj.name =  user._source.User.Name
+                    obj.screenName =  user._source.User.ScreenName
+                    obj.followersCount =  user._source.User.FollowersCount
+                }
                 obj.tweet =  user._source.Text
-                obj.followersCount =  user._source.User.FollowersCount
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
@@ -69,6 +73,7 @@ function LiveAnalysis() {
             })
             setData(final)
         })
+        .catch(err => {console.log(err.response)})
 
     }
 
@@ -101,9 +106,7 @@ function LiveAnalysis() {
           .catch(err => {
               console.log(err)
           })
-    }
-
-
+    }    
 
     useEffect(() => {
         fetchData()
@@ -113,7 +116,7 @@ function LiveAnalysis() {
             }
           }, reloadInterval);
           return () => clearInterval(interval);
-    }, [reloadInterval,liveReloading])
+    }, [reloadInterval,liveReloading,from,to])
 
     return (
         <SideNav>
@@ -144,13 +147,15 @@ function LiveAnalysis() {
                         {
                             liveReloading && (
                                 <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
+                                    <InputLabel id="reload-interval-label">Reload Interval</InputLabel>
                                         <Select
-                                            labelId="demo-simple-select-outlined-label"
-                                            id="demo-simple-select-outlined"
+                                            labelId="reload-interval-label"
+                                            id="reload-interval"
                                             value={reloadInterval}
                                             onChange={(e) => setReloadInterval(e.target.value)}
-                                            label="Reload Interval "
+                                            label="Reload Interval"
+                                            variant="outlined"
+                                            fullWidth
                                         >
                                     <MenuItem value={10000}>10 Seconds</MenuItem>
                                     <MenuItem value={20000}>20 Seconds</MenuItem>

@@ -63,14 +63,15 @@ export default function SentimentalAnalysisLineChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [open, setOpen] = useState(true)
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
-       Axios.post(process.env.REACT_APP_URL,
-        {
+        let query = {
             "aggs": {
               "date-based-range": {
                 "date_range": {
@@ -121,7 +122,22 @@ export default function SentimentalAnalysisLineChart() {
                   }
                 }
               }
-            },{
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
+       Axios.post(process.env.REACT_APP_URL,
+        query,{
             headers:{
                'Content-Type':'application/json'
            }
@@ -198,7 +214,7 @@ export default function SentimentalAnalysisLineChart() {
         console.log(err)
         setOpen(false)
     })
-    }, [from,to,refresh])
+    }, [from,to,refresh,keywords,keywordType])
 
     useEffect(() => {
         const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
@@ -277,6 +293,8 @@ export default function SentimentalAnalysisLineChart() {
                                     sentiments={[sentiments,setSentiments]} 
                                     languages={[languages,setLanguages]} 
                                     subSources={[subSources,setSubSources]} 
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                     />
                             </FilterWrapper>
                         </Grid>

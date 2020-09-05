@@ -10,6 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
+import { addMonths } from '../../helpers'
+
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -36,18 +38,18 @@ function ExportData() {
     const [data, setData] = useState([])
     const [liveReloading, setLiveReloading] = useState(false)
     const [reloadInterval, setReloadInterval] = useState(10000)
-    const [to, setTo] = useState(new Date())
-    const [from, setFrom] = useState(new Date())
+    const [to, setTo] = useState(addMonths(new Date(),0))
+    const [from, setFrom] = useState(addMonths(new Date(),0))
 
     function fetchData(){
-        Axios.post('http://3.7.187.244:9200/analyzed-docs/_search',{
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "aggs": {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "format": "dd-MMM-yyyy",
+                  "format": "dd-MM-yyyy",
                   "ranges": [
-                    { "from":"now-1d/d", "to": "now" }
+                    { "from":from, "to": to }
                   ]
                 }
               }
@@ -126,7 +128,7 @@ function ExportData() {
                             )
                         }
                     </Grid>
-                    <Grid item md={3} xs={12}>
+                    {/* <Grid item md={3} xs={12}>
                         <FormControl variant="outlined" className={classes.formControl}>
                             <InputLabel id="demo-simple-select-outlined-label">Sentiment</InputLabel>
                                 <Select
@@ -153,10 +155,10 @@ function ExportData() {
                                     <MenuItem value={'neutral'}>Anticipation</MenuItem>
                                 </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <MaterialTable 
-                            title='Live Analysis'
+                            title='Export Data'
                             columns={[
                                 {title:'Name',field:'name',editable:'never'},
                                 {title:'Screen Name',field:'screenName',editable:'never'},

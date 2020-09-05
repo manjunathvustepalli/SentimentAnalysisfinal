@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -6,6 +6,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
 import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
+import { green } from '@material-ui/core/colors';
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     width: "100%",
     marginLeft: "30px !important",
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'white',
     paddingBottom: "30px !important",
   },
 }));
@@ -68,11 +70,12 @@ function TabbarMUI(props) {
           textColor="primary"
           variant="scrollable"
           scrollButtons="auto"
+          TabIndicatorProps={{style: {background:green[400]}}}
           aria-label="scrollable auto tabs example"
         >
           {
             props.data[0] && (Object.keys(props.data[0]).map((source,i) => {
-              return <Tab label={source} {...a11yProps(i)} />
+              return <Tab label={source} style={{color:value===i && (green[400])}} {...a11yProps(i)} />
             }))
           }
         </Tabs>

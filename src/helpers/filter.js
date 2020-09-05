@@ -383,17 +383,19 @@ export const sentimentAnalysisLineChartFilter = (languages,subSources,sources,se
     var dataArray = []
     Object.keys(languages).forEach((language) =>{
         if(languages[language]){
-            Object.keys(sortedData[language]).forEach(source => {
-                if(sources[source])
-                Object.keys(sortedData[language][source]).forEach(subSource => {
-                    if(!uniqueSubSources.includes(subSource)){
-                        uniqueSubSources.push(subSource)
-                    }
-                    if(subSources[subSource]){
-                        dataArray.push(sortedData[language][source][subSource])
-                    }
+            if(Object.keys(sortedData).length){
+                Object.keys(sortedData[language]).forEach(source => {
+                    if(sources[source])
+                    Object.keys(sortedData[language][source]).forEach(subSource => {
+                        if(!uniqueSubSources.includes(subSource)){
+                            uniqueSubSources.push(subSource)
+                        }
+                        if(subSources[subSource]){
+                            dataArray.push(sortedData[language][source][subSource])
+                        }
+                    })
                 })
-            })
+            }
         }
     })
     let allDates = getDatesArray(from,to)

@@ -19,7 +19,6 @@ import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 
-
 const useStyles = makeStyles((theme) => ({
     main: {
 
@@ -63,14 +62,15 @@ export default function SentimentalAnalysisAreaChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [open, setOpen] = useState(true)
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
-       Axios.post(process.env.REACT_APP_URL,
-        {
+        let query = {
             "aggs": {
               "date-based-range": {
                 "date_range": {
@@ -121,7 +121,22 @@ export default function SentimentalAnalysisAreaChart() {
                   }
                 }
               }
-            },{
+            }
+        if(keywordType === 'Screen Name'){
+            query["query"] = {
+                "terms": {
+                  "User.ScreenName.keyword": keywords
+                }
+              }
+        } else if (keywordType === 'Hash Tags') {
+            query["query"] =  {
+                "terms": {
+                  "HashtagEntities.Text.keyword": keywords
+                }
+            }
+        }
+       Axios.post(process.env.REACT_APP_URL,
+        query,{
             headers:{
                'Content-Type':'application/json'
            }
@@ -199,7 +214,7 @@ export default function SentimentalAnalysisAreaChart() {
         console.log(err)
         setOpen(false)
     })
-    }, [from,to,refresh])
+    }, [from,to,refresh,keywords,keywordType])
 
 
     useEffect(() => {
@@ -270,7 +285,15 @@ export default function SentimentalAnalysisAreaChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters toFromDatesHandlers={[setFrom,setTo]} sources={[sources,setSources]} sentiments={[sentiments,setSentiments]} languages={[languages,setLanguages]} subSources={[subSources,setSubSources]} />
+                                <AccordianFilters 
+                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    sources={[sources,setSources]} 
+                                    sentiments={[sentiments,setSentiments]} 
+                                    languages={[languages,setLanguages]} 
+                                    subSources={[subSources,setSubSources]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

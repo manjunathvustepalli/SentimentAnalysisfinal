@@ -26,7 +26,6 @@ function DateFilter(props) {
   
     const useStyles = makeStyles((theme) => ({
         formControl: {
-            marginBottom: '20px',
             fullWidth: true,
             display: 'flex',
             wrap: 'nowrap'

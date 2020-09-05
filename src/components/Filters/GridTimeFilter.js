@@ -28,33 +28,26 @@ function GridTimeFilter(props) {
   
     const useStyles = makeStyles((theme) => ({
         formControl: {
-            marginBottom: '20px',
             fullWidth: true,
-            display: 'flex',
-            wrap: 'nowrap'
-        },
-        selectEmpty: {
-          marginTop: theme.spacing(2),
-        },
-        select:{
-            width:'100%'
+            margin:'10px'
         }
     }));
     
     const classes = useStyles();
     
     return (
-        <Grid container spacing={2}>
+        <Grid container>
             <Grid item xs={12} sm={12} md={6} lg={6}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               className={classes.formControl}
-              margin='dense'
               id="start-date-picker-dialog"
               label="Start Date"
               value = {startDate}
               onChange= {handleStartDateChange}
               format="dd-MM-yyyy"
+              variant="outlined"
+              inputVariant="outlined"
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
@@ -65,12 +58,13 @@ function GridTimeFilter(props) {
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               className={classes.formControl}
-              margin='dense'
               id="end-date-picker-dialog"
               label="End Date"
               value = {endDate}
               onChange = {handleEndDateChange}
               format="dd-MM-yyyy"
+              variant="outlined"
+              inputVariant="outlined"
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}

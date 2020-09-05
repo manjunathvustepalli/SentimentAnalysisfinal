@@ -16,6 +16,8 @@ import WordCloud from '../charts/WordCloudChart';
 import {addMonths, getKeyArray} from '../../helpers'
 import Axios from 'axios';
 import { wordCloudSentimentFilter } from '../../helpers/filter';
+import { green } from '@material-ui/core/colors';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -333,10 +335,11 @@ function WordCloudSentiment() {
                                 textColor="primary"
                                 variant="scrollable"
                                 scrollButtons="auto"
+                                TabIndicatorProps={{style: {background:green[800]}}}
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=>  (<Tab label={lang} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=>  (<Tab label={lang} style={{color:value===i && (green[800])}} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>

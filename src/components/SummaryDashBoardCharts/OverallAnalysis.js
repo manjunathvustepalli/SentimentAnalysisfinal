@@ -12,9 +12,10 @@ const useStyles = makeStyles((theme) => ({
         color: "#CB0038",
     },
     formControl: {
-      margin: theme.spacing(1),
-      width:'90%',
-      borderBottom:'2px solid white'
+      margin: '10px',
+      fullWidth: true,
+      display: 'flex',
+      wrap: 'nowrap'
     },
     selectEmpty: {
       marginTop: theme.spacing(2),
@@ -132,20 +133,22 @@ function OverallAnalysis({to, from}) {
         <CardContent >Overall Analysis</CardContent>
         <Grid container spacing={0} className={classes.gridposition}>
             <Grid item xs={3}>
-            <FormControl className={classes.formControl} style={{margin:'30px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Source</InputLabel>
-                    <Select
-                    labelId="demo-simple-select-helper-label"
-                    id="demo-simple-select-helper"
-                    value={source}
-                    onChange={(e) => handleChange(e.target.value)}
+            <FormControl variant="outlined" className={classes.formControl} style={{margin:'30px'}} >
+                <InputLabel id="Source-label">Source</InputLabel>
+                    <Select 
+                      labelId="Source-label"
+                      variant="outlined"
+                      id="source"
+                      label="Source"
+                      value={source}
+                      onChange={(e) => handleChange(e.target.value)}
                     >
                         {
-                            sources.map((source,i) => <MenuItem value={source}>{source}</MenuItem> )
+                            sources.map((source,i) => <MenuItem key={i} value={source}>{source}</MenuItem> )
                         }
                     </Select>
                 </FormControl>
-                <Card style={{backgroundColor:'black',color:'white'}} align='center'>
+                <Card style={{backgroundColor:'#2F363F',color:'white'}} align='center'>
                     <Typography variant='subtitle1' >
                         40K+ Twitter mentions
                     </Typography>

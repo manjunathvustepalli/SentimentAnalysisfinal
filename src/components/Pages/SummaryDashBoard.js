@@ -34,13 +34,14 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "#CB0038",
     },
-    formControl: {
-      margin: theme.spacing(1),
-      width:'90%',
-      borderBottom:'2px solid white'
-    },
     selectEmpty: {
       marginTop: theme.spacing(2),
+    },
+    formControl: {
+        margin: '10px',
+        fullWidth: true,
+        display: 'flex',
+        wrap: 'nowrap'
     },
     gridposition: {
         position: "relative",
@@ -56,35 +57,38 @@ function SummaryDashBoard() {
     return (
         <SideNav>    
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
-                <Typography style={{color:'green'}} variant='h5' >
+                <Typography style={{color:'green',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
                         <Card>
-                            <IconWithText>
-                                <FilterListIcon style={{margin:'0 20px'}} /> 
+                            <IconWithText style={{margin:'10px 10px 0 10px'}}>
+                                <FilterListIcon /> 
                                 <p> FILTERS </p>
                             </IconWithText>
                             <Grid container>    
                                 <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label">Keyword type</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                </FormControl>
+                                <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="keyword-type-label">Keyword Type</InputLabel>
+                            <Select
+                                labelId="keyword-type-label"
+                                id="keyword-type"
+                                label="Change Chart Type"
+                            >
+                            <MenuItem value='area'>Entire Data</MenuItem>
+                            <MenuItem value='line'>Screen Name</MenuItem>
+                            <MenuItem value='bar'>Hashtags</MenuItem>
+                            </Select>
+                            </FormControl>
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={3} >
                                 <FormControl className={classes.formControl}>
                                         <TextField
-                                            label='type keyword'
-                                            variant="standard"
+                                            id="keyword"
+                                            label='Enter keyword'
+                                            variant="outlined"
+                                            fullWidth
                                         />
                                     </FormControl>
                                 </Grid>
@@ -114,11 +118,11 @@ function SummaryDashBoard() {
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
-                            <Grid container>
-                                <Grid item xs={5}>
-                                    <CardContent>Influence Comparison</CardContent>
+                            <Grid container > 
+                                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}} >
+                                    Influence Comparison
                                 </Grid>
-                                <Grid item xs={7}>
+                                <Grid item xs={7}  >
                                     <InlineFilter />
                                 </Grid>
                             </Grid>
@@ -133,8 +137,8 @@ function SummaryDashBoard() {
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
                             <Grid container>
-                                <Grid item xs={5}>
-                                    <CardContent>Geo Tagging Summary</CardContent>
+                                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
+                                    Geo Tagging Summary
                                 </Grid>
                                 <Grid item xs={7}>
                                     <InlineFilter />

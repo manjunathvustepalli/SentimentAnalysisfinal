@@ -135,21 +135,9 @@ function WordCloud(props) {
 
     useEffect(() => {
         setData(prev => {
-            if(Object.keys(sortedData).length){
-                if(sortedData[source]){
-                    if(sortedData[source][sentiment]){
-                        if(sortedData[source][sentiment][mood]){
-                            return sortedData[source][sentiment][mood]
-                        } else {
-                            return []
-                        }
-                    } else {
-                        return []
-                    }
-                } else {
-                    return []
-                }
-            } else {
+            try{
+                return sortedData[source][sentiment][mood]
+            } catch {
                 return []
             }
         })
@@ -158,8 +146,8 @@ function WordCloud(props) {
 
     return (
         <Grid container>
-            <Grid item xs={5}>
-                <CardContent >Word Cloud</CardContent>
+            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
+                Word Cloud
             </Grid>
             <Grid item xs={7}>
                 { sources && sources.length && (<InlineFilter 
