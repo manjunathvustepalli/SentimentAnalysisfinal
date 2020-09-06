@@ -18,6 +18,7 @@ import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 import WordCloud from '../SummaryDashBoardCharts/WordCloud'
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
 import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
+import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
 
 
 const IconWithText = styled.div`
@@ -117,17 +118,7 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
-                            <Grid container > 
-                                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}} >
-                                    Influence Comparison
-                                </Grid>
-                                <Grid item xs={7}  >
-                                    <InlineFilter />
-                                </Grid>
-                            </Grid>
-                            <TreeMap/>
-                        </Card>
+                        <InfluencerComparison from={from} to={to} />
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >

@@ -13,7 +13,6 @@ function ChipInputFilter(props) {
         clearInputValueOnChange	
         onDelete
         onChange={(chips) => {
-            console.log(chips)
             setKeywords(chips)
         }}
         />

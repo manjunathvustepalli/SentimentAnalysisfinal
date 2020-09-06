@@ -49,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
       flexShrink: 0,
-      
     },
   },
   appBar: {
@@ -78,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(1),
   },
 }));
 
@@ -164,13 +163,15 @@ const SideNavBar = ( props) => {
     
    const drawer = (
     <div>
-          <div className={classes.toolbar} id="userMenuHeader">
-            <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
-            <Grid container justify="space-around" className='grid-user'>
-              <Grid item align="left">
+          <div id="userMenuHeader">
+            <Grid container justify='space-around' flexDirection='row' >
+              <Grid xs={12}>
+              <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
+              </Grid>
+              <Grid item align="left" className='grid-user' xs={10} >
                 <Typography > Welcome User</Typography>
               </Grid>
-              <Grid item align="right">
+              <Grid item align="right" className='grid-user' xs={2}>
                 <Typography align="right"><ArrowDropDownIcon/></Typography>
               </Grid>
             </Grid>

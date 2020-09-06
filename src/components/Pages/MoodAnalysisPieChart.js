@@ -126,7 +126,6 @@ export default function MoodAnalysisPieChart() {
             }
         })
         .then(fetchedData => {
-            console.log(fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets)
             var sourceKeys,sourceBuckets,perDayKeys,perDayBuckets
             var uniqueSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
@@ -151,7 +150,6 @@ export default function MoodAnalysisPieChart() {
                     sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))[0]
                 });
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source => {
                 availableSourceKeys[source] = true
@@ -177,7 +175,6 @@ export default function MoodAnalysisPieChart() {
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
-        console.log(temp)
         if(temp){
             setData(temp)
         }

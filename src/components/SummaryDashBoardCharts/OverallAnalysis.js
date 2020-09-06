@@ -36,7 +36,6 @@ function OverallAnalysis({to, from}) {
 
     const handleChange = (value) => {
         setSource(value)
-        console.log(sourceData,mainSourceData)
         let obj = []
         let sum = 0
         sourceData.forEach(source => {

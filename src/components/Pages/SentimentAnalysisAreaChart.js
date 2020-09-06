@@ -18,10 +18,9 @@ import { Typography } from '@material-ui/core';
 import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
-
+ 
 const useStyles = makeStyles((theme) => ({
     main: {
-
         fontSize: 16,
         fontWeight: "bold",
         color: "#CB0038",

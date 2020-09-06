@@ -58,7 +58,6 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
-                console.log(user._source.User.Name)
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name

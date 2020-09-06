@@ -242,14 +242,14 @@ function MoodAnalysisBarChart(props) {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/mood-analysis/area-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
-                    <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
+                    <Typography style={{ color:'#43B02A',fontSize:'30px',}}>
                         Mood Analysis
                     </Typography>
                     <Card className={classes.main}>

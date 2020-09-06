@@ -237,7 +237,6 @@ function InfluencerAnalysis() {
             }
           })
             .then(res => {
-              console.log(res)
                 setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                     return {
                         influencer: <div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} >{doc.key.split('')[0].toUpperCase()}</Avatar> &nbsp;&nbsp; {doc.key} </div>,
@@ -322,7 +321,6 @@ function InfluencerAnalysis() {
           }
         })
           .then(res => {
-            console.log(res)
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                   return {
                       newspaper:doc.key,
