@@ -13,6 +13,9 @@ import Axios from 'axios';
 import { green } from '@material-ui/core/colors';
 import EmailIcon from '@material-ui/icons/Email';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import ArtTrackIcon from '@material-ui/icons/ArtTrack';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -323,10 +326,10 @@ function InfluencerAnalysis() {
           .then(res => {
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                   return {
-                      newspaper:doc.key,
-                      articles:doc.ArticleCount.value,
-                      mood:doc.Mood.buckets[0].key,
-                      sentiment:doc.Sentiment.buckets[0].key
+                      newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > <ArtTrackIcon/> </Avatar> &nbsp;&nbsp; {doc.key} </div>,
+                      articles: <span> <AssignmentIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
+                      mood:<span style={{color:colors[doc.Mood.buckets[0].key]}} > {doc.Mood.buckets[0].key} </span> ,
+                      sentiment:<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
                   }
               }))
               setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
