@@ -33,6 +33,7 @@ import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchIcon from '@material-ui/icons/Search';
+import { green } from '@material-ui/core/colors'
 
 
 const drawerWidth = 260;
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:"white"
   },
   AvatarBox:{
-      backgroundColor:'green'
+      backgroundColor:green[800]
   },
   
   content: {
@@ -89,7 +90,7 @@ const SideNavBar = ( props) => {
 
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:"#2ecc72"}
+        return {color:green[800]}
     }
     else{
         return {color:"black"}

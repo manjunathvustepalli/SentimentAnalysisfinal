@@ -58,17 +58,18 @@ function OverallAnalysis({to, from}) {
     }
 
     var colors = {
-        'joy':'rgba(0,255,0,0.5)',
-        'sad':'rgba(236, 240, 22,0.5)',
-        'anger':'rgba(240, 22, 37,0.5)',
-        'anticipation':'rgba(29, 180, 240,0.5)',
-        'disgust':'rgba(226, 29, 240,0.5)',
-        'surprise':'rgba(240, 124, 29,0.5)',
-        'fear':'rgba(0, 0, 0,0.5)',
-        'trust':'rgba(217, 202, 202,0.5)',
-        'positive':'rgba(0,255,0,0.5)',
-        'negative':'rgba(255,0,0,0.5)',
-        'neutral':'rgba(235,255,0,0.5)'}
+        'joy':'rgba(0,255,0)',
+        'sad':'rgba(236, 240, 22)',
+        'anger':'rgba(240, 22, 37)',
+        'anticipation':'rgba(29, 180, 240)',
+        'disgust':'rgba(226, 29, 240)',
+        'surprise':'rgba(240, 124, 29)',
+        'fear':'rgba(0, 0, 0)',
+        'trust':'rgba(217, 202, 202)',
+        'positive':'rgba(0,255,0)',
+        'negative':'rgba(255,0,0)',
+        'neutral':'rgba(235,255,0)'
+      }
 
     useEffect(() => {
         Axios.post(process.env.REACT_APP_URL,{

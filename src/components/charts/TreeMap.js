@@ -32,7 +32,11 @@ function TreeMap(props) {
                 plotOptions: {
                     series: {
                         dataLabels: {
-                            enabled: true
+                            enabled: false,
+                            style:{
+                                color:'rgb(0,0,0)',
+                                fontSize:'2rem'
+                            }
                         }
                         
                     }
@@ -58,7 +62,8 @@ function TreeMap(props) {
                     verticalAlign: 'top',
                     style: {
                         fontSize: '15px',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color:'#fff'
                     }
                 }
             }],

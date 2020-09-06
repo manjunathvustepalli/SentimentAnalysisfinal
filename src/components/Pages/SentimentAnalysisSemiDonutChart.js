@@ -19,7 +19,7 @@ import Table1 from '../Tables/Table1'
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
-
+import { addMonths } from '../../helpers/index'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -59,11 +59,12 @@ function SentimentAnalysisSemiDonutChart() {
     const [languages, setLanguages] = useState({})
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState([])
-    const [date, setDate] = useState(moment(new Date()).format('DD-MM-YYYY'))
+    const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [to, setTo] = useState(addMonths(new Date(),0))
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
-    }
+    } 
 
     useEffect(() => {
 
@@ -73,9 +74,9 @@ function SentimentAnalysisSemiDonutChart() {
            "date-based-range": {
              "date_range": {
                 "field": "CreatedAt",
-                "format": "dd-MM-yyyy HH:mm",
+                "format": "dd-MM-yyyy",
                 "ranges": [
-                  { "from": `${date} 00:00`, "to": `${date} 23:59` }
+                  { "from": from, "to": to }
                ]
              },
              "aggs": {
@@ -165,7 +166,7 @@ function SentimentAnalysisSemiDonutChart() {
             console.log(err)
         })        
 
-    }, [date,refresh])
+    }, [from,to,refresh])
 
     useEffect(() => {
         let tempData = sentimentAnalysisPieChartFilter(languages,sentiments,sources,sortedData)
@@ -242,7 +243,7 @@ function SentimentAnalysisSemiDonutChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    singleDate={setDate} 
+                                    toFromDatesHandlers={[setFrom,setTo]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     sentiments={[sentiments,setSentiments]}

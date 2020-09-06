@@ -8,6 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import { withStyles } from '@material-ui/core/styles';
 import { Typography, Grid, FormControl, InputLabel, Select, MenuItem, Avatar } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
@@ -17,11 +18,6 @@ import { green } from '@material-ui/core/colors';
 const columns = [
   { id: 'influencer', label: 'Influencer',align:'center' },
   { id: 'posts', label: 'Total Posts',align:'center' },
-  {
-    id: 'engagement',
-    label: 'Engagement',
-    align:'center'
-  },
   {
     id: 'followers',
     label: 'Total Followers',
@@ -55,11 +51,28 @@ const useStyles = makeStyles({
 }
 });
 
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: green[800],
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))(TableRow);
+
 export default function StickyHeadTable(props) {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sourceType, setSourceTypeChange] = useState([])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -75,32 +88,32 @@ export default function StickyHeadTable(props) {
     <Paper className={classes.root} >         
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
+          <TableHead  >
             <TableRow>
               {columns.map((column) => (
-                <TableCell
+                <StyledTableCell
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
-                </TableCell>
+                </StyledTableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
-                      <TableCell key={column.id} align={column.align}>
+                      <StyledTableCell key={column.id} align={column.align}>
                         {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
+                      </StyledTableCell>
                     );
                   })}
-                </TableRow>
+                </StyledTableRow>
               );
             })}
           </TableBody>

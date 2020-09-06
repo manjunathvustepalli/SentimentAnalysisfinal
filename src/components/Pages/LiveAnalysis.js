@@ -170,10 +170,16 @@ function LiveAnalysis() {
                             title='Live Analysis'
                             columns={[
                                 {title:'Name',field:'name'},
-                                {title:'Screen Name',field:'screenName'},
+                                {title:'Screen Name',field:'screenName',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
                                 {title:'Tweet',field:'tweet'},
-                                {title:'Followers Count',field:'followersCount'},
-                                {title:'Retweet Count',field:'retweetCount'},
+                                {title:'Followers Count',field:'followersCount',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" },},
+                                {title:'Retweet Count',field:'retweetCount',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" },},
                                 {title:'Mood',field:'mood'},
                                 {title:'Sentiment',field:'sentiment'},
                             ]}
@@ -181,7 +187,13 @@ function LiveAnalysis() {
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
-                                maxBodyHeight:500
+                                maxBodyHeight:500,
+                                headerStyle:{
+                                    backgroundColor:green[800],
+                                    color:'white',
+                                    paddingTop:'10px',
+                                    paddingBottom:'10px',
+                                }
                             }}
                         />
                     </Grid>

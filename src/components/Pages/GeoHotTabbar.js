@@ -72,12 +72,12 @@ function TabbarMUI() {
           textColor="primary"
           variant="scrollable"
           scrollButtons="auto"
-          TabIndicatorProps={{style: {background:green[400]}}}
+          TabIndicatorProps={{style: {background:green[800]}}}
           aria-label="scrollable auto tabs example"
         >
-          <Tab label="Sentiment" style={{color:value===0 && (green[400])}} {...a11yProps(0)} />
-          <Tab label="Mood" style={{color:value===1 && (green[400])}} {...a11yProps(1)} />
-          <Tab label="Spatio Temporal" style={{color:value===2 && (green[400])}} {...a11yProps(2)} />
+          <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
+          <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
+          <Tab label="Spatio Temporal" style={{color:value===2 && (green[800])}} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>

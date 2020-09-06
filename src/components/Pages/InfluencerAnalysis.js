@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
 import PropTypes from "prop-types";
-import {Box, Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles, Tab, Tabs } from '@material-ui/core'
+import {Box, Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles, Tab, Tabs, Avatar } from '@material-ui/core'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import FilterHeader from '../Filters/FilterHeader'
@@ -10,6 +10,9 @@ import Table3 from '../Tables/Table3'
 import TreeMap from '../charts/TreeMap'
 import { addMonths } from '../../helpers'
 import Axios from 'axios';
+import { green } from '@material-ui/core/colors';
+import EmailIcon from '@material-ui/icons/Email';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -47,17 +50,33 @@ function InfluencerAnalysis() {
     const [refresh, setRefresh] = useState(true)
     const [sources,setSources] = useState(['Twitter','Newspaper'])
     const [source,setSource] = useState('Twitter')
-    const [languages,setLanguages] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
-    const [moods, setMoods] = useState({'joy':true,'sad':true,'anger':true,'anticipation':true,'disgust':true,'surprise':true,'fear':true,'trust':true})
-    const [sentiments, setSentiments] = useState({'negative':true,'positive':true,'neutral':true})
     const [data, setData] = useState([])
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
-
+  
+    var colors = {
+      'joy':green[800],
+      'sad':'rgba(236, 240, 22)',
+      'anger':'rgba(240, 22, 37)',
+      'anticipation':'rgba(29, 180, 240)',
+      'disgust':'rgba(226, 29, 240)',
+      'surprise':'rgba(240, 124, 29)',
+      'fear':'rgba(0, 0, 0)',
+      'trust':'rgba(217, 202, 202)',
+      'positive':green[800],
+      'negative':'rgba(255,0,0)',
+      'neutral':'rgba(235,255,0)'
+    }
 
     const useStyles = makeStyles((theme) => ({
+      root: {
+        display: 'flex',
+        '& > *': {
+          margin: theme.spacing(1),
+        },
+      },
         main: {
     
             fontSize: 16,
@@ -108,6 +127,7 @@ function InfluencerAnalysis() {
       name: 'Neutral',
       color: '#EC9800'
   }]
+  
   const parentMood = [{
     id:'joy',
     name:'Joy',
@@ -141,9 +161,10 @@ function InfluencerAnalysis() {
     name:'trust',
     color:"rgb(217, 202, 202)"
   }]
-    const classes = useStyles();
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event, newValue) => {
+
+  const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
@@ -219,12 +240,11 @@ function InfluencerAnalysis() {
               console.log(res)
                 setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                     return {
-                        influencer: doc.key,
-                        posts:doc.Posts.value,
-                        followers:doc.Followers.value,
-                        engagement:doc.influenceWeight.value,
-                        mood:doc.Moods.buckets[0].key,
-                        sentiment:doc.Sentiment.buckets[0].key
+                        influencer: <div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} >{doc.key.split('')[0].toUpperCase()}</Avatar> &nbsp;&nbsp; {doc.key} </div>,
+                        posts: <span> <EmailIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Posts.value} </span>,
+                        followers: <span> <SupervisorAccountIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Followers.value} </span>,
+                        mood: <span style={{color:colors[doc.Moods.buckets[0].key]}} > {doc.Moods.buckets[0].key} </span> ,
+                        sentiment: <span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
                     }
                 }))
                 setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
@@ -349,7 +369,7 @@ function InfluencerAnalysis() {
                                             Top Influencers
                                         </CardContent>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    {/* <Grid item xs={4}>
                                         <FormControl variant="outlined" className={classes.formControl}>
                                             <InputLabel id="select-table"></InputLabel>
                                             <Select
@@ -363,7 +383,7 @@ function InfluencerAnalysis() {
                                                 <MenuItem value='top 30 influencers'>Top 30 influencers</MenuItem>
                                             </Select>
                                         </FormControl>
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12}>
                                         {
                                             source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} />)
@@ -386,12 +406,13 @@ function InfluencerAnalysis() {
                                                 onChange={handleChange}
                                                 indicatorColor="primary"
                                                 textColor="primary"
+                                                TabIndicatorProps={{style: {background:green[800]}}}
                                                 variant="scrollable"
                                                 scrollButtons="auto"
                                                 aria-label="scrollable auto tabs example"
                                             >
-                                                <Tab label="Sentiment" {...a11yProps(0)} />
-                                                <Tab label="Mood" {...a11yProps(1)} />
+                                                <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
+                                                <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
                                             </Tabs>
                                         </Grid>
                                     </Grid>

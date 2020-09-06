@@ -86,7 +86,7 @@ function ExportData() {
     return (
         <SideNav>
             <Card>
-                <Grid container spacing={5} style={{padding:'20px'}}>
+                <Grid container spacing={5} style={{width:'80vw'}}>
                     <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
@@ -161,19 +161,30 @@ function ExportData() {
                             title='Export Data'
                             columns={[
                                 {title:'Name',field:'name',editable:'never'},
-                                {title:'Screen Name',field:'screenName',editable:'never'},
+                                {title:'Screen Name',field:'screenName',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
                                 {title:'Tweet',field:'tweet',editable:'never'},
-                                {title:'Followers Count',field:'followersCount',editable:'never'},
-                                {title:'Retweet Count',field:'retweetCount',editable:'never'},
-                                {title:'Mood',field:'mood', lookup:{'joy':'Joy','anger':'Anger','surprise':'Surprise','anticipation':'Anticipation','trust':'Trust','sad':'Sad','disgust':'Disgust','fear':'Fear'} },
-                                {title:'Sentiment',field:'sentiment',lookup:{'positive':'Positive','negative':'Negative','neutral':'Neutral'}},
+                                {title:'Followers Count',field:'followersCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Retweet Count',field:'retweetCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Mood(Predicted)',field:'mood',editable:"never" },
+                                {title:'Mood(Manual)',field:'manualMood', lookup:{'joy':'Joy','anger':'Anger','surprise':'Surprise','anticipation':'Anticipation','trust':'Trust','sad':'Sad','disgust':'Disgust','fear':'Fear'} },
+                                {title:'Sentiment(Predicted)',field:'sentiment',editable:"never"},
+                                {title:'Sentiment(Manual)',field:'manualSentiment',lookup:{'positive':'Positive','negative':'Negative','neutral':'Neutral'}},
                             ]}
                             data={data}
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
                                 exportButton: true,
-                                maxBodyHeight:500
+                                maxBodyHeight:500,
+                                headerStyle:{
+                                    backgroundColor:green[800],
+                                    color:'white',
+                                    paddingTop:'10px',
+                                    paddingBottom:'10px',
+                                }
                             }}
                             editable={{
                                 onRowUpdate: (newData, oldData) =>
