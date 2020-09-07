@@ -11,6 +11,7 @@ import Select from '@material-ui/core/Select';
 import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
 import { addMonths } from '../../helpers'
+import moment from 'moment'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -36,25 +37,28 @@ function LiveAnalysis() {
     const classes = useStyles();
     const [data, setData] = useState([])
     const [liveReloading, setLiveReloading] = useState(false)
-    const [reloadInterval, setReloadInterval] = useState(10000)
-    const [to, setTo] = useState(addMonths(new Date(),0))
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [reloadInterval, setReloadInterval] = useState(5000)
+    const [to, setTo] = useState(new Date())
+    const [from, setFrom] = useState(new Date())
     const [keyword, setKeyword] = useState('')
 
     function fetchData(){
+
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "aggs": {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
+                  "time_zone": "+05:30",
+                  "format": "dd-MMM-yyyy-hh:mm",
                   "ranges": [
-                    { "from":from, "to": to }
+                    { "to": "now-1m/m"},
+                    { "from": "now-1m/m", "to": "now/m"},
+                    { "from": "now/m"}
                   ]
                 }
               }
-            },
-            "from": 1000
+            }
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
@@ -68,6 +72,7 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
+                console.log(user._source.User.Name)
                 return obj
             })
             setData(final)
@@ -110,7 +115,7 @@ function LiveAnalysis() {
     useEffect(() => {
         fetchData()
         const interval = setInterval(() => {
-            if(liveReloading){
+            if(liveReloading && !keyword){
                 fetchData()
             }
           }, reloadInterval);
@@ -140,7 +145,7 @@ function LiveAnalysis() {
                     </Button>
                     </Grid>
                     <Grid item xs={4} align="left">
-                        <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                        <GridTimeFilter dateTime={true} toFromDatesHandlers={[setTo,setFrom]} />
                     </Grid>
                     <Grid item xs={2} align="right">
                         {

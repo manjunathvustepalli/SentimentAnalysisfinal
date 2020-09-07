@@ -30,11 +30,27 @@ function TreeMap(props) {
         exporting: {
             chartOptions: {
                 plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: false,
+                    treemap:{
+                        dataLabels:{
+                            enabled:true,
                             style:{
-                                color:'rgb(0,0,0)',
+                                color:'black'
+                            }
+                        }
+                    },
+                    series: {
+                        treemap:{
+                            label:{
+                                enabled:true,
+                                style:{
+                                    color:'black'
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            style:{
+                                color:'black',
                                 fontSize:'2rem'
                             }
                         }
@@ -67,10 +83,10 @@ function TreeMap(props) {
                     }
                 }
             }],
-            data:props.data || [{
+            data: props.data || [{
                 id: 'negative',
                 name: 'Negative',
-                color: "#EC2500"
+                color: "#EC2500",
             }, {
                 id: 'positive',
                 name: 'Positive',

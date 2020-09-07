@@ -9,7 +9,7 @@ var sortedData = {}
 
 function WordCloud(props) {
 
-    const { from,to } = props
+    const { from,to,keywords,keywordType } = props
     const [sources, setSources] = useState([])
     const [source, setSource] = useState('')
     const [sentiment, setSentiment] = useState('positive')
@@ -17,7 +17,7 @@ function WordCloud(props) {
     const [data, setData] = useState([])
 
     useEffect(()=>{
-        Axios.post(process.env.REACT_APP_URL,{
+        let query = {
             "aggs": {
                 "date-based-range": {
                     "date_range": {
@@ -58,7 +58,21 @@ function WordCloud(props) {
                     }
                 }
             }
-        })
+        }
+        if(keywordType === 'Screen Name'){
+            query["query"] = {
+                "terms": {
+                  "User.ScreenName.keyword": keywords
+                }
+              }
+        } else if (keywordType === 'Hash Tags') {
+            query["query"] =  {
+                "terms": {
+                  "HashtagEntities.Text.keyword": keywords
+                }
+            }
+        }
+        Axios.post(process.env.REACT_APP_URL,query)
         .then(fetchedData => {
             let sourceBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].Source.buckets
             let sourceKeys = getKeyArray(sourceBuckets)
@@ -131,7 +145,7 @@ function WordCloud(props) {
         .catch(err => {
             console.log(err)
         })
-    },[to,from])
+    },[to,from,keywords,keywordType])
 
     useEffect(() => {
         setData(prev => {

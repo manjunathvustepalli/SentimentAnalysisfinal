@@ -31,7 +31,7 @@ function InfluencerComparison({from,to}) {
         'anticipation':'rgba(29, 180, 240)',
         'disgust':'rgba(226, 29, 240)',
         'surprise':'rgba(240, 124, 29)',
-        'fear':'rgba(0, 0, 0)',
+        'fear':'#616C6F',
         'trust':'rgba(217, 202, 202)',
         'positive':green[800],
         'negative':'rgba(255,0,0)',
@@ -41,47 +41,113 @@ function InfluencerComparison({from,to}) {
     const parent = [{
         id: 'negative',
         name: 'Negative',
-        color: "#EC2500"
+        color: "#EC2500",
+        dataLabels:{
+          color:'#000',
+          style:{
+              textOutline:'none'
+          }
+      }
     }, {
         id: 'positive',
         name: 'Positive',
-        color: "#9EDE00"
+        color: "#9EDE00",
+        dataLabels:{
+          color:'#000',
+          style:{
+              textOutline:'none'
+          }
+      }
     }, {
         id: 'neutral',
         name: 'Neutral',
-        color: '#EC9800'
+        color: '#EC9800',
+        dataLabels:{
+          color:'#000',
+          style:{
+              textOutline:'none'
+          }
+      }
     },{
       id:'joy',
       name:'Joy',
-      color:"rgb(0,255,0)"
+      color:"rgb(0,255,0)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'sad',
       name:'sad',
-      color:"rgb(236,240,22)"
+      color:"rgb(236,240,22)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'anger',
       name:'anger',
-      color:"rgb(240,22,37)"
+      color:"rgb(240,22,37)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'anticipation',
       name:'anticipation',
-      color:"rgb(29, 180, 240)"
+      color:"rgb(29, 180, 240)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'disgust',
       name:'disgust',
-      color:"rgb(226, 29, 240)"
+      color:"rgb(226, 29, 240)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'surprise',
       name:'surprise',
-      color:"rgb(240,124,29)"
+      color:"rgb(240,124,29)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'fear',
       name:'fear',
-      color:"rgb(0,0,0)"
+      color:"#616C6F",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     },{
       id:'trust',
       name:'trust',
-      color:"rgb(217, 202, 202)"
+      color:"rgb(217, 202, 202)",
+      dataLabels:{
+        color:'#000',
+        style:{
+            textOutline:'none'
+        }
+    }
     }]
 
     useEffect(() => {
@@ -159,7 +225,13 @@ function InfluencerComparison({from,to}) {
                           return {
                               name: doc.key,
                               parent:doc[type].buckets[0].key,
-                              value:doc.influenceWeight.value 
+                              value:doc.influenceWeight.value,
+                              dataLabels:{
+                                color:'#000',
+                                style:{
+                                    textOutline:'none'
+                                }
+                            }
                           }
                       })))
                 })
@@ -226,6 +298,12 @@ function InfluencerComparison({from,to}) {
                         name:doc.key,
                         value:doc.ArticleCount.value,
                         parent:doc[type].buckets[0].key,
+                        dataLabels:{
+                          color:'#000',
+                          style:{
+                              textOutline:'none'
+                          }
+                      }
                     }
                 })))
               })

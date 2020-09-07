@@ -3,7 +3,7 @@ import 'date-fns'
 import DateFnsUtils from "@date-io/date-fns";
 import {
     MuiPickersUtilsProvider,
-    KeyboardDatePicker,
+    KeyboardDateTimePicker,
   } from "@material-ui/pickers";
   import { makeStyles } from '@material-ui/core/styles';
 import { addMonths } from '../../helpers';
@@ -17,12 +17,20 @@ function GridTimeFilter(props) {
     const Etime = new Date();
     const [endDate, setEndDate] = useState(Etime);
     const [setTo, setFrom] = props.toFromDatesHandlers;
-    const handleStartDateChange = (date) => { 
+    const handleStartDateChange = (date) => {
+      if(props.dateTime){
+        setTo(date)
+      }else {
         setTo(addMonths(date,0))
+      }
         setStartDate(date)
       };
       const handleEndDateChange = (date) => {
-        setFrom(addMonths(date,0))
+        if(props.dateTime){
+          setFrom(date)
+        }else {
+          setFrom(addMonths(date,0))
+        }        
         setEndDate(date)
       };
   
@@ -39,7 +47,7 @@ function GridTimeFilter(props) {
         <Grid container>
             <Grid item xs={12} sm={12} md={6} lg={6}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
+            <KeyboardDateTimePicker
               className={classes.formControl}
               id="start-date-picker-dialog"
               label="Start Date"
@@ -56,7 +64,7 @@ function GridTimeFilter(props) {
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
+            <KeyboardDateTimePicker
               className={classes.formControl}
               id="end-date-picker-dialog"
               label="End Date"

@@ -4,6 +4,29 @@ import { makeStyles } from '@material-ui/core/styles';
 import SemiDonutChart from '../charts/SemiDonutChart'
 import Axios from 'axios';
 import PieChart from '../charts/PieChart';
+import { getKeyArray } from '../../helpers';
+
+var sortedData =  {}
+
+function nFormatter(num, digits) {
+  var si = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "k" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "G" },
+    { value: 1E12, symbol: "T" },
+    { value: 1E15, symbol: "P" },
+    { value: 1E18, symbol: "E" }
+  ];
+  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  var i;
+  for (i = si.length - 1; i > 0; i--) {
+    if (num >= si[i].value) {
+      break;
+    }
+  }
+  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+}
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -30,9 +53,29 @@ function OverallAnalysis({to, from}) {
     const [sentiments, setSentiments] = useState([])
     const [moods, setMoods] = useState([])
     const [sources, setSources] = useState([])
-    const [source, setSource] = useState('twitter')
+    const [source, setSource] = useState('')
     const [sourceData, setSourceData] = useState([])
     const [mainSourceData, setMainSourceData] = useState([])
+
+    const getPositiveSentiment =() => {
+      let value = ''
+      sentiments.forEach(sentimentObj =>{
+        if(sentimentObj.name === 'positive'){
+          value = sentimentObj.y
+        }
+      })
+      return nFormatter(value,0)
+    }
+
+    const getJoyMood = () => {
+      let value = ''
+      moods.forEach(moodObj =>{
+        if(moodObj.name ==='joy'){
+          value = moodObj.y
+        }
+      })
+      return nFormatter(value,0)
+    }
 
     const handleChange = (value) => {
         setSource(value)
@@ -54,6 +97,8 @@ function OverallAnalysis({to, from}) {
             y:sum
         })
         setMainSourceData(obj)
+        setSentiments(sortedData[value].sentiment)
+        setMoods(sortedData[value].mood)
     }
 
     var colors = {
@@ -83,19 +128,26 @@ function OverallAnalysis({to, from}) {
                   ]
                 },
                 "aggs": {
-                  "Sentiment": {
-                    "terms": {
-                      "field": "predictedSentiment.keyword"
-                    }
-                  },
-                  "Mood": {
-                    "terms": {
-                      "field": "predictedMood.keyword"
-                    }
-                  },
                   "Source": {
                     "terms": {
                       "field": "Source.keyword"
+                    }
+                  },
+                  "sources-mood-sentiment":{
+                    "terms":{
+                      "field":"Source.keyword"
+                    },
+                    "aggs":{
+                      "Sentiment":{
+                        "terms":{
+                          "field":"predictedSentiment.keyword"
+                        }
+                      },
+                      "Mood": {
+                        "terms": {
+                          "field": "predictedMood.keyword"
+                        }
+                      }
                     }
                   }
                 }
@@ -103,14 +155,14 @@ function OverallAnalysis({to, from}) {
             }
           })
           .then(res => {
-              setSentiments(res.data.aggregations['date-based-range'].buckets[0].Sentiment.buckets.map(doc => {return{name:doc.key,y:doc.doc_count,color:colors[doc.key]}}))
-              setMoods(res.data.aggregations['date-based-range'].buckets[0].Mood.buckets.map(doc => {return{name:doc.key,y:doc.doc_count,color:colors[doc.key]}}))
+            console.log(res.data.aggregations['date-based-range'].buckets[0]['sources-mood-sentiment'].buckets)
               setSources(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>doc.key))
               setSourceData(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}))
               let obj = []
-        let sum = 0
-        res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}).forEach(source => {
-            if(Object.keys(source)[0] !== 'twitter'){
+            let sum = 0
+            setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key)
+          res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}).forEach(source => {
+            if(Object.keys(source)[0] !== res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key){
                 sum += source[Object.keys(source)[0]]
             } else {
                 obj.push({
@@ -119,13 +171,39 @@ function OverallAnalysis({to, from}) {
                 })
             }
 
-        })
+          })
         obj.push({
             name:'others',
             y:sum
         })
         setMainSourceData(obj)
+        let sourceBuckets = res.data.aggregations['date-based-range'].buckets[0]['sources-mood-sentiment'].buckets
+        let sourceKeys = getKeyArray(sourceBuckets)
+        sourceKeys.forEach((source,i) => {
+          console.log(source)
+          sortedData[source] = {}
+          let moodBuckets = sourceBuckets[i].Mood.buckets
+          let sentimentBuckets = sourceBuckets[i].Sentiment.buckets
+          sortedData[source].mood = moodBuckets.map(moodObj =>{
+            return {
+              name:moodObj.key,
+              y:moodObj.doc_count,
+              color:colors[moodObj.key]
+            }
           })
+          sortedData[source].sentiment = sentimentBuckets.map(sentimentObj =>{
+            return {
+              name:sentimentObj.key,
+              y:sentimentObj.doc_count,
+              color:colors[sentimentObj.key]
+            }
+          })
+        })
+        console.log(sortedData)
+        let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
+        setSentiments(sortedData[s].sentiment)
+        setMoods(sortedData[s].mood)
+      })
     }, [from,to])
 
     return (
@@ -150,13 +228,15 @@ function OverallAnalysis({to, from}) {
                 </FormControl>
                 <Card style={{backgroundColor:'#2F363F',color:'white'}} align='center'>
                     <Typography variant='subtitle1' >
-                        40K+ Twitter mentions
+                        {nFormatter(mainSourceData.length && (
+                          mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)
+                        ),0)}+ &nbsp; {source} mentions
                     </Typography>
                     <Typography variant='subtitle1'>
-                        40+ positive sentiment
+                        {getPositiveSentiment()}+ &nbsp; positive sentiment
                     </Typography>
                     <Typography variant='subtitle1'>
-                        35+ Positive mood
+                        {getJoyMood()}+ Joy mood
                     </Typography>
                 </Card>
             </Grid>

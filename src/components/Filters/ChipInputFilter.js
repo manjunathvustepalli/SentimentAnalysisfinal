@@ -11,7 +11,7 @@ function ChipInputFilter(props) {
         variant="outlined"
         label="Type Keyword"
         clearInputValueOnChange	
-        onDelete
+        style={{transform:props.transform ? 'translateY(20%)' : ''}}
         onChange={(chips) => {
             setKeywords(chips)
         }}

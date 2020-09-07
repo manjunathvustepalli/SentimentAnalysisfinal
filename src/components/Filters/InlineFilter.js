@@ -51,7 +51,7 @@ function InlineFilter(props) {
                         
                     </Select>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <InputLabel id="demo-simple-select-helper-label" className={classes.filterColorDefault}>Mood </InputLabel>
                     <Select
                     labelId="demo-simple-select-helper-label"

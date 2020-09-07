@@ -19,6 +19,8 @@ import WordCloud from '../SummaryDashBoardCharts/WordCloud'
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
 import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
+import ChipInputFilter from '../Filters/ChipInputFilter';
+import Keywords from '../Filters/Keywords';
 
 
 const IconWithText = styled.div`
@@ -53,6 +55,8 @@ function SummaryDashBoard() {
     const classes = useStyles();
     const [refresh, setRefresh] = useState(false)
     const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywords, setKeywords] = useState([])
     const [to, setTo] = useState(addMonths(new Date(),0))
 
     return (
@@ -75,23 +79,18 @@ function SummaryDashBoard() {
                             <Select
                                 labelId="keyword-type-label"
                                 id="keyword-type"
-                                label="Change Chart Type"
+                                label="Keyword Type"
+                                value={keywordType}
+                                onChange={(e) => setKeywordType(e.target.value)}
                             >
-                            <MenuItem value='area'>Entire Data</MenuItem>
-                            <MenuItem value='line'>Screen Name</MenuItem>
-                            <MenuItem value='bar'>Hashtags</MenuItem>
+                            <MenuItem value='Entire Data'>Entire Data</MenuItem>
+                            <MenuItem value='Screen Name'>Screen Name</MenuItem>
+                            <MenuItem value='Hash Tags'> Hash Tags </MenuItem>
                             </Select>
                             </FormControl>
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                        <TextField
-                                            id="keyword"
-                                            label='Enter keyword'
-                                            variant="outlined"
-                                            fullWidth
-                                        />
-                                    </FormControl>
+                                    <ChipInputFilter transform={true} setKeywords={setKeywords} />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} >
                                     <GridTimeFilter toFromDatesHandlers={[setFrom,setTo]} />
@@ -103,18 +102,18 @@ function SummaryDashBoard() {
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
                     <Grid item xl={4} md={12} xs={12}>
-                        <OverallAnalysis to={to} from={from}/>
+                        <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
                     </Grid>
                     <Grid item xl={4} md={6} sm={12} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Mood Analysis</CardContent> 
-                            <MoodAnalysis dates={[from,to]} />
+                            <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
                         </Card>
                     </Grid>                    
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Sentiment Analysis</CardContent>
-                            <SentimentAnalysis  dates={[from,to]} />
+                            <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
@@ -122,7 +121,7 @@ function SummaryDashBoard() {
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} >
-                           <WordCloud to={to} from={from} />
+                           <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
@@ -132,7 +131,7 @@ function SummaryDashBoard() {
                                     Geo Tagging Summary
                                 </Grid>
                                 <Grid item xs={7}>
-                                    <InlineFilter />
+                                    <InlineFilter sources={['newspaper','twitter']} source={'newspaper'} sentiment={'positive'} mood={'joy'} />
                                 </Grid>
                                 <Grid item xs={12} align="center">
                                     <GeoHotSpotMap />
