@@ -225,7 +225,7 @@ function MoodAnalysisLineChart() {
  
     return (
         <SideNav>
-        <div style={{ backgroundColor: '#F7F7F7',padding:'20px', }}>            
+        <div style={{ backgroundColor: '#F7F7F7',padding:'20px 0px 20px 20px', }}>            
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}

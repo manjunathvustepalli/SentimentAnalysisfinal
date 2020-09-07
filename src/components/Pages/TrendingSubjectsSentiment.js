@@ -37,6 +37,8 @@ function InfluencerAnalysis() {
   const [sentiment, setSentiment] = useState('positive');
   const [data, setData] = useState([])
   const [noData, setnoData] = useState(true)
+  const [keywords, setKeywords] = useState([])
+  const [keywordType, setKeywordType] = useState('Entire Data')
 
 
   const useStyles = makeStyles((theme) => ({
@@ -81,7 +83,7 @@ function InfluencerAnalysis() {
 
 
 useEffect(()=>{
-  Axios.post(process.env.REACT_APP_URL,{
+  let query = {
     "aggs": {
         "date-based-range": {
             "date_range": {
@@ -129,7 +131,22 @@ useEffect(()=>{
             }
         }
     }
-})
+}
+
+if(keywordType === 'Screen Name'){
+  query["query"] = {
+      "terms": {
+        "User.ScreenName.keyword": keywords
+      }
+    }
+} else if (keywordType === 'Hash Tags') {
+  query["query"] =  {
+      "terms": {
+        "HashtagEntities.Text.keyword": keywords
+      }
+  }
+}
+  Axios.post(process.env.REACT_APP_URL,query)
 .then(fetchedData => {
   let uniqueSources = []
   let uniqueSubSources = []
@@ -174,7 +191,7 @@ useEffect(()=>{
 .catch(err=>{
   console.log(err)
 })
-},[from,to,refresh])
+},[from,to,refresh,keywords,keywordType])
 
 useEffect(() => {
    try{
@@ -194,7 +211,7 @@ useEffect(() => {
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0px 20px 20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
@@ -274,6 +291,8 @@ useEffect(() => {
                     radioSources={[source,setSource,sources]}
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    setKeywords={setKeywords}
+                    keywordTypes={[keywordType, setKeywordType]}
                   />
                 </FilterWrapper>
               </Grid>

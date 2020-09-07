@@ -18,7 +18,6 @@ import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import {wordCloudSentimentFilter} from '../../helpers/filter';
 
-
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
   
@@ -93,15 +92,11 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
-    const handleChange = (e) => {
-        setChartType(e.target.value)
-    }
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
       };
 
-    const [chartType, setChartType] = useState('pie')
     const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
     const [sources, setSources] = useState({})
     const [subSources,setSubSources] = useState({})
@@ -111,10 +106,12 @@ function WordCloudSentiment() {
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
     const [wordCount, setWordCount] = useState(30)
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
 
 
     useEffect( () => {
-        Axios.post(process.env.REACT_APP_URL,{
+        let query = {
             "aggs": {
                 "date-based-range": {
                     "date_range": {
@@ -162,7 +159,21 @@ function WordCloudSentiment() {
                     }
                 }
             }
-        })
+        }
+        if(keywordType === 'Screen Name'){
+            query["query"] = {
+                "terms": {
+                  "User.ScreenName.keyword": keywords
+                }
+              }
+        } else if (keywordType === 'Hash Tags') {
+            query["query"] =  {
+                "terms": {
+                  "HashtagEntities.Text.keyword": keywords
+                }
+            }
+        }
+        Axios.post(process.env.REACT_APP_URL,query)
           .then(fetchedData =>{
             var sourceKeys,subSourceKeys,sentimentKeys
             var uniqueSourceKeys = []
@@ -237,7 +248,7 @@ function WordCloudSentiment() {
           .catch(err => {
               console.log(err.response)
           })
-    },[to,from,refresh])
+    },[to,from,refresh,keywords,keywordType])
 
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
@@ -251,8 +262,7 @@ function WordCloudSentiment() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
-            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             <Grid container spacing={2} >
                 <Grid item sm={12} md={8}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -343,6 +353,8 @@ function WordCloudSentiment() {
                                     sources={[sources, setSources]} 
                                     sentiments={[sentiments,setSentiments]}
                                     subSources={[subSources,setSubSources]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>
                         </Grid>

@@ -35,7 +35,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchIcon from '@material-ui/icons/Search';
 import { green } from '@material-ui/core/colors'
 
-
 const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
@@ -74,10 +73,8 @@ const useStyles = makeStyles((theme) => ({
   AvatarBox:{
       backgroundColor:green[800]
   },
-  
   content: {
     flexGrow: 1,
-    padding: theme.spacing(1),
   },
 }));
 

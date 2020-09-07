@@ -35,6 +35,8 @@ function InfluencerAnalysis() {
   const [mood, setmood] = useState('joy');
   const [data, setData] = useState([])
   const [noData, setnoData] = useState(true)
+  const [keywords, setKeywords] = useState([])
+  const [keywordType, setKeywordType] = useState('Entire Data')
 
 
   const useStyles = makeStyles((theme) => ({
@@ -77,9 +79,8 @@ function InfluencerAnalysis() {
 
   const classes = useStyles();
 
-
 useEffect(()=>{
-  Axios.post(process.env.REACT_APP_URL,{
+  let query = {
     "aggs": {
         "date-based-range": {
             "date_range": {
@@ -127,7 +128,22 @@ useEffect(()=>{
             }
         }
     }
-})
+}
+
+if(keywordType === 'Screen Name'){
+  query["query"] = {
+      "terms": {
+        "User.ScreenName.keyword": keywords
+      }
+    }
+} else if (keywordType === 'Hash Tags') {
+  query["query"] =  {
+      "terms": {
+        "HashtagEntities.Text.keyword": keywords
+      }
+  }
+}
+  Axios.post(process.env.REACT_APP_URL,query)
 .then(fetchedData => {
   let uniqueSources = []
   let uniqueSubSources = []
@@ -172,7 +188,7 @@ useEffect(()=>{
 .catch(err=>{
   console.log(err)
 })
-},[from,to,refresh])
+},[from,to,refresh,keywords,keywordType])
 
 useEffect(() => {
    try{
@@ -193,7 +209,7 @@ useEffect(() => {
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0 20px 20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
@@ -215,9 +231,6 @@ useEffect(() => {
                       value={mood}
                       onChange={(e) => setmood(e.target.value)}
                     >
-                    <MenuItem value="happy">
-                      Happy
-                    </MenuItem>
                     <MenuItem value="joy">Joy</MenuItem>
                     <MenuItem value="sad">Sad</MenuItem>
                     <MenuItem value="anger">Anger</MenuItem>
@@ -278,6 +291,8 @@ useEffect(() => {
                     radioSources={[source,setSource,sources]}
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    setKeywords={setKeywords}
+                    keywordTypes={[keywordType, setKeywordType]}
                   />
                 </FilterWrapper>
               </Grid>

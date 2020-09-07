@@ -60,57 +60,73 @@ export default function SentimentalAnalysisPieChart() {
     const [data, setData] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
+        let query = {
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                   "field": "CreatedAt",
+                   "format": "dd-MM-yyyy",
+                   "ranges": [
+                     { "from": from, "to": to }
+                  ]
+                },
+                "aggs": {
+                  "lang": {
+                    "terms": {
+                      "field": "predictedLang.keyword"
+                    },
+                    "aggs": {
+                      "Source": {
+                        "terms": {
+                          "field": "Source.keyword"
+                        },
+                        "aggs": {
+                              "per-day": {
+                                "date_histogram": {
+                                    "field": "CreatedAt",
+                                    "format": "yyyy-MM-dd", 
+                                    "calendar_interval": "day"
+                                },
+                              "aggs": {
+                                "Daily-Sentiment-Distro": {
+                                  "terms": {
+                                    "field": "predictedSentiment.keyword"
+                                  }
+                                }
+                              }
+                              }
+                          }
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
 
         Axios.post(process.env.REACT_APP_URL,
-        {
-         "aggs": {
-           "date-based-range": {
-             "date_range": {
-                "field": "CreatedAt",
-                "format": "dd-MM-yyyy",
-                "ranges": [
-                  { "from": from, "to": to }
-               ]
-             },
-             "aggs": {
-               "lang": {
-                 "terms": {
-                   "field": "predictedLang.keyword"
-                 },
-                 "aggs": {
-                   "Source": {
-                     "terms": {
-                       "field": "Source.keyword"
-                     },
-                     "aggs": {
-                           "per-day": {
-                             "date_histogram": {
-                                 "field": "CreatedAt",
-                                 "format": "yyyy-MM-dd", 
-                                 "calendar_interval": "day"
-                             },
-                           "aggs": {
-                             "Daily-Sentiment-Distro": {
-                               "terms": {
-                                 "field": "predictedSentiment.keyword"
-                               }
-                             }
-                           }
-                           }
-                       }
-                       }
-                   }
-                 }
-               }
-             }
-           }
-         },{
+        query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -165,7 +181,7 @@ export default function SentimentalAnalysisPieChart() {
             console.log(err)
         })        
 
-    }, [from,to,refresh])
+    }, [from,to,refresh,keywords,keywordType])
 
     useEffect(() => {
         let tempData = sentimentAnalysisPieChartFilter(languages,sentiments,sources,sortedData)
@@ -176,7 +192,7 @@ export default function SentimentalAnalysisPieChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
@@ -245,6 +261,8 @@ export default function SentimentalAnalysisPieChart() {
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     sentiments={[sentiments,setSentiments]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>
                         </Grid>

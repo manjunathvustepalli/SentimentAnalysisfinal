@@ -68,57 +68,72 @@ export default function MoodAnalysisSemiDonutChart() {
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [languages,setLanguages] = useState([])
     const [moods, setMoods] = useState([])
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
-
+        let query = {
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                   "field": "CreatedAt",
+                   "format": "dd-MM-yyyy",
+                   "ranges": [
+                     { "from": from, "to": to }
+                  ]
+                },
+                "aggs": {
+                  "lang": {
+                    "terms": {
+                      "field": "predictedLang.keyword"
+                    },
+                    "aggs": {
+                      "Source": {
+                        "terms": {
+                          "field": "Source.keyword"
+                        },
+                        "aggs": {
+                              "per-day": {
+                                "date_histogram": {
+                                    "field": "CreatedAt",
+                                    "format": "yyyy-MM-dd", 
+                                    "calendar_interval": "day"
+                                },
+                              "aggs": {
+                                "Daily-Sentiment-Distro": {
+                                  "terms": {
+                                    "field": "predictedMood.keyword"
+                                  }
+                                }
+                              }
+                              }
+                          }
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
         Axios.post(process.env.REACT_APP_URL,
-        {
-         "aggs": {
-           "date-based-range": {
-             "date_range": {
-                "field": "CreatedAt",
-                "format": "dd-MM-yyyy",
-                "ranges": [
-                  { "from": from, "to": to }
-               ]
-             },
-             "aggs": {
-               "lang": {
-                 "terms": {
-                   "field": "predictedLang.keyword"
-                 },
-                 "aggs": {
-                   "Source": {
-                     "terms": {
-                       "field": "Source.keyword"
-                     },
-                     "aggs": {
-                           "per-day": {
-                             "date_histogram": {
-                                 "field": "CreatedAt",
-                                 "format": "yyyy-MM-dd", 
-                                 "calendar_interval": "day"
-                             },
-                           "aggs": {
-                             "Daily-Sentiment-Distro": {
-                               "terms": {
-                                 "field": "predictedMood.keyword"
-                               }
-                             }
-                           }
-                           }
-                       }
-                       }
-                   }
-                 }
-               }
-             }
-           }
-         },{
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -169,18 +184,18 @@ export default function MoodAnalysisSemiDonutChart() {
         .catch(err => {
             console.log(err)
         })
-    }, [from,to,refresh])
+    }, [from,to,refresh,keywordType,keywords])
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
         if(temp){
             setData(temp)
         }
-    },[moods,languages,sources])
+    },[moods,languages,sources,keywords,keywordType])
  
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
@@ -248,7 +263,9 @@ export default function MoodAnalysisSemiDonutChart() {
                                     toFromDatesHandlers={[setFrom,setTo]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
-                                    moods={[moods,setMoods]} 
+                                    moods={[moods,setMoods]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>
                         </Grid>

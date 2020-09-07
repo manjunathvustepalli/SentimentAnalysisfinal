@@ -57,7 +57,7 @@ function SummaryDashBoard() {
 
     return (
         <SideNav>    
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px'}}>
                 <Typography style={{color:'green',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>

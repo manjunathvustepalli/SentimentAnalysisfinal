@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
 import PropTypes from "prop-types";
-import {Box, Grid, Typography, Card, CardContent, FormControl, InputLabel, MenuItem, Select,makeStyles, Tab, Tabs, Avatar } from '@material-ui/core'
+import {Box, Grid, Typography, Card, CardContent, makeStyles, Tab, Tabs, Avatar } from '@material-ui/core'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import FilterHeader from '../Filters/FilterHeader'
@@ -15,7 +15,6 @@ import EmailIcon from '@material-ui/icons/Email';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -177,7 +176,7 @@ function InfluencerAnalysis() {
           {
             "query": {
               "terms": {
-                "Source.keyword": ["twitter", "new-twitter"]
+                "Source.keyword": ["twitter", "new-twitter"],
               }
             },
             "aggs": {
@@ -355,7 +354,7 @@ function InfluencerAnalysis() {
   
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0 20px 20px', }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>

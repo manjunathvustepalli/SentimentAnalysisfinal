@@ -190,7 +190,7 @@ useEffect(() => {
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0 20px 20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
