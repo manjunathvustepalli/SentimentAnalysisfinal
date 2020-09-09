@@ -45,7 +45,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, radioSources, radioSubSources, radioLanguages, AutoCompleteSubSources, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
+  const {singleDate, radioSources,setKeywords,keywordTypes,keywords, radioSubSources, radioLanguages, AutoCompleteSubSources, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -55,7 +55,9 @@ export default function ControlledAccordions(props) {
 
   return (
     <div className={classes.root}>
-      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+      {
+        setKeywords && keywordTypes && (
+          <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -69,9 +71,11 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          <Keywords/>
+          <Keywords setKeywords={setKeywords} keywordTypes={keywordTypes} keywords={keywords || []} />
         </AccordionDetails>
       </Accordion>
+        )
+      }
       <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -259,7 +263,7 @@ export default function ControlledAccordions(props) {
             id="panel11bh-header"
           >
               <IconWithText>
-                  <TranslateIcon style={{marginRight:'10px'}} /> 
+                  <SubjectIcon style={{marginRight:'10px'}} /> 
                   <p>
                     Select Sub Source
                   </p>

@@ -9,20 +9,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography, Grid, FormControl, InputLabel, Select, MenuItem, Avatar } from '@material-ui/core';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
-import ShareIcon from '@material-ui/icons/Share';
+import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import { green } from '@material-ui/core/colors';
 
 const columns = [
-  { id: 'influencer', label: 'Influencer',align:'center' },
-  { id: 'posts', label: 'Total Posts',align:'center' },
-  {
-    id: 'followers',
-    label: 'Total Followers',
-    align:'center'
-  },
+  { id: 'newspaper', label: 'News Paper',align:'center' },
+  { id: 'articles', label: 'Articles',align:'center' },
   {
     id: 'mood',
     label: 'Mood',
@@ -34,7 +26,6 @@ const columns = [
     align:'center'
   }
 ];
-
 
 const useStyles = makeStyles({
   root: {
@@ -88,7 +79,7 @@ export default function StickyHeadTable(props) {
     <Paper className={classes.root} >         
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead  >
+          <TableHead>
             <TableRow>
               {columns.map((column) => (
                 <StyledTableCell

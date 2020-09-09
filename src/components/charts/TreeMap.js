@@ -4,7 +4,7 @@ import HighchartsTreeMap from "highcharts/modules/treemap";
 import HighchartsReact from 'highcharts-react-official';
 require('highcharts/modules/exporting')(Highcharts);
 
-function TreeMap() {
+function TreeMap(props) {
     
     Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
         var path = [
@@ -30,9 +30,29 @@ function TreeMap() {
         exporting: {
             chartOptions: {
                 plotOptions: {
+                    treemap:{
+                        dataLabels:{
+                            enabled:true,
+                            style:{
+                                color:'black'
+                            }
+                        }
+                    },
                     series: {
+                        treemap:{
+                            label:{
+                                enabled:true,
+                                style:{
+                                    color:'black'
+                                }
+                            }
+                        },
                         dataLabels: {
-                            enabled: true
+                            enabled: true,
+                            style:{
+                                color:'black',
+                                fontSize:'2rem'
+                            }
                         }
                         
                     }
@@ -58,57 +78,58 @@ function TreeMap() {
                     verticalAlign: 'top',
                     style: {
                         fontSize: '15px',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color:'#fff'
                     }
                 }
             }],
-            data: [{
-                id: 'A',
+            data: props.data || [{
+                id: 'negative',
                 name: 'Negative',
-                color: "#EC2500"
+                color: "#EC2500",
             }, {
-                id: 'B',
+                id: 'positive',
                 name: 'Positive',
                 color: "#9EDE00"
             }, {
-                id: 'O',
+                id: 'neutral',
                 name: 'Neutral',
                 color: '#EC9800'
             },{
                 name: 'Anne',
-                parent: 'A',
+                parent: 'negative',
                 value: 5
             }, {
                 name: 'Rick',
-                parent: 'A',
+                parent: 'negative',
                 value: 3
             }, {
                 name: 'Peter',
-                parent: 'A',
+                parent: 'negative',
                 value: 4
             }, {
                 name: 'Anne',
-                parent: 'B',
+                parent: 'positive',
                 value: 4
             }, {
                 name: 'Rick',
-                parent: 'B',
+                parent: 'positive',
                 value: 10
             }, {
                 name: 'Peter',
-                parent: 'B',
+                parent: 'positive',
                 value: 1
             }, {
                 name: 'Anne',
-                parent: 'O',
+                parent: 'neutral',
                 value: 1
             }, {
                 name: 'Rick',
-                parent: 'O',
+                parent: 'neutral',
                 value: 3
-            }, {
+            },{},{}, {
                 name: 'Peter',
-                parent: 'O',
+                parent: 'neutral',
                 value: 3
             }]
         }],

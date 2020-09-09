@@ -26,6 +26,11 @@ export default class PieChart extends Component {
                 plotShadow: false,
                 type: 'pie'
             },
+            CSSObject:{
+                color:'rbg(0,0,0)',
+                fontFamily: 'monospace',
+                fontSize: '1.2rem'
+            },
             credits: {
                 enabled: false
             },
@@ -33,7 +38,7 @@ export default class PieChart extends Component {
                 text: ''
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                pointFormat: '<b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
                 pie: {
@@ -44,13 +49,17 @@ export default class PieChart extends Component {
                         enabled: true,
                         format: '{point.percentage:.1f} %',
                         distance: -50,
+                        style: {
+                            fontWeight: 'bold',
+                            color: 'black',
+                            fontSize:'0.8rem'
+                          }
                     }
-                }
+                },
             },
             series: [{
                 name:this.props.name,
-                colorByPoint: true,
-                data: this.props.data
+                data: this.props.data,
             }],
             exporting: {
                 chartOptions: {

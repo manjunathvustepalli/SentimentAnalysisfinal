@@ -33,7 +33,9 @@ import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchIcon from '@material-ui/icons/Search';
-
+import { green } from '@material-ui/core/colors'
+import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
+import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 
 const drawerWidth = 260;
 
@@ -48,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
       flexShrink: 0,
-      
     },
   },
   appBar: {
@@ -72,12 +73,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:"white"
   },
   AvatarBox:{
-      backgroundColor:'green'
+      backgroundColor:green[800]
   },
-  
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
   },
 }));
 
@@ -89,7 +88,7 @@ const SideNavBar = ( props) => {
 
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:"#2ecc72"}
+        return {color:green[800]}
     }
     else{
         return {color:"black"}
@@ -107,7 +106,7 @@ const SideNavBar = ( props) => {
     {
       name:'Sentimental Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart'],
+      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart'],
     },
     // {
     //   name:'Mood Analysis',
@@ -132,7 +131,7 @@ const SideNavBar = ( props) => {
     {
       name:'Trending Subject',
       icon:<TrendingUpIcon/>,
-      path:['/trending-subject'],
+      path:['/trending-subject/sentiment','/trending-subject/mood'],
     },
     {
       name:'Trend Analysis',
@@ -159,17 +158,29 @@ const SideNavBar = ( props) => {
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
     },
+    {
+      name:'Admin Page',
+      icon:<PermDataSettingIcon/>,
+      path:['/admin'],
+    },
+    {
+      name:'Search Image',
+      icon:<ImageSearchIcon/>,
+      path:['/image-gallery'],
+    },
   ]
     
    const drawer = (
     <div>
-          <div className={classes.toolbar} id="userMenuHeader">
-            <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
-            <Grid container justify="space-around" className='grid-user'>
-              <Grid item align="left">
+          <div id="userMenuHeader">
+            <Grid container justify='space-around' flexDirection='row' >
+              <Grid xs={12}>
+              <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
+              </Grid>
+              <Grid item align="left" className='grid-user' xs={10} >
                 <Typography > Welcome User</Typography>
               </Grid>
-              <Grid item align="right">
+              <Grid item align="right" className='grid-user' xs={2}>
                 <Typography align="right"><ArrowDropDownIcon/></Typography>
               </Grid>
             </Grid>

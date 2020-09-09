@@ -10,6 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
+import { addMonths } from '../../helpers'
+
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -36,8 +38,8 @@ function ExportData() {
     const [data, setData] = useState([])
     const [liveReloading, setLiveReloading] = useState(false)
     const [reloadInterval, setReloadInterval] = useState(10000)
-    const [to, setTo] = useState(new Date())
-    const [from, setFrom] = useState(new Date())
+    const [to, setTo] = useState(addMonths(new Date(),0))
+    const [from, setFrom] = useState(addMonths(new Date(),0))
 
     function fetchData(){
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
@@ -45,10 +47,9 @@ function ExportData() {
               "date-based-range": {
                 "date_range": {
                   "field": "CreatedAt",
-                  "time_zone": "+05:30",
-                  "format": "dd-MMM-yyyy-hh:mm",
+                  "format": "dd-MM-yyyy",
                   "ranges": [
-                    { "from": "now-1d/d", "to": "now"}
+                    { "from":from, "to": to }
                   ]
                 }
               }
@@ -64,7 +65,6 @@ function ExportData() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)
@@ -84,8 +84,8 @@ function ExportData() {
 
     return (
         <SideNav>
-            <Card>
-                <Grid container spacing={5} style={{padding:'20px'}}>
+            <Card style={{padding:'20px'}}>
+                <Grid container spacing={5} style={{width:'80vw'}}>
                     <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
@@ -129,7 +129,7 @@ function ExportData() {
                             )
                         }
                     </Grid>
-                    <Grid item md={3} xs={12}>
+                    {/* <Grid item md={3} xs={12}>
                         <FormControl variant="outlined" className={classes.formControl}>
                             <InputLabel id="demo-simple-select-outlined-label">Sentiment</InputLabel>
                                 <Select
@@ -156,25 +156,49 @@ function ExportData() {
                                     <MenuItem value={'neutral'}>Anticipation</MenuItem>
                                 </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <MaterialTable 
-                            title='Live Analysis'
+                            title='Export Data'
                             columns={[
-                                {title:'Name',field:'name'},
-                                {title:'Screen Name',field:'screenName'},
-                                {title:'Tweet',field:'tweet'},
-                                {title:'Followers Count',field:'followersCount'},
-                                {title:'Retweet Count',field:'retweetCount'},
-                                {title:'Mood',field:'mood'},
-                                {title:'Sentiment',field:'sentiment'},
+                                {title:'Name',field:'name',editable:'never'},
+                                {title:'Screen Name',field:'screenName',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Tweet',field:'tweet',editable:'never'},
+                                {title:'Followers Count',field:'followersCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Retweet Count',field:'retweetCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Mood(Predicted)',field:'mood',editable:"never" },
+                                {title:'Mood(Manual)',field:'manualMood', lookup:{'joy':'Joy','anger':'Anger','surprise':'Surprise','anticipation':'Anticipation','trust':'Trust','sad':'Sad','disgust':'Disgust','fear':'Fear'} },
+                                {title:'Sentiment(Predicted)',field:'sentiment',editable:"never"},
+                                {title:'Sentiment(Manual)',field:'manualSentiment',lookup:{'positive':'Positive','negative':'Negative','neutral':'Neutral'}},
                             ]}
                             data={data}
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
                                 exportButton: true,
-                                maxBodyHeight:500
+                                maxBodyHeight:500,
+                                headerStyle:{
+                                    backgroundColor:green[800],
+                                    color:'white',
+                                    paddingTop:'10px',
+                                    paddingBottom:'10px',
+                                }
+                            }}
+                            editable={{
+                                onRowUpdate: (newData, oldData) =>
+                                    new Promise((resolve, reject) => {
+                                        setTimeout(() => {
+                                            const dataUpdate = [...data];
+                                            const index = oldData.tableData.id;
+                                            dataUpdate[index] = newData;
+                                            setData([...dataUpdate]);
+                        
+                                            resolve();
+                                        }, 1000);
+                                    })
                             }}
                         />
                     </Grid>

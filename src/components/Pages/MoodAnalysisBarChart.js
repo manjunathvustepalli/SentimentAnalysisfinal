@@ -1,28 +1,17 @@
-import React,{useState, useEffect} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import React, { useState, useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Redirect } from 'react-router-dom';
+import { Grid, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
+import { Redirect } from 'react-router-dom'
+import FilterHeader from '../Filters/FilterHeader'
+import FilterWrapper from '../Filters/FilterWrapper'
+import AccordianFilters from '../Filters/AccordianFilters'
+import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
-import FilterHeader from '../Filters/FilterHeader';
-import FilterWrapper from '../Filters/FilterWrapper';
-import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography } from '@material-ui/core';
-import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
-import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
-import Loader from '../LoaderWithBackDrop';
-import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
-
+import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
+import BarChart from '../charts/BarChart'
 
 const useStyles = makeStyles((theme) => ({
     main: {
-
         fontSize: 16,
         fontWeight: "bold",
         color: "#CB0038",
@@ -51,25 +40,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 var sortedData = {}
 
-export default function SentimentalAnalysisLineChart() {
-    const [chartType, setChartType] = useState('line')
+function MoodAnalysisBarChart(props) {
+    var colors = {'joy':'rgb(0,255,0)','sad':'rgb(236, 240, 22)','anger':'rgb(240, 22, 37)','anticipation':'rgb(29, 180, 240)','disgust':'rgb(226, 29, 240)','surprise':'rgb(240, 124, 29)','fear':'rgb(0, 0, 0)','trust':'rgb(217, 202, 202)'}
+    const classes = useStyles()
+    const [chartType, setChartType] = useState(props.stack ? 'stack' : 'bar')
     const [refresh, setRefresh] = useState(true)
-    const [data, setData] = useState([])
-    const [dates, setDates] = useState([])
     const [sources,setSources] = useState([])
     const [subSources,setSubSources] = useState([])
+    const [data, setData] = useState({})
+    const [dates, setDates] = useState([])
     const [languages,setLanguages] = useState([])
-    const [sentiments,setSentiments] = useState([])
+    const [moods,setMoods] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
-    const [open, setOpen] = useState(true)
     const [keywords, setKeywords] = useState([])
     const [keywordType, setKeywordType] = useState('Entire Data')
-    const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
-
+    
     useEffect(() => {
         let query = {
             "aggs": {
@@ -108,7 +97,7 @@ export default function SentimentalAnalysisLineChart() {
                                 "aggs": {
                                   "Daily-Sentiment-Distro": {
                                     "terms": {
-                                      "field": "predictedSentiment.keyword"
+                                      "field": "predictedMood.keyword"
                                     }
                                   }
                                 }
@@ -136,44 +125,47 @@ export default function SentimentalAnalysisLineChart() {
                     }
                 }
             }
-       Axios.post(process.env.REACT_APP_URL,
-        query,{
-            headers:{
-               'Content-Type':'application/json'
-           }
-       })
-    .then(fetchedData => {
-        setOpen(true)
-        var sourceKeys,subSourceKeys
-        var uniqueSourceKeys = []
-        var uniqueSubSourceKeys = []
-        let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-        var languageKeys = getKeyArray(languageBuckets)
-        if(languageKeys[0]){
+        Axios.post(process.env.REACT_APP_URL,
+            query,{
+             headers:{
+                'Content-Type':'application/json'
+            }
+        })
+     .then( fetchedData => {
+         var sourceKeys,subSourceKeys
+         var uniqueSourceKeys = []
+         var uniqueSubSourceKeys = []
+         let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+         var languageKeys = getKeyArray(languageBuckets)
+         if(languageKeys[0]){
             languageKeys.forEach((key,i) =>{
                 let sourceBuckets = languageBuckets[i].Source.buckets
                 sourceKeys = getKeyArray(sourceBuckets)
                 sortedData[key] ={}
                 sourceKeys.forEach((source,j) => {
-                    if(!uniqueSourceKeys.includes(source)){
-                        uniqueSourceKeys.push(source)
+                   if(!uniqueSourceKeys.includes(source)){
+                       uniqueSourceKeys.push(source)
+                   }
+                   sortedData[key][source] ={}
+                   let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+                   subSourceKeys = getKeyArray(subSourceBuckets)
+                   subSourceKeys.forEach((subSource,k) => {
+                    if(!uniqueSubSourceKeys.includes(subSource)){
+                        uniqueSubSourceKeys.push(subSource)
                     }
-                    let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-                    subSourceKeys = getKeyArray(subSourceBuckets)
-                    sortedData[key][source] = {}
-                    subSourceKeys.forEach((subSource,k) => {
-                        if(!uniqueSubSourceKeys.includes(subSource)){
-                            uniqueSubSourceKeys.push(subSource)
-                        }
-                        sortedData[key][source][subSource] = {}
-                        let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
-                        let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
-                        sortedData[key][source][subSource]['dates'] = perDayKeys
-                        sortedData[key][source][subSource]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))
-                        sortedData[key][source][subSource]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))
-                        sortedData[key][source][subSource]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))
-                    })
-                });
+                    sortedData[key][source][subSource] = {}
+                    let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
+                    let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
+                   sortedData[key][source][subSource]['dates'] = perDayKeys
+                   sortedData[key][source][subSource]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
+                   sortedData[key][source][subSource]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
+                   sortedData[key][source][subSource]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
+                   sortedData[key][source][subSource]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
+                   sortedData[key][source][subSource]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
+                   sortedData[key][source][subSource]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
+                   sortedData[key][source][subSource]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
+                   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                })                  
+               });
             })
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source =>{
@@ -188,70 +180,83 @@ export default function SentimentalAnalysisLineChart() {
             setLanguages(availableLanguageKeys)
 
             let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
+            uniqueSubSourceKeys.forEach(subSource => {
+                availableSubSourceKeys[subSource] = true
             })
             setSubSources(availableSubSourceKeys)
-            setSentiments(prev => {
+
+            setMoods(prev =>{
                 if(Object.keys(prev).length){
                     return prev
                 } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-            setOpen(false)
-        } else {
-            sortedData = {}
-            setSources({})
-            setSubSources({})
-            setLanguages({})
-            setSentiments({})
-            setOpen(false)
-        }
-        
-    })
-    .catch(err => {
-        console.log(err)
-        setOpen(false)
-    })
-    }, [from,to,refresh,keywords,keywordType])
+                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                }})   
+         } else {
+             setSources({})
+             setLanguages({})
+             setMoods({})
+             sortedData = {}
+         }
+             })
+     .catch(err => {
+         console.log(err)
+     })
+     }, [from,to,refresh,keywords,keywordType])
+
+     useEffect(() => {
+        const [finalData]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
+        setDates(finalData.dates)
+        let obj = []
+        Object.keys(finalData).forEach(key => {
+            if(key !== 'dates'){
+                obj.push({
+                    name:key,
+                    color:colors[key],
+                    data:finalData[key]
+                })
+            }
+        })
+        setData(obj)
+    }, [languages, moods, subSources])
 
     useEffect(() => {
-        const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
-        setData(finalData)
-        setDates(allDates)
-    },[languages,subSources,sentiments])
-
-    useEffect(() => {
-        const [ finalData,allDates,uniqueSubSources ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
-        setData(finalData)
-        setDates(allDates)
+        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
+        setDates(finalData.dates)
+        let obj = []
+        Object.keys(finalData).forEach(key => {
+            if(key !== 'dates'){
+                obj.push({
+                    name:key,
+                    color:colors[key],
+                    data:finalData[key]
+                })
+            }
+        })
+        setData(obj)
         let availableSubSourceKeys = {}
-            uniqueSubSources.forEach(subSource => {
-                availableSubSourceKeys[subSource]  = true
-            })
+        availableSubSources.forEach(subSource =>{
+            availableSubSourceKeys[subSource]  = true
+        })
         setSubSources(availableSubSourceKeys)
-    },[sources])
+    }, [sources]) 
 
     return (
         <SideNav>
-            <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
-            {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
-            {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
-            {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
-            {chartType === 'bar' && <Redirect to='/sentimental-analysis/bar-chart' />}
-            {chartType === 'stack' && (<Redirect to='/sentimental-analysis/stack-chart' />) }
+            {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
+            {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
+            {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
+            {chartType === 'area' && <Redirect to='/mood-analysis/area-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
-                    <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Sentimental Analysis
+                    <Typography style={{ color:'#43B02A',fontSize:'30px',}}>
+                        Mood Analysis
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
                             <Grid item sm={8}>
                                 <CardContent>
-                                    Sentiment Wise Trend
+                                    Mood Wise Trend
                                 </CardContent>
                             </Grid>
                             <Grid item sm={4}>
@@ -269,39 +274,40 @@ export default function SentimentalAnalysisLineChart() {
                             <MenuItem value='bar'>Bar chart</MenuItem>
                             <MenuItem value='stack'>Stacked Bar chart</MenuItem>
                             <MenuItem value='pie'>Pie chart</MenuItem>
-                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
-                            
-                            </Select>
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>                            </Select>
                             </FormControl>
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <TrendAnalysisLineChart dates={dates} data={data} />
+                            <BarChart data={data} stacking={chartType==='stack' ? 'normal' : ''} categories={dates} />
                         </Grid>
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
-                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                            <FilterHeader refresh={[refresh,setRefresh]} />
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    toFromDatesHandlers={[setFrom,setTo,addMonths]} 
                                     sources={[sources,setSources]} 
-                                    sentiments={[sentiments,setSentiments]} 
                                     languages={[languages,setLanguages]} 
-                                    subSources={[subSources,setSubSources]} 
+                                    moods={[moods,setMoods]} 
+                                    subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
-                                    />
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </div>       
         </SideNav>
-    );
+
+    )
 }
+
+export default MoodAnalysisBarChart

@@ -58,17 +58,14 @@ function GeoHotSpotAnalysis() {
 
   return (
     <SideNav>
-      <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Geo Hotspot Analysis
-      </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
+              <Typography style={{ color: "#43B02A", fontSize: "30px", margin:'20px' }}>
+                Geo Hotspot Analysis
+              </Typography>
               <Grid container spacing={3}>
-                <Grid item md={7} sm={5}>
-                  <CardContent>Geo Mapping</CardContent>
-                </Grid>
                 <Grid item xs={12}>
                   <GeoHotTabbar />
                 </Grid>

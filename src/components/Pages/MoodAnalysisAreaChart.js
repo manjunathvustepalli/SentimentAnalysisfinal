@@ -10,6 +10,7 @@ import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';
 
+
 const useStyles = makeStyles((theme) => ({
     main: {
         fontSize: 16,
@@ -52,64 +53,80 @@ export default function MoodAnalysisAreaChart() {
     const [moods,setMoods] = useState([])
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
-        Axios.post(process.env.REACT_APP_URL,
-            {
+        let query = {
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                  "field": "CreatedAt",
+                  "format": "dd-MM-yyyy",
+                  "ranges": [
+                    { "from": from,"to": to}
+                  ]
+                },
                 "aggs": {
-                  "date-based-range": {
-                    "date_range": {
-                      "field": "CreatedAt",
-                      "format": "dd-MM-yyyy",
-                      "ranges": [
-                        { "from": from,"to": to}
-                      ]
+                  "lang": {
+                    "terms": {
+                      "field": "predictedLang.keyword"
                     },
                     "aggs": {
-                      "lang": {
+                      "Source": {
                         "terms": {
-                          "field": "predictedLang.keyword"
+                          "field": "Source.keyword"
                         },
-                        "aggs": {
-                          "Source": {
-                            "terms": {
-                              "field": "Source.keyword"
-                            },
-                            "aggs":{
-                                "SubSource":{
-                                    "terms":{
-                                        "field": "SubSource.keyword"
-                                    },
-                                
-        
+                        "aggs":{
+                            "SubSource":{
+                                "terms":{
+                                    "field": "SubSource.keyword"
+                                },
+                            
+    
+                            "aggs": {
+                                "per-day": {
+                                  "date_histogram": {
+                                      "field": "CreatedAt",
+                                      "format": "yyyy-MM-dd", 
+                                      "calendar_interval": "day"
+                                  },
                                 "aggs": {
-                                    "per-day": {
-                                      "date_histogram": {
-                                          "field": "CreatedAt",
-                                          "format": "yyyy-MM-dd", 
-                                          "calendar_interval": "day"
-                                      },
-                                    "aggs": {
-                                      "Daily-Sentiment-Distro": {
-                                        "terms": {
-                                          "field": "predictedMood.keyword"
-                                        }
-                                      }
+                                  "Daily-Sentiment-Distro": {
+                                    "terms": {
+                                      "field": "predictedMood.keyword"
                                     }
-                                    }
+                                  }
                                 }
-                              }
-                            }
+                                }
                             }
                           }
+                        }
                         }
                       }
                     }
                   }
-                },{
+                }
+              }
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
+        Axios.post(process.env.REACT_APP_URL,
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -184,10 +201,10 @@ export default function MoodAnalysisAreaChart() {
      .catch(err => {
          console.log(err)
      })
-     }, [from,to,refresh])
+     }, [from,to,refresh,keywords,keywordType])
  
     useEffect(() => {
-        const [finalData,availableSubSources]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
+        const [finalData]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
             setData(finalData)
     }, [languages,moods,subSources])
 
@@ -204,9 +221,12 @@ export default function MoodAnalysisAreaChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
+            {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
+            {chartType === 'bar' && <Redirect to='/mood-analysis/bar-chart' />}
+            {chartType === 'stack' && <Redirect to='/mood-analysis/stack-chart' />}
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -229,9 +249,12 @@ export default function MoodAnalysisAreaChart() {
                                 onChange={handleChange}
                                 label="Change Chart Type"
                             >
-                                <MenuItem value='pie'>Pie chart</MenuItem>
-                                <MenuItem value='area'>Area chart</MenuItem>
-                                <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>
@@ -254,6 +277,8 @@ export default function MoodAnalysisAreaChart() {
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]} 
                                     subSources={[subSources,setSubSources]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>
                         </Grid>

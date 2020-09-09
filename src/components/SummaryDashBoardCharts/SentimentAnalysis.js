@@ -1,45 +1,58 @@
 import React, { useEffect, useState } from 'react'
-import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
 import Axios from 'axios'
 import AreaChart from '../charts/AreaChart'
 
-function SentimentAnalysis(props) {
+function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
 
-    const [ from,to ] = props.dates
+    const [ from,to ] = toFromDateHandlers
     const [data, setData] = useState([])
     const [dates, setDates] = useState([])
 
     useEffect(() => {
-        Axios.post(process.env.REACT_APP_URL,
-            {
-                "aggs": {
-                  "date-based-range": {
-                    "date_range": {
-                      "field": "CreatedAt",
-                      "format": "dd-MM-yyyy",
-                      "ranges": [
-                        { "from": from,"to": to}
-                      ]
+      let query = {
+        "aggs": {
+          "date-based-range": {
+            "date_range": {
+              "field": "CreatedAt",
+              "format": "dd-MM-yyyy",
+              "ranges": [
+                { "from": from,"to": to}
+              ]
+            },
+              "aggs": {
+                  "per-day": {
+                    "date_histogram": {
+                        "field": "CreatedAt",
+                        "format": "yyyy-MM-dd", 
+                        "calendar_interval": "day"
                     },
-                                "aggs": {
-                                    "per-day": {
-                                      "date_histogram": {
-                                          "field": "CreatedAt",
-                                          "format": "yyyy-MM-dd", 
-                                          "calendar_interval": "day"
-                                      },
-                                    "aggs": {
-                                      "Daily-Sentiment-Distro": {
-                                        "terms": {
-                                          "field": "predictedSentiment.keyword"
-                                        }
-                                      }
-                                    }
-                                    }
+                  "aggs": {
+                    "Daily-Sentiment-Distro": {
+                      "terms": {
+                        "field": "predictedSentiment.keyword"
                       }
                     }
                   }
-                },{
+                  }
+              }
+            }
+          }
+        }
+        if(keywordType === 'Screen Name'){
+          query["query"] = {
+              "terms": {
+                "User.ScreenName.keyword": keywords
+              }
+            }
+      } else if (keywordType === 'Hash Tags') {
+          query["query"] =  {
+              "terms": {
+                "HashtagEntities.Text.keyword": keywords
+              }
+          }
+      }
+        Axios.post(process.env.REACT_APP_URL,
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -49,7 +62,7 @@ function SentimentAnalysis(props) {
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
          let sortedData = []
          let sentiments = ['positive','negative','neutral']
-         let colors = ['rgb(0,255,0)','rgb(255,0,0)','rgb(255,255,0)']
+         let colors = ['rgba(0,255,0,0.5)','rgba(255,0,0,0.5)','rgba(255,255,0,0.5)']
 
          sentiments.forEach((sentiment,i) => {
              sortedData.push({
@@ -69,7 +82,7 @@ function SentimentAnalysis(props) {
          setData(sortedData)
          setDates(perDayKeys)
      })
-    }, [from,to])
+    }, [from,to,keywords,keywordType])
 
     return (
         <div>

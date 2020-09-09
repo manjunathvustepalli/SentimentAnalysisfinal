@@ -7,6 +7,8 @@ import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
 import Maps1 from "../charts/Maps/Maps1";
 import GeoHotSpotMap from "../charts/Maps/GeoHotSpotMap";
+import { green } from '@material-ui/core/colors';
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -47,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
     width: "95%",
     marginLeft: "20px",
     marginBottom: "20px",
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'white',
+    paddingBottom: "30px !important",
   },
 }));
 
@@ -69,11 +72,12 @@ function TabbarMUI() {
           textColor="primary"
           variant="scrollable"
           scrollButtons="auto"
+          TabIndicatorProps={{style: {background:green[800]}}}
           aria-label="scrollable auto tabs example"
         >
-          <Tab label="Geo Hot Spot - Sentiment" {...a11yProps(0)} />
-          <Tab label="Geo Hot Spot - Mood" {...a11yProps(1)} />
-          <Tab label="Spatio Temporal" {...a11yProps(2)} />
+          <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
+          <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
+          <Tab label="Spatio Temporal" style={{color:value===2 && (green[800])}} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>

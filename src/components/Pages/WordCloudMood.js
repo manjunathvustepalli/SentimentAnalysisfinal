@@ -13,9 +13,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import {addMonths, getKeyArray} from '../../helpers'
+import { addMonths, getKeyArray } from '../../helpers'
 import Axios from 'axios';
 import { wordCloudSentimentFilter } from '../../helpers/filter';
+import { green } from '@material-ui/core/colors';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -91,15 +92,11 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
-    const handleChange = (e) => {
-        setChartType(e.target.value)
-    }
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
       };
 
-    const [chartType, setChartType] = useState('pie')
     const [moods, setMoods] = useState({})
     const [sources, setSources] = useState({})
     const [subSources,setSubSources] = useState({})
@@ -109,9 +106,12 @@ function WordCloudSentiment() {
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
     const [wordCount, setWordCount] = useState(30)
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
+
 
     useEffect( () => {
-        Axios.post(process.env.REACT_APP_URL,{
+        let query = {
             "aggs": {
                 "date-based-range": {
                     "date_range": {
@@ -159,7 +159,21 @@ function WordCloudSentiment() {
                     }
                 }
             }
-        })
+        }
+        if(keywordType === 'Screen Name'){
+            query["query"] = {
+                "terms": {
+                  "User.ScreenName.keyword": keywords
+                }
+              }
+        } else if (keywordType === 'Hash Tags') {
+            query["query"] =  {
+                "terms": {
+                  "HashtagEntities.Text.keyword": keywords
+                }
+            }
+        }
+        Axios.post(process.env.REACT_APP_URL,query)
           .then(fetchedData =>{
             var sourceKeys,subSourceKeys,moodKeys
             var uniqueSourceKeys = []
@@ -262,7 +276,7 @@ function WordCloudSentiment() {
           .catch(err => {
               console.log(err.response)
           })
-    },[to,from,refresh])
+    },[to,from,refresh,keywords,keywordType])
 
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
@@ -274,8 +288,7 @@ function WordCloudSentiment() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
-            {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -331,10 +344,11 @@ function WordCloudSentiment() {
                                 textColor="primary"
                                 variant="scrollable"
                                 scrollButtons="auto"
+                                TabIndicatorProps={{style: {background:green[800]}}}
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=> data[lang].length && (<Tab label={lang} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=>  (<Tab label={lang} style={{color:value===i && (green[800])}} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
                             </AppBar>
@@ -364,6 +378,8 @@ function WordCloudSentiment() {
                                     toFromDatesHandlers={[setFrom,setTo]} 
                                     sources={[sources, setSources]} 
                                     subSources={[subSources,setSubSources]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                     moods={[moods,setMoods]}
                                 />
                             </FilterWrapper>

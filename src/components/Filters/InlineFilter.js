@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
         borderStyle: "solid",
         borderWidth: "1px",
         padding: '5px',
-        color: "#43B02A"
+        color: "#43B02A",
     },
     filterColorDefault:{
         color: "#43B02A"
@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function InlineFilter(props) {
-
     const classes = useStyles();
 
     return (
@@ -52,7 +51,7 @@ function InlineFilter(props) {
                         
                     </Select>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <InputLabel id="demo-simple-select-helper-label" className={classes.filterColorDefault}>Mood </InputLabel>
                     <Select
                     labelId="demo-simple-select-helper-label"

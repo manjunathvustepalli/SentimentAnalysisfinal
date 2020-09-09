@@ -49,7 +49,7 @@ function AreaChart(props) {
         },
         yAxis: {
             title: {
-                text: 'Data %'
+                text: 'Data'
             },
             labels: {
                 formatter: function () {

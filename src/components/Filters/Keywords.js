@@ -1,8 +1,13 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, InputLabel, Select, MenuItem, TextField } from '@material-ui/core';
+import ChipInput from 'material-ui-chip-input';
+import ChipInputFilter from './ChipInputFilter';
 
-function Keywords() {
+function Keywords(props) {
+    let keywordTypes = ['Entire Data','Screen Name','Hash Tags']
+
+    const [keywordType, setKeywordType] = props.keywordTypes
 
     const useStyles = makeStyles((theme) => ({
         formControl: {
@@ -30,16 +35,16 @@ function Keywords() {
                     id="select-outlined"
                     label="KeyWord"
                     className={classes.select}
+                    value={keywordType}
+                    onChange={(e) => setKeywordType(e.target.value)}
                     >
-                    <MenuItem value={'type1'}>Type 1</MenuItem>
-                    <MenuItem value={'type2'}>Type 1</MenuItem>
-                    <MenuItem value={'type3'}>Type 1</MenuItem>
+                        {
+                            keywordTypes.map(keywordType => <MenuItem value={keywordType}>{keywordType}</MenuItem> )
+                        }                    
                     </Select>
             </FormControl>
 
-                <FormControl variant="outlined" className={classes.formControl}>
-                    <TextField id="outlined-basic" label="Enter Your Keyword" variant="outlined" />
-                </FormControl>
+                <ChipInputFilter setKeywords={props.setKeywords} keywords={props.keywords} />
         </div>
     )
 }

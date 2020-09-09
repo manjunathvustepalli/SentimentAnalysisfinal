@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   makeStyles,
+  Button,
 } from "@material-ui/core";
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
@@ -19,6 +20,7 @@ import TrendingSubjectsTable from "../Tables/TrendingSubjectsTable";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
 import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
+import { Link } from "react-router-dom";
 
 var sortedData = {}
 
@@ -33,9 +35,11 @@ function InfluencerAnalysis() {
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
   const [sentiment, setSentiment] = useState('positive');
-  const [mood, setMood] = useState('joy');
   const [data, setData] = useState([])
-  const [noData, setNoData] = useState(false)
+  const [noData, setnoData] = useState(true)
+  const [keywords, setKeywords] = useState([])
+  const [keywordType, setKeywordType] = useState('Entire Data')
+
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -65,13 +69,21 @@ function InfluencerAnalysis() {
     tablecenter: {
       marginLeft: "30px !important",
     },
+    buttonStyle:{
+      border:'1px solid green',
+      color:'white',
+      backgroundColor:"green",
+      '&:hover': {
+          backgroundColor:"green",
+      }
+  }
   }));
 
   const classes = useStyles();
 
 
 useEffect(()=>{
-  Axios.post(process.env.REACT_APP_URL,{
+  let query = {
     "aggs": {
         "date-based-range": {
             "date_range": {
@@ -102,19 +114,12 @@ useEffect(()=>{
                                             "terms": {
                                               "field": "predictedSentiment.keyword"
                                             },
-                                            "aggs":{
-                                              "Daily-Mood-Distro":{
-                                                "terms":{
-                                                  "field":"predictedMood.keyword"
-                                                },
                                                 "aggs":{
                                                   "Words":{
                                                     "terms":{
                                                       "field":"HashtagEntities.Text.keyword"
                                                     }
-                                                  }
                                                 }
-                                              }
                                             }
                                         }
                                     }
@@ -126,7 +131,22 @@ useEffect(()=>{
             }
         }
     }
-})
+}
+
+if(keywordType === 'Screen Name'){
+  query["query"] = {
+      "terms": {
+        "User.ScreenName.keyword": keywords
+      }
+    }
+} else if (keywordType === 'Hash Tags') {
+  query["query"] =  {
+      "terms": {
+        "HashtagEntities.Text.keyword": keywords
+      }
+  }
+}
+  Axios.post(process.env.REACT_APP_URL,query)
 .then(fetchedData => {
   let uniqueSources = []
   let uniqueSubSources = []
@@ -151,17 +171,12 @@ useEffect(()=>{
         let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
         let sentimentKeys = getKeyArray(sentimentBuckets)
         sentimentKeys.forEach((sentiment,l)=>{
-          sortedData[language][source][subSource][sentiment] = {}
-          let moodBuckets  = sentimentBuckets[l]['Daily-Mood-Distro'].buckets
-          let moodKeys = getKeyArray(moodBuckets)
-          moodKeys.forEach((mood,m)=>{
-            sortedData[language][source][subSource][sentiment][mood] = moodBuckets[m].Words.buckets.map(wordObj => {
-              return {
-                name:wordObj.key,
-                y:wordObj.doc_count
-              }
-            })
-          })
+            sortedData[language][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
+                return {
+                  name:wordObj.key,
+                  y:wordObj.doc_count
+                }
+              })
         })
       })
     })
@@ -176,41 +191,45 @@ useEffect(()=>{
 .catch(err=>{
   console.log(err)
 })
-},[from,to,refresh])
+},[from,to,refresh,keywords,keywordType])
 
 useEffect(() => {
    try{
-     if(sortedData[language][source][subSource][sentiment][mood]){
-       setData(sortedData[language][source][subSource][sentiment][mood])
+     if(sortedData[language][source][subSource][sentiment]){
+       setData(sortedData[language][source][subSource][sentiment])
+       setnoData(false)
+     } else {
+         setnoData(true)
+         setData([])
      }
-     setNoData(false)
    }
    catch(err){
-    setNoData(true)
-    setData([])
-    console.log(err)
+        setData([])
+        setnoData(true)
    }
-}, [language,source,subSource,sentiment,mood])
+}, [language,source,subSource,sentiment])
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0 20px 20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0px 20px 20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
             <Card className={classes.main}>
               <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-                Trending Subject
+                Trending Subjects
               </Typography>
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6}>
                   <FormControl
                     className={classes.formControl}
+                    variant="outlined"
                   >
                     <InputLabel id="select-table">Select Sentiment</InputLabel>
                     <Select
                       labelId="select-table"
                       id="demo-simple-select-outlined"
-                      varient={"standard"}
+                      varient="outlined"
+                      label="Select Sentiment"
                       value={sentiment}
                       onChange={(e) => setSentiment(e.target.value)}
                     >
@@ -222,38 +241,32 @@ useEffect(() => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item md={6} sm={6}>
-                  <FormControl
-                    className={classes.formControl}
-                  >
-                    <InputLabel id="select-table">Select Mood</InputLabel>
-                    <Select
-                      labelId="select-table"
-                      id="demo-simple-select-outlined"
-                      varient={"standard"}
-                      value={mood}
-                      onChange={(e) => setMood(e.target.value)}
-                    >
-                      <MenuItem value="happy">
-                        Happy
-                      </MenuItem>
-                      <MenuItem value="joy">Joy</MenuItem>
-                      <MenuItem value="sad">Sad</MenuItem>
-                      <MenuItem value="anger">Anger</MenuItem>
-                      <MenuItem value="anticipation">Anticipation</MenuItem>
-                      <MenuItem value="disgust">Disgust</MenuItem>
-                      <MenuItem value="suprice">Suprice</MenuItem>
-                      <MenuItem value="fear">Fear</MenuItem>
-                      <MenuItem value="trust">Trust</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+                <Grid item xs={12} sm={6} align='right'>
+                                    <Button
+                                        variant="contained"
+                                        style={{margin:"10px"}}
+                                        component={Link}
+                                        to="/trending-subject/mood"
+                                        >
+                                        Mood
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        style={{margin:"10px"}}
+                                        className={classes.buttonStyle}
+                                        component={Link}
+                                        to="/trending-subject/sentiment"
+                                    >
+                                        Sentiment                                                                       
+                                    </Button>
+                            </Grid>
+
                 <Grid item xs={12} className={classes.tablecenter}>
                   <TrendingSubjectsBarChart data={data} />
                 </Grid>
-                <Grid item xs={11}>
+                {/* <Grid item xs={11}>
                   <TrendingSubjectsTable />
-                </Grid>
+                </Grid> */}
               </Grid>
             </Card>
           </Grid>
@@ -263,15 +276,14 @@ useEffect(() => {
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
               {
-                noData && (
-              <Grid item xs={12}>
-                <Alert variant="filled" severity="error">
-                    No Data available for Specified Filters
-                </Alert>
-              </Grid>
-                )
+                  noData && (
+                    <Grid item xs={12}>
+                    <Alert variant="filled" severity="error">
+                        No Data available, Please change the Filters
+                    </Alert>
+                  </Grid>
+                  )
               }
-              
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
@@ -279,6 +291,8 @@ useEffect(() => {
                     radioSources={[source,setSource,sources]}
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    setKeywords={setKeywords}
+                    keywordTypes={[keywordType, setKeywordType]}
                   />
                 </FilterWrapper>
               </Grid>
@@ -287,7 +301,7 @@ useEffect(() => {
         </Grid>
       </div>
     </SideNav>
-  );
+    );
 }
 
 export default InfluencerAnalysis;

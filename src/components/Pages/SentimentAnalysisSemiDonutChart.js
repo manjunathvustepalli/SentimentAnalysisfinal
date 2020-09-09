@@ -19,7 +19,7 @@ import Table1 from '../Tables/Table1'
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
-
+import { addMonths } from '../../helpers/index'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -59,58 +59,74 @@ function SentimentAnalysisSemiDonutChart() {
     const [languages, setLanguages] = useState({})
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState([])
-    const [date, setDate] = useState(moment(new Date()).format('DD-MM-YYYY'))
+    const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [to, setTo] = useState(addMonths(new Date(),0))
+    const [keywords, setKeywords] = useState([])
+    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
-    }
+    } 
 
     useEffect(() => {
-
+        let query =         {
+            "aggs": {
+              "date-based-range": {
+                "date_range": {
+                   "field": "CreatedAt",
+                   "format": "dd-MM-yyyy",
+                   "ranges": [
+                     { "from": from, "to": to }
+                  ]
+                },
+                "aggs": {
+                  "lang": {
+                    "terms": {
+                      "field": "predictedLang.keyword"
+                    },
+                    "aggs": {
+                      "Source": {
+                        "terms": {
+                          "field": "Source.keyword"
+                        },
+                        "aggs": {
+                              "per-day": {
+                                "date_histogram": {
+                                    "field": "CreatedAt",
+                                    "format": "yyyy-MM-dd", 
+                                    "calendar_interval": "day"
+                                },
+                              "aggs": {
+                                "Daily-Sentiment-Distro": {
+                                  "terms": {
+                                    "field": "predictedSentiment.keyword"
+                                  }
+                                }
+                              }
+                              }
+                          }
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if(keywordType === 'Screen Name'){
+                query["query"] = {
+                    "terms": {
+                      "User.ScreenName.keyword": keywords
+                    }
+                  }
+            } else if (keywordType === 'Hash Tags') {
+                query["query"] =  {
+                    "terms": {
+                      "HashtagEntities.Text.keyword": keywords
+                    }
+                }
+            }
         Axios.post(process.env.REACT_APP_URL,
-        {
-         "aggs": {
-           "date-based-range": {
-             "date_range": {
-                "field": "CreatedAt",
-                "format": "dd-MM-yyyy HH:mm",
-                "ranges": [
-                  { "from": `${date} 00:00`, "to": `${date} 23:59` }
-               ]
-             },
-             "aggs": {
-               "lang": {
-                 "terms": {
-                   "field": "predictedLang.keyword"
-                 },
-                 "aggs": {
-                   "Source": {
-                     "terms": {
-                       "field": "Source.keyword"
-                     },
-                     "aggs": {
-                           "per-day": {
-                             "date_histogram": {
-                                 "field": "CreatedAt",
-                                 "format": "yyyy-MM-dd", 
-                                 "calendar_interval": "day"
-                             },
-                           "aggs": {
-                             "Daily-Sentiment-Distro": {
-                               "terms": {
-                                 "field": "predictedSentiment.keyword"
-                               }
-                             }
-                           }
-                           }
-                       }
-                       }
-                   }
-                 }
-               }
-             }
-           }
-         },{
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -137,7 +153,6 @@ function SentimentAnalysisSemiDonutChart() {
                     sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))[0]
                 });
             })
-            console.log(sortedData)
             let availableSourceKeys = {}
             uniqueSourceKeys.forEach(source => {
                 availableSourceKeys[source] = true
@@ -166,7 +181,7 @@ function SentimentAnalysisSemiDonutChart() {
             console.log(err)
         })        
 
-    }, [date,refresh])
+    }, [from,to,refresh,keywords,keywordType])
 
     useEffect(() => {
         let tempData = sentimentAnalysisPieChartFilter(languages,sentiments,sources,sortedData)
@@ -177,10 +192,12 @@ function SentimentAnalysisSemiDonutChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
+            {chartType === 'bar' && <Redirect to='/sentimental-analysis/bar-chart' />}
+            {chartType === 'stack' && (<Redirect to='/sentimental-analysis/stack-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -203,10 +220,12 @@ function SentimentAnalysisSemiDonutChart() {
                                 onChange={handleChange}
                                 label="Change Chart type"
                             >
-                                <MenuItem value='area'>Area chart</MenuItem>
-                                <MenuItem value='line'>Line chart</MenuItem>
-                                <MenuItem value='pie'>Pie chart</MenuItem>
-                                <MenuItem value={chartType}>Semi Pie chart</MenuItem>
+                            <MenuItem value='area'>Area chart</MenuItem>
+                            <MenuItem value='line'>Line chart</MenuItem>
+                            <MenuItem value='bar'>Bar chart</MenuItem>
+                            <MenuItem value='stack'>Stacked Bar chart</MenuItem>
+                            <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
                             </Select>
                             </FormControl>
                             </Grid>
@@ -239,10 +258,12 @@ function SentimentAnalysisSemiDonutChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    singleDate={setDate} 
+                                    toFromDatesHandlers={[setFrom,setTo]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     sentiments={[sentiments,setSentiments]}
+                                    setKeywords={setKeywords}
+                                    keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>
                         </Grid>

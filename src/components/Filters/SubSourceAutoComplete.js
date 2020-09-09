@@ -9,10 +9,6 @@ function SubSourceAutoComplete(props) {
     const [ subSources, setSubsources ] = props.subSources
     const [selectedSubsources, setSelectedSubsources] = useState([])
 
-    useEffect(()=> {
-        console.log(subSources)
-    },[subSources])
-
     const handleChange = (e,arr) => {
         let obj = {}
         Object.keys(subSources).forEach(subSource => {

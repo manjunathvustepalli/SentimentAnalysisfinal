@@ -12,13 +12,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
 import GridTimeFilter from '../Filters/GridTimeFilter';
-import DonutChart from '../charts/DonutChart';
-import SemiDonutChart from '../charts/SemiDonutChart';
 import InlineFilter from '../Filters/InlineFilter';
 import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
 import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 import WordCloud from '../SummaryDashBoardCharts/WordCloud'
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
+import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
+import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
+import ChipInputFilter from '../Filters/ChipInputFilter';
+import Keywords from '../Filters/Keywords';
 
 
 const IconWithText = styled.div`
@@ -35,13 +37,14 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "#CB0038",
     },
-    formControl: {
-      margin: theme.spacing(1),
-      width:'90%',
-      borderBottom:'2px solid white'
-    },
     selectEmpty: {
       marginTop: theme.spacing(2),
+    },
+    formControl: {
+        margin: '10px',
+        fullWidth: true,
+        display: 'flex',
+        wrap: 'nowrap'
     },
     gridposition: {
         position: "relative",
@@ -52,42 +55,42 @@ function SummaryDashBoard() {
     const classes = useStyles();
     const [refresh, setRefresh] = useState(false)
     const [from, setFrom] = useState(addMonths(new Date(),-1))
+    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywords, setKeywords] = useState([])
     const [to, setTo] = useState(addMonths(new Date(),0))
 
     return (
         <SideNav>    
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
-                <Typography style={{color:'green'}} variant='h5' >
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px'}}>
+                <Typography style={{color:'green',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
                         <Card>
-                            <IconWithText>
-                                <FilterListIcon style={{margin:'0 20px'}} /> 
+                            <IconWithText style={{margin:'10px 10px 0 10px'}}>
+                                <FilterListIcon /> 
                                 <p> FILTERS </p>
                             </IconWithText>
                             <Grid container>    
                                 <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel id="demo-simple-select-helper-label">Keyword type</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value={10}>Ten</MenuItem>
-                                        <MenuItem value={20}>Twenty</MenuItem>
-                                        <MenuItem value={30}>Thirty</MenuItem>
-                                        </Select>
-                                </FormControl>
+                                <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="keyword-type-label">Keyword Type</InputLabel>
+                            <Select
+                                labelId="keyword-type-label"
+                                id="keyword-type"
+                                label="Keyword Type"
+                                value={keywordType}
+                                onChange={(e) => setKeywordType(e.target.value)}
+                            >
+                            <MenuItem value='Entire Data'>Entire Data</MenuItem>
+                            <MenuItem value='Screen Name'>Screen Name</MenuItem>
+                            <MenuItem value='Hash Tags'> Hash Tags </MenuItem>
+                            </Select>
+                            </FormControl>
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={3} >
-                                <FormControl className={classes.formControl}>
-                                        <TextField
-                                            label='type keyword'
-                                            variant="standard"
-                                        />
-                                    </FormControl>
+                                    <ChipInputFilter transform={true} setKeywords={setKeywords} />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} >
                                     <GridTimeFilter toFromDatesHandlers={[setFrom,setTo]} />
@@ -99,83 +102,36 @@ function SummaryDashBoard() {
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                     </Grid>                  
                     <Grid item xl={4} md={12} xs={12}>
-                        <Card className={classes.main}>
-                            <CardContent >Overall Analysis</CardContent>
-                            <Grid container spacing={0} className={classes.gridposition}>
-                                <Grid item xs={3}>
-                                <FormControl className={classes.formControl} style={{margin:'30px'}} >
-                                    <InputLabel id="demo-simple-select-helper-label">Source</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        >
-                                        <MenuItem value={'Twitter'}>Twitter</MenuItem>
-                                        <MenuItem value={'Facebook'}>Facebook</MenuItem>
-                                        <MenuItem value={'Newspaper'}>News paper</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <Card style={{backgroundColor:'black',color:'white'}} align='center'>
-                                        <Typography variant='subtitle1' >
-                                            40K+ Twitter mentions
-                                        </Typography>
-                                        <Typography variant='subtitle1'>
-                                            40+ positive sentiment
-                                        </Typography>
-                                        <Typography variant='subtitle1'>
-                                            35+ Positive mood
-                                        </Typography>
-                                    </Card>
-                                </Grid>
-                                <Grid item xs={3} >
-                                    <SemiDonutChart />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <DonutChart mood={false} data={[['anger',20],['sad',34],['joy',23],['anticipation',9]]} />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <DonutChart mood={true} />
-                                </Grid>
-                            </Grid>
-                        </Card>
+                        <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
                     </Grid>
                     {/* <Grid item xl={4} md={6} sm={12} xs={12}>
                         <Card className={classes.main} >
                             <CardContent>Mood Analysis</CardContent> 
-                            <MoodAnalysis dates={[from,to]} />
+                            <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
                         </Card>
                     </Grid>                     */}
                     <Grid item xl={4} md={6} xs={12} >
                         <Card className={classes.main} style={{height:'500px'}} >
                             <CardContent>Sentiment Analysis</CardContent>
-                            <SentimentAnalysis  dates={[from,to]} />
+                            <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
                         </Card>
                     </Grid>                   
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} style={{height:'500px'}} >
-                            <Grid container>
-                                <Grid item xs={5}>
-                                    <CardContent>Influence Comparison</CardContent>
-                                </Grid>
-                                <Grid item xs={7}>
-                                    <InlineFilter />
-                                </Grid>
-                            </Grid>
-                            <TreeMap/>
-                        </Card>
+                        <InfluencerComparison from={from} to={to} />
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} style={{height:'500px'}} >
-                           <WordCloud to={to} from={from} />
+                        <Card className={classes.main} >
+                           <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={6} xs={12}>
                         <Card className={classes.main} style={{height:'500px'}}>
                             <Grid container>
-                                <Grid item xs={5}>
-                                    <CardContent>Geo Tagging Summary</CardContent>
+                                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
+                                    Geo Tagging Summary
                                 </Grid>
                                 <Grid item xs={7}>
-                                    <InlineFilter />
+                                    <InlineFilter sources={['newspaper','twitter']} source={'newspaper'} sentiment={'positive'} mood={'joy'} />
                                 </Grid>
                                 <Grid item xs={12} align="center">
                                     <GeoHotSpotMap />

@@ -49,13 +49,15 @@ export default class PieChart extends Component {
                         distance: -50,
                         style: {
                             fontWeight: 'bold',
-                            color: 'black'
+                            color: 'black',
+                            fontSize:'1rem'
+
                         }
                     },
                     startAngle: -90,
                     endAngle: 90,
                     center: ['50%', '75%'],
-                    size: '110%'
+                    size: '110%',
                 }
             },
             series: [{

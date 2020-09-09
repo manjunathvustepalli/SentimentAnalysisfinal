@@ -10,11 +10,13 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
+import { addMonths } from '../../helpers'
+import moment from 'moment'
+
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
+        fullWidth:true
     },
     selectEmpty: {
       marginTop: theme.spacing(2),
@@ -35,25 +37,25 @@ function LiveAnalysis() {
     const classes = useStyles();
     const [data, setData] = useState([])
     const [liveReloading, setLiveReloading] = useState(false)
-    const [reloadInterval, setReloadInterval] = useState(10000)
+    const [reloadInterval, setReloadInterval] = useState(5000)
     const [to, setTo] = useState(new Date())
     const [from, setFrom] = useState(new Date())
     const [keyword, setKeyword] = useState('')
 
     function fetchData(){
+
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "time_zone": "+05:30",
-                  "format": "dd-MMM-yyyy-hh:mm",
-                  "ranges": [
-                    { "from": "now-1d/d", "to": "now"}
-                  ]
+            "query": {
+              "match_all": {}
+            },
+            "size": 10,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
                 }
               }
-            }
+            ]
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
@@ -67,11 +69,11 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)
         })
+        .catch(err => {console.log(err.response)})
 
     }
 
@@ -92,7 +94,6 @@ function LiveAnalysis() {
         }
           )
           .then(fetchedData =>{
-              console.log(fetchedData)
               let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -104,7 +105,6 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(obj.name)
                 return obj
             })
             setData(final)
@@ -112,19 +112,17 @@ function LiveAnalysis() {
           .catch(err => {
               console.log(err)
           })
-    }
-
-
+    }    
 
     useEffect(() => {
         fetchData()
         const interval = setInterval(() => {
-            if(liveReloading){
+            if(liveReloading && !keyword){
                 fetchData()
             }
           }, reloadInterval);
           return () => clearInterval(interval);
-    }, [reloadInterval,liveReloading])
+    }, [reloadInterval,liveReloading,from,to])
 
     return (
         <SideNav>
@@ -146,7 +144,7 @@ function LiveAnalysis() {
                     <TextField label="Enter Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
                     </Grid>
                     <Grid item xs={4} align="left">
-                        <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                        <GridTimeFilter dateTime={true} toFromDatesHandlers={[setTo,setFrom]} />
                     </Grid>
                     <Grid item xs={2} align={'left'}>
                     <Button style={{transform:"translateY(5px)"}} className={classes.button} onClick={() => fetchFromKeyword()} >
@@ -157,13 +155,15 @@ function LiveAnalysis() {
                         {
                             liveReloading && (
                                 <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="reload">Reload Interval</InputLabel>
+                                    <InputLabel id="reload-interval-label">Reload Interval</InputLabel>
                                         <Select
-                                            labelId="reload"
-                                            id="reload"
+                                            labelId="reload-interval-label"
+                                            id="reload-interval"
                                             value={reloadInterval}
-                                            onChange = {(e) => setReloadInterval(e.target.value)}
-                                            label="Reload Interval "
+                                            onChange={(e) => setReloadInterval(e.target.value)}
+                                            label="Reload Interval"
+                                            variant="outlined"
+                                            fullWidth
                                         >
                                     <MenuItem value={10000}>10 Seconds</MenuItem>
                                     <MenuItem value={20000}>20 Seconds</MenuItem>
@@ -178,10 +178,16 @@ function LiveAnalysis() {
                             title='Live Analysis'
                             columns={[
                                 {title:'Name',field:'name'},
-                                {title:'Screen Name',field:'screenName'},
+                                {title:'Screen Name',field:'screenName',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" }},
                                 {title:'Tweet',field:'tweet'},
-                                {title:'Followers Count',field:'followersCount'},
-                                {title:'Retweet Count',field:'retweetCount'},
+                                {title:'Followers Count',field:'followersCount',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" },},
+                                {title:'Retweet Count',field:'retweetCount',                                    width: "1%",
+                                cellStyle: { whiteSpace: "nowrap" },
+                                headerStyle: { whiteSpace: "nowrap" },},
                                 {title:'Mood',field:'mood'},
                                 {title:'Sentiment',field:'sentiment'},
                             ]}
@@ -189,7 +195,13 @@ function LiveAnalysis() {
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
-                                maxBodyHeight:500
+                                maxBodyHeight:500,
+                                headerStyle:{
+                                    backgroundColor:green[800],
+                                    color:'white',
+                                    paddingTop:'10px',
+                                    paddingBottom:'10px',
+                                }
                             }}
                         />
                     </Grid>

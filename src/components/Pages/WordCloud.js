@@ -181,7 +181,7 @@ export default function MoodAnalysisPieChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>

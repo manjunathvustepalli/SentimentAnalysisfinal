@@ -7,6 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import DonutChart from '../charts/DonutChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
@@ -16,11 +17,9 @@ import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
-import moment from 'moment'
-import { moodAnalysisPieChartFilter } from '../../helpers/filter';
-import PieChart from '../charts/PieChart';
+import { moodAnalysisPieChartFilter, sentimentAnalysisPieChartFilter } from '../../helpers/filter';
+import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
-
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -58,14 +57,13 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }));
-
 var sortedData = {}
-export default function MoodAnalysisPieChart() {
-    const [chartType, setChartType] = useState('pie')
+export default function MoodAnalysisSemiDonutChart() {
+    const [chartType, setChartType] = useState('semi pie')
     const [showTable, setShowTable] = useState(false)
     const [sources, setSources] = useState([])
     const [refresh, setRefresh] = useState(true)
-    const [data, setData] = useState({})    
+    const [data, setData] = useState({})
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [languages,setLanguages] = useState([])
@@ -135,7 +133,7 @@ export default function MoodAnalysisPieChart() {
                 }
             }
         Axios.post(process.env.REACT_APP_URL,
-        query,{
+            query,{
              headers:{
                 'Content-Type':'application/json'
             }
@@ -186,24 +184,23 @@ export default function MoodAnalysisPieChart() {
         .catch(err => {
             console.log(err)
         })
-    }, [from,to,refresh,keywords,keywordType])
+    }, [from,to,refresh,keywordType,keywords])
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
         if(temp){
             setData(temp)
         }
-    },[moods,languages,sources])
-
+    },[moods,languages,sources,keywords,keywordType])
+ 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
-            {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
-            {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
+            {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
+            {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'bar' && <Redirect to='/mood-analysis/bar-chart' />}
             {chartType === 'stack' && <Redirect to='/mood-analysis/stack-chart' />}
-        
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -225,19 +222,19 @@ export default function MoodAnalysisPieChart() {
                                 value={chartType}
                                 onChange={handleChange}
                                 label="Change Chart type"
-                            >
+                            >                            
                             <MenuItem value='area'>Area chart</MenuItem>
                             <MenuItem value='line'>Line chart</MenuItem>
                             <MenuItem value='bar'>Bar chart</MenuItem>
                             <MenuItem value='stack'>Stacked Bar chart</MenuItem>
                             <MenuItem value='pie'>Pie chart</MenuItem>
-                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem> 
+                            <MenuItem value='semi pie'>Semi Pie chart</MenuItem>  
                             </Select>
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
                                 return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
-                                <PieChart data ={data[source]}/>
+                                <SemiDonutChart data ={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
                                 </Button>
@@ -269,7 +266,7 @@ export default function MoodAnalysisPieChart() {
                                     moods={[moods,setMoods]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
-                                    />
+                                />
                             </FilterWrapper>
                         </Grid>
                     </Grid>
