@@ -85,7 +85,7 @@ function ExportData() {
 
     return (
         <SideNav>
-            <Card>
+            <Card style={{padding:'20px'}}>
                 <Grid container spacing={5} style={{width:'80vw'}}>
                     <Grid item xs={2} align="left">
                             <FormControlLabel

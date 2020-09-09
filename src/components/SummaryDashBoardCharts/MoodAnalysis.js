@@ -61,7 +61,6 @@ function MoodAnalysis({toFromDateHandlers,keywords,keywordType}) {
 
          let perDayBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0]['per-day'].buckets
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
-          console.log(perDayBuckets)
          let sortedData = []
          let moods = ['joy','anticipation','surprise','anger','disgust','fear','sad','trust']
          let colors = ['rgb(17, 237, 24)','rgb(46, 190, 230)','rgb(237, 147, 74)','rgb(217, 30, 52)','rgb(237, 74, 204)','rgb(0,0,0)','rgb(237, 226, 74)','rgb(181, 180, 163)']

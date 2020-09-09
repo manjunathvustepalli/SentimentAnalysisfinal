@@ -45,7 +45,7 @@ const IconWithText = styled.div`
 `;
 
 export default function ControlledAccordions(props) {
-  const {singleDate, radioSources,setKeywords,keywordTypes, radioSubSources, radioLanguages, AutoCompleteSubSources, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
+  const {singleDate, radioSources,setKeywords,keywordTypes,keywords, radioSubSources, radioLanguages, AutoCompleteSubSources, toFromDatesHandlers, sources, subSources, sentiments,languages, moods} = props
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -71,7 +71,7 @@ export default function ControlledAccordions(props) {
             </IconWithText>
         </AccordionSummary>
         <AccordionDetails>
-          <Keywords setKeywords={setKeywords} keywordTypes={keywordTypes} />
+          <Keywords setKeywords={setKeywords} keywordTypes={keywordTypes} keywords={keywords || []} />
         </AccordionDetails>
       </Accordion>
         )

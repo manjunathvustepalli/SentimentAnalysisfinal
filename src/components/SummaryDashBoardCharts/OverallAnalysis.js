@@ -155,7 +155,6 @@ function OverallAnalysis({to, from}) {
             }
           })
           .then(res => {
-            console.log(res.data.aggregations['date-based-range'].buckets[0]['sources-mood-sentiment'].buckets)
               setSources(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>doc.key))
               setSourceData(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}))
               let obj = []
@@ -180,7 +179,6 @@ function OverallAnalysis({to, from}) {
         let sourceBuckets = res.data.aggregations['date-based-range'].buckets[0]['sources-mood-sentiment'].buckets
         let sourceKeys = getKeyArray(sourceBuckets)
         sourceKeys.forEach((source,i) => {
-          console.log(source)
           sortedData[source] = {}
           let moodBuckets = sourceBuckets[i].Mood.buckets
           let sentimentBuckets = sourceBuckets[i].Sentiment.buckets
@@ -199,7 +197,6 @@ function OverallAnalysis({to, from}) {
             }
           })
         })
-        console.log(sortedData)
         let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
         setSentiments(sortedData[s].sentiment)
         setMoods(sortedData[s].mood)

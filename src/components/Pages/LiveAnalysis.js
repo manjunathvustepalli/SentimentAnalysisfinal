@@ -45,20 +45,17 @@ function LiveAnalysis() {
     function fetchData(){
 
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "time_zone": "+05:30",
-                  "format": "dd-MMM-yyyy-hh:mm",
-                  "ranges": [
-                    { "to": "now-1m/m"},
-                    { "from": "now-1m/m", "to": "now/m"},
-                    { "from": "now/m"}
-                  ]
+            "query": {
+              "match_all": {}
+            },
+            "size": 10,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
                 }
               }
-            }
+            ]
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
@@ -72,7 +69,6 @@ function LiveAnalysis() {
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
-                console.log(user._source.User.Name)
                 return obj
             })
             setData(final)

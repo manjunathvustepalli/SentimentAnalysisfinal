@@ -1,11 +1,40 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, CardContent } from '@material-ui/core'
+import { Grid, CardContent, makeStyles, InputLabel, Select, MenuItem } from '@material-ui/core'
 import InlineFilter from '../Filters/InlineFilter'
 import Axios from 'axios'
 import { getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
+import { green } from '@material-ui/core/colors'
 
 var sortedData = {}
+
+var colors = {
+    'joy':green[800],
+    'sad':'rgba(236, 240, 22)',
+    'anger':'rgba(240, 22, 37)',
+    'anticipation':'rgba(29, 180, 240)',
+    'disgust':'rgba(226, 29, 240)',
+    'surprise':'rgba(240, 124, 29)',
+    'fear':'rgba(0, 0, 0)',
+    'trust':'rgba(217, 202, 202)',
+    'positive':green[800],
+    'negative':'rgba(255,0,0)',
+    'neutral':'rgba(235,255,0)'
+  }
+
+  const useStyles = makeStyles((theme) => ({
+    filterDefault: {
+        borderColor: "#43B02A",
+        borderStyle: "solid",
+        borderWidth: "1px",
+        padding: '5px',
+        color: "#43B02A",
+    },
+    filterColorDefault:{
+        color: "#43B02A"
+    },
+
+}));
 
 function WordCloud(props) {
 
@@ -15,6 +44,8 @@ function WordCloud(props) {
     const [sentiment, setSentiment] = useState('positive')
     const [mood, setMood] = useState('joy')
     const [data, setData] = useState([])
+    const [type, setType] = useState('sentiment')
+    const classes = useStyles();
 
     useEffect(()=>{
         let query = {
@@ -38,17 +69,22 @@ function WordCloud(props) {
                                     "terms": {
                                         "field": "predictedSentiment.keyword"
                                     },
-                                    "aggs": {
-                                        "Daily-Mood-Distro": {
-                                            "terms": {
-                                                "field": "predictedMood.keyword"
-                                            },
-                                            "aggs": {
-                                                "Words": {
-                                                    "terms": {
-                                                        "field": "HashtagEntities.Text.keyword"
-                                                    }
+                                  "aggs":{
+                                  	   "Words": {
+                                         	"terms": {
+                                                "field": "HashtagEntities.Text.keyword"
                                                 }
+                                            }
+                                  }
+                                },
+                                "Daily-Mood-Distro":{
+                                    "terms": {
+                                        "field": "predictedMood.keyword"
+                                    },
+                                    "aggs": {
+                                        "Words": {
+                                            "terms": {
+                                                "field": "HashtagEntities.Text.keyword"
                                             }
                                         }
                                     }
@@ -82,65 +118,33 @@ function WordCloud(props) {
                 sortedData[source] = {}
                 let sentimentBuckets = sourceBuckets[i]['Daily-Sentiment-Distro'].buckets
                 let sentimentKeys = getKeyArray(sentimentBuckets)
+                sortedData[source].sentiment = {}
                 sentimentKeys.forEach((sentiment,j) => {
-                    sortedData[source][sentiment] = {}
-                    let moodBuckets = sentimentBuckets[j]['Daily-Mood-Distro'].buckets
-                    let moodKeys = getKeyArray(moodBuckets)
-                    moodKeys.forEach((mood,k)=>{
-                        sortedData[source][sentiment][mood] = moodBuckets[k].Words.buckets.map((wordObj) => {
-                            if(mood === 'joy'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(17, 237, 24)'
-                                }
-                            } else if(mood === 'anticipation'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(46, 190, 230)'
-                                }
-                            }else if(mood === 'surprise'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(237, 147, 74)'
-                                }
-                            }else if(mood === 'disgust'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(237, 74, 204)'
-                                }
-                            }else if(mood === 'sad'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(237, 226, 74)'
-                                }
-                            }else if(mood === 'fear'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(0,0,0)'
-                                }
-                            }else if(mood === 'trust'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(181, 180, 163)'
-                                }
-                            }else if(mood === 'anger'){
-                                return {
-                                    name:wordObj.key,
-                                    weight:wordObj.doc_count,
-                                    color:'rgb(217, 30, 52)'
-                                }
-                            }
-                        })
+                    console.log(sentiment,j)
+                    let wordBuckets = sentimentBuckets[j].Words.buckets
+                    sortedData[source].sentiment[sentiment] = wordBuckets.map(wordObj => {
+                        return {
+                            name:wordObj.key,
+                            weight:wordObj.doc_count,
+                            color:colors[sentiment]
+                        }
                     })
                 })
-            })    
+                let moodBuckets = sourceBuckets[i]['Daily-Mood-Distro'].buckets
+                let moodKeys = getKeyArray(moodBuckets)
+                sortedData[source].mood = {}
+                moodKeys.forEach((mood,k) =>{
+                    let wordBuckets = moodBuckets[k].Words.buckets
+                    sortedData[source].mood[mood] = wordBuckets.map(wordObj => {
+                        return {
+                            name:wordObj.key,
+                            weight:wordObj.doc_count,
+                            color:colors[mood]
+                        }
+                    })
+                })
+            })
+            console.log(sortedData)    
         })
         .catch(err => {
             console.log(err)
@@ -150,13 +154,17 @@ function WordCloud(props) {
     useEffect(() => {
         setData(prev => {
             try{
-                return sortedData[source][sentiment][mood]
+                if(type==='sentiment'){
+                    return sortedData[source].sentiment[sentiment]
+                } else {
+                    return sortedData[source].mood[mood]
+                }
             } catch {
                 return []
             }
         })
         
-    },[source,sentiment,mood])
+    },[source,sentiment,mood,type])
 
     return (
         <Grid container>
@@ -164,15 +172,82 @@ function WordCloud(props) {
                 Word Cloud
             </Grid>
             <Grid item xs={7}>
-                { sources && sources.length && (<InlineFilter 
-                                                    source={source} 
-                                                    sources={sources} 
-                                                    setSource={setSource} 
-                                                    mood={mood} 
-                                                    setMood={setMood} 
-                                                    sentiment={sentiment} 
-                                                    setSentiment={setSentiment} 
-                                                    />) }
+                { sources && sources.length && (
+                    <Grid container spacing={1} style={{marginTop:'20px'}}>
+                    <Grid item xs={4} >
+                        <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
+                            <Select
+                            labelId="select-source"
+                            id="select-source-main"
+                            fullWidth
+                            className={classes.filterDefault}
+                            value = {source}
+                            onChange = { (e) => setSource(e.target.value) }
+                            >
+                                {
+                                   sources && sources.length && (sources.map((source,i) => <MenuItem value={source} key={i} >{source}</MenuItem>))
+                                }                    
+                            </Select>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <InputLabel id="demo-simple-select-helper-label"className={classes.filterColorDefault} >Type </InputLabel>
+                        <Select
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
+                            fullWidth
+                            value={type}
+                            onChange = {(e) => setType(e.target.value)}
+                            className={classes.filterDefault}
+                        >
+                            <MenuItem value={'sentiment'}>Sentiment</MenuItem>
+                            <MenuItem value={'mood'}>Mood</MenuItem>
+                        </Select>
+                    </Grid>
+                    <Grid item xs={3}>
+                    {
+                        type ==='sentiment' ? (
+                            <>
+                            <InputLabel id="demo-simple-select-helper-label"className={classes.filterColorDefault} >Sentiment </InputLabel>
+                            <Select
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
+                            fullWidth
+                            value={sentiment}
+                            onChange = {(e) => setSentiment(e.target.value)}
+                            className={classes.filterDefault}
+                            >
+                            <MenuItem value={'negative'}>Negative</MenuItem>
+                            <MenuItem value={'positive'}>Positive</MenuItem>
+                            <MenuItem value={'neutral'}>Neutral</MenuItem>
+                            </Select>
+                            </>
+                        ) : (
+                            <>
+                            <InputLabel id="demo-simple-select-helper-label" className={classes.filterColorDefault}>Mood </InputLabel>
+                            <Select
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
+                            fullWidth
+                            value = {mood}
+                            onChange = {(e) => setMood(e.target.value)}
+                            className={classes.filterDefault}
+                            >
+                            <MenuItem value={'joy'}>Joy</MenuItem>
+                            <MenuItem value={'anticipation'}>Anticipation</MenuItem>
+                            <MenuItem value={'surprise'}>Surprise</MenuItem>
+                            <MenuItem value={'anger'}>Anger</MenuItem>
+                            <MenuItem value={'trust'}>Trust</MenuItem>
+                            <MenuItem value={'fear'}>Fear</MenuItem>
+                            <MenuItem value={'sad'}>Sad</MenuItem>
+                            <MenuItem value={'disgust'}>Disgust</MenuItem>
+        
+                            </Select>
+                            </>
+                        )
+                    }                        
+                    </Grid>
+                </Grid>
+                ) }
             </Grid>
             <Grid item xs={12}>
                 <WordCloudChart data={data} />

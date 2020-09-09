@@ -4,13 +4,13 @@ import ChipInput from 'material-ui-chip-input';
 
 function ChipInputFilter(props) {
 
-    const setKeywords = props.setKeywords
+    const {setKeywords,keywords} = props
     return (
         <ChipInput
         fullWidth
         variant="outlined"
         label="Type Keyword"
-        clearInputValueOnChange	
+        defaultValue={keywords}        
         style={{transform:props.transform ? 'translateY(20%)' : ''}}
         onChange={(chips) => {
             setKeywords(chips)

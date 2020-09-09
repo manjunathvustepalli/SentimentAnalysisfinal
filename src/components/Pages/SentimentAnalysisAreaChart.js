@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect,useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,6 +18,7 @@ import { Typography } from '@material-ui/core';
 import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
+import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
  
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -50,19 +51,30 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 
 export default function SentimentalAnalysisAreaChart() {
+    const sentimentFilters = useContext(SentimentAnalysisFiltersContext)
+    const {
+        keywords,
+        setKeywords,
+        keywordType, 
+        setKeywordType,
+        from,
+        setFrom,
+        to,
+        setTo,
+        sources,
+        setSources,
+        subSources,
+        setSubSources,
+        languages,
+        setLanguages,
+        sentiments,
+        setSentiments
+    } = sentimentFilters
     let colors = { 'positive':'rgb(0,255,0)','negative':'rgb(255,0,0)','neutral':'rgb(235,255,0)' } 
     const [chartType, setChartType] = useState('area')
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
-    const [sources,setSources] = useState([])
-    const [subSources,setSubSources] = useState([])
-    const [languages,setLanguages] = useState([])
-    const [sentiments,setSentiments] = useState([])
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
     const [open, setOpen] = useState(true)
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
@@ -173,23 +185,31 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                 });
             })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
+            console.log(sortedData,uniqueSourceKeys,uniqueSubSourceKeys,languageKeys)
+            
+            setSources(prev =>{
+                let availableSourceKeys = {}
+                uniqueSourceKeys.forEach(source =>{
+                    availableSourceKeys[source] = !!prev[source]
+                })
+                return availableSourceKeys
             })
-            setSources(availableSourceKeys)
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
+            setLanguages(prev =>{
+                let availableLanguageKeys = {}
+                languageKeys.forEach(lang =>{
+                    availableLanguageKeys[lang] = !!prev[lang]
+                })
+                return availableLanguageKeys
             })
-            setLanguages(availableLanguageKeys)
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
+            setSubSources(prev =>{
+                let availableSubSourceKeys = {}
+                uniqueSubSourceKeys.forEach(subSource =>{
+                    availableSubSourceKeys[subSource]  = !!prev[subSource]
+                })
+                return availableSubSourceKeys
             })
-            setSubSources(availableSubSourceKeys)
 
             setSentiments(prev => {
                 if(Object.keys(prev).length){
@@ -214,7 +234,6 @@ export default function SentimentalAnalysisAreaChart() {
         setOpen(false)
     })
     }, [from,to,refresh,keywords,keywordType])
-
 
     useEffect(() => {
         const [finalData]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
@@ -290,6 +309,7 @@ export default function SentimentalAnalysisAreaChart() {
                                     sentiments={[sentiments,setSentiments]} 
                                     languages={[languages,setLanguages]} 
                                     subSources={[subSources,setSubSources]}
+                                    keywords={keywords}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                 />

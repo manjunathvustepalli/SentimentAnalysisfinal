@@ -24,9 +24,13 @@ import WordCloudMood from "../Pages/WordCloudMood";
 import ExportData from "../Pages/ExportData";
 import MoodAnalysisSemiDonutChart from "../Pages/MoodAnalysisSemiDonutChart";
 import MoodAnalysisBarChart from "../Pages/MoodAnalysisBarChart";
+import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
+import AdminPage from "../Pages/AdminPage";
+import ImageSearch from "../Pages/ImageSearch"
 
 function Routes() {
   return (
+    <SentimentAnalysisContext>
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Login} />
@@ -104,11 +108,14 @@ function Routes() {
         <Route path="/trending-subject/mood" exact component={TrendingSubjectsMood} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
+        <Route path="/admin" exact component={AdminPage} />
+        <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>
+    </SentimentAnalysisContext>
   );
 }
 

@@ -219,9 +219,7 @@ function InfluencerComparison({from,to}) {
                 }
               })
                 .then(res => {
-                  console.log(res)
                     setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
-                        console.log(doc[type].buckets[0].key)
                           return {
                               name: doc.key,
                               parent:doc[type].buckets[0].key,
@@ -291,9 +289,7 @@ function InfluencerComparison({from,to}) {
               }
             })
               .then(res => {
-                console.log(res)
                   setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
-                    console.log(doc[type].buckets[0].key)
                     return {
                         name:doc.key,
                         value:doc.ArticleCount.value,

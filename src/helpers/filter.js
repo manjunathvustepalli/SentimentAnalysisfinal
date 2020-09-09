@@ -12,7 +12,7 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
     let sourceFilteredData = []
     languageFilteredData.forEach(sourceData => {
         sourceList.forEach(source =>{
-            if(sources[source] && sourceData[source]){
+            if(sourceData && sources[source] && sourceData[source]){
                 Object.keys(sourceData[source]).forEach(availableSubSource =>{
                     if(!availableSubSources.includes(availableSubSource)){
                         availableSubSources.push(availableSubSource)

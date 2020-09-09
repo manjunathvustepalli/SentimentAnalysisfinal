@@ -34,6 +34,8 @@ import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SearchIcon from '@material-ui/icons/Search';
 import { green } from '@material-ui/core/colors'
+import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
+import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 
 const drawerWidth = 260;
 
@@ -155,6 +157,16 @@ const SideNavBar = ( props) => {
       name:'Export Data',
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
+    },
+    {
+      name:'Admin Page',
+      icon:<PermDataSettingIcon/>,
+      path:['/admin'],
+    },
+    {
+      name:'Search Image',
+      icon:<ImageSearchIcon/>,
+      path:['/image-gallery'],
     },
   ]
     

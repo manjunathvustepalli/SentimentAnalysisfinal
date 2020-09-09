@@ -44,7 +44,7 @@ function Keywords(props) {
                     </Select>
             </FormControl>
 
-                <ChipInputFilter setKeywords={props.setKeywords} />
+                <ChipInputFilter setKeywords={props.setKeywords} keywords={props.keywords} />
         </div>
     )
 }

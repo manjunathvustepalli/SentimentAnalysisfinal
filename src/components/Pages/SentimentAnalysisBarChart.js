@@ -222,7 +222,6 @@ export default function SentimentalAnalysisAreaChart(props) {
     useEffect(() => {
         const [finalData]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
         setDates(finalData.dates)
-        console.log(finalData.dates)
         let obj = []
         Object.keys(finalData).forEach(key => {
             if(key !== 'dates'){
@@ -234,13 +233,11 @@ export default function SentimentalAnalysisAreaChart(props) {
             }
         })
         setData(obj)
-        console.log(obj)
     }, [languages, sentiments, subSources])
 
     useEffect(() => {
         const [finalData,availableSubSources]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
         setDates(finalData.dates)
-        console.log(finalData.dates)
         let obj = []
         Object.keys(finalData).forEach(key => {
             if(key !== 'dates'){
@@ -252,7 +249,6 @@ export default function SentimentalAnalysisAreaChart(props) {
             }
         })
         setData(obj)
-        console.log(obj)
         let availableSubSourceKeys = {}
         availableSubSources.forEach(subSource =>{
             availableSubSourceKeys[subSource]  = true
