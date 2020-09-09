@@ -18,6 +18,9 @@ import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
+import useDidUpdateEffect  from '../custom Hooks/useDidUpdateEffect';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+
 
 
 const useStyles = makeStyles((theme) => ({

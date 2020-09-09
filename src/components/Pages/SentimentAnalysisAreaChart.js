@@ -19,7 +19,10 @@ import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
- 
+import useDidUpdateEffect  from '../custom Hooks/useDidUpdateEffect';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+
+
 const useStyles = makeStyles((theme) => ({
     main: {
         fontSize: 16,
@@ -80,7 +83,7 @@ export default function SentimentalAnalysisAreaChart() {
         setChartType(e.target.value)
     }
 
-    useEffect(() => {
+    const fetchData = (changeInState) => {
         let query = {
             "aggs": {
               "date-based-range": {
@@ -186,30 +189,39 @@ export default function SentimentalAnalysisAreaChart() {
                 });
             })
             console.log(sortedData,uniqueSourceKeys,uniqueSubSourceKeys,languageKeys)
-            
-            setSources(prev =>{
-                let availableSourceKeys = {}
-                uniqueSourceKeys.forEach(source =>{
-                    availableSourceKeys[source] = !!prev[source]
-                })
-                return availableSourceKeys
-            })
 
-            setLanguages(prev =>{
-                let availableLanguageKeys = {}
-                languageKeys.forEach(lang =>{
-                    availableLanguageKeys[lang] = !!prev[lang]
-                })
-                return availableLanguageKeys
-            })
+            if(changeInState){
 
-            setSubSources(prev =>{
-                let availableSubSourceKeys = {}
-                uniqueSubSourceKeys.forEach(subSource =>{
-                    availableSubSourceKeys[subSource]  = !!prev[subSource]
+            if(uniqueSourceKeys.length){
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        console.log(prev[source],!!prev[source])
+                        availableSourceKeys[source] = !!prev[source]
+                    })
+                    return availableSourceKeys
                 })
-                return availableSubSourceKeys
-            })
+            }    
+
+            if(languageKeys.length){
+                setLanguages(prev =>{
+                    let availableLanguageKeys = {}
+                    languageKeys.forEach(lang =>{
+                        availableLanguageKeys[lang] = !!prev[lang]
+                    })
+                    return availableLanguageKeys
+                })    
+            }
+
+            if(uniqueSubSourceKeys.length){
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = !!prev[subSource]
+                    })
+                    return availableSubSourceKeys
+                })    
+            }
 
             setSentiments(prev => {
                 if(Object.keys(prev).length){
@@ -218,6 +230,47 @@ export default function SentimentalAnalysisAreaChart() {
                     return {negative:true,positive:true,neutral:true}
                 }
             })
+            } else {
+            
+            if(uniqueSourceKeys.length){
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = true
+                    })
+                    return availableSourceKeys
+                })    
+            }
+
+            if(languageKeys.length){  
+            setLanguages(prev =>{
+                let availableLanguageKeys = {}
+                languageKeys.forEach(lang =>{
+                    availableLanguageKeys[lang] = true
+                })
+                return availableLanguageKeys
+            })
+            }
+
+            if(uniqueSubSourceKeys){
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = true
+                    })
+                    return availableSubSourceKeys
+                })
+            }
+
+            setSentiments(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {negative:true,positive:true,neutral:true}
+                }
+            })
+            }
+            
             setOpen(false)
         } else {
             sortedData = {}
@@ -226,14 +279,26 @@ export default function SentimentalAnalysisAreaChart() {
             setLanguages({})
             setSentiments({})
             setOpen(false)
-        }
-        
+        }       
     })
     .catch(err => {
         console.log(err)
         setOpen(false)
     })
-    }, [from,to,refresh,keywords,keywordType])
+    }
+
+    useMountAndUpdateEffect(()=>{
+        fetchData(false)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(true)
+        }
+    },[keywordType])
+
 
     useEffect(() => {
         const [finalData]  = sentimentalAnalysisAreaChartFilter(languages,sentiments,sources,subSources,sortedData,from,to)
