@@ -12,7 +12,9 @@ import { green } from '@material-ui/core/colors'
 import GridTimeFilter from '../Filters/GridTimeFilter'
 import { addMonths } from '../../helpers'
 import moment from 'moment'
-
+import AccordianFilters from '../Filters/AccordianFilters'
+import FilterWrapper from '../Filters/FilterWrapper'
+import FilterHeader from '../Filters/FilterHeader'
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -41,14 +43,50 @@ function LiveAnalysis() {
     const [to, setTo] = useState(new Date())
     const [from, setFrom] = useState(new Date())
     const [keyword, setKeyword] = useState('')
+    const [sources, setSources] = useState({"twitter":true,"facebook":true})
+    const [languages, setLanguages] = useState({"english":true,"hindi":false})
+    const [subSources, setSubSources] = useState({"twitter for android":true,"TimesOfIndia":false})
+    const [refresh, setRefresh] = useState(true)
 
     function fetchData(){
+        let selectedSources = []
+        Object.keys(sources).forEach(source =>{
+            sources[source] && (selectedSources.push(source))
+        })
+
+        let selectedSubSources = []
+        Object.keys(subSources).forEach(subSource =>{
+            subSources[subSource] && (selectedSubSources.push(subSource))
+        })
+
+        let selectedlanguages = []
+        Object.keys(languages).forEach(language =>{
+            languages[language] && (selectedlanguages.push(language))
+        })
 
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
-              "match_all": {}
+              "bool": {
+                "should": [
+                  {
+                    "terms": {
+                      "Source.keyword":selectedSources
+                    }
+                  },
+                  {
+                    "terms": {
+                      "SubSource.keyword": selectedSubSources
+                    }
+                  },
+                  {
+                    "terms": {
+                      "predictedLang.keyword": selectedlanguages
+                    }
+                  }
+                ]
+              }
             },
-            "size": 10,
+            "size": 50,
             "sort": [
               {
                 "CreatedAt": {
@@ -122,7 +160,7 @@ function LiveAnalysis() {
             }
           }, reloadInterval);
           return () => clearInterval(interval);
-    }, [reloadInterval,liveReloading,from,to])
+    }, [reloadInterval,liveReloading,from,to,languages,sources,subSources])
 
     return (
         <SideNav>
@@ -166,7 +204,7 @@ function LiveAnalysis() {
                             )
                         }
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={8}>
                         <MaterialTable 
                             title='Live Analysis'
                             columns={[
@@ -198,6 +236,22 @@ function LiveAnalysis() {
                             }}
                         />
                     </Grid>
+                    <Grid item sm={12} md={4}  >
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                        <Grid item xs={12} >
+                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FilterWrapper>
+                                <AccordianFilters 
+                                    sources={[sources,setSources]} 
+                                    languages={[languages,setLanguages]} 
+                                    subSources={[subSources,setSubSources]}
+                                />
+                            </FilterWrapper>
+                        </Grid>
+                    </Grid>
+                </Grid>
                 </Grid>
             </Card>
         </SideNav>

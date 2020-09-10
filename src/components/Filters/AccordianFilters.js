@@ -76,24 +76,29 @@ export default function ControlledAccordions(props) {
       </Accordion>
         )
       }
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2bh-content"
-          id="panel2bh-header"
-        >
-            <IconWithText>
-                <DateRangeIcon style={{marginRight:'10px'}} /> 
-                <p>
-                Dates
-                </p>
-            </IconWithText>
-        </AccordionSummary>
-        <AccordionDetails>
-          {singleDate ? (<SingleDate singleDate={singleDate} />) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
-          
-        </AccordionDetails>
-      </Accordion>
+      {
+        (singleDate || toFromDatesHandlers) && (
+          <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2bh-content"
+            id="panel2bh-header"
+          >
+              <IconWithText>
+                  <DateRangeIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                  Dates
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails>
+            {singleDate ? (<SingleDate singleDate={singleDate} />) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
+            
+          </AccordionDetails>
+        </Accordion>
+        ) 
+      }
+
 {languages && (      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
