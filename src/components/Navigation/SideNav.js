@@ -158,16 +158,16 @@ const SideNavBar = ( props) => {
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
     },
-    {
-      name:'Admin Page',
-      icon:<PermDataSettingIcon/>,
-      path:['/admin'],
-    },
-    {
-      name:'Search Image',
-      icon:<ImageSearchIcon/>,
-      path:['/image-gallery'],
-    },
+    // {
+    //   name:'Admin Page',
+    //   icon:<PermDataSettingIcon/>,
+    //   path:['/admin'],
+    // },
+    // {
+    //   name:'Search Image',
+    //   icon:<ImageSearchIcon/>,
+    //   path:['/image-gallery'],
+    // },
   ]
     
    const drawer = (

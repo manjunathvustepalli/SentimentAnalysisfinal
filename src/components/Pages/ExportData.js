@@ -43,17 +43,17 @@ function ExportData() {
 
     function fetchData(){
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from":from, "to": to }
-                  ]
+            "query": {
+              "match_all": {}
+            },
+            "size": 10,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
                 }
               }
-            }
+            ]
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
@@ -99,15 +99,15 @@ function ExportData() {
                             />
                     </Grid>
                     <Grid item xs={2} align='right' direction='row'>
-                    <TextField label="Enter Keyword" />
+                    {/* <TextField label="Enter Keyword" /> */}
                     </Grid>
                     <Grid item xs={4} align="left">
-                        <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                        {/* <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} /> */}
                     </Grid>
                     <Grid item xs={2} align="left">
-                    <Button style={{transform:"translateY(5px)"}} className={classes.button} >
+                    {/* <Button style={{transform:"translateY(5px)"}} className={classes.button} >
                         Search
-                    </Button>
+                    </Button> */}
                     </Grid>
                     <Grid item xs={2} align="right">
                         {
@@ -125,7 +125,7 @@ function ExportData() {
                                     <MenuItem value={20000}>20 Seconds</MenuItem>
                                     <MenuItem value={30000}>30 Seconds</MenuItem>
                                     </Select>
-      </FormControl>
+                                </FormControl>
                             )
                         }
                     </Grid>
