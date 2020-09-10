@@ -252,7 +252,8 @@ export default function SentimentalAnalysisAreaChart() {
             })
             }
 
-            if(uniqueSubSourceKeys){
+            if(uniqueSubSourceKeys.length){
+                console.log('yes,i am')
                 setSubSources(prev =>{
                     let availableSubSourceKeys = {}
                     uniqueSubSourceKeys.forEach(subSource =>{
