@@ -41,7 +41,7 @@ function InfluencerComparison({from,to}) {
     const parent = [{
         id: 'negative',
         name: 'Negative',
-        color: "#EC2500",
+        color: "#CB0038",
         dataLabels:{
           color:'#000',
           style:{
@@ -51,7 +51,7 @@ function InfluencerComparison({from,to}) {
     }, {
         id: 'positive',
         name: 'Positive',
-        color: "#9EDE00",
+        color: "#04E46C",
         dataLabels:{
           color:'#000',
           style:{
@@ -61,7 +61,7 @@ function InfluencerComparison({from,to}) {
     }, {
         id: 'neutral',
         name: 'Neutral',
-        color: '#EC9800',
+        color: '#FFC400',
         dataLabels:{
           color:'#000',
           style:{
@@ -71,7 +71,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'joy',
       name:'Joy',
-      color:"rgb(0,255,0)",
+      color:"#4C7A00",
       dataLabels:{
         color:'#000',
         style:{
@@ -81,7 +81,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'sad',
       name:'sad',
-      color:"rgb(236,240,22)",
+      color:"#D8D8D8",
       dataLabels:{
         color:'#000',
         style:{
@@ -91,7 +91,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'anger',
       name:'anger',
-      color:"rgb(240,22,37)",
+      color:"#FF5151",
       dataLabels:{
         color:'#000',
         style:{
@@ -101,7 +101,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'anticipation',
       name:'anticipation',
-      color:"rgb(29, 180, 240)",
+      color:"#111D31",
       dataLabels:{
         color:'#000',
         style:{
@@ -111,7 +111,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'disgust',
       name:'disgust',
-      color:"rgb(226, 29, 240)",
+      color:"#D512CF",
       dataLabels:{
         color:'#000',
         style:{
@@ -121,7 +121,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'surprise',
       name:'surprise',
-      color:"rgb(240,124,29)",
+      color:"#FF6600",
       dataLabels:{
         color:'#000',
         style:{
@@ -131,7 +131,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'fear',
       name:'fear',
-      color:"#616C6F",
+      color:"#2000FF",
       dataLabels:{
         color:'#000',
         style:{

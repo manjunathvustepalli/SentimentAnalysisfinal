@@ -9,17 +9,17 @@ import { green } from '@material-ui/core/colors'
 var sortedData = {}
 
 var colors = {
-    'joy':green[800],
-    'sad':'rgba(236, 240, 22)',
-    'anger':'rgba(240, 22, 37)',
-    'anticipation':'rgba(29, 180, 240)',
-    'disgust':'rgba(226, 29, 240)',
-    'surprise':'rgba(240, 124, 29)',
-    'fear':'rgba(0, 0, 0)',
-    'trust':'rgba(217, 202, 202)',
-    'positive':green[800],
-    'negative':'rgba(255,0,0)',
-    'neutral':'rgba(235,255,0)'
+    'joy':'#4C7A00',
+    'sad':'#D8D8D8',
+    'anger':'#FF5151',
+    'anticipation':'#111D31',
+    'disgust':'#D512CF',
+    'surprise':'#FF6600',
+    'fear':'#2000FF',
+    'trust':'#0099FF',
+    'positive':'#04E46C',
+    'negative':'#CB0038',
+    'neutral':'#FFC400'
   }
 
   const useStyles = makeStyles((theme) => ({

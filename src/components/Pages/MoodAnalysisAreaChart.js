@@ -64,7 +64,19 @@ export default function MoodAnalysisAreaChart() {
 		moods,
 		setMoods
 	} = moodFilters
-	var colors = {'joy':'rgba(0,255,0,0.5)','sad':'rgba(236, 240, 22,0.5)','anger':'rgba(240, 22, 37,0.5)','anticipation':'rgba(29, 180, 240,0.5)','disgust':'rgba(226, 29, 240,0.5)','surprise':'rgba(240, 124, 29,0.5)','fear':'rgba(0, 0, 0,0.5)','trust':'rgba(217, 202, 202,0.5)'}
+	var colors = {
+		'joy':'#4C7A00',
+		'sad':'#D8D8D8',
+		'anger':'#FF5151',
+		'anticipation':'#111D31',
+		'disgust':'#D512CF',
+		'surprise':'#FF6600',
+		'fear':'#2000FF',
+		'trust':'#0099FF',
+		'positive':'#04E46C',
+		'negative':'#CB0038',
+		'neutral':'#FFC400'
+	  }
 	const classes = useStyles()
 	const [refresh, setRefresh] = useState(true)
 	const [chartType, setChartType] = useState('area')
