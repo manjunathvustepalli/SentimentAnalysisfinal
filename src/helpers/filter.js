@@ -86,7 +86,7 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
     let sourceFilteredData = []
     languageFilteredData.forEach(sourceData =>{
         sourceList.forEach(source =>{
-            if(sources[source] && sourceData[source]){
+            if(sourceData && sources[source] && sourceData[source]){
                 Object.keys(sourceData[source]).forEach(availableSubSource =>{
                     if(!availableSubSources.includes(availableSubSource)){
                         availableSubSources.push(availableSubSource)
@@ -446,7 +446,7 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
     var uniqueSubSources = []
     var dataArray = []
     Object.keys(languages).forEach((language) =>{
-        if(languages[language]){
+        if(languages[language] && sortedData[language]){
             Object.keys(sortedData[language]).forEach(source => {
                 if(sources[source])
                 Object.keys(sortedData[language][source]).forEach(subSource => {

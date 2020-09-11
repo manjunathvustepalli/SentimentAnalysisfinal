@@ -21,7 +21,7 @@ import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
 import ChipInputFilter from '../Filters/ChipInputFilter';
 import Keywords from '../Filters/Keywords';
-
+import { Input, createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 
 const IconWithText = styled.div`
   display: flex;
@@ -124,7 +124,7 @@ function SummaryDashBoard() {
                            <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
                         </Card>
                     </Grid>
-                    <Grid item xl={4} md={6} xs={12}>
+                    <Grid item xl={4} md={12} xs={12}>
                         <Card className={classes.main} >
                             <Grid container>
                                 <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>

@@ -262,7 +262,7 @@ function WordCloudSentiment() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             <Grid container spacing={2} >
                 <Grid item sm={12} md={8}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -349,7 +349,7 @@ function WordCloudSentiment() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters  
-                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources, setSources]} 
                                     sentiments={[sentiments,setSentiments]}
                                     subSources={[subSources,setSubSources]}

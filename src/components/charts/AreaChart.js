@@ -71,7 +71,8 @@ function AreaChart(props) {
                             enabled: true
                         }
                     }
-                }
+                },
+                showInLegend: true
             }
         },
         series,

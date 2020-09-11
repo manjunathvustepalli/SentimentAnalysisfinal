@@ -61,12 +61,12 @@ function GeoHotSpotAnalysis() {
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-            <Card className={classes.main}>
-              <Typography style={{ color: "#43B02A", fontSize: "30px", margin:'20px' }}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
                 Geo Hotspot Analysis
               </Typography>
+            <Card className={classes.main}>
               <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid item xs={12} style={{marginTop:'20px'}}>
                   <GeoHotTabbar />
                 </Grid>
               </Grid>
@@ -80,7 +80,7 @@ function GeoHotSpotAnalysis() {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
                     moods={[moods, setMoods]}

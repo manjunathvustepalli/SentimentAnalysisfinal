@@ -515,7 +515,7 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                             <AccordianFilters 
-                              toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                              toFromDatesHandlers={[setFrom,setTo,from,to]} 
                               radioSources={[source,setSource,sources]}
                                 />
                             </FilterWrapper>

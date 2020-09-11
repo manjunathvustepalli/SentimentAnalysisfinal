@@ -57,9 +57,9 @@ export default function ControlledAccordions(props) {
     <div className={classes.root}>
       {
         setKeywords && keywordTypes && (
-          <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+          <Accordion expanded={expanded === 'panel1'} className={classes.accordianStyling} onChange={handleChange('panel1')}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}} />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
@@ -76,9 +76,9 @@ export default function ControlledAccordions(props) {
       </Accordion>
         )
       }
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+      <Accordion expanded={expanded === 'panel2'} className={classes.accordianStyling} onChange={handleChange('panel2')}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
           aria-controls="panel2bh-content"
           id="panel2bh-header"
         >
@@ -94,9 +94,9 @@ export default function ControlledAccordions(props) {
           
         </AccordionDetails>
       </Accordion>
-{languages && (      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+{languages && (      <Accordion expanded={expanded === 'panel4'} className={classes.accordianStyling} onChange={handleChange('panel4')}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
           aria-controls="panel4bh-content"
           id="panel4bh-header"
         >
@@ -113,9 +113,9 @@ export default function ControlledAccordions(props) {
       </Accordion>)}
       {
         sources && (
-        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+        <Accordion expanded={expanded === 'panel3'} className={classes.accordianStyling} onChange={handleChange('panel3')}>
           <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
           aria-controls="panel3bh-content"
           id="panel3bh-header"
           >
@@ -134,9 +134,9 @@ export default function ControlledAccordions(props) {
       }
       {
         subSources && (
-          <Accordion expanded={expanded === 'panel8'} onChange={handleChange('panel8')}>
+          <Accordion expanded={expanded === 'panel8'} className={classes.accordianStyling} onChange={handleChange('panel8')}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
             aria-controls="panel3bh-content"
             id="panel3bh-header"
           >
@@ -154,9 +154,9 @@ export default function ControlledAccordions(props) {
         )
       }
       {sentiments && (
-        <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+        <Accordion expanded={expanded === 'panel5'} className={classes.accordianStyling} onChange={handleChange('panel5')}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}} />}
           aria-controls="panel5bh-content"
           id="panel5bh-header"
         >
@@ -173,9 +173,9 @@ export default function ControlledAccordions(props) {
       </Accordion>
       )}
             {moods && (
-        <Accordion expanded={expanded === 'panel6'} onChange={handleChange('panel6')}>
+        <Accordion expanded={expanded === 'panel6'} className={classes.accordianStyling} onChange={handleChange('panel6')}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
           aria-controls="panel5bh-content"
           id="panel5bh-header"
         >
@@ -193,9 +193,9 @@ export default function ControlledAccordions(props) {
       )}
       {
         radioSources && (
-          <Accordion expanded={expanded === 'panel7'} onChange={handleChange('panel7')}>
+          <Accordion expanded={expanded === 'panel7'} className={classes.accordianStyling} onChange={handleChange('panel7')}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
             aria-controls="panel7bh-content"
             id="panel7bh-header"
           >
@@ -214,9 +214,9 @@ export default function ControlledAccordions(props) {
       }
       {
         radioSubSources && (
-          <Accordion expanded={expanded === 'panel10'} onChange={handleChange('panel10')}>
+          <Accordion expanded={expanded === 'panel10'} className={classes.accordianStyling} onChange={handleChange('panel10')}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
             aria-controls="panel10bh-content"
             id="panel9bh-header"
           >
@@ -235,9 +235,9 @@ export default function ControlledAccordions(props) {
       }
       {
         radioLanguages && (
-          <Accordion expanded={expanded === 'panel9'} onChange={handleChange('panel9')}>
+          <Accordion expanded={expanded === 'panel9'} className={classes.accordianStyling} onChange={handleChange('panel9')}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{color:'white'}}/>}
             aria-controls="panel7bh-content"
             id="panel9bh-header"
           >
@@ -256,7 +256,7 @@ export default function ControlledAccordions(props) {
       }
       {
         AutoCompleteSubSources && (
-          <Accordion expanded={expanded === 'panel11'} onChange={handleChange('panel11')}>
+          <Accordion expanded={expanded === 'panel11'} className={classes.accordianStyling} onChange={handleChange('panel11')}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel11bh-content"

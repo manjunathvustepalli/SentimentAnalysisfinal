@@ -27,9 +27,12 @@ import MoodAnalysisBarChart from "../Pages/MoodAnalysisBarChart";
 import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
 import AdminPage from "../Pages/AdminPage";
 import ImageSearch from "../Pages/ImageSearch"
+import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
+
 
 function Routes() {
   return (
+    <MoodAnalysisContext>
     <SentimentAnalysisContext>
     <BrowserRouter>
       <Switch>
@@ -116,6 +119,7 @@ function Routes() {
       </Switch>
     </BrowserRouter>
     </SentimentAnalysisContext>
+    </MoodAnalysisContext>
   );
 }
 

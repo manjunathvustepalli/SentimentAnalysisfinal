@@ -44,6 +44,7 @@ export default class PieChart extends Component {
             },
             plotOptions: {
                 pie: {
+                    showInLegend: true,
                     dataLabels: {
                         enabled: true,
                         distance: -50,

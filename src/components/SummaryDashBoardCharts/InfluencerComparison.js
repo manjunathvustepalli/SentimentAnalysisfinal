@@ -312,11 +312,11 @@ function InfluencerComparison({from,to}) {
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
         <Grid container spacing={3} > 
-            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'0 0 0 20px'}} >
+            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'35px'}} >
                 Influence Comparison
             </Grid>
             <Grid item xs={7}  >
-                <Grid container >
+                <Grid container style={{marginTop:'30px'}}>
                 <Grid item xs={4} >
                 <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
                     <Select 
@@ -330,7 +330,7 @@ function InfluencerComparison({from,to}) {
                        <MenuItem value={'twitter'} > Twitter </MenuItem>                    
                        <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
                     </Select>
-            </Grid>
+                </Grid>
             <Grid item xs={1}/>
             <Grid item xs={4}>
                 <InputLabel id="Select-type"className={classes.filterColorDefault} >Select Type </InputLabel>

@@ -205,9 +205,9 @@ function OverallAnalysis({to, from}) {
 
     return (
         <Card className={classes.main}>
-        <CardContent >Overall Analysis</CardContent>
         <Grid container spacing={0} className={classes.gridposition}>
             <Grid item xs={3}>
+            <CardContent >Overall Analysis</CardContent>
             <FormControl variant="outlined" className={classes.formControl} style={{margin:'30px'}} >
                 <InputLabel id="Source-label">Source</InputLabel>
                     <Select 

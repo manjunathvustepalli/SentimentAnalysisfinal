@@ -188,11 +188,8 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                 });
             })
-            console.log(sortedData,uniqueSourceKeys,uniqueSubSourceKeys,languageKeys)
-
+            console.log(keywords.length,keywordType)
             if(changeInState){
-
-            if(uniqueSourceKeys.length){
                 setSources(prev =>{
                     let availableSourceKeys = {}
                     uniqueSourceKeys.forEach(source =>{
@@ -201,9 +198,6 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                     return availableSourceKeys
                 })
-            }    
-
-            if(languageKeys.length){
                 setLanguages(prev =>{
                     let availableLanguageKeys = {}
                     languageKeys.forEach(lang =>{
@@ -211,18 +205,13 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                     return availableLanguageKeys
                 })    
-            }
-
-            if(uniqueSubSourceKeys.length){
                 setSubSources(prev =>{
                     let availableSubSourceKeys = {}
                     uniqueSubSourceKeys.forEach(subSource =>{
                         availableSubSourceKeys[subSource]  = !!prev[subSource]
                     })
                     return availableSubSourceKeys
-                })    
-            }
-
+                })
             setSentiments(prev => {
                 if(Object.keys(prev).length){
                     return prev
@@ -230,9 +219,7 @@ export default function SentimentalAnalysisAreaChart() {
                     return {negative:true,positive:true,neutral:true}
                 }
             })
-            } else {
-            
-            if(uniqueSourceKeys.length){
+            } else {         
                 setSources(prev =>{
                     let availableSourceKeys = {}
                     uniqueSourceKeys.forEach(source =>{
@@ -240,9 +227,7 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                     return availableSourceKeys
                 })    
-            }
 
-            if(languageKeys.length){  
             setLanguages(prev =>{
                 let availableLanguageKeys = {}
                 languageKeys.forEach(lang =>{
@@ -250,10 +235,6 @@ export default function SentimentalAnalysisAreaChart() {
                 })
                 return availableLanguageKeys
             })
-            }
-
-            if(uniqueSubSourceKeys.length){
-                console.log('yes,i am')
                 setSubSources(prev =>{
                     let availableSubSourceKeys = {}
                     uniqueSubSourceKeys.forEach(subSource =>{
@@ -261,8 +242,6 @@ export default function SentimentalAnalysisAreaChart() {
                     })
                     return availableSubSourceKeys
                 })
-            }
-
             setSentiments(prev => {
                 if(Object.keys(prev).length){
                     return prev
@@ -270,8 +249,7 @@ export default function SentimentalAnalysisAreaChart() {
                     return {negative:true,positive:true,neutral:true}
                 }
             })
-            }
-            
+            }     
             setOpen(false)
         } else {
             sortedData = {}
@@ -283,20 +261,20 @@ export default function SentimentalAnalysisAreaChart() {
         }       
     })
     .catch(err => {
-        console.log(err)
+        console.log(err.response)
         setOpen(false)
     })
     }
 
     useMountAndUpdateEffect(()=>{
-        fetchData(false)
+        fetchData(true)
     },()=>{
         fetchData(true)
     },[from,to,refresh,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
-            fetchData(true)
+            fetchData(false)
         }
     },[keywordType])
 
@@ -370,7 +348,7 @@ export default function SentimentalAnalysisAreaChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources,setSources]} 
                                     sentiments={[sentiments,setSentiments]} 
                                     languages={[languages,setLanguages]} 

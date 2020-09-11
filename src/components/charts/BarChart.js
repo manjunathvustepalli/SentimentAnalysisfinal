@@ -41,21 +41,29 @@ function BarChart(props) {
     },
     yAxis: {
       title: {
-        text: "",
+        text: "data",
       },
     },
     legend: {
-      enabled: false,
+      enabled: true,
     },
     plotOptions: {
       column:{
         stacking:props.stacking || ''
+
       },
       series: {
         borderWidth: 0,
         dataLabels: {
           enabled: true,
           format: "{point.y}",
+          style: {
+            fontWeight: 'bold',
+            color: 'black',
+            fontSize:'0.8rem',
+            textOutline:'none',
+            border:'none'
+          },
         },
       },
     },
@@ -65,8 +73,7 @@ function BarChart(props) {
               series: {
                   dataLabels: {
                       enabled: true
-                  }
-                  
+                  }      
               }
           }
       },

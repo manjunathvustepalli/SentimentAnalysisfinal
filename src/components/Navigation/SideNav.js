@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:"white"
   },
   AvatarBox:{
-      backgroundColor:green[800]
+      backgroundColor:'rgb(67,176,42)'
   },
   content: {
     flexGrow: 1,
@@ -88,7 +88,7 @@ const SideNavBar = ( props) => {
 
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:green[800]}
+        return {color:'rgb(67,176,42)'}
     }
     else{
         return {color:"black"}
@@ -171,11 +171,11 @@ const SideNavBar = ( props) => {
   ]
     
    const drawer = (
-    <div>
+    <div className={classes.drawerScroller} >
           <div id="userMenuHeader">
-            <Grid container justify='space-around' flexDirection='row' >
-              <Grid xs={12}>
-              <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
+            <Grid container justify='space-between' flexDirection='row' >
+              <Grid item align="left" xs={12}>
+                <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
               </Grid>
               <Grid item align="left" className='grid-user' xs={10} >
                 <Typography > Welcome User</Typography>
@@ -193,7 +193,7 @@ const SideNavBar = ( props) => {
               <ListItemIcon style={currentTab(history,menuItem.path)}> {menuItem.icon} </ListItemIcon>
               <ListItemText style={currentTab(history,menuItem.path)} classes={{primary:classes.listItemText}} primary={menuItem.name} />
             </ListItem>
-            <Divider/>      
+            <Divider/>
           </Link> 
         ))}
       </List>

@@ -25,13 +25,19 @@ function WordCloud(props) {
         highchartsWordCloud(Highcharts)
     
         let config =  {
+
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function() {
+                          return false;
+                        }
+                    }
+                }
+            },            
             series: [{
                 type: 'wordcloud',
                 data: props.data,
-                name: 'Occurrences',
-                style:{
-                    fontFamily:`Baloo Da 2`
-                }
             }],
             title: {
                 text: ''

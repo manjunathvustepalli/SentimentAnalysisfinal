@@ -260,7 +260,7 @@ export default function MoodAnalysisSemiDonutChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]}
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]}

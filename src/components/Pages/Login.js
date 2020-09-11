@@ -31,18 +31,20 @@ const useStyles = makeStyles((theme) => ({
     large: {
       width: theme.spacing(15),
       height: theme.spacing(15),
+      marginBottom:'20px'
     },
     margin: {
         margin: theme.spacing(1),
       },
     button:{
         margin: theme.spacing(1),
+        padding:'15px 0',
         color:'white',
         display:'block',
         textAlign:'center',
-        backgroundColor:green[800],
+        backgroundColor:`rgb(67,176,42)`,
         '&:hover': {
-            backgroundColor:green[800],
+            backgroundColor:`rgb(67,176,42)`,
         }
     }
   }));
@@ -56,7 +58,7 @@ function Login() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>
                     <div style={styles.wrapper}>
-                    <Card style={{minHeight:'300px',padding:'30px',display:'flex',flexDirection:'column',alignItems:'center'}} >
+                    <Card style={{minHeight:'400px',padding:'30px',display:'flex',flexDirection:'column',alignItems:'center'}} >
                         <Avatar src={require('../../imgs/logo.png')} className={classes.large} />
                         <Typography variant='h6'>
                             SOCIAL MEDIA SENTIMENT ANALYSIS
@@ -65,21 +67,21 @@ function Login() {
                             FOR GOVT. OF BANGLADESH
                         </Typography>
                         <div className={classes.margin}>
-                            <Grid container spacing={3} alignItems="flex-end">
-                            <Grid item>
+                            <Grid container spacing={10} alignItems="flex-end">
+                            <Grid item >
                                 <AccountCircle />
                             </Grid>
-                            <Grid item>
+                            <Grid item  >
                                 <TextField id="user-id" fullWidth label="User Id" />
                             </Grid>
                             </Grid>
                         </div>
                         <div className={classes.margin}>
-                            <Grid container spacing={3} alignItems="flex-end">
-                            <Grid item>
+                            <Grid container spacing={10} alignItems="flex-end">
+                            <Grid item >
                                 <LockRoundedIcon />
                             </Grid>
-                            <Grid item>
+                            <Grid item >
                                 <TextField id="password" type="password" fullWidth label="Password" />
                             </Grid>
                             </Grid>

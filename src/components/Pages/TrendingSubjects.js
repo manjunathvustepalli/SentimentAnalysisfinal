@@ -190,13 +190,13 @@ useEffect(() => {
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0 20px 20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-            <Card className={classes.main}>
-              <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
                 Trending Subject
               </Typography>
+            <Card className={classes.main}>
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6}>
                   <FormControl
@@ -261,7 +261,7 @@ useEffect(() => {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     radioSources={[source,setSource,sources]}
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}

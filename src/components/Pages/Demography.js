@@ -67,12 +67,12 @@ function TrendAnalysis() {
 
   return (
     <SideNav>
-      <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Demography
-      </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+            Demography
+          </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6} >
               <Card className={classes.main} >
@@ -123,7 +123,9 @@ function TrendAnalysis() {
               <Grid item xs={12} md={6}>
                 <Card className={classes.main}>
                   <CardContent>Age</CardContent>
-                  <DemographyAgeChart />
+                  <div style={{padding:'21px 0'}} >
+                    <DemographyAgeChart  />
+                  </div>
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -160,7 +162,7 @@ function TrendAnalysis() {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
                     moods={[moods, setMoods]}
