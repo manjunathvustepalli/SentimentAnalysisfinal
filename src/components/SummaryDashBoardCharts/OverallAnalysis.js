@@ -227,13 +227,13 @@ function OverallAnalysis({to, from}) {
                     <Typography variant='subtitle1' >
                         {nFormatter(mainSourceData.length && (
                           mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)
-                        ),0)}+ &nbsp; {source} mentions
+                        ),0)}+ &nbsp; {source} Documents.
                     </Typography>
                     <Typography variant='subtitle1'>
-                        {getPositiveSentiment()}+ &nbsp; positive sentiment
+                        {getPositiveSentiment()}+ &nbsp; Positive Sentiment.
                     </Typography>
                     <Typography variant='subtitle1'>
-                        {getJoyMood()}+ Joy mood
+                        {getJoyMood()}+ Joy Mood.
                     </Typography>
                 </Card>
             </Grid>
