@@ -15,6 +15,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import colors from '../../helpers/colors';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -57,20 +58,7 @@ function InfluencerAnalysis() {
     const [data, setData] = useState([])
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
-  
-    var colors = {
-      'joy':'#4C7A00',
-      'sad':'#D8D8D8',
-      'anger':'#FF5151',
-      'anticipation':'#111D31',
-      'disgust':'#D512CF',
-      'surprise':'#FF6600',
-      'fear':'#2000FF',
-      'trust':'#0099FF',
-      'positive':'#04E46C',
-      'negative':'#CB0038',
-      'neutral':'#FFC400'
-    }
+
 
     const useStyles = makeStyles((theme) => ({
       root: {
@@ -109,8 +97,8 @@ function InfluencerAnalysis() {
         tabStyle: {
             borderStyle: 'solid', 
             borderWidth:'1px', 
-            borderColor: 'green', 
-            color:'green',
+            borderColor: 'rgb(67, 176, 42)', 
+            color:'rgb(67, 176, 42)',
             marginTop: '15px',
             marginBottom: '10px'
         }
@@ -447,26 +435,10 @@ function InfluencerAnalysis() {
                                             Top Influencers
                                         </CardContent>
                                     </Grid>
-                                    {/* <Grid item xs={4}>
-                                        <FormControl variant="outlined" className={classes.formControl}>
-                                            <InputLabel id="select-table"></InputLabel>
-                                            <Select
-                                                labelId="select-table"
-                                                id="demo-simple-select-outlined"
-                                                varient={'standard'}
-                                                defaultValue={'top 15 influencers'}
-                                                style={{borderColor: '#13A0FF', borderWidth: '2px', borderStyle: 'solid', color: '#13A0FF'}}
-                                            >
-                                                <MenuItem selected value='top 15 influencers'>Top 15 Influencers</MenuItem>
-                                                <MenuItem value='top 30 influencers'>Top 30 influencers</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </Grid> */}
                                     <Grid item xs={12}>
                                         {
                                             source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} />)
                                         }
-                                        
                                     </Grid>
                                 </Grid>
                             </Card>
@@ -484,13 +456,13 @@ function InfluencerAnalysis() {
                                                 onChange={handleChange}
                                                 indicatorColor="primary"
                                                 textColor="primary"
-                                                TabIndicatorProps={{style: {background:green[800]}}}
+                                                TabIndicatorProps={{style: {backgroundColor:'rgb(67, 176, 42)'}}}
                                                 variant="scrollable"
                                                 scrollButtons="auto"
                                                 aria-label="scrollable auto tabs example"
                                             >
-                                                <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
-                                                <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
+                                                <Tab label="Sentiment" style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />
+                                                <Tab label="Mood" style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
                                             </Tabs>
                                         </Grid>
                                     </Grid>

@@ -15,15 +15,14 @@ import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
-import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
+import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentalAnalysisAreaChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import { useContext } from 'react';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
-
-
+import colors from '../../helpers/colors'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -76,7 +75,6 @@ export default function SentimentalAnalysisAreaChart(props) {
         sentiments,
         setSentiments
     } = sentimentFilters
-    let colors = { 'positive':'rgb(0,255,0)','negative':'rgb(255,0,0)','neutral':'rgb(235,255,0)' } 
     const [chartType, setChartType] = useState(props.stack ?'stack': 'bar')
     const [refresh, setRefresh] = useState(true)
     const [dates, setDates] = useState([])

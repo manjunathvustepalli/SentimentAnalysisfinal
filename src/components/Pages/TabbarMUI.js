@@ -75,7 +75,7 @@ function TabbarMUI(props) {
         >
           {
             props.data[0] && (Object.keys(props.data[0]).map((source,i) => {
-              return <Tab label={source} style={{color:value===i && (green[400])}} {...a11yProps(i)} />
+              return <Tab label={source} style={{color:value===i && ('white'),backgroundColor:value===i && ('rgb(67, 176, 42)'),border:value !== i && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(i)} />
             }))
           }
         </Tabs>

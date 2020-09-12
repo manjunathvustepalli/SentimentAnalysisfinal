@@ -47,11 +47,11 @@ export default class PieChart extends Component {
                     showInLegend: true,
                     dataLabels: {
                         enabled: true,
-                        distance: -50,
+                        distance: -70,
                         style: {
                             fontWeight: 'bold',
                             color: 'black',
-                            fontSize:'1rem'
+                            fontSize:'0.7rem'
 
                         }
                     },

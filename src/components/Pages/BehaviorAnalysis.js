@@ -11,13 +11,8 @@ import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
-import DemographyAgeChart from "../charts/DemographyCharts/DemographyAgeChart";
-import DonutChart from "../charts/DonutChart";
-import TabbarMUI from "./TabbarMUI";
 import DemographyDonutChart from "../charts/DemographyCharts/DemographyDonutChart";
 import DemographyPieChart from "../charts/DemographyCharts/DemographyPieChart";
-import DemographyBubble from "../charts/DemographyCharts/DemographyBubble";
 import "./icons.css";
 import BarChart from "../charts/BehaviorAnalysisCharts/BarChart";
 function BehaviorAnalysis() {

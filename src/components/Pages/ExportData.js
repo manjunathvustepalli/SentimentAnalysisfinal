@@ -43,18 +43,17 @@ function ExportData() {
 
     function fetchData(){
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from":from, "to": to }
-                  ]
+            "query": {
+              "match_all": {}
+            },
+            "size": 10,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
                 }
               }
-            },
-            "from": 1000
+            ]
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {

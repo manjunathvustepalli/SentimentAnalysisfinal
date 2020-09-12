@@ -22,7 +22,7 @@ function TrendAnalysisLineChart(props) {
 
   const options = {
     title: {
-      text: "",
+      text: "hey this is heading",
     },
     yAxis: {
       title: {

@@ -49,10 +49,10 @@ function AdminPage() {
     const [keywords, setKeywords] = useState([{ keyword:'EXAarmy' },{ keyword:'BTS' },{ keyword:'Bangladesh' },{ keyword:'EXAarmy' },{keyword:'বাজপাখি'}])
     const [screenNames, setScreenNames] = useState([{screenName:'zapalak'},{screenName:'mokhlesurphy'}])
     const [keywordColumns, setKeywordColumns] = useState([
-    {
+      {
         title:'Keyword',
         field:'keyword'
-    },
+      },
     ])
     const [screenNameColumns, setScreenNameColumns] = useState([
         {
@@ -80,8 +80,8 @@ function AdminPage() {
                     TabIndicatorProps={{style: {background:green[400]}}}
                     aria-label="scrollable auto tabs example"
                     >
-                    <Tab label={'Keywords'} style={{color:value===0 && (green[400])}} {...a11yProps(0)} />
-                    <Tab label={'Screen Names'} style={{color:value===1 && (green[400])}} {...a11yProps(1)} />
+                    <Tab label={'Keywords'} style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />
+                    <Tab label={'Screen Names'} style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
                     </Tabs>
                 </AppBar>
                     <TabPanel value={value} index={0}>

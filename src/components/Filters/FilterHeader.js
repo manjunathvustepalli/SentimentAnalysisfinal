@@ -44,7 +44,7 @@ function FilterHeader(props) {
 
     return (
         <Card style={{backgroundColor:'#43B02A'}}>
-            <CardContent style={{padding:'10px'}}>
+            <CardContent>
                 <Grid container>
                     <Grid xs={5} item align='left'>
                         <IconWithText>
@@ -54,11 +54,11 @@ function FilterHeader(props) {
                         
                     </Grid>
                 <Grid xs={7} item align='right'>
-                    <Typography style={{fontSize:'15px',marginTop:'15px',color:'white'}}>
+                    <Typography style={{fontSize:'15px',color:'white'}}>
                         Last Refresh at {new Date().toTimeString().split('GMT')[0]}
                     </Typography>
                     <Button
-                    style={{marginTop:'10px'}}
+                    style={{marginTop:'13px'}}
                     variant="outlined"
                     color="primary"
                     className={classes.buttonStyle}

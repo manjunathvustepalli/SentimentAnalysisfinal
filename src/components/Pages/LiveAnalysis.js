@@ -25,9 +25,9 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         color:'white',
         textAlign:'center',
-        backgroundColor:green[800],
+        backgroundColor:'rgb(67, 176, 42)',
         '&:hover': {
-            backgroundColor:green[800],
+            backgroundColor:'rgb(67, 176, 42)',
         }
     }
   }));
@@ -189,7 +189,7 @@ function LiveAnalysis() {
                                 paging:false,
                                 maxBodyHeight:500,
                                 headerStyle:{
-                                    backgroundColor:green[800],
+                                    backgroundColor:'rgb(67, 176, 42)',
                                     color:'white',
                                     paddingTop:'10px',
                                     paddingBottom:'10px',

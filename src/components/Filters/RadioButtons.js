@@ -6,9 +6,9 @@ import { FormControlLabel } from '@material-ui/core';
 
 const GreenRadio = withStyles({
   root: {
-    color: green[800],
+    color: 'rgb(67, 176, 42)',
     '&$checked': {
-      color: green[800],
+      color: 'rgb(67, 176, 42)',
     },
   },
   checked: {},

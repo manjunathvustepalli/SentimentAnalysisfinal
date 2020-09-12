@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts'
+import colors from '../../helpers/colors';
+import downloadIcon from '../../helpers/downloadIcon';
 require('highcharts/modules/exporting')(Highcharts);
 
 
 function AreaChart(props) {
 
-    Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
-        var path = [
-            'M', x + w * 0.5, y,
-            'L', x + w * 0.5, y + h * 0.7,
-            'M', x + w * 0.3, y + h * 0.5,
-            'L', x + w * 0.5, y + h * 0.7,
-            'L', x + w * 0.7, y + h * 0.5,
-            'M', x, y + h * 0.9,
-            'L', x, y + h,
-            'L', x + w, y + h,
-            'L', x + w, y + h * 0.9
-        ];
-        return path;
-    };
+    Highcharts.SVGRenderer.prototype.symbols.download = downloadIcon
     const [series, setseries] = useState([])
 
     useEffect(() => {
@@ -27,7 +16,7 @@ function AreaChart(props) {
         if(!props.sorted){
             Object.keys(props.data).forEach(key => {
                 if(key !== 'dates')
-                    data.push({name:key,data:props.data[key],color:props.colors[key]})
+                    data.push({name:key,data:props.data[key],color:colors[key]})
             })
         } else {
             data = props.data

@@ -22,6 +22,7 @@ import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison
 import ChipInputFilter from '../Filters/ChipInputFilter';
 import Keywords from '../Filters/Keywords';
 import { Input, createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import GeoTaggingSummary from '../SummaryDashBoardCharts/GeoTaggingSummary';
 
 const IconWithText = styled.div`
   display: flex;
@@ -61,8 +62,8 @@ function SummaryDashBoard() {
 
     return (
         <SideNav>    
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px'}}>
-                <Typography style={{color:'green',marginBottom:'10px'}} variant='h5' >
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
+                <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
@@ -125,19 +126,7 @@ function SummaryDashBoard() {
                         </Card>
                     </Grid>
                     <Grid item xl={4} md={12} xs={12}>
-                        <Card className={classes.main} >
-                            <Grid container>
-                                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
-                                    Geo Tagging Summary
-                                </Grid>
-                                <Grid item xs={7}>
-                                    <InlineFilter sources={['newspaper','twitter']} source={'newspaper'} sentiment={'positive'} mood={'joy'} />
-                                </Grid>
-                                <Grid item xs={12} align="center">
-                                    <GeoHotSpotMap />
-                                </Grid>
-                            </Grid>
-                        </Card>
+                        <GeoTaggingSummary/>
                     </Grid>
                 </Grid>
             </div>

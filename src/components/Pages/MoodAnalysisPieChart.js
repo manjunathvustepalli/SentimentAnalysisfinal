@@ -51,10 +51,10 @@ const useStyles = makeStyles((theme) => ({
         width: 130,        
       },
       buttonStyle:{
-        border:'1px solid green',
-        color:'green',
+        border:'1px solid rgb(67, 176, 42)',
+        color:'rgb(67, 176, 42)',
         '&:hover': {
-            border:'1px solid green',
+            border:'1px solid rgb(67, 176, 42)',
         }
     }
 }));

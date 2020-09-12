@@ -222,7 +222,11 @@ const SideNavBar = ( props) => {
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>
-          <Button color="inherit" >
+          <Button 
+            color="inherit"  
+            component={Link}
+            to="/"
+          >
             <ExitToAppIcon/>
           </Button>
           </Tooltip>

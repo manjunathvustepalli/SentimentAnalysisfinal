@@ -43,7 +43,7 @@ function AdminPageTable({ data,setData,name,columns }) {
             maxBodyHeight:500,
             actionsColumnIndex:-1,
             headerStyle:{
-                backgroundColor:green[800],
+                backgroundColor:'rgb(67, 176, 42)',
                 color:'white',
                 paddingTop:'10px',
                 paddingBottom:'10px',
