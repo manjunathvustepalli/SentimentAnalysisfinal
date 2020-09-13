@@ -337,7 +337,7 @@ export default function MoodAnalysisAreaChart() {
 							</Grid>
 						</Grid>
 						<Grid item xs={12}>
-							<AreaChart data={data} colors={colors} />
+							<AreaChart title='Date wise Mood Area Chart' data={data} colors={colors} />
 						</Grid>
 					</Card>
 				</Grid>

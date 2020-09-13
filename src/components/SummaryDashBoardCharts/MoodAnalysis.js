@@ -102,7 +102,7 @@ function MoodAnalysis({toFromDateHandlers,keywords,keywordType}) {
 
     return (
         <div>
-            <TrendAnalysisLineChart dates={dates} data={data} />
+            <TrendAnalysisLineChart title="Date wise Mood Trend" dates={dates} data={data} />
         </div>
     )
 }

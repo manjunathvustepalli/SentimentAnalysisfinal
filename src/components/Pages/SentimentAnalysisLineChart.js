@@ -22,8 +22,6 @@ import useDidUpdateEffect  from '../custom Hooks/useDidUpdateEffect';
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
 
-
-
 const useStyles = makeStyles((theme) => ({
     main: {
 
@@ -75,19 +73,6 @@ export default function SentimentalAnalysisLineChart() {
         sentiments,
         setSentiments
     } = sentimentFilters
-	var colors = {
-		'joy':'#4C7A00',
-		'sad':'#D8D8D8',
-		'anger':'#FF5151',
-		'anticipation':'#111D31',
-		'disgust':'#D512CF',
-		'surprise':'#FF6600',
-		'fear':'#2000FF',
-		'trust':'#0099FF',
-		'positive':'#04E46C',
-		'negative':'#CB0038',
-		'neutral':'#FFC400'
-	  }
     const [chartType, setChartType] = useState('line')
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
@@ -314,7 +299,7 @@ export default function SentimentalAnalysisLineChart() {
     return (
         <SideNav>
             <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
@@ -354,7 +339,7 @@ export default function SentimentalAnalysisLineChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <TrendAnalysisLineChart dates={dates} data={data} />
+                            <TrendAnalysisLineChart title='Date wise Sentiment Line Chart' dates={dates} data={data} />
                         </Grid>
                     </Card>
                 </Grid>

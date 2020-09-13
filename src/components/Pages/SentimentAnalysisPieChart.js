@@ -192,7 +192,7 @@ export default function SentimentalAnalysisPieChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
@@ -238,14 +238,14 @@ export default function SentimentalAnalysisPieChart() {
                             </Grid>)
                             }
                             )}
-                            <Grid item align='right' xs={10} style={{margin:'30px'}}>
+                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
                                 </Button>
                             </Grid>
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>

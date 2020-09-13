@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, CardContent, makeStyles, InputLabel, Select, MenuItem } from '@material-ui/core'
-import InlineFilter from '../Filters/InlineFilter'
+import { Grid, makeStyles, InputLabel, Select, MenuItem } from '@material-ui/core'
 import Axios from 'axios'
-import { getKeyArray } from '../../helpers'
+import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
-import { green } from '@material-ui/core/colors'
 
 var sortedData = {}
 
@@ -40,7 +38,7 @@ function WordCloud(props) {
 
     const { from,to,keywords,keywordType } = props
     const [sources, setSources] = useState([])
-    const [source, setSource] = useState('')
+    const [source, setSource] = useState('.')
     const [sentiment, setSentiment] = useState('positive')
     const [mood, setMood] = useState('joy')
     const [data, setData] = useState([])
@@ -167,13 +165,13 @@ function WordCloud(props) {
     },[source,sentiment,mood,type])
 
     return (
-        <Grid container>
-            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
+        <Grid container spacing={3}>
+            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'10px 0 0 20px'}}>
                 Word Cloud
             </Grid>
             <Grid item xs={7}>
                 { sources && sources.length && (
-                    <Grid container spacing={1} style={{marginTop:'20px'}}>
+                    <Grid container spacing={1} style={{marginTop:'10px'}}>
                     <Grid item xs={4} >
                         <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
                             <Select
@@ -250,7 +248,7 @@ function WordCloud(props) {
                 ) }
             </Grid>
             <Grid item xs={12}>
-                <WordCloudChart data={data} />
+                <WordCloudChart title={`${capitalizeString(source)}  ${type==='sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} ${ capitalizeString(type)} Word Cloud`} data={data} />
             </Grid>
         </Grid>
     )

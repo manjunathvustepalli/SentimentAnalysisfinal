@@ -97,22 +97,18 @@ function TrendAnalysis() {
               </CardContent>
                 <Grid container spacing={1} className={classes.gridposition}>
                   <Grid item xs={4}>
-                    <i className="fas fa-male maleIcon"></i>
                     <DemographyDonutChart
-                      color1="rgba(245, 12, 12)"
-                      color2="rgba(237, 230, 230)"
+                      data={[{name:'male',y:65,color:'rgba(245, 12, 12)'},{name:'others',y:35,color:'rgba(237, 230, 230)'}]}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <i class="fas fa-female femaleIcon"></i>
                     <DemographyDonutChart
-                      color1="#0e59ed"
-                      color2="rgba(237, 230, 230)"
+                      data={[{name:'female',y:35,color:'#0e59ed'},{name:'others',y:65,color:'rgba(237, 230, 230)'}]}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <i class="fas fa-transgender transIcon"></i>
                     <DemographyDonutChart
+                      data={[{name:'female',y:3,color:'#60656e'},{name:'others',y:65,color:'rgba(237, 230, 230)'}]}
                       color1="#60656e"
                       color2="rgba(237, 230, 230)"
                     />
@@ -131,7 +127,9 @@ function TrendAnalysis() {
               <Grid item xs={12} md={6}>
                 <Card className={classes.main}>
                   <CardContent>Martial Status</CardContent>
-                  <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                  <DemographyDonutChart 
+                  
+                  color1="#f21649" color2="#349eeb" />
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>

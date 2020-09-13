@@ -86,7 +86,7 @@ function TreeMap(props) {
             data: props.data,
         }],
         title: {
-            text: ''
+            text: props.title || ''
         }
     }
     

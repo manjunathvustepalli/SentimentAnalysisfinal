@@ -23,6 +23,7 @@ function DemographyAgeChart() {
   let config = {
     chart: {
       type: "areaspline",
+      height:'200px'
     },
     title: {
       text: "",
@@ -44,7 +45,8 @@ function DemographyAgeChart() {
       ],
       tickmarkPlacement: "on",
       title: {
-        enabled: false,
+        enabled: true,
+        text:'Dates'
       },
     },
     yAxis: {

@@ -98,7 +98,7 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
 
     return (
         <div>
-            <AreaChart dates={dates} data={data} sorted={true} />
+            <AreaChart title="Date wise Sentiment Trend" dates={dates} data={data} sorted={true} />
         </div>
     )
 }

@@ -25,7 +25,7 @@ function TrendAnalysisChart(props) {
       type: "column",
     },
     title: {
-      text: "",
+      text: props.title || "",
     },
     subtitle: {
       text: "",
@@ -33,16 +33,38 @@ function TrendAnalysisChart(props) {
     xAxis: {
       categories: dates,
       crosshair: true,
+      title:{
+        text:"Dates",
+      }
     },
     yAxis: {
       min: 0,
       title: {
-        text: "Data (%)",
+        text: "Data",
       },
     },
     credits: {
       enabled: false
   },
+  exporting: {
+    chartOptions: {
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+                
+            }
+        }
+    },
+    scale: 3,
+    fallbackToExportServer: false,
+    buttons: {
+        contextButton: {
+            symbol: 'download'
+        }
+    }
+},
     colors: [
       "rgba(3, 240, 252)",
       "rgba(252, 3, 65)",

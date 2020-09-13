@@ -30,11 +30,14 @@ function AreaChart(props) {
             type: 'areaspline'
         },
         title: {
-            text:'',
+            text:props.title || '',
         },
         xAxis: {
             categories: props.data.dates || props.dates,
             tickmarkPlacement: 'on',
+            title:{
+                text:'Dates'
+            }
         },
         yAxis: {
             title: {

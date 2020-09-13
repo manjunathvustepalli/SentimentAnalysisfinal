@@ -52,7 +52,6 @@ export default class PieChart extends Component {
                             fontWeight: 'bold',
                             color: 'black',
                             fontSize:'0.7rem'
-
                         }
                     },
                     startAngle: -90,

@@ -8,17 +8,14 @@ function BarChart(props) {
   const options = {
     chart: {
       type: "bar",
-    },
-    credits: {
-      enabled: false
+      height:'200px'
     },
     title: {
-      text: "",
+      text: "  ",
     },
     subtitle: {
       text: "",
     },
-    // colors: ["#32a852", "#c2081a", "#ebc909", "#0f94db", "#cc14bd"],
     xAxis: {
       categories: [
         "Open to experience",
@@ -83,25 +80,6 @@ function BarChart(props) {
           }
       }
   },
-    plotOptions: {
-      bar: {
-        dataLabels: {
-          enabled: true,
-        },
-      },
-    },
-    legend: {
-      layout: "vertical",
-      align: "right",
-      verticalAlign: "top",
-      x: -40,
-      y: 80,
-      floating: true,
-      borderWidth: 1,
-      backgroundColor:
-        Highcharts.defaultOptions.legend.backgroundColor || "#FFFFFF",
-      shadow: true,
-    },
     credits: {
       enabled: false,
     },

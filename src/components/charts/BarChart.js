@@ -22,7 +22,7 @@ function BarChart(props) {
       type: "column",
     },
     title: {
-      text: "",
+      text: props.title || '',
     },
     subtitle: {
       text: "",
@@ -37,7 +37,10 @@ function BarChart(props) {
   },
     xAxis: {
       type: "category",
-      categories:props.categories
+      categories:props.categories,
+      title:{
+        text:'Dates',
+      }
     },
     yAxis: {
       title: {

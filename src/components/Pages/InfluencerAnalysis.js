@@ -420,7 +420,7 @@ function InfluencerAnalysis() {
   
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -469,10 +469,10 @@ function InfluencerAnalysis() {
                                 </Grid>
                                 <Grid item xs={11}>
                                     <TabPanel value={value} index={0}>
-                                        <TreeMap data={sentimentData} />
+                                        <TreeMap title={`${source} Influence comparison Treemap based on Sentiment`} data={sentimentData} />
                                     </TabPanel>
                                     <TabPanel value={value} index={1}>
-                                        <TreeMap data={moodData} />
+                                        <TreeMap title={`${source} Influence comparison Treemap based on Mood`} data={moodData} />
                                     </TabPanel>
                                 </Grid>
                             </Card>

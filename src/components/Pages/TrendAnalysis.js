@@ -187,7 +187,7 @@ function TrendAnalysis() {
                             </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <TrendAnalysisChart data={barData} stacking={stacking} />
+                  <TrendAnalysisChart title={` Date wise Trend analysis ${stacking ? 'Stacked Bar Chart' : 'Bar Chart'}`} data={barData} stacking={stacking} />
                 </Grid>
                 <Grid item xs={11}>
                     <TabbarMUI className={classes.tabbar} data={lineData} />

@@ -309,7 +309,7 @@ export default function SentimentalAnalysisAreaChart() {
     return (
         <SideNav>
             <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
@@ -348,7 +348,7 @@ export default function SentimentalAnalysisAreaChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                             <AreaChart data={data} colors={colors} />
+                             <AreaChart title='Date wise Sentiment Area Chart' data={data} colors={colors} />
                         </Grid>
                     </Card>
                 </Grid>

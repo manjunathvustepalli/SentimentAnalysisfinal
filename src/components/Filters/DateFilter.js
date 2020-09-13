@@ -12,7 +12,6 @@ import { addMonths } from '../../helpers';
 function DateFilter(props) {
   const [setTo, setFrom,from,to] = props.toFromDatesHandlers;
   const Stime = new Date();
-  console.log(from.split('-'),to.split('-'))
   const [startDate, setStartDate] = useState(new Date(from.split('-')[2],parseInt(from.split('-')[1])-1,from.split('-')[0])); 
   const Etime = new Date();
   const [endDate, setEndDate] = useState(new Date(to.split('-')[2],parseInt(to.split('-')[1])-1,to.split('-')[0]));

@@ -40,7 +40,7 @@ function WordCloud(props) {
                 data: props.data,
             }],
             title: {
-                text: ''
+                text: props.title || ''
             },
             credits: {
                 enabled: false

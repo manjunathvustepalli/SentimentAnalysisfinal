@@ -122,7 +122,7 @@ function LiveAnalysis() {
         <SideNav>
             <Card>
                 <Grid container spacing={2} style={{padding:'20px'}}>
-                    <Grid item xs={2} align="left">
+                <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
                                     color="primary"
@@ -134,34 +134,34 @@ function LiveAnalysis() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                    <Grid item xs={4} align='right' direction='row'>
-                    <TextField label="Enter Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
-                    <Button style={{transform:"translateY(5px)"}} className={classes.button} onClick={() => fetchFromKeyword()} >
+                    <Grid item xs={2}  >
+                    <TextField id="keyword" style={{transform:'translateY(10px)'}} label="Enter Keyword" variant="outlined" />
+                    </Grid>
+                    <Grid item xs={4} align="left">
+                        <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                    </Grid>
+                    <Grid item xs={2} align="left">
+                    <Button style={{transform:"translateY(10px)"}} className={classes.button} >
                         Search
                     </Button>
                     </Grid>
-                    <Grid item xs={4} align="left">
-                        <GridTimeFilter dateTime={true} toFromDatesHandlers={[setTo,setFrom]} />
-                    </Grid>
-                    <Grid item xs={2} align="right">
+                    <Grid item xs={2}>
                         {
                             liveReloading && (
                                 <FormControl variant="outlined" className={classes.formControl}>
-                                    <InputLabel id="reload-interval-label">Reload Interval</InputLabel>
+                                    <InputLabel id="demo-simple-select-outlined-label">Reload Interval</InputLabel>
                                         <Select
-                                            labelId="reload-interval-label"
-                                            id="reload-interval"
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
                                             value={reloadInterval}
                                             onChange={(e) => setReloadInterval(e.target.value)}
-                                            label="Reload Interval"
-                                            variant="outlined"
-                                            fullWidth
+                                            label="Reload Interval "
                                         >
                                     <MenuItem value={10000}>10 Seconds</MenuItem>
                                     <MenuItem value={20000}>20 Seconds</MenuItem>
                                     <MenuItem value={30000}>30 Seconds</MenuItem>
                                     </Select>
-      </FormControl>
+                                </FormControl>
                             )
                         }
                     </Grid>

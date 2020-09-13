@@ -77,7 +77,7 @@ function AdminPage() {
                     textColor="primary"
                     variant="scrollable"
                     scrollButtons="auto"
-                    TabIndicatorProps={{style: {background:green[400]}}}
+                    TabIndicatorProps={{style: {background:'rgb(67, 176, 42)'}}}
                     aria-label="scrollable auto tabs example"
                     >
                     <Tab label={'Keywords'} style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />

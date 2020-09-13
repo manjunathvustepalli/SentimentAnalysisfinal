@@ -23,6 +23,7 @@ function DemographyDonutChart(props) {
       plotBorderWidth: null,
       plotShadow: false,
       type: "pie",
+      height:'200px'
     },
     title: {
       text: "",
@@ -82,6 +83,7 @@ function DemographyDonutChart(props) {
         allowPointSelect: true,
         cursor: "pointer",
         dataLabels: {
+          distance:10,
           enabled: true,
           format: "<b>{point.name}</b>: {point.percentage:.1f} %",
         },

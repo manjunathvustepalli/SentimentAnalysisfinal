@@ -24,7 +24,7 @@ function DemographyDonutChart(props) {
   const options = {
     chart: {
       type: "packedbubble",
-      height: "100%",
+      height: "200px",
     },
     title: {
       text: "",

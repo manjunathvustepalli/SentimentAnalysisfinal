@@ -5,6 +5,7 @@ import InlineFilter from '../Filters/InlineFilter'
 import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import { useEffect } from 'react';
+import { capitalizeString } from '../../helpers';
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -24,19 +25,7 @@ function InfluencerComparison({from,to}) {
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
     const [data, setData] = useState([])
-    var colors = {
-        'joy':green[800],
-        'sad':'rgba(236, 240, 22)',
-        'anger':'rgba(240, 22, 37)',
-        'anticipation':'rgba(29, 180, 240)',
-        'disgust':'rgba(226, 29, 240)',
-        'surprise':'rgba(240, 124, 29)',
-        'fear':'#616C6F',
-        'trust':'rgba(217, 202, 202)',
-        'positive':green[800],
-        'negative':'rgba(255,0,0)',
-        'neutral':'rgba(235,255,0)'
-      }
+
     
     const parent = [{
         id: 'negative',
@@ -312,11 +301,11 @@ function InfluencerComparison({from,to}) {
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
         <Grid container spacing={3} > 
-            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'35px'}} >
+            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'15px 20px'}} >
                 Influence Comparison
             </Grid>
             <Grid item xs={7}  >
-                <Grid container style={{marginTop:'30px'}}>
+                <Grid container style={{marginTop:'15px'}}>
                 <Grid item xs={4} >
                 <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
                     <Select 
@@ -348,8 +337,10 @@ function InfluencerComparison({from,to}) {
             </Grid>
                 </Grid>
             </Grid>
+            <Grid item xs={12}>
+            <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>
+            </Grid>
         </Grid>
-        <TreeMap data={data}/>
     </Card>
     )
 }
