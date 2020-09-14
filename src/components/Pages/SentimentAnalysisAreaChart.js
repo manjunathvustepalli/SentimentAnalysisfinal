@@ -318,7 +318,7 @@ export default function SentimentalAnalysisAreaChart() {
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Sentimental Analysis
+                        Sentiment Analysis
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>

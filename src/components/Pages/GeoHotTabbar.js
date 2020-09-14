@@ -64,7 +64,6 @@ function TabbarMUI() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -78,7 +77,6 @@ function TabbarMUI() {
           <Tab label="Mood" style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
           <Tab label="Spatio Temporal" style={{color:value===2 && ('white'),backgroundColor:value===2 && ('rgb(67, 176, 42)'),border:value !== 2 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(2)} />
         </Tabs>
-      </AppBar>
       <TabPanel value={value} index={0}>
         <GeoHotSpotMap />
       </TabPanel>

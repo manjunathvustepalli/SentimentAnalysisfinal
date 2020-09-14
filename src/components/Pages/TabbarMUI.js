@@ -63,7 +63,6 @@ function TabbarMUI(props) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -80,7 +79,6 @@ function TabbarMUI(props) {
             }))
           }
         </Tabs>
-      </AppBar>
       {
         props.data[0] && (
           Object.keys(props.data[0]).map((source,i) =>{

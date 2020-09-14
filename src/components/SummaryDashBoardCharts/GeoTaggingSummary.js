@@ -29,7 +29,7 @@ function GeoTaggingSummary() {
     return (
         <Card >
             <Grid container>
-                <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
+                <Grid item xs={5} style={{fontSize: 16,fontWeight: "bold",color: "#CB0038",height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
                     Geo Tagging Summary
                 </Grid>
                 <Grid item xs={7}>

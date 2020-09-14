@@ -7,11 +7,24 @@ import TextField from '@material-ui/core/TextField';
 function SubSourceAutoComplete(props) {
 
     const [ subSources, setSubsources ] = props.subSources
-    const [selectedSubsources, setSelectedSubsources] = useState([])
+    const [selectedSubsources, setSelectedSubsources] = useState(['All'])
 
     const handleChange = (e,arr) => {
         let obj = {}
-        Object.keys(subSources).forEach(subSource => {
+        if(arr.includes('All')){
+          Object.keys(subSources).forEach(subSource =>{
+            obj[subSource] = true
+          })
+          setSelectedSubsources(['All'])
+          setSubsources(obj)
+        } else if (arr.length === 0){
+          Object.keys(subSources).forEach(subSource =>{
+            obj[subSource] = true
+          })
+          setSelectedSubsources([])
+          setSubsources(obj)
+        } else {
+          Object.keys(subSources).forEach(subSource => {
             if(arr.includes(subSource)){
                 obj[subSource] = true
             } else {
@@ -20,17 +33,17 @@ function SubSourceAutoComplete(props) {
         })
         setSelectedSubsources(arr)
         setSubsources(obj)
+        }
     }
 
     return (
-            <Autocomplete
+        <Autocomplete
         multiple
         fullWidth
         id="tags-outlined"
         value={selectedSubsources}
-        defaultValue={Object.keys(subSources)}
         onChange={(e,arr) => handleChange(e,arr)}
-        options={Object.keys(subSources)}
+        options={[...Object.keys(subSources),'All']}
         getOptionLabel={(option) => option}
         renderTags={(value, getTagProps) =>
             value.map((option, index) => (

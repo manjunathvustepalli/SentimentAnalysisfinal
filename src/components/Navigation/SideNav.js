@@ -36,6 +36,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { green } from '@material-ui/core/colors'
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
+import { useEffect } from 'react';
 
 const drawerWidth = 260;
 
@@ -104,7 +105,7 @@ const SideNavBar = ( props) => {
       path:['/summary-dashboard'],
     }, 
     {
-      name:'Sentimental Analysis',
+      name:'Sentiment Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
       path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart'],
     },
@@ -170,23 +171,26 @@ const SideNavBar = ( props) => {
     },
   ]
     
+  useEffect(() => {
+    document.querySelector('#scroll-id').scroll(40,40)
+  },[])
    const drawer = (
     <div className={classes.drawerScroller} >
-          <div id="userMenuHeader">
-            <Grid container justify='space-between' flexDirection='row' >
-              <Grid item align="left" xs={12}>
+          <div id="userMenuHeader" >
+            <Grid container justify='space-around' flexDirection='row' >
+              <Grid item align="left"  xs={12}>
                 <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
               </Grid>
-              <Grid item align="left" className='grid-user' xs={10} >
+              <Grid item align="left" className='grid-user' xs={8} >
                 <Typography > Welcome User</Typography>
               </Grid>
-              <Grid item align="right" className='grid-user' xs={2}>
+              <Grid item align="left" className='grid-user' xs={4}>
                 <Typography align="right"><ArrowDropDownIcon/></Typography>
               </Grid>
             </Grid>
           </div>
       <Divider />
-      <List>
+      <List >
         {menus.map((menuItem, index) => (
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
             <ListItem  button key={index}>
@@ -202,10 +206,11 @@ const SideNavBar = ( props) => {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root}  >
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="fixed" className={classes.appBar} >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -233,7 +238,7 @@ const SideNavBar = ( props) => {
           </span>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav className={classes.drawer} id='scroll-id'  aria-label="mailbox folders">
         <Hidden smUp implementation="css">
           <Drawer
             container={container}

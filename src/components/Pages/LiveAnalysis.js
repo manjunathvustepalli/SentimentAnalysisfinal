@@ -35,20 +35,46 @@ const useStyles = makeStyles((theme) => ({
 function LiveAnalysis() {
 
     const classes = useStyles();
-    const [data, setData] = useState([])
-    const [liveReloading, setLiveReloading] = useState(false)
-    const [reloadInterval, setReloadInterval] = useState(5000)
-    const [to, setTo] = useState(new Date())
-    const [from, setFrom] = useState(new Date())
-    const [keyword, setKeyword] = useState('')
+    const [data, setData] = useState([]);
+    const [liveReloading, setLiveReloading] = useState(false);
+    const [reloadInterval, setReloadInterval] = useState(10000);
+    const [to, setTo] = useState(new Date());
+    const [from, setFrom] = useState(new Date());
+    const [keyword, setKeyword] = useState('');
+    const [source, setSource] = useState('twitter');
+    const [columns, setColumns] = useState([
+        {title:'Name',field:'name'},
+        {title:'Screen Name',field:'screenName',width: "1%",
+        cellStyle: { whiteSpace: "nowrap" },
+        headerStyle: { whiteSpace: "nowrap" }},
+        {title:'Post',field:'tweet'},
+        {title:'Followers Count',field:'followersCount',width: "1%",
+        cellStyle: { whiteSpace: "nowrap" },
+        headerStyle: { whiteSpace: "nowrap" },},
+        {title:'Retweet Count',field:'retweetCount',width: "1%",
+        cellStyle: { whiteSpace: "nowrap" },
+        headerStyle: { whiteSpace: "nowrap" },},
+        {title:'Mood',field:'mood'},
+        {title:'Sentiment',field:'sentiment'},
+    ])
 
     function fetchData(){
 
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
-              "match_all": {}
+              "bool": {
+                "must": [
+                  {
+                    "terms": {
+                      "Source.keyword": [
+                        source
+                      ]
+                    }
+                  }
+                ]
+              }
             },
-            "size": 10,
+            "size": 50,
             "sort": [
               {
                 "CreatedAt": {
@@ -58,6 +84,7 @@ function LiveAnalysis() {
             ]
           })
         .then(fetchedData => {
+            console.log(fetchedData.data.hits.hits)
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -72,6 +99,38 @@ function LiveAnalysis() {
                 return obj
             })
             setData(final)
+            if(source === 'twitter'){
+                setColumns([
+                    {title:'Name',field:'name'},
+                    {title:'Screen Name',field:'screenName',width: "1%",
+                    cellStyle: { whiteSpace: "nowrap" },
+                    headerStyle: { whiteSpace: "nowrap" }},
+                    {title:'Post',field:'tweet'},
+                    {title:'Followers Count',field:'followersCount',width: "1%",
+                    cellStyle: { whiteSpace: "nowrap" },
+                    headerStyle: { whiteSpace: "nowrap" },},
+                    {title:'Retweet Count',field:'retweetCount',width: "1%",
+                    cellStyle: { whiteSpace: "nowrap" },
+                    headerStyle: { whiteSpace: "nowrap" },},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
+                ])
+            } else if( source === 'facebook'){
+                setColumns([
+                    {title:'Post',field:'tweet'},
+                    {title:'Replies',field:'retweetCount',width: "1%",
+                    cellStyle: { whiteSpace: "nowrap" },
+                    headerStyle: { whiteSpace: "nowrap" },},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
+                ])
+            } else if( source === 'newspaper' ){
+                setColumns([
+                    {title:'Post',field:'tweet'},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
+                ])
+            }
         })
         .catch(err => {console.log(err.response)})
 
@@ -80,12 +139,33 @@ function LiveAnalysis() {
     function fetchFromKeyword(){
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
-              "multi_match": {
-                "query": keyword,
-                "type": "phrase", 
-                "fields": ["bn", "en", "Source.keyword", "SubSource.keyword", "User.ScreenName.keyword"]
+              "bool": {
+                "must": [
+                  {
+                    "terms": {
+                      "Source.keyword": [
+                        source
+                      ]
+                    }
+                  }
+                ], 
+                "should": [
+                  {
+                    "terms": {
+                      "User.ScreenName.keyword": [keyword]
+                    }
+                  }
+                ]
               }
-            }
+            },
+            "size": 50,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
+                }
+              }
+            ]
           })
           .then(fetchedData =>{
               let final =  fetchedData.data.hits.hits.map(user => {
@@ -109,19 +189,45 @@ function LiveAnalysis() {
     }    
 
     useEffect(() => {
-        fetchData()
+        if(!keyword){
+            fetchData()
+        } else {
+            fetchFromKeyword()
+        }
         const interval = setInterval(() => {
             if(liveReloading && !keyword){
                 fetchData()
             }
           }, reloadInterval);
           return () => clearInterval(interval);
-    }, [reloadInterval,liveReloading,from,to])
+    }, [reloadInterval,liveReloading,from,to,source])
 
     return (
         <SideNav>
             <Card>
                 <Grid container spacing={2} style={{padding:'20px'}}>
+                    <Grid item xs={10}>
+                        <Grid container>
+                            <Grid item xs={4} sm={3} md={2} lg={2}
+                                    onClick={() => setSource('twitter')}
+                                    style={{backgroundColor:source==='twitter'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='twitter'?'white':'black', height:'50px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
+                                TWITTER
+                            </Grid>
+                            <Grid item xs={4} sm={3} md={2} lg={2} 
+                                onClick={() => setSource('facebook')}
+                                style={{backgroundColor:source==='facebook'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='facebook'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
+                                FACEBOOK
+                            </Grid>
+                            <Grid item xs={4} sm={3} md={2} lg={2} 
+                                onClick={() => setSource('newspaper')}
+                                style={{backgroundColor:source==='newspaper'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='newspaper'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
+                                NEWSPAPER
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid xs={2}>
+
+                    </Grid>
                 <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
@@ -141,7 +247,7 @@ function LiveAnalysis() {
                         <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
                     </Grid>
                     <Grid item xs={2} align="left">
-                    <Button style={{transform:"translateY(10px)"}} className={classes.button} >
+                    <Button style={{transform:"translateY(10px)"}} onClick={() => fetchFromKeyword()} className={classes.button} >
                         Search
                     </Button>
                     </Grid>
@@ -168,21 +274,7 @@ function LiveAnalysis() {
                     <Grid item xs={12}>
                         <MaterialTable 
                             title='Live Analysis'
-                            columns={[
-                                {title:'Name',field:'name'},
-                                {title:'Screen Name',field:'screenName',                                    width: "1%",
-                                cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" }},
-                                {title:'Tweet',field:'tweet'},
-                                {title:'Followers Count',field:'followersCount',                                    width: "1%",
-                                cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" },},
-                                {title:'Retweet Count',field:'retweetCount',                                    width: "1%",
-                                cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" },},
-                                {title:'Mood',field:'mood'},
-                                {title:'Sentiment',field:'sentiment'},
-                            ]}
+                            columns={columns}
                             data={data}
                             options={{
                                 grouping:!liveReloading,

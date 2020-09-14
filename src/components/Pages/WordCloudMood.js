@@ -337,8 +337,8 @@ function WordCloudSentiment() {
                                         Sentiment                                                                       
                                     </Button>
                             </Grid>
-                            <Grid item xs={12}>
-                            <AppBar position="static" color="white">
+                            <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
+                            <Grid item xs={7}>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -353,8 +353,8 @@ function WordCloudSentiment() {
                                         Object.keys(data).map((lang,i)=>  (<Tab label={lang} style={{color:value===i && ('white'),backgroundColor:value===i && ('rgb(67, 176, 42)'),border:value !== i && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
-                            </AppBar>
                             </Grid>
+                            </div>
                             <Grid item xs={12}>
                                 {
                                     Object.keys(data).map((lang,i) => {
@@ -379,7 +379,7 @@ function WordCloudSentiment() {
                                 <AccordianFilters  
                                     toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources, setSources]} 
-                                    subSources={[subSources,setSubSources]}
+                                    // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                     moods={[moods,setMoods]}

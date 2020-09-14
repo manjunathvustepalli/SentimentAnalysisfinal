@@ -446,11 +446,11 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <Card className={classes.main}>
                                 <Grid item xs={12}>
-                                    <Grid container spacing={2}>
+                                    <Grid container spacing={2} style={{marginTop:'20px'}}>
                                         <Grid item xs={5}>
                                             <CardContent>Influncers Comparison</CardContent>
                                         </Grid>
-                                        <Grid item xs={7}>
+                                        <Grid item xs={7} align={'right'}>
                                             <Tabs
                                                 value={value}
                                                 onChange={handleChange}

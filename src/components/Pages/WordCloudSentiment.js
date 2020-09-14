@@ -309,8 +309,8 @@ function WordCloudSentiment() {
                                     Sentiment                                                                       
                                 </Button>
                             </Grid>
-                            <Grid item xs={12} align='right'>
-                            <AppBar position="static" color="white">
+                            <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
+                            <Grid item xs={7} align='right'>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -318,15 +318,15 @@ function WordCloudSentiment() {
                                 textColor="primary"
                                 variant="scrollable"
                                 scrollButtons="auto"
-                                TabIndicatorProps={{style: {background:green[800]}}}
+                                TabIndicatorProps={{style: {background:'rgb(67, 176, 42)'}}}
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
                                         Object.keys(data).map((lang,i)=> (<Tab label={lang} style={{color:value===i && ('white'),backgroundColor:value===i && ('rgb(67, 176, 42)'),border:value !== i && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
-                            </AppBar>
                             </Grid>
+                            </div>
                             <Grid item xs={12}>
                                 {
                                     Object.keys(data).map((lang,i) => {
@@ -352,7 +352,7 @@ function WordCloudSentiment() {
                                     toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources, setSources]} 
                                     sentiments={[sentiments,setSentiments]}
-                                    subSources={[subSources,setSubSources]}
+                                    // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                 />
