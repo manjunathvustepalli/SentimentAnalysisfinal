@@ -23,6 +23,8 @@ function GlobalSearch() {
     const [handles, setHandles] = useState([]);
     const [data, setData] = useState([]);
     const [columns, setColumns] = useState([]);
+    const [twitterHandles, setTwitterHandles] = useState([])
+    const [facebookHandles, setFacebookHandles] = useState([])
 
     const submitData = () => {
         let keywordsString = keywords.join(',')
@@ -38,7 +40,7 @@ function GlobalSearch() {
                               "bool": {
                                 "must": [
                                   {"terms": {"Source.keyword": ["twitter"]}},
-                                  {"terms": {"User.ScreenName.keyword": handles}}
+                                  {"terms": {"User.ScreenName.keyword": twitterHandles}}
                                 ],
                                 "should": [
                                   {"terms": {"Text.keyword": keywords}}
@@ -84,7 +86,6 @@ function GlobalSearch() {
                                     field:'name',   
                                 },
                                 {
-                                    defaultGroupOrder:0,
                                     title:'Screen Name',
                                     field:'screenName',   
                                 },
@@ -92,13 +93,6 @@ function GlobalSearch() {
                                     title:'Post',
                                     field:'post',
                                 },
-                                // {
-                                //     title:'Hashtags',
-                                //     field:'hashTags',
-                                //     width:'50%',
-                                //     headerStyle: { whiteSpace: "nowrap" },
-                                    
-                                // },
                                 {
                                     title:'Followers Count',
                                     field:'followersCount',   
@@ -139,7 +133,7 @@ function GlobalSearch() {
                               "bool": {
                                 "must": [
                                   {"terms": {"Source.keyword": ["facebook"]}},
-                                  {"terms": {"SubSource.keyword":handles }}
+                                  {"terms": {"SubSource.keyword": facebookHandles }}
                                 ]
                               }
                             },
@@ -174,23 +168,11 @@ function GlobalSearch() {
                                 {
                                     title:'Screen Name',
                                     field:'screenName',
-                                    defaultGroupOrder:0,
                                 },
                                 {
                                     title:'Post',
                                     field:'post',
                                 },
-                                // {
-                                //     title:'Hashtags',
-                                //     field:'hashTags',
-                                //     width:'50%',
-                                //     headerStyle: { whiteSpace: "nowrap" },
-                                    
-                                // },
-                                // {
-                                //     title:'Location',
-                                //     field:'location',   
-                                // },
                                 {
                                     title:'Sentiment',
                                     field:'sentiment',   
@@ -225,6 +207,9 @@ function GlobalSearch() {
                             onClick={() => {
                                 setData([])
                                 setSource('twitter')
+                                setKeywords([])
+                                setTwitterHandles([])
+                                setFacebookHandles([])
                             }}
                             style={{backgroundColor:source==='twitter'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='twitter'?'white':'black', height:'50px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         TWITTER
@@ -233,6 +218,9 @@ function GlobalSearch() {
                         onClick={() => {
                             setData([])
                             setSource('facebook')
+                            setKeywords([])
+                            setTwitterHandles([])
+                            setFacebookHandles([])
                         }}
                         style={{backgroundColor:source==='facebook'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='facebook'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         FACEBOOK
@@ -242,16 +230,46 @@ function GlobalSearch() {
             <Grid item xs={2} />
             <Grid item xs={2} sm={false} />
             <Grid item sm={12} md={4} lg={3}>
-                <ChipInput 
-                    fullWidth
-                    variant="outlined"
-                    blurBehavior="add"
-                    label="Type Screen Names"
-                    defaultValue={handles}        
-                    onChange={(chips) => {
-                        setHandles(chips)
-                    }}
-                />
+                {
+                    source === 'twitter' ? (
+                        <ChipInput 
+                        fullWidth
+                        variant="outlined"
+                        blurBehavior="add"
+                        label="Type Twitter Screen Names"
+                        value={twitterHandles}
+                        onAdd={(chip) =>{
+                            setTwitterHandles(prev => [...prev,chip])
+                        }}
+                        onDelete={(chip,i) =>{
+                            setTwitterHandles(prev => {
+                                let data = [...prev]
+                                data.splice(i,1)
+                                return data
+                            })
+                        }}
+                    />
+                    ) : (
+                        <ChipInput 
+                        fullWidth
+                        variant="outlined"
+                        blurBehavior="add"
+                        label="Type Facebook Screen Names"
+                        value={facebookHandles}
+                        onAdd={(chip) =>{
+                            setFacebookHandles(prev => [...prev,chip])
+                        }}
+                        onDelete={(chip,i) =>{
+                            setFacebookHandles(prev => {
+                                let data = [...prev]
+                                data.splice(i,1)
+                                return data
+                            })
+                        }}
+                    />
+                    )
+                }
+
             </Grid>
                 {
                     source === 'twitter' ? (
@@ -261,7 +279,7 @@ function GlobalSearch() {
                         blurBehavior="add"
                         variant="outlined"
                         label="Type Keywords"
-                        defaultValue={keywords}        
+                        defaultValue={[]}   
                         onChange={(chips) => {
                             setKeywords(chips)
                         }}
@@ -285,7 +303,6 @@ function GlobalSearch() {
                 columns={columns}
                 data={data}
                 options={{
-                    grouping:true,
                     paging:false,
                     tableLayout:"fixed",
                     maxBodyHeight:500,
