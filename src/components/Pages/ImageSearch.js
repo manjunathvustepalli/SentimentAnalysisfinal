@@ -49,7 +49,7 @@ export default function TitlebarGridList() {
             author: 'author',
           },
           {
-            img: require('../../imgs/pic5.jfif'),
+            img: require('../../imgs/pic5.jpg'),
             title: 'Image',
             author: 'author',
           },

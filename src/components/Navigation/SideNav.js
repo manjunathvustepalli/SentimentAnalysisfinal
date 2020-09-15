@@ -37,6 +37,7 @@ import { green } from '@material-ui/core/colors'
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import { useEffect } from 'react';
+import PageviewIcon from '@material-ui/icons/Pageview';
 
 const drawerWidth = 260;
 
@@ -120,11 +121,6 @@ const SideNavBar = ( props) => {
       path:['/influencer-analysis'],
     },
     {
-      name:'Geo HotSpot Analysis',
-      icon:<PublicIcon/>,
-      path:['/geo-hotspot'],
-    },
-    {
       name:'Word cloud',
       icon:<AppsIcon/>,
       path:['/word-cloud/sentiment','/word-cloud/mood'],
@@ -138,17 +134,12 @@ const SideNavBar = ( props) => {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
       path:['/trend-analysis'],
+    }, 
+    {
+      name:'Global Search',
+      icon:<PageviewIcon/>,
+      path:['/global-search']
     },
-    {
-      name:'Demography',
-      icon:<DeviceHubIcon/>,
-      path:['/demography'],
-    },    
-    {
-      name:'Behavior Analysis',
-      icon:<HdrWeakIcon/>,
-      path:['/behavior-analysis'],
-    },    
     {
       name:'Live Analysis',
       icon:<CalendarViewDayIcon/>,
@@ -169,6 +160,21 @@ const SideNavBar = ( props) => {
       icon:<ImageSearchIcon/>,
       path:['/image-gallery'],
     },
+    {
+      name:'Geo HotSpot Analysis',
+      icon:<PublicIcon/>,
+      path:['/geo-hotspot'],
+    },
+    {
+      name:'Demography',
+      icon:<DeviceHubIcon/>,
+      path:['/demography'],
+    },    
+    {
+      name:'Behavior Analysis',
+      icon:<HdrWeakIcon/>,
+      path:['/behavior-analysis'],
+    }, 
   ]
     
   useEffect(() => {

@@ -240,16 +240,16 @@ function LiveAnalysis() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                    <Grid item xs={2}  >
-                    <TextField id="keyword" style={{transform:'translateY(10px)'}} label="Enter Keyword" variant="outlined" />
+                   <Grid item xs={2}  >
+                    {/* <TextField id="keyword" style={{transform:'translateY(10px)'}} label="Enter Keyword" variant="outlined" /> */}
                     </Grid>
                     <Grid item xs={4} align="left">
-                        <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} />
+                        {/* <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} /> */}
                     </Grid>
                     <Grid item xs={2} align="left">
-                    <Button style={{transform:"translateY(10px)"}} onClick={() => fetchFromKeyword()} className={classes.button} >
+                    {/* <Button style={{transform:"translateY(10px)"}} onClick={() => fetchFromKeyword()} className={classes.button} >
                         Search
-                    </Button>
+                    </Button> */}
                     </Grid>
                     <Grid item xs={2}>
                         {

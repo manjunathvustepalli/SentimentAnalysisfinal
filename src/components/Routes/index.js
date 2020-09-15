@@ -28,6 +28,7 @@ import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContex
 import AdminPage from "../Pages/AdminPage";
 import ImageSearch from "../Pages/ImageSearch"
 import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
+import GlobalSearch from "../Pages/GlobalSearch";
 
 
 function Routes() {
@@ -111,6 +112,7 @@ function Routes() {
         <Route path="/trending-subject/mood" exact component={TrendingSubjectsMood} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
+        <Route path="/global-search" exact component={GlobalSearch} />
         <Route path="/admin" exact component={AdminPage} />
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
