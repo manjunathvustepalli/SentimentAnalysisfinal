@@ -137,9 +137,10 @@ function TrendAnalysis() {
       setSources(availableSourceKeys)
 
       let availableLanguageKeys = {}
-      languageKeys.forEach(lang =>{
+      uniqueLanguageKeys.forEach(lang =>{
           availableLanguageKeys[lang] = true
       })
+      console.log(availableLanguageKeys)
       setLanguages(availableLanguageKeys)
     })
     .catch(err=>{
@@ -173,18 +174,18 @@ function TrendAnalysis() {
                 </Grid>
                 <Grid item md={5} sm={6}>
                 <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
-                            <Select
+                    <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
+                    <Select
                                 labelId="demo-simple-select-outlined-label"
                                 id="demo-simple-select-outlined"
                                 value={stacking}
                                 onChange={(e) => setStacking(e.target.value)}
                                 label="Change Chart Type"
                             >
-                            <MenuItem value={false}>Bar chart</MenuItem>
-                            <MenuItem value={true}>Stacked Bar chart</MenuItem>                            
-                            </Select>
-                            </FormControl>
+                        <MenuItem value={false}>Bar chart</MenuItem>
+                        <MenuItem value={true}>Stacked Bar chart</MenuItem>                            
+                    </Select>
+                </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <TrendAnalysisChart title={` Date wise Trend analysis ${stacking ? 'Stacked Bar Chart' : 'Bar Chart'}`} data={barData} stacking={stacking} />
