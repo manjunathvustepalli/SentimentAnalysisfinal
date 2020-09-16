@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import DonutChart from '../charts/DonutChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
@@ -17,7 +16,7 @@ import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
-import { moodAnalysisPieChartFilter, sentimentAnalysisPieChartFilter } from '../../helpers/filter';
+import { moodAnalysisPieChartFilter} from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
 

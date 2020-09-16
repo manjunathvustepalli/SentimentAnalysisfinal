@@ -140,8 +140,8 @@ function TrendAnalysis(props) {
       uniqueLanguageKeys.forEach(lang =>{
           availableLanguageKeys[lang] = true
       })
-      console.log(availableLanguageKeys)
       setLanguages(availableLanguageKeys)
+      console.log(sortedData)
     })
     .catch(err=>{
       console.log(err)
@@ -169,6 +169,8 @@ function TrendAnalysis(props) {
       {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
       {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
       {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
+      {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
+      {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
 
 
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
@@ -192,10 +194,12 @@ function TrendAnalysis(props) {
                                 value={chartType}
                                 onChange={(e) => setChartType(e.target.value)}
                             >
-                        <MenuItem value={'bar'}>Bar chart</MenuItem>
-                        <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
-                        <MenuItem value={'area'}>Area chart</MenuItem>                            
-                        <MenuItem value={'line'}>Line chart</MenuItem>                            
+                          <MenuItem value={'bar'}>Bar chart</MenuItem>
+                          <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
+                          <MenuItem value={'area'}>Area chart</MenuItem>                            
+                          <MenuItem value={'line'}>Line chart</MenuItem>                            
+                          <MenuItem value={'pie'}>Pie chart</MenuItem>                            
+                          <MenuItem value={'semi-pie'}>Semi Pie chart</MenuItem>
                     </Select>
                 </FormControl>
                 </Grid>

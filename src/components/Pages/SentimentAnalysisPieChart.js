@@ -230,8 +230,9 @@ export default function SentimentalAnalysisPieChart() {
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
+                                console.log(data[source])
                                 return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
-                                <PieChart data ={data[source]}/>
+                                <PieChart data={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
                                 </Button>

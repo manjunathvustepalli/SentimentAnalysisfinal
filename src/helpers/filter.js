@@ -11,7 +11,7 @@ var colors = {
     'trust':'#0099FF',
     'positive':'#04E46C',
     'negative':'#CB0038',
-    'neutral':'#FFC400'
+    'neutral':'#FFC400', 
   }
 
 export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,subSources,data,from,to) => {
@@ -573,4 +573,35 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
             })
         }
         return [finalData,allDates,uniqueSubSources] 
+}
+
+export const TrendAnalysisPieChartFilter = (languages,sources,sortedData) => {
+    let finalData = {}
+    Object.keys(sortedData).forEach((date,i) => {
+        Object.keys(sortedData[date]).forEach((source,j) =>{
+            if(sources[source]){
+                if(!finalData[source]){
+                    finalData[source] = {}
+                }
+                Object.keys(sortedData[date][source]).forEach((language,k)=>{
+                    if(languages[language]){
+                        if(!finalData[source][language]){
+                            finalData[source][language] = 0
+                        }
+                        finalData[source][language] += sortedData[date][source][language]
+                    }
+                })
+            }
+        })
+    })
+    let data = {}
+    Object.keys(finalData).forEach((source) =>{
+        data[source] = Object.keys(finalData[source]).map((language)=>{
+            return {
+                name: language,
+                y:finalData[source][language]
+            }
+        })
+    })
+    return data
 }

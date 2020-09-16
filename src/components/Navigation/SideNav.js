@@ -108,7 +108,7 @@ const SideNavBar = ( props) => {
     {
       name:'Sentiment Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart'],
+      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart','/sentimental-analysis/stack-chart'],
     },
     {
       name:'Mood Analysis',
@@ -133,7 +133,7 @@ const SideNavBar = ( props) => {
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart'],
+      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/line-chart','/trend-analysis/stacked-bar-chart'],
     }, 
     {
       name:'Global Search',

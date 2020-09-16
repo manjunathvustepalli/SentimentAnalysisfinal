@@ -31,6 +31,8 @@ import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
 import GlobalSearch from "../Pages/GlobalSearch";
 import TrendAnalysisAreaChart from "../Pages/TrendAnalysisAreaChart";
 import TrendAnalysisLineChart from "../Pages/TrendAnalysisLineChart";
+import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
+import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
 
 
 function Routes() {
@@ -112,6 +114,8 @@ function Routes() {
         <Route path="/trend-analysis/stacked-bar-chart" exact component={() => <TrendAnalysis stacking />} />
         <Route path="/trend-analysis/area-chart" exact component={TrendAnalysisAreaChart} />
         <Route path="/trend-analysis/line-chart" exact component={TrendAnalysisLineChart} />
+        <Route path="/trend-analysis/pie-chart" exact component={TrendAnalysisPieChart} />
+        <Route path="/trend-analysis/semi-pie-chart" exact component={TrendAnalysisSemiDonut} />
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject/sentiment" exact component={TrendingSubjectsSentiment} />
         <Route path="/trending-subject/mood" exact component={TrendingSubjectsMood} />
