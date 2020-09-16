@@ -5,7 +5,8 @@ import { TextField } from '@material-ui/core'
 function SubSourceSingleAutoComplete(props) {
     const [subSource,setSubSource,subSources] = props.subSources
     return (
-        <Autocomplete
+        <div id='autocomplete-subsource' style={{width:'100%'}}>
+            <Autocomplete
             id="Autocomplete-subSources"
             options={subSources}
             getOptionLabel={(option) => option}
@@ -16,6 +17,7 @@ function SubSourceSingleAutoComplete(props) {
             }}
             renderInput={(params) => <TextField {...params} label="Sub Source" variant="outlined" />}
         />
+        </div>
     )
 }
 

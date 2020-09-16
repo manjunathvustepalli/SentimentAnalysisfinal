@@ -53,3 +53,18 @@ ul.MuiList-padding{
 #summary-dashboard label {
     color:'green'
 }
+
+#autocomplete-subsource .MuiOutlinedInput-notchedOutline{
+    border-color: white;
+}
+#autocomplete-subsource label{
+    color: white;
+}
+
+#autocomplete-subsource .MuiSvgIcon-root{
+    color: white;
+}
+
+#autocomplete-subsource input{
+    color: white;
+}

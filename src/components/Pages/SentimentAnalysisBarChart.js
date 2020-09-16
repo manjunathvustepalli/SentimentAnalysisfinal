@@ -190,13 +190,11 @@ export default function SentimentalAnalysisAreaChart(props) {
                     })
                 });
             })
-            console.log(sortedData,uniqueSourceKeys,uniqueSubSourceKeys,languageKeys)
 
             if(changeInState){
                 setSources(prev =>{
                     let availableSourceKeys = {}
                     uniqueSourceKeys.forEach(source =>{
-                        console.log(prev[source],!!prev[source])
                         availableSourceKeys[source] = !!prev[source]
                     })
                     return availableSourceKeys
@@ -270,16 +268,13 @@ export default function SentimentalAnalysisAreaChart(props) {
     }
 
     useMountAndUpdateEffect(()=>{
-        console.log('update')
         fetchData(false)
     },()=>{
         fetchData(true)
-        console.log('load')
     },[from,to,refresh,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
-            console.log('update')
             fetchData(true)
         }
     },[keywordType])

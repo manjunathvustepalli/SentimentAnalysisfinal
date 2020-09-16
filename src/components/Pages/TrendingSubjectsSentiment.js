@@ -16,7 +16,6 @@ import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths, getKeyArray } from "../../helpers";
-import TrendingSubjectsTable from "../Tables/TrendingSubjectsTable";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
 import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
@@ -184,9 +183,10 @@ if(keywordType === 'Screen Name'){
   setLanguages(languageKeys)
   setLanguage(languageKeys[0])
   setSources(uniqueSources)
-  setSource(uniqueSources[0])
-  setSubSources(uniqueSubSources)
-  setSubSource(uniqueSubSources[0])
+  setSource(uniqueSources[0])  
+  setSubSources(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]]))
+  setSubSource(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]])[0])
+
 })
 .catch(err=>{
   console.log(err)
@@ -207,7 +207,26 @@ useEffect(() => {
         setData([])
         setnoData(true)
    }
-}, [language,source,subSource,sentiment])
+}, [subSource,sentiment])
+
+useEffect(() => {
+  try{
+    if(sortedData[language][source][subSource][sentiment]){
+      setData(sortedData[language][source][subSource][sentiment])
+      setnoData(false)
+    }
+  } catch(err){
+    if(sortedData[language]){
+      if(sortedData[language][source]){
+        setSubSources(Object.keys(sortedData[language][source]))
+        setSubSource(Object.keys(sortedData[language][source])[0])
+      }
+    }
+    setnoData(true)
+    console.log(err)
+  }
+
+}, [source,language])
 
   return (
     <SideNav>

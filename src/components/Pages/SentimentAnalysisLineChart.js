@@ -188,13 +188,11 @@ export default function SentimentalAnalysisLineChart() {
                     })
                 });
             })
-            console.log(sortedData,uniqueSourceKeys,uniqueSubSourceKeys,languageKeys)
 
             if(changeInState){
                 setSources(prev =>{
                     let availableSourceKeys = {}
                     uniqueSourceKeys.forEach(source =>{
-                        console.log(prev[source],!!prev[source])
                         availableSourceKeys[source] = !!prev[source]
                     })
                     return availableSourceKeys

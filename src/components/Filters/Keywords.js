@@ -40,7 +40,7 @@ function Keywords(props) {
                     onChange={(e) => setKeywordType(e.target.value)}
                     >
                         {
-                            keywordTypes.map(keywordType => <MenuItem style={{backgroundColor:'#2C3335',color:'white'}} value={keywordType}>{keywordType}</MenuItem> )
+                            keywordTypes.map((keywordType,i) => <MenuItem key={i} style={{backgroundColor:'#2C3335',color:'white'}} value={keywordType}>{keywordType}</MenuItem> )
                         }                    
                     </Select>
             </FormControl>

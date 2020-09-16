@@ -183,7 +183,7 @@ const SideNavBar = ( props) => {
    const drawer = (
     <div className={classes.drawerScroller} >
           <div id="userMenuHeader" >
-            <Grid container justify='space-around' flexDirection='row' >
+            <Grid container justify='space-around' >
               <Grid item align="left"  xs={12}>
                 <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
               </Grid>
@@ -229,7 +229,7 @@ const SideNavBar = ( props) => {
           </IconButton>
           <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
           <Typography variant="h6" noWrap>
-          &nbsp; Amar Sarkar Sentiment Analysis
+          &nbsp; Sentiment and Mood Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>

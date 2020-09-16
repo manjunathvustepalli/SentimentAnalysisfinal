@@ -118,7 +118,6 @@ function WordCloud(props) {
                 let sentimentKeys = getKeyArray(sentimentBuckets)
                 sortedData[source].sentiment = {}
                 sentimentKeys.forEach((sentiment,j) => {
-                    console.log(sentiment,j)
                     let wordBuckets = sentimentBuckets[j].Words.buckets
                     sortedData[source].sentiment[sentiment] = wordBuckets.map(wordObj => {
                         return {
@@ -142,7 +141,6 @@ function WordCloud(props) {
                     })
                 })
             })
-            console.log(sortedData)    
         })
         .catch(err => {
             console.log(err)

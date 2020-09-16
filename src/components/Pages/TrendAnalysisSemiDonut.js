@@ -143,7 +143,6 @@ function TrendAnalysisSemiDonut() {
             availableLanguageKeys[lang] = true
         })
         setLanguages(availableLanguageKeys)
-        console.log(sortedData)
       })
       .catch(err=>{
         console.log(err)
@@ -198,7 +197,6 @@ function TrendAnalysisSemiDonut() {
                   </Grid>
                         {
                           Object.keys(pieData).map((source) =>{
-                            console.log(pieData[source])
                             return (
                             <Grid item xs={12} sm={6} md={4} lg={4} align='center' >
                               <SemiDonutChart data={pieData[source]} />

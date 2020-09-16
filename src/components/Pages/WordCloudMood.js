@@ -274,7 +274,6 @@ function WordCloudSentiment() {
                 }}) 
           })
           .catch(err => {
-              console.log(err.response)
           })
     },[to,from,refresh,keywords,keywordType])
 

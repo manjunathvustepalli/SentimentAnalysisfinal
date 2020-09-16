@@ -8,9 +8,8 @@ function RadioButtons(props) {
     return (
         <div>
             {selectingArray.map((eachValue,i) => (
-                <FormControlLabel value={eachValue} control={
+                <FormControlLabel key={i} value={eachValue} control={
                     <Radio
-                    key={i}
                     checked={selectedValue === eachValue}
                     onChange = {(e) => setSelectedValue(e.target.value)}
                     value={eachValue}

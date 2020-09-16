@@ -85,7 +85,6 @@ export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,
             }
         })
     })
-    console.log(finalData)
     return [finalData,availableSubSources]
 }
 

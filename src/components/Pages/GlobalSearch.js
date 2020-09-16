@@ -29,11 +29,9 @@ function GlobalSearch() {
     const submitData = () => {
         let keywordsString = keywords.join(',')
         let handlesString = handles.join(',')
-        console.log(keywordsString,handlesString,source)
         if(source === 'twitter'){
             Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-224b3922.localhost.run/bsma-webservice/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
                 .then(res =>{
-                    console.log(res)
                     if(res.data.status === 'ACCEPTED'){
                         Axios.post(process.env.REACT_APP_SEARCH_URL,{
                             "query": {
@@ -50,7 +48,6 @@ function GlobalSearch() {
                             "size": 50
                           })
                           .then(data =>{
-                              console.log(data)
                             setData(data.data.hits.hits.map((postObj)=>{
                                 if(!postObj._source.User){
                                     return {
@@ -126,7 +123,6 @@ function GlobalSearch() {
         } else if(source === 'facebook') {
             Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-224b3922.localhost.run/bsma-webservice/fetchdatafromfb?fbpage=${handlesString}`)
                 .then(res =>{
-                    console.log(res)
                     if(res.data.status === 'ACCEPTED'){
                         Axios.post(process.env.REACT_APP_SEARCH_URL,{
                             "query": {
@@ -147,7 +143,6 @@ function GlobalSearch() {
                             ]
                           })
                           .then(data=>{
-                            console.log(data)
                             setData(data.data.hits.hits.map((postObj,i)=>{
                                 return {
                                     id:i,

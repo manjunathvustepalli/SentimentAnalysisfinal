@@ -140,7 +140,6 @@ function TrendAnalysisAreaChart() {
       uniqueLanguageKeys.forEach(lang =>{
           availableLanguageKeys[lang] = true
       })
-      console.log(availableLanguageKeys)
       setLanguages(availableLanguageKeys)
     })
     .catch(err=>{
@@ -151,7 +150,6 @@ function TrendAnalysisAreaChart() {
   useEffect(()=>{
     setBarData((prev) => {
       let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
-      console.log(data)
       return data
     })
   },[languages,sources])

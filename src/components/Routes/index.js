@@ -33,6 +33,7 @@ import TrendAnalysisAreaChart from "../Pages/TrendAnalysisAreaChart";
 import TrendAnalysisLineChart from "../Pages/TrendAnalysisLineChart";
 import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
 import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
+import Test from "../Pages/Test";
 
 
 function Routes() {
@@ -126,6 +127,7 @@ function Routes() {
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
+        <Route path="/test" exact component={Test} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

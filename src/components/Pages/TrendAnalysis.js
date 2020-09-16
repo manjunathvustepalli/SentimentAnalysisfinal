@@ -141,7 +141,6 @@ function TrendAnalysis(props) {
           availableLanguageKeys[lang] = true
       })
       setLanguages(availableLanguageKeys)
-      console.log(sortedData)
     })
     .catch(err=>{
       console.log(err)
@@ -151,7 +150,6 @@ function TrendAnalysis(props) {
   useEffect(()=>{
     setBarData((prev) => {
       let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
-      console.log(data)
       return data
     })
   },[languages,sources])
