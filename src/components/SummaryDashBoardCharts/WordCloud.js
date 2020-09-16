@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, makeStyles, InputLabel, Select, MenuItem } from '@material-ui/core'
+import { Grid, makeStyles, InputLabel, Select, MenuItem, FormControl } from '@material-ui/core'
 import Axios from 'axios'
 import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
@@ -166,19 +166,21 @@ function WordCloud(props) {
 
     return (
         <Grid container spacing={3}>
-            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'10px 0 0 20px'}}>
+            <Grid item xs={3} style={{height:'70px',lineHeight:'70px',padding:'10px 0 0 20px'}}>
                 Word Cloud
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={9}>
                 { sources && sources.length && (
-                    <Grid container spacing={1} style={{marginTop:'10px'}}>
+                    <Grid container spacing={2} style={{marginTop:'10px'}}>
                     <Grid item xs={4} >
-                        <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
+                        <FormControl variant="outlined" style={{width:'100%'}}>
+                            <InputLabel id="select-source"  >Source</InputLabel>
                             <Select
                             labelId="select-source"
                             id="select-source-main"
+                            variant="outlined"
+                            label="Source"
                             fullWidth
-                            className={classes.filterDefault}
                             value = {source}
                             onChange = { (e) => setSource(e.target.value) }
                             >
@@ -186,61 +188,64 @@ function WordCloud(props) {
                                    sources && sources.length && (sources.map((source,i) => <MenuItem value={source} key={i} >{source}</MenuItem>))
                                 }                    
                             </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={4}>
-                        <InputLabel id="demo-simple-select-helper-label"className={classes.filterColorDefault} >Type </InputLabel>
+                        <FormControl variant="outlined" style={{width:'100%'}} >
+                        <InputLabel id="Select-type" >Type </InputLabel>
                         <Select
-                            labelId="demo-simple-select-helper-label"
-                            id="demo-simple-select-helper"
+                            labelId="Select-type"
+                            id="select-type-main"
                             fullWidth
+                            label="Type"
+                            variant="outlined"
                             value={type}
                             onChange = {(e) => setType(e.target.value)}
-                            className={classes.filterDefault}
                         >
                             <MenuItem value={'sentiment'}>Sentiment</MenuItem>
                             <MenuItem value={'mood'}>Mood</MenuItem>
                         </Select>
+                        </FormControl>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                     {
                         type ==='sentiment' ? (
-                            <>
-                            <InputLabel id="demo-simple-select-helper-label"className={classes.filterColorDefault} >Sentiment </InputLabel>
-                            <Select
-                            labelId="demo-simple-select-helper-label"
-                            id="demo-simple-select-helper"
-                            fullWidth
-                            value={sentiment}
-                            onChange = {(e) => setSentiment(e.target.value)}
-                            className={classes.filterDefault}
-                            >
-                            <MenuItem value={'negative'}>Negative</MenuItem>
-                            <MenuItem value={'positive'}>Positive</MenuItem>
-                            <MenuItem value={'neutral'}>Neutral</MenuItem>
-                            </Select>
-                            </>
+                            <FormControl variant="outlined" style={{width:'90%'}} >
+                                <InputLabel id="sentiment-select" >Sentiment </InputLabel>
+                                <Select
+                                    labelId="sentiment-select"
+                                    id="sentiment-select-main"
+                                    fullWidth
+                                    label="Sentiment"
+                                    value={sentiment}
+                                    onChange = {(e) => setSentiment(e.target.value)}
+                                >
+                                    <MenuItem value={'negative'}>Negative</MenuItem>
+                                    <MenuItem value={'positive'}>Positive</MenuItem>
+                                    <MenuItem value={'neutral'}>Neutral</MenuItem>
+                                </Select>
+                            </FormControl>
                         ) : (
-                            <>
-                            <InputLabel id="demo-simple-select-helper-label" className={classes.filterColorDefault}>Mood </InputLabel>
-                            <Select
-                            labelId="demo-simple-select-helper-label"
-                            id="demo-simple-select-helper"
-                            fullWidth
-                            value = {mood}
-                            onChange = {(e) => setMood(e.target.value)}
-                            className={classes.filterDefault}
-                            >
-                            <MenuItem value={'joy'}>Joy</MenuItem>
-                            <MenuItem value={'anticipation'}>Anticipation</MenuItem>
-                            <MenuItem value={'surprise'}>Surprise</MenuItem>
-                            <MenuItem value={'anger'}>Anger</MenuItem>
-                            <MenuItem value={'trust'}>Trust</MenuItem>
-                            <MenuItem value={'fear'}>Fear</MenuItem>
-                            <MenuItem value={'sad'}>Sad</MenuItem>
-                            <MenuItem value={'disgust'}>Disgust</MenuItem>
-        
-                            </Select>
-                            </>
+                            <FormControl variant="outlined" style={{width:'90%'}}>
+                                <InputLabel id="select-mood" >Mood </InputLabel>
+                                <Select
+                                    labelId="select-mood"
+                                    id="select-mood-main"
+                                    fullWidth
+                                    label="Mood"
+                                    value = {mood}
+                                    onChange = {(e) => setMood(e.target.value)}
+                                >
+                                    <MenuItem value={'joy'}>Joy</MenuItem>
+                                    <MenuItem value={'anticipation'}>Anticipation</MenuItem>
+                                    <MenuItem value={'surprise'}>Surprise</MenuItem>
+                                    <MenuItem value={'anger'}>Anger</MenuItem>
+                                    <MenuItem value={'trust'}>Trust</MenuItem>
+                                    <MenuItem value={'fear'}>Fear</MenuItem>
+                                    <MenuItem value={'sad'}>Sad</MenuItem>
+                                    <MenuItem value={'disgust'}>Disgust</MenuItem>
+                                </Select>
+                            </FormControl>
                         )
                     }                        
                     </Grid>

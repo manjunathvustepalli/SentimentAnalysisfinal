@@ -57,12 +57,13 @@ function SummaryDashBoard() {
 
     return (
         <SideNav>    
-            <div className={'keyword-wrapper'} style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
                 <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
+                        <div className={'keyword-wrapper'}>
                         <Card style={{backgroundColor:'#2C3335'}} >
                             <IconWithText style={{margin:'10px 10px 0 10px'}}>
                                 <FilterListIcon style={{color:'white'}} /> 
@@ -94,35 +95,42 @@ function SummaryDashBoard() {
                                 </Grid>
                             </Grid>
                         </Card>
+                        </div>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
-                        <FilterHeader refresh={[refresh,setRefresh]}/>
-                    </Grid>                  
-                    <Grid item xl={4} md={12} xs={12}>
-                        <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
-                    </Grid>
-                    <Grid item xl={4} md={6} sm={12} xs={12}>
-                        <Card className={classes.main} >
-                            <CardContent>Mood Analysis</CardContent> 
-                            <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
-                        </Card>
-                    </Grid>                    
-                    <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
-                            <CardContent>Sentiment Analysis</CardContent>
-                            <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
-                        </Card>
-                    </Grid>                   
-                    <Grid item xl={4} md={6} xs={12}>
-                        <InfluencerComparison from={from} to={to} />
-                    </Grid>
-                    <Grid item xl={4} md={6} xs={12}>
-                        <Card className={classes.main} >
-                           <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
-                        </Card>
-                    </Grid>
-                    <Grid item xl={4} md={12} xs={12}>
-                        <GeoTaggingSummary/>
+                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                        </Grid>
+                        <Grid item xs={12} >
+                        <div id="summary-dashboard" style={{width:'100%'}}>
+                        <Grid container spacing={2}>                     
+                            <Grid item xl={4} md={12} xs={12}>
+                                <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
+                            </Grid>
+                            <Grid item xl={4} md={6} sm={12} xs={12}>
+                                <Card className={classes.main} >
+                                    <CardContent>Mood Analysis</CardContent> 
+                                    <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
+                                </Card>
+                            </Grid>                    
+                            <Grid item xl={4} md={6} xs={12}>
+                                <Card className={classes.main} >
+                                    <CardContent>Sentiment Analysis</CardContent>
+                                    <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
+                                </Card>
+                            </Grid>                   
+                            <Grid item xl={4} md={6} xs={12}>
+                                <InfluencerComparison from={from} to={to} />
+                            </Grid>
+                            <Grid item xl={4} md={6} xs={12}>
+                                <Card className={classes.main} >
+                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
+                                </Card>
+                            </Grid>
+                            <Grid item xl={4} md={12} xs={12}>
+                                <GeoTaggingSummary/>
+                            </Grid>
+                        </Grid>
+                        </div>
                     </Grid>
                 </Grid>
             </div>

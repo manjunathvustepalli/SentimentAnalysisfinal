@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Grid, InputLabel, Select, MenuItem,makeStyles } from '@material-ui/core'
+import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl } from '@material-ui/core'
 import TreeMap from '../charts/TreeMap'
 import InlineFilter from '../Filters/InlineFilter'
 import { green } from '@material-ui/core/colors';
@@ -25,8 +25,7 @@ function InfluencerComparison({from,to}) {
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
     const [data, setData] = useState([])
-
-    
+ 
     const parent = [{
         id: 'negative',
         name: 'Negative',
@@ -307,33 +306,38 @@ function InfluencerComparison({from,to}) {
             <Grid item xs={7}  >
                 <Grid container style={{marginTop:'15px'}}>
                 <Grid item xs={4} >
-                <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
-                    <Select 
-                    labelId="select-source"
-                    id="select-source-main"
-                    fullWidth
-                    className={classes.filterDefault}
-                    value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    >
-                       <MenuItem value={'twitter'} > Twitter </MenuItem>                    
-                       <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
+                  <FormControl variant="outlined" style={{width:'100%'}} >
+                    <InputLabel id="select-source" >Source</InputLabel>
+                      <Select 
+                        labelId="select-source"
+                        label="Source"
+                        id="select-source-main"
+                        fullWidth
+                        value={source}
+                        onChange={(e) => setSource(e.target.value)}
+                      >
+                        <MenuItem value={'twitter'} > Twitter </MenuItem>                    
+                        <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
                     </Select>
+                  </FormControl>
                 </Grid>
             <Grid item xs={1}/>
             <Grid item xs={4}>
-                <InputLabel id="Select-type"className={classes.filterColorDefault} >Select Type </InputLabel>
+              <FormControl variant="outlined" style={{width:'100%'}} >
+              <InputLabel id="Select-type">Select Type </InputLabel>
                     <Select
+                    variant="outlined"
                     labelId="Select-type"
+                    label="Select Type"
                     id="demo-simple-select-helper"
                     fullWidth
-                    className={classes.filterDefault}
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     >
                     <MenuItem value='Sentiment'>Sentiment</MenuItem>
                     <MenuItem value='Mood'>Mood</MenuItem>
                     </Select>
+              </FormControl>
             </Grid>
                 </Grid>
             </Grid>

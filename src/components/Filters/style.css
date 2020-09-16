@@ -45,3 +45,11 @@ ul.MuiList-padding{
 #tags-outlined{
     color:white;
 }
+
+#summary-dashboard .MuiOutlinedInput-notchedOutline{
+    border-color:green !important
+}
+
+#summary-dashboard label {
+    color:'green'
+}
