@@ -10,7 +10,13 @@ function ChipInputFilter(props) {
         fullWidth
         variant="outlined"
         label="Type Keyword"
-        defaultValue={keywords}        
+        defaultValue={keywords}
+        InputLabelProps={{style:{
+            color:'white'
+        }}}
+        InputProps={{style:{
+            color:'white'
+        }}}
         style={{transform:props.transform ? 'translateY(20%)' : ''}}
         onChange={(chips) => {
             setKeywords(chips)

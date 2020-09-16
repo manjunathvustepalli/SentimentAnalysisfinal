@@ -15,24 +15,24 @@ import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths, getKeyArray } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
 import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
 import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../../helpers/filter";
+import AreaChart from "../charts/AreaChart";
 import { Redirect } from "react-router-dom";
 
 var sortedData = {}
 
-function TrendAnalysis(props) {
+function TrendAnalysisAreaChart() {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState({});
-  const [chartType, setChartType] = useState( props.stacking ? 'stack' : 'bar')
   const [languages, setLanguages] = useState({});
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
-  const [barData, setBarData] = useState([])
+  const [barData, setBarData] = useState([[],[]])
   const [lineData, setLineData] = useState([])
+  const [chartType, setChartType] = useState('area')
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -165,12 +165,9 @@ function TrendAnalysis(props) {
 
   return (
     <SideNav>
-      {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
-      {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
-      {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
-      {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
-
-
+        {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
+        {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
+        {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
@@ -194,13 +191,14 @@ function TrendAnalysis(props) {
                             >
                         <MenuItem value={'bar'}>Bar chart</MenuItem>
                         <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
-                        <MenuItem value={'area'}>Area chart</MenuItem>                            
-                        <MenuItem value={'line'}>Line chart</MenuItem>                            
+                        <MenuItem value={'area'}>Area chart</MenuItem>  
+                        <MenuItem value={'line'}>Line chart</MenuItem>  
+
                     </Select>
                 </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <TrendAnalysisChart title={` Date wise Trend analysis ${props.stacking ? 'Stacked Bar Chart' : 'Bar Chart'}`} data={barData} stacking={props.stacking} />
+                    <AreaChart sorted data={barData[0]} dates={barData[1]} />
                 </Grid>
                 <Grid item xs={11}>
                     <TabbarMUI className={classes.tabbar} data={lineData} />
@@ -230,4 +228,4 @@ function TrendAnalysis(props) {
   );
 }
 
-export default TrendAnalysis;
+export default TrendAnalysisAreaChart;

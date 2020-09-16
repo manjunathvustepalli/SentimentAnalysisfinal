@@ -5,6 +5,10 @@ import { green } from '@material-ui/core/colors';
 function AdminPageTable({ data,setData,name,columns }) {
     return (
         <MaterialTable
+            style={{
+                padding:'20px',
+                margin:'20px'
+            }}
             title={name}
             data={data}
             columns={columns}

@@ -41,10 +41,12 @@ function DateFilter(props) {
     const classes = useStyles();
     
     return (
+      <div id="side-filters-time-date" style={{width:'100%'}} >
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               className={classes.formControl}
               margin="normal"
+              inputVariant="outlined"
               id="start-date-picker-dialog"
               label="Start Date"
               value = {startDate}
@@ -58,6 +60,7 @@ function DateFilter(props) {
               className={classes.formControl}
               margin="normal"
               id="end-date-picker-dialog"
+              inputVariant="outlined"
               label="End Date"
               value = {endDate}
               onChange = {handleEndDateChange}
@@ -67,6 +70,7 @@ function DateFilter(props) {
               }}
             />
         </MuiPickersUtilsProvider>
+      </div>
     )
 }
 

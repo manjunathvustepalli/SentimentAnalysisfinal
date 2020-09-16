@@ -37,9 +37,11 @@ function SubSourceAutoComplete(props) {
     }
 
     return (
+      <div className={'autocomplete-wrapper'} style={{width:'100%'}}>
         <Autocomplete
         multiple
         fullWidth
+        limitTags={2}
         id="tags-outlined"
         value={selectedSubsources}
         onChange={(e,arr) => handleChange(e,arr)}
@@ -47,19 +49,21 @@ function SubSourceAutoComplete(props) {
         getOptionLabel={(option) => option}
         renderTags={(value, getTagProps) =>
             value.map((option, index) => (
-              <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-            ))
+              <Chip variant="outlined" style={{backgroundColor:'white',color:'black'}} label={option} {...getTagProps({ index })} />
+            )) 
           }
         renderInput={(params) => (
           <TextField
             fullWidth
             {...params}
             variant="outlined"
+            style={{color:'white'}}
             label="Select Subsource"
             placeholder="Subsources"
           />
         )}
       />
+      </div>
     )
 }
 

@@ -223,7 +223,7 @@ function OverallAnalysis({to, from}) {
                         }
                     </Select>
                 </FormControl>
-                <Card style={{backgroundColor:'#2F363F',color:'white'}} align='center'>
+                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'30px'}} align='center'>
                     <Typography variant='subtitle1' >
                         {nFormatter(mainSourceData.length && (
                           mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)

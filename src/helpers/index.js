@@ -1,6 +1,12 @@
 import moment from 'moment'
 
-export const capitalizeString = string => string[0].toUpperCase() + string.slice(1);
+export const capitalizeString = string =>{
+  if(string){
+    return string[0].toUpperCase() + string.slice(1)
+  } else {
+    return ''
+  }
+};
 
 export const getKeyArray = (dataArray) => dataArray.map(obj => obj.key)
 

@@ -133,7 +133,7 @@ const SideNavBar = ( props) => {
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/trend-analysis'],
+      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart'],
     }, 
     {
       name:'Global Search',

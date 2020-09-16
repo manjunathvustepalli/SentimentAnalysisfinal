@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Typography, Grid, Card, TextField, CardContent } from '@material-ui/core'
+import { Typography, Grid, Card, CardContent } from '@material-ui/core'
 import FilterHeader from '../Filters/FilterHeader'
 import styled from 'styled-components';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -9,19 +9,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
-import TreeMap from "../charts/TreeMap";
 import { addMonths } from '../../helpers';
 import GridTimeFilter from '../Filters/GridTimeFilter';
-import InlineFilter from '../Filters/InlineFilter';
 import MoodAnalysis from '../SummaryDashBoardCharts/MoodAnalysis';
 import SentimentAnalysis from '../SummaryDashBoardCharts/SentimentAnalysis';
 import WordCloud from '../SummaryDashBoardCharts/WordCloud'
-import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap';
 import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
 import ChipInputFilter from '../Filters/ChipInputFilter';
-import Keywords from '../Filters/Keywords';
-import { Input, createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import GeoTaggingSummary from '../SummaryDashBoardCharts/GeoTaggingSummary';
 
 const IconWithText = styled.div`
@@ -62,31 +57,32 @@ function SummaryDashBoard() {
 
     return (
         <SideNav>    
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
+            <div className={'keyword-wrapper'} style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
                 <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
-                        <Card>
+                        <Card style={{backgroundColor:'#2C3335'}} >
                             <IconWithText style={{margin:'10px 10px 0 10px'}}>
-                                <FilterListIcon /> 
-                                <p> FILTERS </p>
+                                <FilterListIcon style={{color:'white'}} /> 
+                                <p style={{color:'white'}} > FILTERS </p>
                             </IconWithText>
                             <Grid container>    
                                 <Grid item xs={12} sm={6} md={3} >
                                 <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="keyword-type-label">Keyword Type</InputLabel>
+                            <InputLabel id="keyword-type-label"style={{color:'white'}} >Keyword Type</InputLabel>
                             <Select
                                 labelId="keyword-type-label"
                                 id="keyword-type"
                                 label="Keyword Type"
                                 value={keywordType}
+                                style={{color:'white'}}
                                 onChange={(e) => setKeywordType(e.target.value)}
                             >
-                            <MenuItem value='Entire Data'>Entire Data</MenuItem>
-                            <MenuItem value='Screen Name'>Screen Name</MenuItem>
-                            <MenuItem value='Hash Tags'> Hash Tags </MenuItem>
+                            <MenuItem style={{backgroundColor:'#2C3335',color:'white'}} value='Entire Data'>Entire Data</MenuItem>
+                            <MenuItem style={{backgroundColor:'#2C3335',color:'white'}} value='Screen Name'>Screen Name</MenuItem>
+                            <MenuItem style={{backgroundColor:'#2C3335',color:'white'}} value='Hash Tags'> Hash Tags </MenuItem>
                             </Select>
                             </FormControl>
                                 </Grid>
