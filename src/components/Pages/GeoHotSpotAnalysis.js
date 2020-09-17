@@ -4,14 +4,12 @@ import {
   Grid,
   Typography,
   Card,
-  CardContent,
   makeStyles,
 } from "@material-ui/core";
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
 import GeoHotTabbar from "./GeoHotTabbar";
 function GeoHotSpotAnalysis() {
   const [refresh, setRefresh] = useState(true);

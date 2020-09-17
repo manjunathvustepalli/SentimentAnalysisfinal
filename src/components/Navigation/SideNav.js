@@ -32,8 +32,6 @@ import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SearchIcon from '@material-ui/icons/Search';
-import { green } from '@material-ui/core/colors'
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import { useEffect } from 'react';
@@ -281,6 +279,5 @@ const SideNavBar = ( props) => {
     </div>
   );
 }
-
 
 export default withRouter(SideNavBar);

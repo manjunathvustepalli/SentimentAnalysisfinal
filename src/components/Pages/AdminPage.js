@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { makeStyles, AppBar, Tabs, Tab, Box, Grid } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
-import MaterialTable from 'material-table';
+import { makeStyles, Tabs, Tab, Box, Grid } from '@material-ui/core';
 import AdminPageTable from '../Tables/AdminPageTable';
 
 function TabPanel(props) {

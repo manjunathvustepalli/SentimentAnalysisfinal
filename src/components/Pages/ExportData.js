@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Card, Grid, Switch, FormControlLabel, TextField, Button } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,7 +8,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import GridTimeFilter from '../Filters/GridTimeFilter'
 import { addMonths } from '../../helpers'
 
 const useStyles = makeStyles((theme) => ({

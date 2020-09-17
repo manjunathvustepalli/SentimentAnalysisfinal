@@ -22,6 +22,8 @@ import RadioButtons from './RadioButtons';
 import SubSourceSingleAutoComplete from './SubSourceSingleAutoComplete';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import FormatSizeIcon from '@material-ui/icons/FormatSize';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -109,7 +111,7 @@ export default function ControlledAccordions(props) {
           id="panel4bh-header"
         >
             <IconWithText>
-                <TranslateIcon style={{marginRight:'10px'}} /> 
+                <FormatSizeIcon style={{marginRight:'10px'}} /> 
                 <p>
                 Languages
                 </p>
@@ -272,7 +274,7 @@ export default function ControlledAccordions(props) {
             id="panel9bh-header"
           >
               <IconWithText>
-                  <TranslateIcon style={{marginRight:'10px'}} /> 
+                  <FormatSizeIcon style={{marginRight:'10px'}} /> 
                   <p>
                     Select Language
                   </p>

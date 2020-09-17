@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Card, Grid, Switch, FormControlLabel, TextField, Button } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel, Button } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,13 +8,31 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { green } from '@material-ui/core/colors'
-import GridTimeFilter from '../Filters/GridTimeFilter'
-import { addMonths } from '../../helpers'
-import moment from 'moment'
-
+import LaunchIcon from '@material-ui/icons/Launch';
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+      background: 'rgb(67, 176, 42)',
+      borderRadius: 3,
+      border: 0,
+      color: 'white',
+      height: 'auto',
+      width:'120px',
+      margin:'10px',
+      fontSize:'10px',
+      padding: '10px',
+      '&:hover': {
+        background: 'rgb(67, 176, 42)',
+        borderRadius: 3,
+        border: 0,
+        color: 'white',
+        height: 'auto',
+        width:'120px',
+        margin:'10px',
+        fontSize:'10px',
+        padding: '10px',
+      }
+    },
     formControl: {
         fullWidth:true
     },
@@ -84,13 +102,60 @@ function LiveAnalysis() {
             ]
           })
         .then(fetchedData => {
-            console.log(fetchedData.data.hits.hits)
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
+                }
+                if(user._source.MediaEntities && user._source.MediaEntities.length){
+                    obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
+                      if(post.MediaURLHttps){
+                        return (
+                          <a target="_blank" style={{textDecoration:'none',color:'white'}} href={post.MediaURLHttps}>
+                            <Button
+                              endIcon={<LaunchIcon/>}
+                              className={classes.root}
+                        > Open Image {i+1} </Button> 
+                          </a>
+                        ) 
+                      } else{
+                        return (
+                            <a target="_blank" style={{textDecoration:'none',color:'white'}} href={post.MediaURL}>
+                              <Button
+                          className={classes.root}
+                          endIcon={<LaunchIcon/>}
+                        >
+                          Open Image {i+1}
+                          </Button></a>) 
+                      }
+                    })
+                    if(user._source.MediaEntities[0].ExpandedURL){
+                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].ExpandedURL}>
+                      <Button
+                        className={classes.root}
+                        endIcon={<LaunchIcon/>}
+                      > Click Here </Button></a> 
+                    } else if(user._source.MediaEntities[0].DisplayURL){
+                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].DisplayURL}>
+                      <Button
+                        className={classes.root}
+                        endIcon={<LaunchIcon/>}
+                      > Click Here </Button></a> 
+                    } else if(user._source.MediaEntities[0].Text){
+                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].Text}>
+                      <Button
+                        className={classes.root}
+                        endIcon={<LaunchIcon/>}
+                      > Click Here </Button></a> 
+                    } else if(user._source.MediaEntities[0].URL){
+                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].URL}>
+                      <Button
+                        className={classes.root}
+                        endIcon={<LaunchIcon/>}
+                      > Click Here </Button></a> 
+                    }
                 }
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
@@ -106,6 +171,14 @@ function LiveAnalysis() {
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" }},
                     {title:'Post',field:'tweet'},
+                    {
+                      title:'Media Urls',field:'mediaUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
+                    {
+                      title:'Post Url',field:'postUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                     {title:'Followers Count',field:'followersCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
@@ -121,6 +194,10 @@ function LiveAnalysis() {
                     {title:'Replies',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
+                    {
+                      title:'Media Urls',field:'mediaUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
@@ -168,6 +245,7 @@ function LiveAnalysis() {
             ]
           })
           .then(fetchedData =>{
+            console.log(fetchedData.data.hits.hits);
               let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -272,14 +350,20 @@ function LiveAnalysis() {
                         }
                     </Grid>
                     <Grid item xs={12}>
-                        <MaterialTable 
+                      <div style={{width:'80%'}}>
+                      <MaterialTable 
                             title='Live Analysis'
                             columns={columns}
                             data={data}
+                            style={{
+                              padding:'20px',
+                              width:'100%',
+                              overflow:'scroll'
+                            }}
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
-                                maxBodyHeight:500,
+                                maxBodyHeight:600,
                                 headerStyle:{
                                     backgroundColor:'rgb(67, 176, 42)',
                                     color:'white',
@@ -288,6 +372,7 @@ function LiveAnalysis() {
                                 }
                             }}
                         />
+                      </div>
                     </Grid>
                 </Grid>
             </Card>
