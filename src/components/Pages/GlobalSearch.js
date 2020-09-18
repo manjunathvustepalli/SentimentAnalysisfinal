@@ -209,7 +209,7 @@ function GlobalSearch() {
                             style={{backgroundColor:source==='twitter'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='twitter'?'white':'black', height:'50px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         TWITTER
                     </Grid>
-                    {/* <Grid item xs={4} sm={3} md={2} lg={2} 
+                    <Grid item xs={4} sm={3} md={2} lg={2} 
                         onClick={() => {
                             setData([])
                             setSource('facebook')
@@ -219,7 +219,7 @@ function GlobalSearch() {
                         }}
                         style={{backgroundColor:source==='facebook'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='facebook'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         FACEBOOK
-                    </Grid> */}
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid item xs={2} />
