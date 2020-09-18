@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Card, Grid, InputLabel, Select, MenuItem,makeStyles } from '@material-ui/core'
+import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl } from '@material-ui/core'
 import TreeMap from '../charts/TreeMap'
 import InlineFilter from '../Filters/InlineFilter'
 import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import { useEffect } from 'react';
+import { capitalizeString } from '../../helpers';
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -24,24 +25,11 @@ function InfluencerComparison({from,to}) {
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
     const [data, setData] = useState([])
-    var colors = {
-        'joy':green[800],
-        'sad':'rgba(236, 240, 22)',
-        'anger':'rgba(240, 22, 37)',
-        'anticipation':'rgba(29, 180, 240)',
-        'disgust':'rgba(226, 29, 240)',
-        'surprise':'rgba(240, 124, 29)',
-        'fear':'#616C6F',
-        'trust':'rgba(217, 202, 202)',
-        'positive':green[800],
-        'negative':'rgba(255,0,0)',
-        'neutral':'rgba(235,255,0)'
-      }
-    
+ 
     const parent = [{
         id: 'negative',
         name: 'Negative',
-        color: "#EC2500",
+        color: "#CB0038",
         dataLabels:{
           color:'#000',
           style:{
@@ -51,7 +39,7 @@ function InfluencerComparison({from,to}) {
     }, {
         id: 'positive',
         name: 'Positive',
-        color: "#9EDE00",
+        color: "#04E46C",
         dataLabels:{
           color:'#000',
           style:{
@@ -61,7 +49,7 @@ function InfluencerComparison({from,to}) {
     }, {
         id: 'neutral',
         name: 'Neutral',
-        color: '#EC9800',
+        color: '#FFC400',
         dataLabels:{
           color:'#000',
           style:{
@@ -71,7 +59,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'joy',
       name:'Joy',
-      color:"rgb(0,255,0)",
+      color:"#4C7A00",
       dataLabels:{
         color:'#000',
         style:{
@@ -81,7 +69,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'sad',
       name:'sad',
-      color:"rgb(236,240,22)",
+      color:"#D8D8D8",
       dataLabels:{
         color:'#000',
         style:{
@@ -91,7 +79,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'anger',
       name:'anger',
-      color:"rgb(240,22,37)",
+      color:"#FF5151",
       dataLabels:{
         color:'#000',
         style:{
@@ -101,7 +89,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'anticipation',
       name:'anticipation',
-      color:"rgb(29, 180, 240)",
+      color:"#111D31",
       dataLabels:{
         color:'#000',
         style:{
@@ -111,7 +99,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'disgust',
       name:'disgust',
-      color:"rgb(226, 29, 240)",
+      color:"#D512CF",
       dataLabels:{
         color:'#000',
         style:{
@@ -121,7 +109,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'surprise',
       name:'surprise',
-      color:"rgb(240,124,29)",
+      color:"#FF6600",
       dataLabels:{
         color:'#000',
         style:{
@@ -131,7 +119,7 @@ function InfluencerComparison({from,to}) {
     },{
       id:'fear',
       name:'fear',
-      color:"#616C6F",
+      color:"#2000FF",
       dataLabels:{
         color:'#000',
         style:{
@@ -312,44 +300,51 @@ function InfluencerComparison({from,to}) {
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
         <Grid container spacing={3} > 
-            <Grid item xs={5} style={{height:'90px',lineHeight:'90px',padding:'0 0 0 20px'}} >
+            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'15px 20px'}} >
                 Influence Comparison
             </Grid>
             <Grid item xs={7}  >
-                <Grid container >
+                <Grid container style={{marginTop:'15px'}}>
                 <Grid item xs={4} >
-                <InputLabel id="select-source" className={classes.filterColorDefault} >Source</InputLabel>
-                    <Select 
-                    labelId="select-source"
-                    id="select-source-main"
-                    fullWidth
-                    className={classes.filterDefault}
-                    value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    >
-                       <MenuItem value={'twitter'} > Twitter </MenuItem>                    
-                       <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
+                  <FormControl variant="outlined" style={{width:'100%'}} >
+                    <InputLabel id="select-source" >Source</InputLabel>
+                      <Select 
+                        labelId="select-source"
+                        label="Source"
+                        id="select-source-main"
+                        fullWidth
+                        value={source}
+                        onChange={(e) => setSource(e.target.value)}
+                      >
+                        <MenuItem value={'twitter'} > Twitter </MenuItem>                    
+                        <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
                     </Select>
-            </Grid>
+                  </FormControl>
+                </Grid>
             <Grid item xs={1}/>
             <Grid item xs={4}>
-                <InputLabel id="Select-type"className={classes.filterColorDefault} >Select Type </InputLabel>
+              <FormControl variant="outlined" style={{width:'100%'}} >
+              <InputLabel id="Select-type">Select Type </InputLabel>
                     <Select
+                    variant="outlined"
                     labelId="Select-type"
+                    label="Select Type"
                     id="demo-simple-select-helper"
                     fullWidth
-                    className={classes.filterDefault}
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     >
                     <MenuItem value='Sentiment'>Sentiment</MenuItem>
                     <MenuItem value='Mood'>Mood</MenuItem>
                     </Select>
+              </FormControl>
             </Grid>
                 </Grid>
             </Grid>
+            <Grid item xs={12}>
+            <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>
+            </Grid>
         </Grid>
-        <TreeMap data={data}/>
     </Card>
     )
 }

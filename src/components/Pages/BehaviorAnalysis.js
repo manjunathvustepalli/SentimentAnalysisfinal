@@ -11,13 +11,8 @@ import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
-import DemographyAgeChart from "../charts/DemographyCharts/DemographyAgeChart";
-import DonutChart from "../charts/DonutChart";
-import TabbarMUI from "./TabbarMUI";
 import DemographyDonutChart from "../charts/DemographyCharts/DemographyDonutChart";
 import DemographyPieChart from "../charts/DemographyCharts/DemographyPieChart";
-import DemographyBubble from "../charts/DemographyCharts/DemographyBubble";
 import "./icons.css";
 import BarChart from "../charts/BehaviorAnalysisCharts/BarChart";
 function BehaviorAnalysis() {
@@ -76,13 +71,13 @@ function BehaviorAnalysis() {
 
   return (
     <SideNav>
-      <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Behavior Analysis
-      </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-              <Grid container spacing={3}>
+            <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+              Behavior Analysis
+            </Typography>
+              <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <Card className={classes.main}>
                     <CardContent>Account fake or real</CardContent>
@@ -103,32 +98,28 @@ function BehaviorAnalysis() {
                     <CardContent>Disc Framework | Source Twitter</CardContent>
                     <Grid container spacing={1}>
                       <Grid item xs={6} md={3}>
-                        <p className={classes.discStyle}>Dominant</p>
-                        <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                        <DemographyDonutChart  data={[{name:'dominant',y:65,color:'#f21649'},{name:'others',y:35,color:'#349eeb'}]} />
                       </Grid>
                       <Grid item xs={6} md={3}>
-                        <p className={classes.discStyle}>Inspiring</p>
-                        <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                        <DemographyDonutChart data={[{name:'Inspiring',y:65,color:'#9e1c39'},{name:'others',y:35,color:'#349eeb'}]} />
                       </Grid>
                       <Grid item xs={6} md={3}>
-                        <p className={classes.discStyle}>Supportive</p>
-                        <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                        <DemographyDonutChart data={[{name:'Supportive',y:65,color:'#f21649'},{name:'others',y:35,color:'#349eeb'}]} />
                       </Grid>
                       <Grid item xs={6} md={3}>
-                        <p className={classes.discStyle}>Cautious</p>
-                        <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                        <DemographyDonutChart data={[{name:'Cautious',y:65,color:'#9e1c39'},{name:'others',y:35,color:'#349eeb'}]} />
                       </Grid>
                     </Grid>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <Card className={classes.main}  style={{height:'500px'}}>
+                <Grid item xs={12} md={6} >
+                  <Card className={classes.main} style={{minHeight:'300px'}}>
                     <CardContent>Audience Behaviour Analysis - Brand Affinities</CardContent>
                     <DemographyPieChart />  
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={6} >
-                  <Card className={classes.main} style={{height:'500px'}}>
+                  <Card className={classes.main} style={{minHeight:'300px'}}>
                     <CardContent>Audience Behavior Analysis - The Media Consumption Habits</CardContent>
                     <DemographyPieChart />
                   </Card>
@@ -143,7 +134,7 @@ function BehaviorAnalysis() {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
                     moods={[moods, setMoods]}

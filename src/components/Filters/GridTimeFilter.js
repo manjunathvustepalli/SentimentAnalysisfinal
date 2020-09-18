@@ -44,6 +44,7 @@ function GridTimeFilter(props) {
     const classes = useStyles();
     
     return (
+      <div id="timeDate" style={{width:'100%'}}>
         <Grid container>
             <Grid item xs={12} sm={12} md={6} lg={6}>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -81,6 +82,7 @@ function GridTimeFilter(props) {
             </Grid>
         </Grid>
 
+      </div>
     )
 }
 

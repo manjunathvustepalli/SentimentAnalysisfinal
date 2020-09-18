@@ -83,59 +83,10 @@ function TreeMap(props) {
                     }
                 }
             }],
-            data: props.data || [{
-                id: 'negative',
-                name: 'Negative',
-                color: "#EC2500",
-            }, {
-                id: 'positive',
-                name: 'Positive',
-                color: "#9EDE00"
-            }, {
-                id: 'neutral',
-                name: 'Neutral',
-                color: '#EC9800'
-            },{
-                name: 'Anne',
-                parent: 'negative',
-                value: 5
-            }, {
-                name: 'Rick',
-                parent: 'negative',
-                value: 3
-            }, {
-                name: 'Peter',
-                parent: 'negative',
-                value: 4
-            }, {
-                name: 'Anne',
-                parent: 'positive',
-                value: 4
-            }, {
-                name: 'Rick',
-                parent: 'positive',
-                value: 10
-            }, {
-                name: 'Peter',
-                parent: 'positive',
-                value: 1
-            }, {
-                name: 'Anne',
-                parent: 'neutral',
-                value: 1
-            }, {
-                name: 'Rick',
-                parent: 'neutral',
-                value: 3
-            },{},{}, {
-                name: 'Peter',
-                parent: 'neutral',
-                value: 3
-            }]
+            data: props.data,
         }],
-
         title: {
-            text: ''
+            text: props.title || ''
         }
     }
     

@@ -20,14 +20,14 @@ import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
 import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../../helpers/filter";
-import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
+import { Redirect } from "react-router-dom";
 
 var sortedData = {}
 
-function TrendAnalysis() {
+function TrendAnalysis(props) {
   const [refresh, setRefresh] = useState(true);
   const [sources, setSources] = useState({});
-  const [stacking, setStacking] = useState(false)
+  const [chartType, setChartType] = useState( props.stacking ? 'stack' : 'bar')
   const [languages, setLanguages] = useState({});
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
@@ -137,7 +137,7 @@ function TrendAnalysis() {
       setSources(availableSourceKeys)
 
       let availableLanguageKeys = {}
-      languageKeys.forEach(lang =>{
+      uniqueLanguageKeys.forEach(lang =>{
           availableLanguageKeys[lang] = true
       })
       setLanguages(availableLanguageKeys)
@@ -148,7 +148,10 @@ function TrendAnalysis() {
   }, [from,to,refresh])
 
   useEffect(()=>{
-    setBarData(trendAnalysisBarGraphFilter(languages,sources,sortedData))
+    setBarData((prev) => {
+      let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
+      return data
+    })
   },[languages,sources])
 
   useEffect(() => {
@@ -160,12 +163,20 @@ function TrendAnalysis() {
 
   return (
     <SideNav>
-      <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Trend Analysis
-      </Typography>
+      {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
+      {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
+      {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
+      {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
+      {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
+      {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
+
+
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+            Trend Analysis
+          </Typography>
             <Card className={classes.main}>
               <Grid container spacing={3}>
                 <Grid item md={7} sm={6}>
@@ -173,21 +184,25 @@ function TrendAnalysis() {
                 </Grid>
                 <Grid item md={5} sm={6}>
                 <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
-                            <Select
+                    <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
+                    <Select
                                 labelId="demo-simple-select-outlined-label"
                                 id="demo-simple-select-outlined"
-                                value={stacking}
-                                onChange={(e) => setStacking(e.target.value)}
                                 label="Change Chart Type"
+                                value={chartType}
+                                onChange={(e) => setChartType(e.target.value)}
                             >
-                            <MenuItem value={false}>Bar chart</MenuItem>
-                            <MenuItem value={true}>Stacked Bar chart</MenuItem>                            
-                            </Select>
-                            </FormControl>
+                          <MenuItem value={'bar'}>Bar chart</MenuItem>
+                          <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
+                          <MenuItem value={'area'}>Area chart</MenuItem>                            
+                          <MenuItem value={'line'}>Line chart</MenuItem>                            
+                          <MenuItem value={'pie'}>Pie chart</MenuItem>                            
+                          <MenuItem value={'semi-pie'}>Semi Pie chart</MenuItem>
+                    </Select>
+                </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <TrendAnalysisChart data={barData} stacking={stacking} />
+                  <TrendAnalysisChart title={` Date wise Trend analysis ${props.stacking ? 'Stacked Bar Chart' : 'Bar Chart'}`} data={barData} stacking={props.stacking} />
                 </Grid>
                 <Grid item xs={11}>
                     <TabbarMUI className={classes.tabbar} data={lineData} />
@@ -203,7 +218,7 @@ function TrendAnalysis() {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
                   />

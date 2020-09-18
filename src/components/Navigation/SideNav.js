@@ -32,10 +32,10 @@ import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
 import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SearchIcon from '@material-ui/icons/Search';
-import { green } from '@material-ui/core/colors'
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
+import { useEffect } from 'react';
+import PageviewIcon from '@material-ui/icons/Pageview';
 
 const drawerWidth = 260;
 
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:"white"
   },
   AvatarBox:{
-      backgroundColor:green[800]
+      backgroundColor:'rgb(67,176,42)'
   },
   content: {
     flexGrow: 1,
@@ -88,7 +88,7 @@ const SideNavBar = ( props) => {
 
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:green[800]}
+        return {color:'rgb(67,176,42)'}
     }
     else{
         return {color:"black"}
@@ -104,9 +104,9 @@ const SideNavBar = ( props) => {
       path:['/summary-dashboard'],
     }, 
     {
-      name:'Sentimental Analysis',
+      name:'Sentiment Analysis',
       icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart'],
+      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart','/sentimental-analysis/stack-chart'],
     },
     // {
     //   name:'Mood Analysis',
@@ -117,11 +117,6 @@ const SideNavBar = ( props) => {
       name:'Influencer Analysis',
       icon:<EmojiPeopleIcon/>,
       path:['/influencer-analysis'],
-    },
-    {
-      name:'Geo HotSpot Analysis',
-      icon:<PublicIcon/>,
-      path:['/geo-hotspot'],
     },
     {
       name:'Word cloud',
@@ -136,18 +131,13 @@ const SideNavBar = ( props) => {
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/trend-analysis'],
+      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/line-chart','/trend-analysis/stacked-bar-chart'],
+    }, 
+    {
+      name:'Global Search',
+      icon:<PageviewIcon/>,
+      path:['/global-search']
     },
-    {
-      name:'Demography',
-      icon:<DeviceHubIcon/>,
-      path:['/demography'],
-    },    
-    {
-      name:'Behavior Analysis',
-      icon:<HdrWeakIcon/>,
-      path:['/behavior-analysis'],
-    },    
     {
       name:'Live Analysis',
       icon:<CalendarViewDayIcon/>,
@@ -158,42 +148,60 @@ const SideNavBar = ( props) => {
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
     },
-    // {
-    //   name:'Admin Page',
-    //   icon:<PermDataSettingIcon/>,
-    //   path:['/admin'],
-    // },
-    // {
-    //   name:'Search Image',
-    //   icon:<ImageSearchIcon/>,
-    //   path:['/image-gallery'],
-    // },
+    {
+      name:'Admin Page',
+      icon:<PermDataSettingIcon/>,
+      path:['/admin'],
+    },
+    {
+      name:'Search Image',
+      icon:<ImageSearchIcon/>,
+      path:['/image-gallery'],
+    },
+    {
+      name:'Geo HotSpot Analysis',
+      icon:<PublicIcon/>,
+      path:['/geo-hotspot'],
+    },
+    {
+      name:'Demography',
+      icon:<DeviceHubIcon/>,
+      path:['/demography'],
+    },    
+    {
+      name:'Behavior Analysis',
+      icon:<HdrWeakIcon/>,
+      path:['/behavior-analysis'],
+    }, 
   ]
     
+  useEffect(() => {
+    document.querySelector('#scroll-id').scroll(40,40)
+  },[])
    const drawer = (
-    <div>
-          <div id="userMenuHeader">
-            <Grid container justify='space-around' flexDirection='row' >
-              <Grid xs={12}>
-              <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
+    <div className={classes.drawerScroller} >
+          <div id="userMenuHeader" >
+            <Grid container justify='space-around' >
+              <Grid item align="left"  xs={12}>
+                <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
               </Grid>
-              <Grid item align="left" className='grid-user' xs={10} >
+              <Grid item align="left" className='grid-user' xs={8} >
                 <Typography > Welcome User</Typography>
               </Grid>
-              <Grid item align="right" className='grid-user' xs={2}>
+              <Grid item align="left" className='grid-user' xs={4}>
                 <Typography align="right"><ArrowDropDownIcon/></Typography>
               </Grid>
             </Grid>
           </div>
       <Divider />
-      <List>
+      <List >
         {menus.map((menuItem, index) => (
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
             <ListItem  button key={index}>
               <ListItemIcon style={currentTab(history,menuItem.path)}> {menuItem.icon} </ListItemIcon>
               <ListItemText style={currentTab(history,menuItem.path)} classes={{primary:classes.listItemText}} primary={menuItem.name} />
             </ListItem>
-            <Divider/>      
+            <Divider/>
           </Link> 
         ))}
       </List>
@@ -202,10 +210,11 @@ const SideNavBar = ( props) => {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root}  >
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="fixed" className={classes.appBar} >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -218,18 +227,22 @@ const SideNavBar = ( props) => {
           </IconButton>
           <Avatar src={require('../../imgs/shyna.jpeg')} />
           <Typography variant="h6" noWrap>
-            &nbsp; Social Media Sentiment Analysis
+          &nbsp; Sentiment and Mood Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>
-          <Button color="inherit" >
+          <Button 
+            color="inherit"  
+            component={Link}
+            to="/"
+          >
             <ExitToAppIcon/>
           </Button>
           </Tooltip>
           </span>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav className={classes.drawer} id='scroll-id'  aria-label="mailbox folders">
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
@@ -266,6 +279,5 @@ const SideNavBar = ( props) => {
     </div>
   );
 }
-
 
 export default withRouter(SideNavBar);

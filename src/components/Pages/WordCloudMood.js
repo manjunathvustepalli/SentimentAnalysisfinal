@@ -274,7 +274,6 @@ function WordCloudSentiment() {
                 }}) 
           })
           .catch(err => {
-              console.log(err.response)
           })
     },[to,from,refresh,keywords,keywordType])
 
@@ -288,7 +287,7 @@ function WordCloudSentiment() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -335,8 +334,8 @@ function WordCloudSentiment() {
                                         Sentiment                                                                       
                                     </Button>
                             </Grid>
-                            <Grid item xs={12}>
-                            <AppBar position="static" color="white">
+                            <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
+                            <Grid item xs={7}>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -348,11 +347,11 @@ function WordCloudSentiment() {
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
-                                        Object.keys(data).map((lang,i)=>  (<Tab label={lang} style={{color:value===i && (green[800])}} {...a11yProps(i)} />))
+                                        Object.keys(data).map((lang,i)=>  (<Tab label={lang} style={{color:value===i && ('white'),backgroundColor:value===i && ('rgb(67, 176, 42)'),border:value !== i && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(i)} />))
                                     }
                                 </Tabs>
-                            </AppBar>
                             </Grid>
+                            </div>
                             <Grid item xs={12}>
                                 {
                                     Object.keys(data).map((lang,i) => 
@@ -375,9 +374,9 @@ function WordCloudSentiment() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters  
-                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources, setSources]} 
-                                    subSources={[subSources,setSubSources]}
+                                    // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                     moods={[moods,setMoods]}

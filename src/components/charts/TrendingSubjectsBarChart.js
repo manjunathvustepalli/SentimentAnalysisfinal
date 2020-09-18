@@ -37,10 +37,13 @@ function TrendingSubjectsBarChart(props) {
   },
     xAxis: {
       type: "category",
+      title:{
+        text:'Keywords'
+      }
     },
     yAxis: {
       title: {
-        text: "",
+        text: "data",
       },
     },
     legend: {

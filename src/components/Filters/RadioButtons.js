@@ -1,18 +1,6 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
 import Radio from '@material-ui/core/Radio';
 import { FormControlLabel } from '@material-ui/core';
-
-const GreenRadio = withStyles({
-  root: {
-    color: green[800],
-    '&$checked': {
-      color: green[800],
-    },
-  },
-  checked: {},
-})((props) => <Radio color="default" {...props} />);
 
 function RadioButtons(props) {
     const [selectedValue, setSelectedValue,selectingArray] = props.radio
@@ -20,12 +8,12 @@ function RadioButtons(props) {
     return (
         <div>
             {selectingArray.map((eachValue,i) => (
-                <FormControlLabel value={eachValue} control={
-                    <GreenRadio
-                    key={i}
+                <FormControlLabel key={i} value={eachValue} control={
+                    <Radio
                     checked={selectedValue === eachValue}
                     onChange = {(e) => setSelectedValue(e.target.value)}
                     value={eachValue}
+                    style={{color:'white'}}
                     name="radio-button"
                     inputProps={{ 'aria-label': eachValue }}
                     />

@@ -7,6 +7,7 @@ import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
 import TrendAnalysisLineChart from "../charts/TrendAnalysisLineChart";
 import { green } from '@material-ui/core/colors';
+import { capitalizeString } from "../../helpers";
 
 
 function TabPanel(props) {
@@ -62,7 +63,6 @@ function TabbarMUI(props) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -75,17 +75,16 @@ function TabbarMUI(props) {
         >
           {
             props.data[0] && (Object.keys(props.data[0]).map((source,i) => {
-              return <Tab label={source} style={{color:value===i && (green[400])}} {...a11yProps(i)} />
+              return <Tab label={source} style={{color:value===i && ('white'),backgroundColor:value===i && ('rgb(67, 176, 42)'),border:value !== i && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(i)} />
             }))
           }
         </Tabs>
-      </AppBar>
       {
         props.data[0] && (
           Object.keys(props.data[0]).map((source,i) =>{
             return (
             <TabPanel value={value} index={i}>
-              <TrendAnalysisLineChart dates={props.data[1]} data={props.data[0][source]} />
+              <TrendAnalysisLineChart title={`Date wise Language Trend in ${capitalizeString(source)}`} dates={props.data[1]} data={props.data[0][source]} />
             </TabPanel>
             )
           }) 

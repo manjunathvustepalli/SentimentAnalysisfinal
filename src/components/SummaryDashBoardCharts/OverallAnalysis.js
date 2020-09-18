@@ -102,18 +102,18 @@ function OverallAnalysis({to, from}) {
     }
 
     var colors = {
-        'joy':'rgba(0,255,0)',
-        'sad':'rgba(236, 240, 22)',
-        'anger':'rgba(240, 22, 37)',
-        'anticipation':'rgba(29, 180, 240)',
-        'disgust':'rgba(226, 29, 240)',
-        'surprise':'rgba(240, 124, 29)',
-        'fear':'rgba(0, 0, 0)',
-        'trust':'rgba(217, 202, 202)',
-        'positive':'rgba(0,255,0)',
-        'negative':'rgba(255,0,0)',
-        'neutral':'rgba(235,255,0)'
-      }
+      'joy':'#4C7A00',
+      'sad':'#D8D8D8',
+      'anger':'#FF5151',
+      'anticipation':'#111D31',
+      'disgust':'#D512CF',
+      'surprise':'#FF6600',
+      'fear':'#2000FF',
+      'trust':'#0099FF',
+      'positive':'#04E46C',
+      'negative':'#CB0038',
+      'neutral':'#FFC400'
+    }
 
     useEffect(() => {
         Axios.post(process.env.REACT_APP_URL,{
@@ -205,9 +205,9 @@ function OverallAnalysis({to, from}) {
 
     return (
         <Card className={classes.main}>
-        <CardContent >Overall Analysis</CardContent>
         <Grid container spacing={0} className={classes.gridposition}>
             <Grid item xs={3}>
+            <CardContent >Overall Analysis</CardContent>
             <FormControl variant="outlined" className={classes.formControl} style={{margin:'30px'}} >
                 <InputLabel id="Source-label">Source</InputLabel>
                     <Select 
@@ -223,17 +223,17 @@ function OverallAnalysis({to, from}) {
                         }
                     </Select>
                 </FormControl>
-                <Card style={{backgroundColor:'#2F363F',color:'white'}} align='center'>
+                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'30px'}} align='center'>
                     <Typography variant='subtitle1' >
                         {nFormatter(mainSourceData.length && (
                           mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)
-                        ),0)}+ &nbsp; {source} mentions
+                        ),0)}+ &nbsp; {source} Documents.
                     </Typography>
                     <Typography variant='subtitle1'>
-                        {getPositiveSentiment()}+ &nbsp; positive sentiment
+                        {getPositiveSentiment()}+ &nbsp; Positive Sentiment.
                     </Typography>
                     <Typography variant='subtitle1'>
-                        {getJoyMood()}+ Joy mood
+                        {getJoyMood()}+ Joy Mood.
                     </Typography>
                 </Card>
             </Grid>

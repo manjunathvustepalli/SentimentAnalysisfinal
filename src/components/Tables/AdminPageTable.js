@@ -5,6 +5,10 @@ import { green } from '@material-ui/core/colors';
 function AdminPageTable({ data,setData,name,columns }) {
     return (
         <MaterialTable
+            style={{
+                padding:'20px',
+                margin:'20px'
+            }}
             title={name}
             data={data}
             columns={columns}
@@ -43,7 +47,7 @@ function AdminPageTable({ data,setData,name,columns }) {
             maxBodyHeight:500,
             actionsColumnIndex:-1,
             headerStyle:{
-                backgroundColor:green[800],
+                backgroundColor:'rgb(67, 176, 42)',
                 color:'white',
                 paddingTop:'10px',
                 paddingBottom:'10px',

@@ -6,15 +6,6 @@ import { capitalizeString } from '../../helpers';
 function Languages(props) {
 
     const [languages, setLanguages] = props.languages
-    const useStyles = makeStyles({
-        root: {
-          "&$checked": {
-            color: "#43B02A"
-          },
-        },
-        checked: {}
-      })
-      const classes = useStyles()
 
       const handleLanguageChange = (language) => {
         setLanguages({...languages,[language]:!languages[language]})
@@ -26,10 +17,7 @@ function Languages(props) {
                 <Grid item xs={6} key={i} align='left'>
                     <FormControlLabel
                 control={<Checkbox name="checkedA"
-                classes={{
-                    root: classes.root,
-                    checked: classes.checked
-                  }}
+                style={{color:'white'}}
                 checked={languages[language]}
                 onChange={() => handleLanguageChange(language)}
                 />}

@@ -1,25 +1,16 @@
-import React,{useState} from 'react'
+import React from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { Grid, Checkbox, makeStyles } from '@material-ui/core';
+import { Grid, Checkbox,} from '@material-ui/core';
 
 
 function Sentiments(props) {
 
     const [sentiments, setSentiment] = props.sentiments
-    const useStyles = makeStyles({
-        root: {
-          "&$checked": {
-            color: "#43B02A"
-          },
-        },
-        checked: {}
-      })
 
     const handleSentimentChange = (sentiment) => {
       setSentiment({...sentiments,[sentiment]:!sentiments[sentiment]})
     }
 
-    const classes = useStyles()
 
     return (
         <Grid container>
@@ -28,10 +19,8 @@ function Sentiments(props) {
                     <FormControlLabel
                 control={<Checkbox
                   checked={sentiments[sentiment]}
-                  classes={{
-                    root: classes.root,
-                    checked: classes.checked
-                  }} onChange={() => handleSentimentChange(sentiment)} name={sentiment} />}
+                  style={{ color: "white" }}
+                  onChange={() => handleSentimentChange(sentiment)} name={sentiment} />}
                 label={sentiment}
               />
                 </Grid>

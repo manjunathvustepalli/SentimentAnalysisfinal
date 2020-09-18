@@ -15,6 +15,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import colors from '../../helpers/colors';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -57,20 +58,7 @@ function InfluencerAnalysis() {
     const [data, setData] = useState([])
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
-  
-    var colors = {
-      'joy':green[800],
-      'sad':'rgba(236, 240, 22)',
-      'anger':'rgba(240, 22, 37)',
-      'anticipation':'rgba(29, 180, 240)',
-      'disgust':'rgba(226, 29, 240)',
-      'surprise':'rgba(240, 124, 29)',
-      'fear':'rgba(0, 0, 0)',
-      'trust':'rgba(217, 202, 202)',
-      'positive':green[800],
-      'negative':'rgba(255,0,0)',
-      'neutral':'rgba(235,255,0)'
-    }
+
 
     const useStyles = makeStyles((theme) => ({
       root: {
@@ -109,8 +97,8 @@ function InfluencerAnalysis() {
         tabStyle: {
             borderStyle: 'solid', 
             borderWidth:'1px', 
-            borderColor: 'green', 
-            color:'green',
+            borderColor: 'rgb(67, 176, 42)', 
+            color:'rgb(67, 176, 42)',
             marginTop: '15px',
             marginBottom: '10px'
         }
@@ -432,7 +420,7 @@ function InfluencerAnalysis() {
   
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -447,26 +435,10 @@ function InfluencerAnalysis() {
                                             Top Influencers
                                         </CardContent>
                                     </Grid>
-                                    {/* <Grid item xs={4}>
-                                        <FormControl variant="outlined" className={classes.formControl}>
-                                            <InputLabel id="select-table"></InputLabel>
-                                            <Select
-                                                labelId="select-table"
-                                                id="demo-simple-select-outlined"
-                                                varient={'standard'}
-                                                defaultValue={'top 15 influencers'}
-                                                style={{borderColor: '#13A0FF', borderWidth: '2px', borderStyle: 'solid', color: '#13A0FF'}}
-                                            >
-                                                <MenuItem selected value='top 15 influencers'>Top 15 Influencers</MenuItem>
-                                                <MenuItem value='top 30 influencers'>Top 30 influencers</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </Grid> */}
                                     <Grid item xs={12}>
                                         {
                                             source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} />)
                                         }
-                                        
                                     </Grid>
                                 </Grid>
                             </Card>
@@ -474,33 +446,33 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <Card className={classes.main}>
                                 <Grid item xs={12}>
-                                    <Grid container spacing={2}>
+                                    <Grid container spacing={2} style={{marginTop:'20px'}}>
                                         <Grid item xs={5}>
                                             <CardContent>Influncers Comparison</CardContent>
                                         </Grid>
-                                        <Grid item xs={7}>
+                                        <Grid item xs={7} align={'right'}>
                                             <Tabs
                                                 value={value}
                                                 onChange={handleChange}
                                                 indicatorColor="primary"
                                                 textColor="primary"
-                                                TabIndicatorProps={{style: {background:green[800]}}}
+                                                TabIndicatorProps={{style: {backgroundColor:'rgb(67, 176, 42)'}}}
                                                 variant="scrollable"
                                                 scrollButtons="auto"
                                                 aria-label="scrollable auto tabs example"
                                             >
-                                                <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
-                                                <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
+                                                <Tab label="Sentiment" style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />
+                                                <Tab label="Mood" style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
                                             </Tabs>
                                         </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={11}>
                                     <TabPanel value={value} index={0}>
-                                        <TreeMap data={sentimentData} />
+                                        <TreeMap title={`${source} Influence comparison Treemap based on Sentiment`} data={sentimentData} />
                                     </TabPanel>
                                     <TabPanel value={value} index={1}>
-                                        <TreeMap data={moodData} />
+                                        <TreeMap title={`${source} Influence comparison Treemap based on Mood`} data={moodData} />
                                     </TabPanel>
                                 </Grid>
                             </Card>
@@ -515,7 +487,7 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                             <AccordianFilters 
-                              toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                              toFromDatesHandlers={[setFrom,setTo,from,to]} 
                               radioSources={[source,setSource,sources]}
                                 />
                             </FilterWrapper>

@@ -3,13 +3,15 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 function DemographyDonutChart(props) {
-  let data = props.data? props.data: [
+
+  let data = props.data ? props.data: [
     ["", 35],
     ["", 65],
   ];
   const options = {
     chart: {
       type: "pie",
+      height:'200px'
     },
     title: {
       text: "",
@@ -20,14 +22,26 @@ function DemographyDonutChart(props) {
     credits: {
       enabled: false
   },
+  exporting: {
+    buttons: {
+        contextButton: {
+            enabled: false
+        }
+    }
+},
     plotOptions: {
       pie: {
         innerSize: "80%",
         allowPointSelect: true,
         cursor: "pointer",
+        showInLegend:'true',
         dataLabels: {
           enabled: true,
-          distance: props.data? 30: -50
+          distance: -10,
+          style:{
+            color:'black',
+            textOutline:'none',
+          }
         },
       },
     },

@@ -15,7 +15,7 @@ function TrendAnalysisChart(props) {
         'M', x, y + h * 0.9,
         'L', x, y + h,
         'L', x + w, y + h,
-        'L', x + w, y + h * 0.9
+        'L', x  + w, y + h * 0.9
     ];
     return path;
 };
@@ -25,7 +25,7 @@ function TrendAnalysisChart(props) {
       type: "column",
     },
     title: {
-      text: "",
+      text: props.title || "",
     },
     subtitle: {
       text: "",
@@ -33,16 +33,38 @@ function TrendAnalysisChart(props) {
     xAxis: {
       categories: dates,
       crosshair: true,
+      title:{
+        text:"Dates",
+      }
     },
     yAxis: {
       min: 0,
       title: {
-        text: "Data (%)",
+        text: "Data",
       },
     },
     credits: {
       enabled: false
   },
+  exporting: {
+    chartOptions: {
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+                
+            }
+        }
+    },
+    scale: 3,
+    fallbackToExportServer: false,
+    buttons: {
+        contextButton: {
+            symbol: 'download'
+        }
+    }
+},
     colors: [
       "rgba(3, 240, 252)",
       "rgba(252, 3, 65)",
@@ -50,13 +72,9 @@ function TrendAnalysisChart(props) {
       "rgba(10, 168, 31)",
     ],
     tooltip: {
-      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
       pointFormat:
-        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-      footerFormat: "</table>",
-      shared: true,
-      useHTML: true,
+        '<span style="color:{point.color}">{point.name}</span><b>{point.y}',
     },
     plotOptions: {
       column: {

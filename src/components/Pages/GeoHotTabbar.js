@@ -1,13 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-import Maps1 from "../charts/Maps/Maps1";
 import GeoHotSpotMap from "../charts/Maps/GeoHotSpotMap";
-import { green } from '@material-ui/core/colors';
 
 
 function TabPanel(props) {
@@ -64,22 +61,19 @@ function TabbarMUI() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor="primary"
           textColor="primary"
           variant="scrollable"
           scrollButtons="auto"
-          TabIndicatorProps={{style: {background:green[800]}}}
+          TabIndicatorProps={{style: {background:'rgb(67, 176, 42)'}}}
           aria-label="scrollable auto tabs example"
         >
-          <Tab label="Sentiment" style={{color:value===0 && (green[800])}} {...a11yProps(0)} />
-          <Tab label="Mood" style={{color:value===1 && (green[800])}} {...a11yProps(1)} />
-          <Tab label="Spatio Temporal" style={{color:value===2 && (green[800])}} {...a11yProps(2)} />
+          <Tab label="Sentiment" style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />
+          <Tab label="Mood" style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
+          <Tab label="Spatio Temporal" style={{color:value===2 && ('white'),backgroundColor:value===2 && ('rgb(67, 176, 42)'),border:value !== 2 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(2)} />
         </Tabs>
-      </AppBar>
       <TabPanel value={value} index={0}>
         <GeoHotSpotMap />
       </TabPanel>

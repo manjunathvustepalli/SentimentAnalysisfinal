@@ -1,0 +1,70 @@
+ul.MuiList-padding{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.keyword-wrapper fieldset.MuiOutlinedInput-notchedOutline{
+    border-color:white !important
+}
+
+#timeDate .MuiFormLabel-root,#timeDate .MuiButtonBase-root{
+    color:white !important;
+}
+
+.keyword-wrapper .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined{
+    color: white !important;
+}
+
+#start-date-picker-dialog,#end-date-picker-dialog{
+    color: white !important;
+}
+
+.autocomplete-wrapper fieldset.MuiOutlinedInput-notchedOutline{
+    border-color: white !important;
+}
+.autocomplete-wrapper .MuiIconButton-root{
+    color:white !important;
+}
+
+.autocomplete-wrapper .MuiFormLabel-root{
+    color:white !important;
+}
+
+#side-filters-time-date .MuiIconButton-label{
+    color:white !important;
+}
+
+#side-filters-time-date .MuiOutlinedInput-notchedOutline{
+    border-color:white !important;
+}
+
+#side-filters-time-date label {
+    color:white;
+}
+
+#tags-outlined{
+    color:white;
+}
+
+#summary-dashboard .MuiOutlinedInput-notchedOutline{
+    border-color:green !important
+}
+
+#summary-dashboard label {
+    color:'green'
+}
+
+#autocomplete-subsource .MuiOutlinedInput-notchedOutline{
+    border-color: white;
+}
+#autocomplete-subsource label{
+    color: white;
+}
+
+#autocomplete-subsource .MuiSvgIcon-root{
+    color: white;
+}
+
+#autocomplete-subsource input{
+    color: white;
+}

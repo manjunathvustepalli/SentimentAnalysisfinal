@@ -22,7 +22,7 @@ function TrendAnalysisLineChart(props) {
 
   const options = {
     title: {
-      text: "",
+      text: props.title || "",
     },
     yAxis: {
       title: {
@@ -32,6 +32,9 @@ function TrendAnalysisLineChart(props) {
     xAxis: {
       categories: dates,
       crosshair: true,
+      title: {
+        text: "Dates",
+      },
     },
     legend: {
       layout: "horizontal",

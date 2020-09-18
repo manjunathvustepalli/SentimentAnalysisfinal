@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import SideNav from '../Navigation/SideNav'
-import { Card, Grid, Switch, FormControlLabel, TextField, Button } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,13 +8,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { green } from '@material-ui/core/colors'
-import GridTimeFilter from '../Filters/GridTimeFilter'
 import { addMonths } from '../../helpers'
 import FilterHeader from '../Filters/FilterHeader'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
-
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -28,9 +25,9 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         color:'white',
         textAlign:'center',
-        backgroundColor:green[800],
+        backgroundColor:'rgb(67, 176, 42)',
         '&:hover': {
-            backgroundColor:green[800],
+            backgroundColor:'rgb(67, 176, 42)',
         }
     }
   }));
@@ -67,27 +64,9 @@ function ExportData() {
 
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
-              "bool": {
-                "should": [
-                  {
-                    "terms": {
-                      "Source.keyword":selectedSources
-                    }
-                  },
-                  {
-                    "terms": {
-                      "SubSource.keyword": selectedSubSources
-                    }
-                  },
-                  {
-                    "terms": {
-                      "predictedLang.keyword": selectedlanguages
-                    }
-                  }
-                ]
-              }
+              "match_all": {}
             },
-            "size": 50,
+            "size": 10,
             "sort": [
               {
                 "CreatedAt": {
@@ -99,10 +78,12 @@ function ExportData() {
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
-                obj.name =  user._source.User.Name
-                obj.screenName =  user._source.User.ScreenName
+                if(user._source.User){
+                    obj.name =  user._source.User.Name
+                    obj.screenName =  user._source.User.ScreenName
+                    obj.followersCount =  user._source.User.FollowersCount
+                }
                 obj.tweet =  user._source.Text
-                obj.followersCount =  user._source.User.FollowersCount
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
                 obj.sentiment = user._source.predictedSentiment
@@ -127,7 +108,7 @@ function ExportData() {
         <SideNav>
             <Card style={{padding:'20px'}}>
                 <Grid container spacing={5} style={{width:'80vw'}}>
-                    <Grid item xs={2} align="left">
+                <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
                                     color="primary"
@@ -139,18 +120,18 @@ function ExportData() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                    <Grid item xs={2} align='right' direction='row'>
-                    {/* <TextField label="Enter Keyword" /> */}
+                    <Grid item xs={2}  >
+                    {/* <TextField id="keyword" style={{transform:'translateY(10px)'}} label="Enter Keyword" variant="outlined" /> */}
                     </Grid>
                     <Grid item xs={4} align="left">
                         {/* <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} /> */}
                     </Grid>
                     <Grid item xs={2} align="left">
-                    {/* <Button style={{transform:"translateY(5px)"}} className={classes.button} >
+                    {/* <Button style={{transform:"translateY(10px)"}} className={classes.button} >
                         Search
                     </Button> */}
                     </Grid>
-                    <Grid item xs={2} align="right">
+                    <Grid item xs={2}>
                         {
                             liveReloading && (
                                 <FormControl variant="outlined" className={classes.formControl}>
@@ -170,35 +151,7 @@ function ExportData() {
                             )
                         }
                     </Grid>
-                    {/* <Grid item md={3} xs={12}>
-                        <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Sentiment</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    label="Reload Interval "
-                                >
-                                    <MenuItem value={'positive'}>Positive</MenuItem>
-                                    <MenuItem value={'negative'}>Negative</MenuItem>
-                                    <MenuItem value={'neutral'}>Neutral</MenuItem>
-                                </Select>
-                        </FormControl>
-                        <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Mood</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    label="Reload Interval "
-                                >
-                                    <MenuItem value={'positive'}>Joy</MenuItem>
-                                    <MenuItem value={'negative'}>Sad</MenuItem>
-                                    <MenuItem value={'neutral'}>Anticipation</MenuItem>
-                                    <MenuItem value={'neutral'}>Disgust</MenuItem>
-                                    <MenuItem value={'neutral'}>Anticipation</MenuItem>
-                                </Select>
-                        </FormControl>
-                    </Grid> */}
-                    <Grid item xs={8}>
+                    <Grid item xs={12}>
                         <MaterialTable 
                             title='Export Data'
                             columns={[
@@ -222,7 +175,7 @@ function ExportData() {
                                 exportButton: true,
                                 maxBodyHeight:500,
                                 headerStyle:{
-                                    backgroundColor:green[800],
+                                    backgroundColor:'rgb(67, 176, 42)',
                                     color:'white',
                                     paddingTop:'10px',
                                     paddingBottom:'10px',

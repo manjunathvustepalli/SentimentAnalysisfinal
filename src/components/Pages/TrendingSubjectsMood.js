@@ -32,12 +32,12 @@ function InfluencerAnalysis() {
   const [language, setLanguage] = useState('');
   const [from, setFrom] = useState(addMonths(new Date(), -1));
   const [to, setTo] = useState(addMonths(new Date(), 0));
+  const [moods, setMoods] = useState([])
   const [mood, setmood] = useState('joy');
   const [data, setData] = useState([])
   const [noData, setnoData] = useState(true)
   const [keywords, setKeywords] = useState([])
   const [keywordType, setKeywordType] = useState('Entire Data')
-
 
   const useStyles = makeStyles((theme) => ({
     main: {
@@ -147,6 +147,7 @@ if(keywordType === 'Screen Name'){
 .then(fetchedData => {
   let uniqueSources = []
   let uniqueSubSources = []
+  let uniqueMoodKeys = []
   let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
   let languageKeys = getKeyArray(languageBuckets)
   languageKeys.forEach((language,i) => {
@@ -168,12 +169,15 @@ if(keywordType === 'Screen Name'){
         let moodBuckets = subSourceBuckets[k]['Daily-mood-Distro'].buckets
         let moodKeys = getKeyArray(moodBuckets)
         moodKeys.forEach((mood,l)=>{
+            if(!uniqueMoodKeys.includes(mood)){
+              uniqueMoodKeys.push(mood)
+            }
             sortedData[language][source][subSource][mood] = moodBuckets[l].Words.buckets.map(wordObj => {
                 return {
                   name:wordObj.key,
                   y:wordObj.doc_count
                 }
-              })
+              }) 
         })
       })
     })
@@ -182,8 +186,10 @@ if(keywordType === 'Screen Name'){
   setLanguage(languageKeys[0])
   setSources(uniqueSources)
   setSource(uniqueSources[0])
-  setSubSources(uniqueSubSources)
-  setSubSource(uniqueSubSources[0])
+  setSubSources(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]]))
+  setSubSource(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]])[0])
+  setMoods(uniqueMoodKeys)
+  setmood(uniqueMoodKeys[0])
 })
 .catch(err=>{
   console.log(err)
@@ -194,7 +200,6 @@ useEffect(() => {
    try{
      if(sortedData[language][source][subSource][mood]){
        setData(sortedData[language][source][subSource][mood])
-       
        setnoData(false)
      } else {
          setnoData(true)
@@ -205,17 +210,36 @@ useEffect(() => {
         setData([])
         setnoData(true)
    }
-}, [language,source,subSource,mood])
+}, [subSource,mood])
+
+useEffect(() => {
+  try{
+    if(sortedData[language][source][subSource][mood]){
+      setData(sortedData[language][source][subSource][mood])
+      setnoData(false)
+    }
+  } catch(err){
+    if(sortedData[language]){
+      if(sortedData[language][source]){
+        setSubSources(Object.keys(sortedData[language][source]))
+        setSubSource(Object.keys(sortedData[language][source])[0])
+      }
+    }
+    setnoData(true)
+    console.log(err)
+  }
+
+}, [source,language])
 
   return (
     <SideNav>
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px 0 20px 20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
-            <Card className={classes.main}>
-            <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
               Trending Subjects
             </Typography>
+            <Card className={classes.main}>
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6}>
                   <FormControl
@@ -243,24 +267,24 @@ useEffect(() => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6} align='right'>
-                                    <Button
-                                        variant="contained"
-                                        style={{margin:"10px"}}
-                                        component={Link}
-                                        className={classes.buttonStyle}
-                                        to="/trending-subject/mood"
-                                        >
-                                        Mood
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        style={{margin:"10px"}}
-                                        component={Link}
-                                        to="/trending-subject/sentiment"
-                                    >
-                                        Sentiment                                                                       
-                                    </Button>
-                            </Grid>
+                  <Button
+                      variant="contained"
+                      style={{margin:"10px"}}
+                      component={Link}
+                      className={classes.buttonStyle}
+                      to="/trending-subject/mood"
+                      >
+                      Mood
+                  </Button>
+                  <Button
+                      variant="contained"
+                      style={{margin:"10px"}}
+                      component={Link}
+                      to="/trending-subject/sentiment"
+                  >
+                      Sentiment                                                                       
+                  </Button>
+                </Grid>
                 <Grid item xs={12} className={classes.tablecenter}>
                   <TrendingSubjectsBarChart data={data} />
                 </Grid>
@@ -287,7 +311,7 @@ useEffect(() => {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     radioSources={[source,setSource,sources]}
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}

@@ -51,10 +51,10 @@ const useStyles = makeStyles((theme) => ({
         width: 130,        
       },
       buttonStyle:{
-        border:'1px solid green',
-        color:'green',
+        border:'1px solid rgb(67, 176, 42)',
+        color:'rgb(67, 176, 42)',
         '&:hover': {
-            border:'1px solid green',
+            border:'1px solid rgb(67, 176, 42)',
         }
     }
 }));
@@ -197,7 +197,7 @@ export default function MoodAnalysisPieChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
@@ -263,7 +263,7 @@ export default function MoodAnalysisPieChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]}
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]}

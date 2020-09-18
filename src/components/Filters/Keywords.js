@@ -1,8 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, InputLabel, Select, MenuItem, TextField } from '@material-ui/core';
-import ChipInput from 'material-ui-chip-input';
+import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import ChipInputFilter from './ChipInputFilter';
+import './style.css';
 
 function Keywords(props) {
     let keywordTypes = ['Entire Data','Screen Name','Hash Tags']
@@ -20,16 +20,17 @@ function Keywords(props) {
           marginTop: theme.spacing(2),
         },
         select:{
-            width:'100%'
+            width:'100%',
+            color:'white'
         }
     }));
 
     const classes = useStyles();
 
     return (
-        <div style={{width:'100%'}}>
+        <div className={'keyword-wrapper'} style={{width:'100%'}}>
             <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel id="select-type">Keyword</InputLabel>
+                <InputLabel style={{color:'white'}} id="select-type">Keyword</InputLabel>
                 <Select
                     labelId="select-type-label"
                     id="select-outlined"
@@ -39,7 +40,7 @@ function Keywords(props) {
                     onChange={(e) => setKeywordType(e.target.value)}
                     >
                         {
-                            keywordTypes.map(keywordType => <MenuItem value={keywordType}>{keywordType}</MenuItem> )
+                            keywordTypes.map((keywordType,i) => <MenuItem key={i} style={{backgroundColor:'#2C3335',color:'white'}} value={keywordType}>{keywordType}</MenuItem> )
                         }                    
                     </Select>
             </FormControl>

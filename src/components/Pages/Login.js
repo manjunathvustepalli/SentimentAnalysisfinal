@@ -6,6 +6,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import LockRoundedIcon from '@material-ui/icons/LockRounded';
 import green from '@material-ui/core/colors/green';
 import { Link } from 'react-router-dom';
+import { Label } from '@material-ui/icons';
 
 const styles = {
     background:{
@@ -31,18 +32,20 @@ const useStyles = makeStyles((theme) => ({
     large: {
       width: theme.spacing(15),
       height: theme.spacing(15),
+      marginBottom:'20px'
     },
     margin: {
         margin: theme.spacing(1),
       },
     button:{
         margin: theme.spacing(1),
+        padding:'15px 0',
         color:'white',
         display:'block',
         textAlign:'center',
-        backgroundColor:green[800],
+        backgroundColor:`rgb(67,176,42)`,
         '&:hover': {
-            backgroundColor:green[800],
+            backgroundColor:`rgb(67,176,42)`,
         }
     }
   }));
@@ -60,25 +63,20 @@ function Login() {
                         <Typography variant='h6'>
                             SOCIAL MEDIA SENTIMENT ANALYSIS
                         </Typography>
-                        <div className={classes.margin}>
-                            <Grid container spacing={3} alignItems="flex-end">
-                            <Grid item>
-                                <AccountCircle />
-                            </Grid>
-                            <Grid item>
-                                <TextField id="user-id" fullWidth label="User Id" />
-                            </Grid>
-                            </Grid>
-                        </div>
-                        <div className={classes.margin}>
-                            <Grid container spacing={3} alignItems="flex-end">
-                            <Grid item>
-                                <LockRoundedIcon />
-                            </Grid>
-                            <Grid item>
-                                <TextField id="password" type="password" fullWidth label="Password" />
-                            </Grid>
-                            </Grid>
+                            <label htmlfor="userName-input" style={{display:'block',width:'100%'}} >
+                            <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
+                                <AccountCircle style={{marginLeft:'40px',color:'#aaa'}}/>
+                                <input type='text'  placeholder="Enter User Id" id="userName-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                            </div>
+                            </label>
+                            <label htmlfor="password-input" style={{display:'block',width:'100%'}}>
+                                <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
+                                    <LockRoundedIcon style={{marginLeft:'40px',color:'#aaa'}} />
+                                    <input type='password' placeholder="Enter Password" id="password-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                                </div>
+                            </label>
+                        <div>
+                            
                         </div>
                         <Button
                             className={classes.button}

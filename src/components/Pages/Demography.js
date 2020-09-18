@@ -11,10 +11,7 @@ import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
 import { addMonths } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
 import DemographyAgeChart from "../charts/DemographyCharts/DemographyAgeChart";
-import DonutChart from "../charts/DonutChart";
-import TabbarMUI from "./TabbarMUI";
 import DemographyDonutChart from "../charts/DemographyCharts/DemographyDonutChart";
 import DemographyPieChart from "../charts/DemographyCharts/DemographyPieChart";
 import DemographyBubble from "../charts/DemographyCharts/DemographyBubble";
@@ -67,12 +64,12 @@ function TrendAnalysis() {
 
   return (
     <SideNav>
-      <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
-        Demography
-      </Typography>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
+          <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
+            Demography
+          </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6} >
               <Card className={classes.main} >
@@ -97,22 +94,18 @@ function TrendAnalysis() {
               </CardContent>
                 <Grid container spacing={1} className={classes.gridposition}>
                   <Grid item xs={4}>
-                    <i className="fas fa-male maleIcon"></i>
                     <DemographyDonutChart
-                      color1="rgba(245, 12, 12)"
-                      color2="rgba(237, 230, 230)"
+                      data={[{name:'male',y:65,color:'rgba(245, 12, 12)'},{name:'others',y:35,color:'rgba(237, 230, 230)'}]}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <i class="fas fa-female femaleIcon"></i>
                     <DemographyDonutChart
-                      color1="#0e59ed"
-                      color2="rgba(237, 230, 230)"
+                      data={[{name:'female',y:35,color:'#0e59ed'},{name:'others',y:65,color:'rgba(237, 230, 230)'}]}
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <i class="fas fa-transgender transIcon"></i>
                     <DemographyDonutChart
+                      data={[{name:'female',y:3,color:'#60656e'},{name:'others',y:65,color:'rgba(237, 230, 230)'}]}
                       color1="#60656e"
                       color2="rgba(237, 230, 230)"
                     />
@@ -123,13 +116,17 @@ function TrendAnalysis() {
               <Grid item xs={12} md={6}>
                 <Card className={classes.main}>
                   <CardContent>Age</CardContent>
-                  <DemographyAgeChart />
+                  <div style={{padding:'21px 0'}} >
+                    <DemographyAgeChart  />
+                  </div>
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Card className={classes.main}>
                   <CardContent>Martial Status</CardContent>
-                  <DemographyDonutChart color1="#f21649" color2="#349eeb" />
+                  <DemographyDonutChart 
+                  
+                  color1="#f21649" color2="#349eeb" />
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -160,7 +157,7 @@ function TrendAnalysis() {
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
-                    toFromDatesHandlers={[setFrom, setTo, addMonths]}
+                    toFromDatesHandlers={[setFrom, setTo,from,to]}
                     sources={[sources, setSources]}
                     languages={[languages, setLanguages]}
                     moods={[moods, setMoods]}

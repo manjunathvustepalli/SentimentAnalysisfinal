@@ -44,6 +44,7 @@ export default class PieChart extends Component {
                 pie: {
                     innerSize: "80%",
                     allowPointSelect: true,
+                    showInLegend: true,
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,

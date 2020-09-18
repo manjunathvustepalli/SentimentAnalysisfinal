@@ -27,9 +27,18 @@ import MoodAnalysisBarChart from "../Pages/MoodAnalysisBarChart";
 import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
 import AdminPage from "../Pages/AdminPage";
 import ImageSearch from "../Pages/ImageSearch"
+import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
+import GlobalSearch from "../Pages/GlobalSearch";
+import TrendAnalysisAreaChart from "../Pages/TrendAnalysisAreaChart";
+import TrendAnalysisLineChart from "../Pages/TrendAnalysisLineChart";
+import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
+import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
+import Test from "../Pages/Test";
+
 
 function Routes() {
   return (
+    <MoodAnalysisContext>
     <SentimentAnalysisContext>
     <BrowserRouter>
       <Switch>
@@ -102,20 +111,28 @@ function Routes() {
           exact
           component={InfluencerAnalysis}
         />
-        <Route path="/trend-analysis" exact component={TrendAnalysis} />
+        <Route path="/trend-analysis/bar-chart" exact component={TrendAnalysis} />
+        <Route path="/trend-analysis/stacked-bar-chart" exact component={() => <TrendAnalysis stacking />} />
+        <Route path="/trend-analysis/area-chart" exact component={TrendAnalysisAreaChart} />
+        <Route path="/trend-analysis/line-chart" exact component={TrendAnalysisLineChart} />
+        <Route path="/trend-analysis/pie-chart" exact component={TrendAnalysisPieChart} />
+        <Route path="/trend-analysis/semi-pie-chart" exact component={TrendAnalysisSemiDonut} />
         <Route path="/demography" exact component={Demography} />
         <Route path="/trending-subject/sentiment" exact component={TrendingSubjectsSentiment} />
         <Route path="/trending-subject/mood" exact component={TrendingSubjectsMood} />
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
+        <Route path="/global-search" exact component={GlobalSearch} />
         <Route path="/admin" exact component={AdminPage} />
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
+        <Route path="/test" exact component={Test} />
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>
     </SentimentAnalysisContext>
+    </MoodAnalysisContext>
   );
 }
 

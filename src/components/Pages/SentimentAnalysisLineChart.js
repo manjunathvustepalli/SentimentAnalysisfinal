@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,7 +18,9 @@ import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
-
+import useDidUpdateEffect  from '../custom Hooks/useDidUpdateEffect';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -52,25 +54,36 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 
 export default function SentimentalAnalysisLineChart() {
+    const sentimentFilters = useContext(SentimentAnalysisFiltersContext)
+    const {
+        keywords,
+        setKeywords,
+        keywordType, 
+        setKeywordType,
+        from,
+        setFrom,
+        to,
+        setTo,
+        sources,
+        setSources,
+        subSources,
+        setSubSources,
+        languages,
+        setLanguages,
+        sentiments,
+        setSentiments
+    } = sentimentFilters
     const [chartType, setChartType] = useState('line')
     const [refresh, setRefresh] = useState(true)
-    const [data, setData] = useState([])
+    const [data, setData] = useState({})
     const [dates, setDates] = useState([])
-    const [sources,setSources] = useState([])
-    const [subSources,setSubSources] = useState([])
-    const [languages,setLanguages] = useState([])
-    const [sentiments,setSentiments] = useState([])
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
     const [open, setOpen] = useState(true)
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
-    useEffect(() => {
+    const fetchData = (changeInState) => {
         let query = {
             "aggs": {
               "date-based-range": {
@@ -123,19 +136,19 @@ export default function SentimentalAnalysisLineChart() {
                 }
               }
             }
-            if(keywordType === 'Screen Name'){
-                query["query"] = {
-                    "terms": {
-                      "User.ScreenName.keyword": keywords
-                    }
-                  }
-            } else if (keywordType === 'Hash Tags') {
-                query["query"] =  {
-                    "terms": {
-                      "HashtagEntities.Text.keyword": keywords
-                    }
+        if(keywordType === 'Screen Name'){
+            query["query"] = {
+                "terms": {
+                  "User.ScreenName.keyword": keywords
+                }
+              }
+        } else if (keywordType === 'Hash Tags') {
+            query["query"] =  {
+                "terms": {
+                  "HashtagEntities.Text.keyword": keywords
                 }
             }
+        }
        Axios.post(process.env.REACT_APP_URL,
         query,{
             headers:{
@@ -175,23 +188,29 @@ export default function SentimentalAnalysisLineChart() {
                     })
                 });
             })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
-
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
-            })
-            setSubSources(availableSubSourceKeys)
+            if(changeInState){
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = !!prev[source]
+                    })
+                    return availableSourceKeys
+                })
+                setLanguages(prev =>{
+                    let availableLanguageKeys = {}
+                    languageKeys.forEach(lang =>{
+                        availableLanguageKeys[lang] = !!prev[lang]
+                    })
+                    return availableLanguageKeys
+                })    
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = !!prev[subSource]
+                    })
+                    return availableSubSourceKeys
+                })
             setSentiments(prev => {
                 if(Object.keys(prev).length){
                     return prev
@@ -199,6 +218,37 @@ export default function SentimentalAnalysisLineChart() {
                     return {negative:true,positive:true,neutral:true}
                 }
             })
+            } else {         
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = true
+                    })
+                    return availableSourceKeys
+                })    
+
+            setLanguages(prev =>{
+                let availableLanguageKeys = {}
+                languageKeys.forEach(lang =>{
+                    availableLanguageKeys[lang] = true
+                })
+                return availableLanguageKeys
+            })
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = true
+                    })
+                    return availableSubSourceKeys
+                })
+            setSentiments(prev => {
+                if(Object.keys(prev).length){
+                    return prev
+                } else {
+                    return {negative:true,positive:true,neutral:true}
+                }
+            })
+            }         
             setOpen(false)
         } else {
             sortedData = {}
@@ -207,14 +257,25 @@ export default function SentimentalAnalysisLineChart() {
             setLanguages({})
             setSentiments({})
             setOpen(false)
-        }
-        
+        }       
     })
     .catch(err => {
-        console.log(err)
+        console.log(err.response)
         setOpen(false)
     })
-    }, [from,to,refresh,keywords,keywordType])
+    }
+
+    useMountAndUpdateEffect(()=>{
+        fetchData(false)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(true)
+        }
+    },[keywordType])
 
     useEffect(() => {
         const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
@@ -236,7 +297,7 @@ export default function SentimentalAnalysisLineChart() {
     return (
         <SideNav>
             <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
@@ -245,7 +306,7 @@ export default function SentimentalAnalysisLineChart() {
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Sentimental Analysis
+                        Sentiment Analysis
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
@@ -276,7 +337,7 @@ export default function SentimentalAnalysisLineChart() {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <TrendAnalysisLineChart dates={dates} data={data} />
+                            <TrendAnalysisLineChart title='Date wise Sentiment Line Chart' dates={dates} data={data} />
                         </Grid>
                     </Card>
                 </Grid>
@@ -288,12 +349,13 @@ export default function SentimentalAnalysisLineChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]} 
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources,setSources]} 
                                     sentiments={[sentiments,setSentiments]} 
                                     languages={[languages,setLanguages]} 
                                     subSources={[subSources,setSubSources]} 
                                     setKeywords={setKeywords}
+                                    keywords={keywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                     />
                             </FilterWrapper>

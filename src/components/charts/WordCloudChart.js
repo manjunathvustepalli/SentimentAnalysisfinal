@@ -25,17 +25,32 @@ function WordCloud(props) {
         highchartsWordCloud(Highcharts)
     
         let config =  {
+
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function() {
+                          return false;
+                        }
+                    }
+                }
+            },            
             series: [{
                 type: 'wordcloud',
                 data: props.data,
                 name: 'Occurrences',
             }],
             title: {
-                text: ''
+                text: props.title || ''
             },
             credits: {
                 enabled: false
             },
+            tooltip: {
+                headerFormat: '',
+                pointFormat:
+                  '<span>{point.name} : </span><b>{point.weight}',
+              },
             exporting: {
                 chartOptions: {
                     plotOptions: {
@@ -55,7 +70,7 @@ function WordCloud(props) {
             },
         }        
         Highcharts.chart('container',config)
-    }, [props.data])
+    }, [props.data,props.title])
 
     
     return <div  id="container" />

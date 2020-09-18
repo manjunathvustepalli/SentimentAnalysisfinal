@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import DonutChart from '../charts/DonutChart';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
@@ -17,7 +16,7 @@ import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
-import { moodAnalysisPieChartFilter, sentimentAnalysisPieChartFilter } from '../../helpers/filter';
+import { moodAnalysisPieChartFilter} from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
 
@@ -195,7 +194,7 @@ export default function MoodAnalysisSemiDonutChart() {
  
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
@@ -260,7 +259,7 @@ export default function MoodAnalysisSemiDonutChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]}
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]}

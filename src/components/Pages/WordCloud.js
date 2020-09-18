@@ -242,7 +242,7 @@ export default function MoodAnalysisPieChart() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo]} sources={[sources, setSources]} moods={[moods,setMoods]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
+                                <AccordianFilters  toFromDatesHandlers={[setFrom,setTo,from,to]} sources={[sources, setSources]} moods={[moods,setMoods]} languages={[languages,setLanguages]} sentiments={[sentiments,setSentiments]} />
                             </FilterWrapper>
                         </Grid>
                     </Grid>

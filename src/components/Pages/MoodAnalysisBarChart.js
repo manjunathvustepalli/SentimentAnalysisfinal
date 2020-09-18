@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import SideNav from '../Navigation/SideNav'
 import { Grid, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
@@ -9,6 +9,10 @@ import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import BarChart from '../charts/BarChart'
+import { MoodAnalysisFiltersContext } from '../../contexts/MoodAnalysisContext'
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect'
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -41,167 +45,241 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 
 function MoodAnalysisBarChart(props) {
-    var colors = {'joy':'rgb(0,255,0)','sad':'rgb(236, 240, 22)','anger':'rgb(240, 22, 37)','anticipation':'rgb(29, 180, 240)','disgust':'rgb(226, 29, 240)','surprise':'rgb(240, 124, 29)','fear':'rgb(0, 0, 0)','trust':'rgb(217, 202, 202)'}
+	var colors = {
+		'joy':'#4C7A00',
+		'sad':'#D8D8D8',
+		'anger':'#FF5151',
+		'anticipation':'#111D31',
+		'disgust':'#D512CF',
+		'surprise':'#FF6600',
+		'fear':'#2000FF',
+		'trust':'#0099FF',
+		'positive':'#04E46C',
+		'negative':'#CB0038',
+		'neutral':'#FFC400'
+	  }
     const classes = useStyles()
-    const [chartType, setChartType] = useState(props.stack ? 'stack' : 'bar')
-    const [refresh, setRefresh] = useState(true)
-    const [sources,setSources] = useState([])
-    const [subSources,setSubSources] = useState([])
+	const moodFilters = useContext(MoodAnalysisFiltersContext)
+	const {
+		keywords,
+		setKeywords,
+		keywordType, 
+		setKeywordType,
+		from,
+		setFrom,
+		to,
+		setTo,
+		sources,
+		setSources,
+		subSources,
+		setSubSources,
+		languages,
+		setLanguages,
+		moods,
+		setMoods
+	} = moodFilters
+	const [refresh, setRefresh] = useState(true)
+	const [chartType, setChartType] = useState(props.stack ? 'stack' :'bar') 
     const [data, setData] = useState({})
     const [dates, setDates] = useState([])
-    const [languages,setLanguages] = useState([])
-    const [moods,setMoods] = useState([])
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
-    const handleChange = (e) => {
-        setChartType(e.target.value)
-    }
-    
-    useEffect(() => {
-        let query = {
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from": from,"to": to}
-                  ]
-                },
-                "aggs": {
-                  "lang": {
-                    "terms": {
-                      "field": "predictedLang.keyword"
-                    },
-                    "aggs": {
-                      "Source": {
-                        "terms": {
-                          "field": "Source.keyword"
-                        },
-                        "aggs":{
-                            "SubSource":{
-                                "terms":{
-                                    "field": "SubSource.keyword"
-                                },
-                            
-    
-                            "aggs": {
-                                "per-day": {
-                                  "date_histogram": {
-                                      "field": "CreatedAt",
-                                      "format": "yyyy-MM-dd", 
-                                      "calendar_interval": "day"
-                                  },
-                                "aggs": {
-                                  "Daily-Sentiment-Distro": {
-                                    "terms": {
-                                      "field": "predictedMood.keyword"
-                                    }
-                                  }
-                                }
-                                }
-                            }
-                          }
-                        }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            if(keywordType === 'Screen Name'){
-                query["query"] = {
-                    "terms": {
-                      "User.ScreenName.keyword": keywords
-                    }
-                  }
-            } else if (keywordType === 'Hash Tags') {
-                query["query"] =  {
-                    "terms": {
-                      "HashtagEntities.Text.keyword": keywords
-                    }
-                }
-            }
-        Axios.post(process.env.REACT_APP_URL,
-            query,{
-             headers:{
-                'Content-Type':'application/json'
-            }
-        })
-     .then( fetchedData => {
-         var sourceKeys,subSourceKeys
-         var uniqueSourceKeys = []
-         var uniqueSubSourceKeys = []
-         let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-         var languageKeys = getKeyArray(languageBuckets)
-         if(languageKeys[0]){
-            languageKeys.forEach((key,i) =>{
-                let sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sortedData[key] ={}
-                sourceKeys.forEach((source,j) => {
-                   if(!uniqueSourceKeys.includes(source)){
-                       uniqueSourceKeys.push(source)
-                   }
-                   sortedData[key][source] ={}
-                   let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-                   subSourceKeys = getKeyArray(subSourceBuckets)
-                   subSourceKeys.forEach((subSource,k) => {
-                    if(!uniqueSubSourceKeys.includes(subSource)){
-                        uniqueSubSourceKeys.push(subSource)
-                    }
-                    sortedData[key][source][subSource] = {}
-                    let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
-                    let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
-                   sortedData[key][source][subSource]['dates'] = perDayKeys
-                   sortedData[key][source][subSource]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
-                   sortedData[key][source][subSource]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
-                   sortedData[key][source][subSource]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
-                   sortedData[key][source][subSource]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
-                   sortedData[key][source][subSource]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
-                   sortedData[key][source][subSource]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
-                   sortedData[key][source][subSource]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
-                   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                })                  
-               });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+	const handleChange = (e) => {
+		setChartType(e.target.value)
+	}
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
+	const fetchData = (changeInState) => {
+		
+		let query = {
+			"aggs": {
+			  "date-based-range": {
+				"date_range": {
+				  "field": "CreatedAt",
+				  "format": "dd-MM-yyyy",
+				  "ranges": [
+					{ "from": from,"to": to}
+				  ]
+				},
+				"aggs": {
+				  "lang": {
+					"terms": {
+					  "field": "predictedLang.keyword"
+					},
+					"aggs": {
+					  "Source": {
+						"terms": {
+						  "field": "Source.keyword"
+						},
+						"aggs":{
+							"SubSource":{
+								"terms":{
+									"field": "SubSource.keyword"
+								},
+							
+	
+							"aggs": {
+								"per-day": {
+								  "date_histogram": {
+									  "field": "CreatedAt",
+									  "format": "yyyy-MM-dd", 
+									  "calendar_interval": "day"
+								  },
+								"aggs": {
+								  "Daily-Sentiment-Distro": {
+									"terms": {
+									  "field": "predictedMood.keyword"
+									}
+								  }
+								}
+								}
+							}
+						  }
+						}
+						}
+					  }
+					}
+				  }
+				}
+			  }
+			}
+			if(keywordType === 'Screen Name'){
+				query["query"] = {
+					"terms": {
+					  "User.ScreenName.keyword": keywords
+					}
+				  }
+			} else if (keywordType === 'Hash Tags') {
+				query["query"] =  {
+					"terms": {
+					  "HashtagEntities.Text.keyword": keywords
+					}
+				}
+			}
+		Axios.post(process.env.REACT_APP_URL,
+			query,{
+			 headers:{
+				'Content-Type':'application/json'
+			}
+		})
+	 .then( fetchedData => {
+		 var sourceKeys,subSourceKeys
+		 var uniqueSourceKeys = []
+		 var uniqueSubSourceKeys = []
+		 let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
+		 var languageKeys = getKeyArray(languageBuckets)
+		 if(languageKeys[0]){
+			languageKeys.forEach((key,i) =>{
+				let sourceBuckets = languageBuckets[i].Source.buckets
+				sourceKeys = getKeyArray(sourceBuckets)
+				sortedData[key] ={}
+				sourceKeys.forEach((source,j) => {
+				   if(!uniqueSourceKeys.includes(source)){
+					   uniqueSourceKeys.push(source)
+				   }
+				   sortedData[key][source] ={}
+				   let subSourceBuckets = sourceBuckets[j].SubSource.buckets
+				   subSourceKeys = getKeyArray(subSourceBuckets)
+				   subSourceKeys.forEach((subSource,k) => {
+					if(!uniqueSubSourceKeys.includes(subSource)){
+						uniqueSubSourceKeys.push(subSource)
+					}
+					sortedData[key][source][subSource] = {}
+					let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
+					let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
+				   sortedData[key][source][subSource]['dates'] = perDayKeys
+				   sortedData[key][source][subSource]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))
+				   sortedData[key][source][subSource]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))
+				   sortedData[key][source][subSource]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))
+				   sortedData[key][source][subSource]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))
+				   sortedData[key][source][subSource]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))
+				   sortedData[key][source][subSource]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))
+				   sortedData[key][source][subSource]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))
+				   sortedData[key][source][subSource]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))                })                  
+			   });
+			})
+			if(changeInState){
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource => {
-                availableSubSourceKeys[subSource] = true
-            })
-            setSubSources(availableSubSourceKeys)
+				setSources(prev =>{
+					let availableSourceKeys = {}
+					uniqueSourceKeys.forEach(source =>{
+						availableSourceKeys[source] = !!prev[source]
+					})
+					return availableSourceKeys
+				})
+	
+				setLanguages(prev =>{
+					let availableLanguageKeys = {}
+					languageKeys.forEach(lang =>{
+						availableLanguageKeys[lang] = !!prev[lang]
+					})
+					return availableLanguageKeys
+				})
+	
 
-            setMoods(prev =>{
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                }})   
-         } else {
-             setSources({})
-             setLanguages({})
-             setMoods({})
-             sortedData = {}
-         }
-             })
-     .catch(err => {
-         console.log(err)
-     })
-     }, [from,to,refresh,keywords,keywordType])
+				setSubSources(prev =>{
+					let availableSubSourceKeys = {}
+					uniqueSubSourceKeys.forEach(subSource => {
+						availableSubSourceKeys[subSource] = !!prev[subSource]
+					})
+					return availableSubSourceKeys
+				})
+	
+				setMoods(prev =>{
+					if(Object.keys(prev).length){
+						return prev
+					} else {
+					   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+					}})   	
+			} else {
+
+				setSources(prev =>{
+					let availableSourceKeys = {}
+					uniqueSourceKeys.forEach(source =>{
+						availableSourceKeys[source] = true
+					})					
+					return availableSourceKeys
+				})
+	
+				let availableLanguageKeys = {}
+				languageKeys.forEach(lang =>{
+					availableLanguageKeys[lang] = true
+				})
+				setLanguages(availableLanguageKeys)
+	
+				let availableSubSourceKeys = {}
+				uniqueSubSourceKeys.forEach(subSource => {
+					availableSubSourceKeys[subSource] = true
+				})
+				setSubSources(availableSubSourceKeys)
+	
+				setMoods(prev =>{
+					if(Object.keys(prev).length){
+						return prev
+					} else {
+					   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+					}})   	
+			}
+		 } else {
+			 setSources({})
+			 setLanguages({})
+			 setMoods({})
+			 sortedData = {}
+		 }
+			 })
+	 .catch(err => {
+		 console.log(err)
+	 })
+	}
+
+	useMountAndUpdateEffect(()=>{
+        fetchData(true)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(false)
+        }
+	},[keywordType])
 
      useEffect(() => {
         const [finalData]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
@@ -242,7 +320,7 @@ function MoodAnalysisBarChart(props) {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
@@ -291,12 +369,13 @@ function MoodAnalysisBarChart(props) {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo,addMonths]} 
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
                                     sources={[sources,setSources]} 
                                     languages={[languages,setLanguages]} 
                                     moods={[moods,setMoods]} 
                                     subSources={[subSources,setSubSources]}
-                                    setKeywords={setKeywords}
+									setKeywords={setKeywords}
+									keywords={keywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                 />
                             </FilterWrapper>

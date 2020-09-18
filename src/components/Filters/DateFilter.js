@@ -10,11 +10,11 @@ import { addMonths } from '../../helpers';
 
 
 function DateFilter(props) {
+  const [setTo, setFrom,from,to] = props.toFromDatesHandlers;
   const Stime = new Date();
-  const [startDate, setStartDate] = useState(Stime.setMonth(Stime.getMonth() - 1));
+  const [startDate, setStartDate] = useState(new Date(from.split('-')[2],parseInt(from.split('-')[1])-1,from.split('-')[0])); 
   const Etime = new Date();
-  const [endDate, setEndDate] = useState(Etime);
-    const [setTo, setFrom] = props.toFromDatesHandlers;
+  const [endDate, setEndDate] = useState(new Date(to.split('-')[2],parseInt(to.split('-')[1])-1,to.split('-')[0]));
     const handleStartDateChange = (date) => { 
         setTo(addMonths(date,0))
         setStartDate(date)
@@ -41,10 +41,12 @@ function DateFilter(props) {
     const classes = useStyles();
     
     return (
+      <div id="side-filters-time-date" style={{width:'100%'}} >
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               className={classes.formControl}
               margin="normal"
+              inputVariant="outlined"
               id="start-date-picker-dialog"
               label="Start Date"
               value = {startDate}
@@ -58,6 +60,7 @@ function DateFilter(props) {
               className={classes.formControl}
               margin="normal"
               id="end-date-picker-dialog"
+              inputVariant="outlined"
               label="End Date"
               value = {endDate}
               onChange = {handleEndDateChange}
@@ -67,6 +70,7 @@ function DateFilter(props) {
               }}
             />
         </MuiPickersUtilsProvider>
+      </div>
     )
 }
 

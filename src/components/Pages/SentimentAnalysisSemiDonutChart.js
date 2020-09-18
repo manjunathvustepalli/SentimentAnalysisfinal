@@ -10,12 +10,10 @@ import Select from '@material-ui/core/Select';
 import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
-import moment from 'moment'
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Button, Typography } from '@material-ui/core';
-import Table1 from '../Tables/Table1'
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
@@ -192,7 +190,7 @@ function SentimentAnalysisSemiDonutChart() {
 
     return (
         <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
@@ -201,7 +199,7 @@ function SentimentAnalysisSemiDonutChart() {
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
-                        Sentimental Analysis
+                        Sentiment Analysis
                     </Typography>
                     <Card className={classes.main}>
                         <Grid container spacing={3}>
@@ -239,14 +237,14 @@ function SentimentAnalysisSemiDonutChart() {
                             </Grid>)
                             }
                             )}
-                            <Grid item align='right' xs={10} style={{margin:'30px'}}>
+                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
                                 </Button>
                             </Grid>
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>
@@ -258,7 +256,7 @@ function SentimentAnalysisSemiDonutChart() {
                         <Grid item xs={12}>
                             <FilterWrapper>
                                 <AccordianFilters 
-                                    toFromDatesHandlers={[setFrom,setTo]}
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]}
                                     sources={[sources, setSources]} 
                                     languages={[languages,setLanguages]} 
                                     sentiments={[sentiments,setSentiments]}

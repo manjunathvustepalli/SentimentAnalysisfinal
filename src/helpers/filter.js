@@ -1,4 +1,19 @@
 import { getDatesArray } from './index'
+
+var colors = {
+    'joy':'#4C7A00',
+    'sad':'#D8D8D8',
+    'anger':'#FF5151',
+    'anticipation':'#111D31',
+    'disgust':'#D512CF',
+    'surprise':'#FF6600',
+    'fear':'#2000FF',
+    'trust':'#0099FF',
+    'positive':'#04E46C',
+    'negative':'#CB0038',
+    'neutral':'#FFC400', 
+  }
+
 export const sentimentalAnalysisAreaChartFilter = (languages,sentiments,sources,subSources,data,from,to) => {
     let availableSubSources = []
     let languageList = Object.keys(languages)
@@ -86,7 +101,7 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
     let sourceFilteredData = []
     languageFilteredData.forEach(sourceData =>{
         sourceList.forEach(source =>{
-            if(sources[source] && sourceData[source]){
+            if(sourceData && sources[source] && sourceData[source]){
                 Object.keys(sourceData[source]).forEach(availableSubSource =>{
                     if(!availableSubSources.includes(availableSubSource)){
                         availableSubSources.push(availableSubSource)
@@ -178,13 +193,13 @@ export const sentimentAnalysisPieChartFilter = (languages,sentiments,sources,dat
                     if(!sourceFilteredData[key]){
                         sourceFilteredData[key] = []
                         if(sentiments['negative']){
-                            sourceFilteredData[key].push({name:'negative',y:sourceObj[key]['negative'] || 0,color:"rgb(255,0,0)"})
+                            sourceFilteredData[key].push({name:'negative',y:sourceObj[key]['negative'] || 0,color:colors['negative']})
                         }
                         if(sentiments['positive']){
-                            sourceFilteredData[key].push({name:'positive',y:sourceObj[key]['positive'] || 0,color:"rgb(0,170,0)"})
+                            sourceFilteredData[key].push({name:'positive',y:sourceObj[key]['positive'] || 0,color:colors['positive']})
                         }
                         if(sentiments['neutral']){
-                            sourceFilteredData[key].push({name:'neutral',y:sourceObj[key]['neutral'] || 0,color:"rgb(255,255,0)"})
+                            sourceFilteredData[key].push({name:'neutral',y:sourceObj[key]['neutral'] || 0,color:colors['neutral']})
                         }
                     } else {
                         sourceFilteredData[key].forEach(obj =>{
@@ -421,21 +436,21 @@ export const sentimentAnalysisLineChartFilter = (languages,subSources,sources,se
         if(sentiments['positive']){
             finalData.push({
                 name:'positive',
-                color:'rgb(0,255,0)',
+                color:colors['positive'],
                 data:positiveData
             })
         }
         if(sentiments['negative']){
             finalData.push({
                 name:'negative',
-                color:'rgb(255,0,0)',
+                color:colors['negative'],
                 data:negativeData
             })
         }
         if(sentiments['neutral']){
             finalData.push({
                 name:'neutral',
-                color:'rgb(235,255,0)',
+                color:colors['neutral'],
                 data:neutralData
             })
         }
@@ -446,7 +461,7 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
     var uniqueSubSources = []
     var dataArray = []
     Object.keys(languages).forEach((language) =>{
-        if(languages[language]){
+        if(languages[language] && sortedData[language]){
             Object.keys(sortedData[language]).forEach(source => {
                 if(sources[source])
                 Object.keys(sortedData[language][source]).forEach(subSource => {
@@ -503,58 +518,89 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
         if(moods['joy']){
             finalData.push({
                 name:'joy',
-                color:'rgb(0,255,0)',
+                color:colors['joy'],
                 data:joyData
             })
         }
         if(moods['anticipation']){
             finalData.push({
                 name:'anticipation',
-                color:'rgb(29, 180, 240)',
+                color:colors['anticipation'],
                 data:anticipationData
             })
         }
         if(moods['fear']){
             finalData.push({
                 name:'fear',
-                color:'rgba(0, 0, 0)',
+                color:colors['fear'],
                 data:fearData
             })
         }
         if(moods['disgust']){
             finalData.push({
                 name:'disgust',
-                color:'rgb(226, 29, 240)',
+                color:colors['disgust'],
                 data:disgustData
             })
         }
         if(moods['sad']){
             finalData.push({
                 name:'sad',
-                color:'rgb(236, 240, 22)',
+                color:colors['sad'],
                 data:sadData
             })
         }
         if(moods['surprise']){
             finalData.push({
                 name:'surprise',
-                color:'rgb(240, 124, 29)',
+                color:colors['surprise'],
                 data:surpriseData
             })
         }
         if(moods['trust']){
             finalData.push({
                 name:'trust',
-                color:'rgb(217, 202, 202)',
+                color:colors['trust'],
                 data:trustData
             })
         }
         if(moods['anger']){
             finalData.push({
                 name:'anger',
-                color:'rgb(240, 22, 37)',
+                color:colors['anger'],
                 data:angerData
             })
         }
         return [finalData,allDates,uniqueSubSources] 
+}
+
+export const TrendAnalysisPieChartFilter = (languages,sources,sortedData) => {
+    let finalData = {}
+    Object.keys(sortedData).forEach((date,i) => {
+        Object.keys(sortedData[date]).forEach((source,j) =>{
+            if(sources[source]){
+                if(!finalData[source]){
+                    finalData[source] = {}
+                }
+                Object.keys(sortedData[date][source]).forEach((language,k)=>{
+                    if(languages[language]){
+                        if(!finalData[source][language]){
+                            finalData[source][language] = 0
+                        }
+                        finalData[source][language] += sortedData[date][source][language]
+                    }
+                })
+            }
+        })
+    })
+    let data = {}
+    Object.keys(finalData).forEach((source) =>{
+        data[source] = Object.keys(finalData[source]).map((language)=>{
+            return {
+                name: language,
+                y:finalData[source][language]
+            }
+        })
+    })
+    return data
 }

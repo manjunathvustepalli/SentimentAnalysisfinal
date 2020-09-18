@@ -62,12 +62,24 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
          let sortedData = []
          let sentiments = ['positive','negative','neutral']
-         let colors = ['rgba(0,255,0,0.5)','rgba(255,0,0,0.5)','rgba(255,255,0,0.5)']
-
+         var colors = {
+          'joy':'#4C7A00',
+          'sad':'#D8D8D8',
+          'anger':'#FF5151',
+          'anticipation':'#111D31',
+          'disgust':'#D512CF',
+          'surprise':'#FF6600',
+          'fear':'#2000FF',
+          'trust':'#0099FF',
+          'positive':'#04E46C',
+          'negative':'#CB0038',
+          'neutral':'#FFC400'
+        }
+    
          sentiments.forEach((sentiment,i) => {
              sortedData.push({
                  name:sentiment,
-                 color:colors[i],
+                 color:colors[sentiment],
                  data:perDayBuckets.map(day => {
                      let sentiBuckets = day['Daily-Sentiment-Distro'].buckets
                      for(var j=0;j<sentiBuckets.length;j++){
@@ -86,7 +98,7 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
 
     return (
         <div>
-            <AreaChart dates={dates} data={data} sorted={true} />
+            <AreaChart title="Date wise Sentiment Trend" dates={dates} data={data} sorted={true} />
         </div>
     )
 }
