@@ -148,31 +148,31 @@ const SideNavBar = ( props) => {
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
     },
-    {
-      name:'Admin Page',
-      icon:<PermDataSettingIcon/>,
-      path:['/admin'],
-    },
-    {
-      name:'Search Image',
-      icon:<ImageSearchIcon/>,
-      path:['/image-gallery'],
-    },
-    {
-      name:'Geo HotSpot Analysis',
-      icon:<PublicIcon/>,
-      path:['/geo-hotspot'],
-    },
-    {
-      name:'Demography',
-      icon:<DeviceHubIcon/>,
-      path:['/demography'],
-    },    
-    {
-      name:'Behavior Analysis',
-      icon:<HdrWeakIcon/>,
-      path:['/behavior-analysis'],
-    }, 
+    // {
+    //   name:'Admin Page',
+    //   icon:<PermDataSettingIcon/>,
+    //   path:['/admin'],
+    // },
+    // {
+    //   name:'Search Image',
+    //   icon:<ImageSearchIcon/>,
+    //   path:['/image-gallery'],
+    // },
+    // {
+    //   name:'Geo HotSpot Analysis',
+    //   icon:<PublicIcon/>,
+    //   path:['/geo-hotspot'],
+    // },
+    // {
+    //   name:'Demography',
+    //   icon:<DeviceHubIcon/>,
+    //   path:['/demography'],
+    // },    
+    // {
+    //   name:'Behavior Analysis',
+    //   icon:<HdrWeakIcon/>,
+    //   path:['/behavior-analysis'],
+    // }, 
   ]
     
   useEffect(() => {

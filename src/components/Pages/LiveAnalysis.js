@@ -17,6 +17,17 @@ import FilterWrapper from '../Filters/FilterWrapper'
 import FilterHeader from '../Filters/FilterHeader'
 import LaunchIcon from '@material-ui/icons/Launch';
 
+const dateFormatter = (unix) => {
+  var date = new Date(unix);
+  var hours = date.getHours();
+  var minutes = "0" + date.getMinutes();
+  var seconds = "0" + date.getSeconds();
+  var month = date.getMonth()+1
+  var year = date.getFullYear()
+  var todayDate = date.getDate()
+  return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
+
 const useStyles = makeStyles((theme) => ({
     root: {
       background: 'rgb(67, 176, 42)',
@@ -182,6 +193,7 @@ function LiveAnalysis() {
                       > Click Here </Button></a> 
                     }
                 }
+                obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
@@ -191,44 +203,36 @@ function LiveAnalysis() {
             setData(final)
             if(source === 'twitter'){
                 setColumns([
+                    {title:'Date',field:'date'},
                     {title:'Name',field:'name'},
-                    {title:'Screen Name',field:'screenName',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" }},
+                    {title:'Screen Name',field:'screenName'},
                     {title:'Post',field:'tweet'},
                     {
-                      title:'Media Urls',field:'mediaUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
+                      title:'Media Urls',field:'mediaUrl'
                     },
                     {
-                      title:'Post Url',field:'postUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
+                      title:'Post Url',field:'postUrl'
                     },
-                    {title:'Followers Count',field:'followersCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
-                    {title:'Retweet Count',field:'retweetCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
+                    {title:'Followers Count',field:'followersCount'},
+                    {title:'Retweet Count',field:'retweetCount'},
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
             } else if( source === 'facebook'){
                 setColumns([
-                    {title:'Post',field:'tweet'},
-                    {title:'Replies',field:'retweetCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
+                    {title:'Date',field:'date'},
+                    {title:'Post',field:'post'},
+                    {title:'Replies',field:'retweetCount'},
                     {
-                      title:'Media Urls',field:'mediaUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
+                      title:'Media Urls',field:'mediaUrl'
                     },
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
             } else if( source === 'newspaper' ){
                 setColumns([
-                    {title:'Post',field:'tweet'},
+                    {title:'Date',field:'date'},
+                    {title:'Post',field:'post'},
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
@@ -292,7 +296,7 @@ function LiveAnalysis() {
     }    
 
     useEffect(() => {
-        if(!keyword){
+        if(!keyword){ 
             fetchData()
         } else {
             fetchFromKeyword()
@@ -374,15 +378,13 @@ function LiveAnalysis() {
                             )
                         }
                     </Grid>
-                    <Grid item xs={12}>
-                      <div style={{width:'80%'}}>
+                    <div style={{width:'55vw'}}>
                       <MaterialTable 
                             title='Live Analysis'
                             columns={columns}
                             data={data}
                             style={{
                               padding:'20px',
-                              width:'100%',
                               overflow:'scroll'
                             }}
                             options={{
@@ -397,9 +399,8 @@ function LiveAnalysis() {
                                 }
                             }}
                         />
-                      </div>
-                    </Grid>
-                    <Grid item sm={12} md={4}  >
+                    </div>
+                    <div style={{width:'26vw',padding:'20px'}}  >
                     <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]}/>
@@ -414,7 +415,7 @@ function LiveAnalysis() {
                             </FilterWrapper>
                         </Grid>
                     </Grid>
-                </Grid>
+                </div>
                 </Grid>
             </Card>
         </SideNav>

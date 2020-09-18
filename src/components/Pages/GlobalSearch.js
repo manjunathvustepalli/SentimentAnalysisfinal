@@ -30,7 +30,7 @@ function GlobalSearch() {
         let keywordsString = keywords.join(',')
         let handlesString = handles.join(',')
         if(source === 'twitter'){
-            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-224b3922.localhost.run/bsma-webservice/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
+            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-44e4ca8a.localhost.run/bsma-webservice/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
                 .then(res =>{
                     if(res.data.status === 'ACCEPTED'){
                         Axios.post(process.env.REACT_APP_SEARCH_URL,{
@@ -121,7 +121,7 @@ function GlobalSearch() {
                     console.log(err.response)
                 })
         } else if(source === 'facebook') {
-            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-224b3922.localhost.run/bsma-webservice/fetchdatafromfb?fbpage=${handlesString}`)
+            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-44e4ca8a.localhost.run/bsma-webservice/fetchdatafromfb?fbpage=${handlesString}`)
                 .then(res =>{
                     if(res.data.status === 'ACCEPTED'){
                         Axios.post(process.env.REACT_APP_SEARCH_URL,{

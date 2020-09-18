@@ -151,18 +151,15 @@ function ExportData() {
                             )
                         }
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={8}>
                         <MaterialTable 
                             title='Export Data'
                             columns={[
                                 {title:'Name',field:'name',editable:'never'},
-                                {title:'Screen Name',field:'screenName',editable:'never',cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Screen Name',field:'screenName',editable:'never'},
                                 {title:'Tweet',field:'tweet',editable:'never'},
-                                {title:'Followers Count',field:'followersCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" }},
-                                {title:'Retweet Count',field:'retweetCount',editable:'never',cellStyle: { whiteSpace: "nowrap" },
-                                headerStyle: { whiteSpace: "nowrap" }},
+                                {title:'Followers Count',field:'followersCount',editable:'never'},
+                                {title:'Retweet Count',field:'retweetCount',editable:'never'},
                                 {title:'Mood(Predicted)',field:'mood',editable:"never" },
                                 {title:'Mood(Manual)',field:'manualMood', lookup:{'joy':'Joy','anger':'Anger','surprise':'Surprise','anticipation':'Anticipation','trust':'Trust','sad':'Sad','disgust':'Disgust','fear':'Fear'} },
                                 {title:'Sentiment(Predicted)',field:'sentiment',editable:"never"},
