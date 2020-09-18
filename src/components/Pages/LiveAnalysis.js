@@ -84,16 +84,10 @@ function LiveAnalysis() {
     const [refresh, setRefresh] = useState(true);
     const [columns, setColumns] = useState([
         {title:'Name',field:'name'},
-        {title:'Screen Name',field:'screenName',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" }},
+        {title:'Screen Name',field:'screenName'},
         {title:'Post',field:'tweet'},
-        {title:'Followers Count',field:'followersCount',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" },},
-        {title:'Retweet Count',field:'retweetCount',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" },},
+        {title:'Followers Count',field:'followersCount',},
+        {title:'Retweet Count',field:'retweetCount'},
         {title:'Mood',field:'mood'},
         {title:'Sentiment',field:'sentiment'},
     ])
@@ -311,7 +305,7 @@ function LiveAnalysis() {
 
     return (
         <SideNav>
-            <Card>
+            <Card style={{width:'100%'}}>
                 <Grid container spacing={2} style={{padding:'20px'}}>
                     <Grid item xs={10}>
                         <Grid container>
@@ -378,15 +372,11 @@ function LiveAnalysis() {
                             )
                         }
                     </Grid>
-                    <div style={{width:'55vw'}}>
-                      <MaterialTable 
+                    <Grid xs={12} style={{backgroundColor:'black',width:'100%'}} >
+                    <MaterialTable 
                             title='Live Analysis'
                             columns={columns}
                             data={data}
-                            style={{
-                              padding:'20px',
-                              overflow:'scroll'
-                            }}
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
@@ -399,8 +389,8 @@ function LiveAnalysis() {
                                 }
                             }}
                         />
-                    </div>
-                    <div style={{width:'26vw',padding:'20px'}}  >
+                    </Grid>
+                    {/* <div style={{width:'26vw',padding:'20px'}}  >
                     <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]}/>
@@ -415,7 +405,7 @@ function LiveAnalysis() {
                             </FilterWrapper>
                         </Grid>
                     </Grid>
-                </div>
+                </div> */}
                 </Grid>
             </Card>
         </SideNav>

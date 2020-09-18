@@ -77,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
   },
 }));
 

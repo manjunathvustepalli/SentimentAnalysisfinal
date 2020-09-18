@@ -151,7 +151,7 @@ function ExportData() {
                             )
                         }
                     </Grid>
-                    <Grid item xs={12} md={8}>
+                    <Grid item xs={12} md={12}>
                         <MaterialTable 
                             title='Export Data'
                             columns={[
@@ -193,7 +193,7 @@ function ExportData() {
                             }}
                         />
                     </Grid>
-                    <Grid item sm={12} md={4}  >
+                    {/* <Grid item sm={12} md={4}  >
                     <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]}/>
@@ -208,7 +208,7 @@ function ExportData() {
                             </FilterWrapper>
                         </Grid>
                     </Grid>
-                </Grid>
+                </Grid> */}
                 </Grid>
             </Card>
         </SideNav>
