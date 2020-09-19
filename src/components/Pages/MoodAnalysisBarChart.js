@@ -319,7 +319,7 @@ function MoodAnalysisBarChart(props) {
     }, [sources]) 
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
@@ -384,7 +384,7 @@ function MoodAnalysisBarChart(props) {
                 </Grid>
             </Grid>
         </div>       
-        </SideNav>
+        </>
 
     )
 }

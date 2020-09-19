@@ -162,7 +162,7 @@ function TrendAnalysisAreaChart() {
   },[languages,sources])
 
   return (
-    <SideNav>
+    <>
         {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
         {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
@@ -226,7 +226,7 @@ function TrendAnalysisAreaChart() {
           </Grid>
         </Grid>
       </div>
-    </SideNav>
+    </>
   );
 }
 

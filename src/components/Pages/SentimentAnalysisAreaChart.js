@@ -305,7 +305,7 @@ export default function SentimentalAnalysisAreaChart() {
     }, [sources])
 
     return (
-        <SideNav>
+        <>
             <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
@@ -373,6 +373,6 @@ export default function SentimentalAnalysisAreaChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
-    );
+    </>
+);
 }

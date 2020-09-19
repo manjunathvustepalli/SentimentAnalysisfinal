@@ -191,7 +191,7 @@ export default function SentimentalAnalysisPieChart() {
     }, [languages,sentiments,sources])
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
@@ -270,6 +270,6 @@ export default function SentimentalAnalysisPieChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

@@ -82,7 +82,6 @@ function ExportData() {
     }, [reloadInterval,liveReloading])
 
     return (
-        <SideNav>
             <Card style={{padding:'20px'}}>
                 <Grid container spacing={5} style={{width:'80vw'}}>
                 <Grid item xs={2} align="left">
@@ -175,7 +174,6 @@ function ExportData() {
                     </Grid>
                 </Grid>
             </Card>
-        </SideNav>
     )
 }
 

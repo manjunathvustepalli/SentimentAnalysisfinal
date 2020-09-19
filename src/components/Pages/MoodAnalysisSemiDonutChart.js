@@ -193,7 +193,7 @@ export default function MoodAnalysisSemiDonutChart() {
     },[moods,languages,sources,keywords,keywordType])
  
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
@@ -272,6 +272,6 @@ export default function MoodAnalysisSemiDonutChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

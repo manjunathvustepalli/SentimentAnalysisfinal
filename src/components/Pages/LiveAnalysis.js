@@ -281,7 +281,7 @@ function LiveAnalysis() {
     }, [reloadInterval,liveReloading,from,to,source])
 
     return (
-        <SideNav>
+        <>
             <Card>
                 <Grid container spacing={2} style={{padding:'20px'}}>
                     <Grid item xs={10}>
@@ -376,7 +376,7 @@ function LiveAnalysis() {
                     </Grid>
                 </Grid>
             </Card>
-        </SideNav>
+        </>
     )
 }
 

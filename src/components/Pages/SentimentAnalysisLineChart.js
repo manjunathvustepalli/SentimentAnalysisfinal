@@ -295,7 +295,7 @@ export default function SentimentalAnalysisLineChart() {
     },[sources])
 
     return (
-        <SideNav>
+        <>
             <Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
@@ -364,6 +364,6 @@ export default function SentimentalAnalysisLineChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

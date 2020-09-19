@@ -196,7 +196,7 @@ export default function MoodAnalysisPieChart() {
     },[moods,languages,sources])
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
@@ -276,6 +276,6 @@ export default function MoodAnalysisPieChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

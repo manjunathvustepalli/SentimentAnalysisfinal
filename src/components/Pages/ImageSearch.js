@@ -93,7 +93,7 @@ useEffect(() =>{
 
   return (
     <div className={classes.root}>
-        <SideNav>
+        <>
             <Grid container>
                 <Grid item xs={2} />
                 <Grid item xs={8} style={{marginTop:'30px'}}>
@@ -123,7 +123,7 @@ useEffect(() =>{
             </GridListTile>
             ))}
         </GridList>
-        </SideNav>
+        </>
     </div>
   );
 }

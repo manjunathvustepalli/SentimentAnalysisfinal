@@ -70,7 +70,6 @@ function BehaviorAnalysis() {
   const classes = useStyles();
 
   return (
-    <SideNav>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
@@ -146,7 +145,6 @@ function BehaviorAnalysis() {
           </Grid>
         </Grid>
       </div>
-    </SideNav>
   );
 }
 

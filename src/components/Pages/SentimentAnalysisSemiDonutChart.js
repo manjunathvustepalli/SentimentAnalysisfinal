@@ -189,7 +189,7 @@ function SentimentAnalysisSemiDonutChart() {
     }, [languages,sentiments,sources])
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
@@ -269,7 +269,7 @@ function SentimentAnalysisSemiDonutChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
 
     )
 }

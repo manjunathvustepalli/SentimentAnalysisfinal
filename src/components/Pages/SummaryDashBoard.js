@@ -56,7 +56,6 @@ function SummaryDashBoard() {
     const [to, setTo] = useState(addMonths(new Date(),0))
 
     return (
-        <SideNav>    
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
                 <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
                     Summary Dashboard
@@ -134,7 +133,6 @@ function SummaryDashBoard() {
                     </Grid>
                 </Grid>
             </div>
-        </SideNav>
     )
 }
 

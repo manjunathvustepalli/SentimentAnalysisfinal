@@ -34,6 +34,7 @@ import TrendAnalysisLineChart from "../Pages/TrendAnalysisLineChart";
 import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
 import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
 import Test from "../Pages/Test";
+import SideNav from "../Navigation/SideNav";
 
 
 function Routes() {
@@ -43,12 +44,13 @@ function Routes() {
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Login} />
-        <Route path="/summary-dashboard" exact component={SummaryDashBoard} />
-        <Route
+        <SideNav>
+          <Route path="/summary-dashboard" exact component={SummaryDashBoard} />
+          <Route
           path="/sentimental-analysis/area-chart"
           exact
           component={SentimentalAnalysisAreaChart}
-        />
+          />
         <Route
           path="/sentimental-analysis/pie-chart"
           exact
@@ -128,6 +130,7 @@ function Routes() {
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
         <Route path="/test" exact component={Test} />
+        </SideNav>
         <Route component={SideNavBar} />
       </Switch>
     </BrowserRouter>

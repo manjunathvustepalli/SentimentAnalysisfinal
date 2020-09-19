@@ -63,7 +63,6 @@ function AdminPage() {
       setValue(newValue);
     };
     return (
-        <SideNav>
             <Grid container style={{marginTop:'40px'}}>
                 <Grid item xs={1}/>
                 <Grid item xs={10}>
@@ -89,8 +88,6 @@ function AdminPage() {
                 </Grid>
                 <Grid item xs={1}/>
             </Grid>
-      
-        </SideNav>
     )
 }
 

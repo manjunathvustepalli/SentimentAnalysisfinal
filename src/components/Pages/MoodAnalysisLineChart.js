@@ -300,7 +300,7 @@ function MoodAnalysisLineChart() {
     },[sources])
  
     return (
-        <SideNav>
+        <>
         <div style={{ backgroundColor: '#F7F7F7',padding:'20px', }}>            
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
@@ -367,7 +367,7 @@ function MoodAnalysisLineChart() {
             </Grid>
         </Grid>
     </div>       
-    </SideNav>
+    </>
     )
 }
 

@@ -158,7 +158,7 @@ function TrendAnalysisSemiDonut() {
       },[languages,sources])
     
     return (
-        <SideNav>
+        <>
         {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
         {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
@@ -230,7 +230,7 @@ function TrendAnalysisSemiDonut() {
             </Grid>
           </Grid>
         </div>
-      </SideNav>
+      </>
   
     )
 }

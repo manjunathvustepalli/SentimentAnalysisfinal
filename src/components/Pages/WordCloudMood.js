@@ -288,7 +288,7 @@ function WordCloudSentiment() {
     },[sources,subSources,moods,wordCount])
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
@@ -389,7 +389,7 @@ function WordCloudSentiment() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     )
 }
 

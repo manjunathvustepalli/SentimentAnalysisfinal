@@ -194,7 +194,7 @@ function GlobalSearch() {
     }
 
     return (
-        <SideNav>
+        <>
             <Grid container spacing={3} style={{padding:'30px'}}>
             <Grid item xs={10}>
                 <Grid container>
@@ -312,7 +312,7 @@ function GlobalSearch() {
                 </div>
             </Grid>
         </Grid>
-        </SideNav>    
+        </>    
     )
 }
 
