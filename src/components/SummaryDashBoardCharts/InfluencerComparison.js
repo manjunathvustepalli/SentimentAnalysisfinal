@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl } from '@material-ui/core'
+import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl} from '@material-ui/core'
 import TreeMap from '../charts/TreeMap'
 import Axios from 'axios';
 import { useEffect } from 'react';
 import { capitalizeString } from '../../helpers';
 import CustomLegend from '../CustomLegend';
+import colors from '../../helpers/colors'
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -342,6 +343,15 @@ function InfluencerComparison({from,to}) {
             </Grid>
             <Grid item xs={12}>
             <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>
+            <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {
+                type === 'Sentiment' ? (
+                  ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                ) : (
+                  ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                )
+              }
+            </div>
             </Grid>
         </Grid>
     </Card>
