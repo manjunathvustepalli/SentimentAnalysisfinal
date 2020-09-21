@@ -35,10 +35,14 @@ import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
 import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
 import Test from "../Pages/Test";
 import SideNav from "../Navigation/SideNav";
+import { WordCloudContext } from "../../contexts/WordCloudContext";
+import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
 
 
 function Routes() {
   return (
+    <TrendingSubjectContext>
+    <WordCloudContext>
     <MoodAnalysisContext>
     <SentimentAnalysisContext>
     <BrowserRouter>
@@ -136,6 +140,8 @@ function Routes() {
     </BrowserRouter>
     </SentimentAnalysisContext>
     </MoodAnalysisContext>
+    </WordCloudContext>
+    </TrendingSubjectContext>
   );
 }
 

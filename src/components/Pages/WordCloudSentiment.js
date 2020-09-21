@@ -1,22 +1,22 @@
-import React,{useState, useEffect} from 'react'
-import SideNav from '../Navigation/SideNav'
+import React,{useState, useEffect, useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography, Button, MenuItem, Select, InputLabel, FormControl } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import {addMonths, getKeyArray} from '../../helpers'
-import { green } from '@material-ui/core/colors';
+import { getKeyArray} from '../../helpers'
 import Axios from 'axios';
 import {wordCloudSentimentFilter} from '../../helpers/filter';
+import { WordCloudFiltersContext } from '../../contexts/WordCloudContext';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -92,25 +92,35 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
-
     const handleTabChange = (event, newValue) => {
         setValue(newValue);
       };
+    const wordCloudFilters = useContext(WordCloudFiltersContext)
+    const {
+        keywords,
+        setKeywords,
+        keywordType, 
+        setKeywordType,
+        from,
+        setFrom,
+        to,
+        setTo,
+        sources,
+        setSources,
+        subSources,
+        setSubSources,
+        sentiments,
+        setSentiments,
+        wordCount, 
+        setWordCount,
+        value,
+        setValue,
+    } = wordCloudFilters
 
-    const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
-    const [sources, setSources] = useState({})
-    const [subSources,setSubSources] = useState({})
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
-    const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
-    const [wordCount, setWordCount] = useState(30)
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
 
-
-    useEffect( () => {
+    const fetchData = (changeInState) => {
         let query = {
             "aggs": {
                 "date-based-range": {
@@ -224,31 +234,70 @@ function WordCloudSentiment() {
                     })
                 })
             })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+            if(changeInState){
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
-            })
-            setSubSources(availableSubSourceKeys)
-
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = !!prev[source]
+                    })
+                    return availableSourceKeys
+                })
+    
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = !!prev[subSource]
+                    })
+                    return availableSubSourceKeys
+                })
+    
+                setSentiments(prev => {
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                        return {negative:true,positive:true,neutral:true}
+                    }
+                })    
+            } else {
+                let availableSourceKeys = {}
+                uniqueSourceKeys.forEach(source =>{
+                    availableSourceKeys[source] = true
+                })
+                setSources(availableSourceKeys)
+    
+                let availableSubSourceKeys = {}
+                uniqueSubSourceKeys.forEach(subSource =>{
+                    availableSubSourceKeys[subSource]  = true
+                })
+                setSubSources(availableSubSourceKeys)
+    
+                setSentiments(prev => {
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                        return {negative:true,positive:true,neutral:true}
+                    }
+                })
+    
+            }
           })
           .catch(err => {
               console.log(err.response)
           })
-    },[to,from,refresh,keywords,keywordType])
+    }
+
+	useMountAndUpdateEffect(()=>{
+        fetchData(false)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(false)
+        }
+	},[keywordType])
 
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
@@ -355,6 +404,7 @@ function WordCloudSentiment() {
                                     // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
+                                    keywords={keywords}
                                 />
                             </FilterWrapper>
                         </Grid>

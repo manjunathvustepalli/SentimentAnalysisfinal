@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl } from '@material-ui/core'
 import TreeMap from '../charts/TreeMap'
-import InlineFilter from '../Filters/InlineFilter'
-import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import { useEffect } from 'react';
 import { capitalizeString } from '../../helpers';
+import CustomLegend from '../CustomLegend';
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -210,7 +209,7 @@ function InfluencerComparison({from,to}) {
                     setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                           return {
                               name: doc.key,
-                              parent:doc[type].buckets[0].key,
+                              parent: doc[type].buckets[0] ? doc[type].buckets[0].key : 'unknown',
                               value:doc.influenceWeight.value,
                               dataLabels:{
                                 color:'#000',
@@ -281,7 +280,7 @@ function InfluencerComparison({from,to}) {
                     return {
                         name:doc.key,
                         value:doc.ArticleCount.value,
-                        parent:doc[type].buckets[0].key,
+                        parent: doc[type].buckets[0] ? doc[type].buckets[0].key : 'unknown',
                         dataLabels:{
                           color:'#000',
                           style:{
@@ -294,7 +293,7 @@ function InfluencerComparison({from,to}) {
               .catch(err => {
                   console.log(err)
               })
-        }
+            }
           },[from,to,source,type])
 
     return (

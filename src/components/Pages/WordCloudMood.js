@@ -1,22 +1,24 @@
-import React,{useState, useEffect} from 'react'
-import SideNav from '../Navigation/SideNav'
+import React,{useState, useEffect, useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import { addMonths, getKeyArray } from '../../helpers'
+import { getKeyArray } from '../../helpers'
 import Axios from 'axios';
 import { wordCloudSentimentFilter } from '../../helpers/filter';
-import { green } from '@material-ui/core/colors';
+import { WordCloudFiltersContext } from '../../contexts/WordCloudContext';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
+import colors from '../../helpers/colors'
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -92,25 +94,33 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
+    const handleTabChange = (event, newValue) => setValue(newValue)
+    const wordCloudFilters = useContext(WordCloudFiltersContext)
+    const {
+        keywords,
+        setKeywords,
+        keywordType, 
+        setKeywordType,
+        from,
+        setFrom,
+        to,
+        setTo,
+        sources,
+        setSources,
+        subSources,
+        setSubSources,
+        moods,
+        setMoods,
+        wordCount, 
+        setWordCount,
+        value,
+        setValue
+    } = wordCloudFilters
 
-    const handleTabChange = (event, newValue) => {
-        setValue(newValue);
-      };
-
-    const [moods, setMoods] = useState({})
-    const [sources, setSources] = useState({})
-    const [subSources,setSubSources] = useState({})
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
-    const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
-    const [wordCount, setWordCount] = useState(30)
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
 
-
-    useEffect( () => {
+    const fetchData = (changeInState) => {
         let query = {
             "aggs": {
                 "date-based-range": {
@@ -200,83 +210,81 @@ function WordCloudSentiment() {
                         moodKeys = getKeyArray(moodBuckets)
                         moodKeys.forEach((mood,l)=>{
                             sortedData[key][source][subSource][mood] = moodBuckets[l].Words.buckets.map(wordObj => {
-                                if(mood === 'joy'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(17, 237, 24)'
-                                    }
-                                } else if(mood === 'anticipation'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(46, 190, 230)'
-                                    }
-                                }else if(mood === 'surprise'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(237, 147, 74)'
-                                    }
-                                }else if(mood === 'disgust'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(237, 74, 204)'
-                                    }
-                                }else if(mood === 'sad'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(237, 226, 74)'
-                                    }
-                                }else if(mood === 'fear'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(255,255,255)'
-                                    }
-                                }else if(mood === 'trust'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(181, 180, 163)'
-                                    }
-                                }else if(mood === 'anger'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(217, 30, 52)'
-                                    }
+                                return {
+                                    name:wordObj.key,
+                                    weight:wordObj.doc_count,
+                                    color:colors[mood]
                                 }
                             })
                         })
                     })
                 })
             })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
-            })
-            setSubSources(availableSubSourceKeys)
+            if(changeInState){
 
-            setMoods(prev =>{
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                }}) 
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = !!prev[source]
+                    })
+                    return availableSourceKeys
+                })
+    
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = !!prev[subSource]
+                    })
+                    return availableSubSourceKeys
+                })
+    
+                setMoods(prev =>{
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                       return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                    }}) 
+            } else {
+                let availableSourceKeys = {}
+                uniqueSourceKeys.forEach(source =>{
+                    availableSourceKeys[source] = true
+                })
+                setSources(availableSourceKeys)
+    
+                let availableSubSourceKeys = {}
+                uniqueSubSourceKeys.forEach(subSource =>{
+                    availableSubSourceKeys[subSource]  = true
+                })
+                setSubSources(availableSubSourceKeys)
+    
+                setMoods(prev =>{
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                       return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+                    }}) 
+            }
           })
           .catch(err => {
+              console.log(err)
           })
-    },[to,from,refresh,keywords,keywordType])
+    }
 
+
+
+	useMountAndUpdateEffect(()=>{
+        fetchData(false)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(false)
+        }
+	},[keywordType])
+	
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
         Object.keys(temp).forEach(language => {
@@ -345,7 +353,7 @@ function WordCloudSentiment() {
                                 textColor="primary"
                                 variant="scrollable"
                                 scrollButtons="auto"
-                                TabIndicatorProps={{style: {background:green[800]}}}
+                                TabIndicatorProps={{style: {background:'rgb(67, 176, 42)'}}}
                                 aria-label="scrollable auto tabs example"
                                 >
                                     {
@@ -382,6 +390,7 @@ function WordCloudSentiment() {
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
                                     moods={[moods,setMoods]}
+                                    keywords={keywords}
                                 />
                             </FilterWrapper>
                         </Grid>

@@ -3,6 +3,7 @@ import { Grid, makeStyles, InputLabel, Select, MenuItem, FormControl } from '@ma
 import Axios from 'axios'
 import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
+import CustomLegend from '../CustomLegend'
 
 var sortedData = {}
 
@@ -252,6 +253,9 @@ function WordCloud(props) {
             </Grid>
             <Grid item xs={12}>
                 <WordCloudChart title={`${capitalizeString(source)}  ${type==='sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} ${ capitalizeString(type)} Word Cloud`} data={data} />
+                <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <CustomLegend color={ type === 'sentiment' ? colors[sentiment] : colors[mood]} word={type === 'sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} />    
+                </div>
             </Grid>
         </Grid>
     )
