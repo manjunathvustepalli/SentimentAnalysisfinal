@@ -11,13 +11,14 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import { getKeyArray } from '../../helpers'
+import { capitalizeString, getKeyArray } from '../../helpers'
 import Axios from 'axios';
 import { wordCloudSentimentFilter } from '../../helpers/filter';
 import { WordCloudFiltersContext } from '../../contexts/WordCloudContext';
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import colors from '../../helpers/colors'
+import CustomLegend from '../CustomLegend';
 
 
 function TabPanel(props) {
@@ -368,6 +369,11 @@ function WordCloudSentiment() {
                                         return (
                                             <TabPanel value={value} index={i}>
                                                 <WordCloud data={data[lang]} />
+                                                <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                                {
+                                                    ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                                                }
+                                                </div>
                                             </TabPanel>
                                         )
                                     })

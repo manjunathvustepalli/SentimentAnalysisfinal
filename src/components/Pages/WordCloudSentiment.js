@@ -11,12 +11,15 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import { getKeyArray} from '../../helpers'
+import { capitalizeString, getKeyArray} from '../../helpers'
 import Axios from 'axios';
 import {wordCloudSentimentFilter} from '../../helpers/filter';
 import { WordCloudFiltersContext } from '../../contexts/WordCloudContext';
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
+import CustomLegend from '../CustomLegend';
+import colors from '../../helpers/colors'
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -92,9 +95,7 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
-    const handleTabChange = (event, newValue) => {
-        setValue(newValue);
-      };
+    const handleTabChange = (event, newValue) => setValue(newValue)
     const wordCloudFilters = useContext(WordCloudFiltersContext)
     const {
         keywords,
@@ -382,6 +383,11 @@ function WordCloudSentiment() {
                                         return (
                                             <TabPanel value={value} index={i}>
                                                 <WordCloud data={data[lang]} />
+                                                <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                                {
+                                                    ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                                                }
+                                                </div>
                                             </TabPanel>
                                         )
                                     })
