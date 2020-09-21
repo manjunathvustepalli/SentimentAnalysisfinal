@@ -8,7 +8,7 @@ import FilterHeader from '../Filters/FilterHeader'
 import Table2 from '../Tables/Table2'
 import Table3 from '../Tables/Table3'
 import TreeMap from '../charts/TreeMap'
-import { addMonths } from '../../helpers'
+import { addMonths, capitalizeString } from '../../helpers'
 import Axios from 'axios';
 import { green } from '@material-ui/core/colors';
 import EmailIcon from '@material-ui/icons/Email';
@@ -16,6 +16,7 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import colors from '../../helpers/colors';
+import CustomLegend from '../CustomLegend';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -469,9 +470,19 @@ function InfluencerAnalysis() {
                                 <Grid item xs={11}>
                                     <TabPanel value={value} index={0}>
                                         <TreeMap title={`${source} Influence comparison Treemap based on Sentiment`} data={sentimentData} />
+                                        <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                          {
+                                            ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                                          }
+                                        </div>
                                     </TabPanel>
                                     <TabPanel value={value} index={1}>
                                         <TreeMap title={`${source} Influence comparison Treemap based on Mood`} data={moodData} />
+                                        <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                          {
+                                            ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                                          }
+                                        </div>
                                     </TabPanel>
                                 </Grid>
                             </Card>
