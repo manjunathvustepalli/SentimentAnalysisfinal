@@ -59,7 +59,6 @@ function InfluencerAnalysis() {
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
 
-
     const useStyles = makeStyles((theme) => ({
       root: {
         display: 'flex',
@@ -298,8 +297,8 @@ function InfluencerAnalysis() {
                         influencer: <div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} >{doc.key.split('')[0].toUpperCase()}</Avatar> &nbsp;&nbsp; {doc.key} </div>,
                         posts: <span> <EmailIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Posts.value} </span>,
                         followers: <span> <SupervisorAccountIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Followers.value} </span>,
-                        mood: <span style={{color:colors[doc.Moods.buckets[0].key]}} > {doc.Moods.buckets[0].key} </span> ,
-                        sentiment: <span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
+                        mood: doc.Moods.buckets[0] ? (<span style={{color:colors[doc.Moods.buckets[0].key]}} > {doc.Moods.buckets[0].key} </span> ) : (<span style={{color:'#aaa'}} > unknown </span> ),
+                        sentiment: doc.Sentiment.buckets[0] ? (<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span>) : (<span style={{color:'#aaa'}} > unknown </span>)  
                     }
                 }))
                 setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
@@ -307,7 +306,7 @@ function InfluencerAnalysis() {
                     name: doc.key,
                     posts:doc.Posts.value,
                     followers:doc.Followers.value,
-                    parent:doc.Moods.buckets[0].key,
+                    parent: doc.Moods.buckets[0] ? (doc.Moods.buckets[0].key) : ("unknown"),
                     value:doc.influenceWeight.value,
                     dataLabels:{
                       color:'#000',
@@ -322,7 +321,7 @@ function InfluencerAnalysis() {
                     name: doc.key,
                     posts:doc.Posts.value,
                     followers:doc.Followers.value,
-                    parent:doc.Sentiment.buckets[0].key,
+                    parent: doc.Sentiment.buckets[0] ? (doc.Sentiment.buckets[0].key) : ("unknown"),
                     value:doc.influenceWeight.value,
                     dataLabels:{
                       color:'#000',
