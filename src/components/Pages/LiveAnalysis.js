@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import LaunchIcon from '@material-ui/icons/Launch';
+import HtmlToPdf from 'html-to-pdf'
 
 const useStyles = makeStyles((theme) => ({
     root: {

@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 function InfluencerAnalysis() {
 
-  const wordCloudFilters = useContext(TrendingSubjectFiltersContext)
+  const trendingSubjectsFilters = useContext(TrendingSubjectFiltersContext)
 
   const {
     sources, 
@@ -89,7 +89,7 @@ function InfluencerAnalysis() {
     setKeywords,
     keywordType,
     setKeywordType
-} = wordCloudFilters
+} = trendingSubjectsFilters
 
   const [refresh, setRefresh] = useState(true);
   const [data, setData] = useState([])
@@ -199,26 +199,40 @@ function InfluencerAnalysis() {
             })
           })
         })
+        let selectedLanguage 
+        let selectedSource 
+        let selectedSubSource
     setLanguages(languageKeys)
     setLanguage(prev => {
       if(languageKeys.includes(prev)){
+        selectedLanguage = prev
         return prev
       } else {
+        selectedLanguage = languageKeys[0] 
        return languageKeys[0]
       }
     } )
     setSources(uniqueSources)
     setSource(prev => {
       if(uniqueSources.includes(prev)){
+        selectedSource = prev
         return prev
       } else {
+        selectedSource = uniqueSources[0] 
         return uniqueSources[0]
       }
     })
-    setSubSources(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]]))
-    setSubSource(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]])[0])
+    setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
+    setSubSource(Object.keys(sortedData[selectedLanguage][selectedSource])[0])
     setMoods(uniqueMoodKeys)
-    setmood(uniqueMoodKeys[0])
+    setmood(prev =>{
+      if(uniqueMoodKeys.includes(prev)){
+        return prev
+      } else {
+        return uniqueMoodKeys[0]
+      }
+    })
+
   })
   .catch(err=>{
     console.log(err)
@@ -226,12 +240,12 @@ function InfluencerAnalysis() {
   }
 
 useEffect(()=>{
-
+  fetchData()  
 },[from,to,refresh,keywords,keywordType])
 
 useEffect(() => {
    try{
-     if(sortedData[language][source][subSource][mood]){
+     if(sortedData[language][source][subSource][mood].length){
        setData(sortedData[language][source][subSource][mood])
        setnoData(false)
      } else {
@@ -247,9 +261,12 @@ useEffect(() => {
 
 useEffect(() => {
   try{
-    if(sortedData[language][source][subSource][mood]){
+    if(sortedData[language][source][subSource][mood].length){
       setData(sortedData[language][source][subSource][mood])
       setnoData(false)
+    } else {
+      setnoData(true)
+      setData([])      
     }
   } catch(err){
     if(sortedData[language]){
@@ -258,6 +275,7 @@ useEffect(() => {
         setSubSource(Object.keys(sortedData[language][source])[0])
       }
     }
+    setData([])
     setnoData(true)
     console.log(err)
   }
@@ -319,7 +337,7 @@ useEffect(() => {
                   </Button>
                 </Grid>
                 <Grid item xs={12} className={classes.tablecenter}>
-                  <TrendingSubjectsBarChart data={data} />
+                  <TrendingSubjectsBarChart y={'frequency'} data={data} />
                 </Grid>
                 {/* <Grid item xs={11}>
                   <TrendingSubjectsTable />
@@ -349,6 +367,7 @@ useEffect(() => {
                     radioLanguages={[language,setLanguage,languages]}
                     AutoCompleteSubSources={[subSource,setSubSource,subSources]}
                     setKeywords={setKeywords}
+                    keywords={keywords}
                     keywordTypes={[keywordType, setKeywordType]}
                   />
                 </FilterWrapper>

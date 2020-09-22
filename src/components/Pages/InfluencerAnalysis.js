@@ -107,7 +107,7 @@ function InfluencerAnalysis() {
     const parentSentiment = [{
       id: 'negative',
       name: 'Negative',
-      color: "#EC2500",
+      color: colors['negative'],
       dataLabels:{
         color:'#000',
         style:{
@@ -117,29 +117,29 @@ function InfluencerAnalysis() {
   }, {
       id: 'positive',
       name: 'Positive',
-      color: "#9EDE00",
+      color: colors['positive'],
       dataLabels:{
         color:'#000',
         style:{
             textOutline:'none'
         }
-    }
-  }, {
+      }
+    }, {
       id: 'neutral',
       name: 'Neutral',
-      color: '#EC9800',
-                      dataLabels:{
-                    color:'#000',
-                    style:{
-                        textOutline:'none'
-                    }
-                }
-  }]
+      color: colors['neutral'],
+      dataLabels:{
+      color:'#000',
+      style:{
+          textOutline:'none'
+        }
+      }
+    }]
   
   const parentMood = [{
     id:'joy',
     name:'Joy',
-    color:"rgb(0,255,0)",                
+    color:colors['joy'],                
     dataLabels:{
       color:'#000',
       style:{
@@ -149,7 +149,7 @@ function InfluencerAnalysis() {
   },{
     id:'sad',
     name:'sad',
-    color:"rgb(236,240,22)",
+    color:colors['sad'],
     dataLabels:{
       color:'#000',
       style:{
@@ -159,7 +159,7 @@ function InfluencerAnalysis() {
   },{
     id:'anger',
     name:'anger',
-    color:"rgb(240,22,37)",
+    color:colors['anger'],
     dataLabels:{
       color:'#000',
       style:{
@@ -169,7 +169,7 @@ function InfluencerAnalysis() {
   },{
     id:'anticipation',
     name:'anticipation',
-    color:"rgb(29, 180, 240)",
+    color:colors['anticipation'],
     dataLabels:{
       color:'#000',
       style:{
@@ -179,7 +179,7 @@ function InfluencerAnalysis() {
   },{
     id:'disgust',
     name:'disgust',
-    color:"rgb(226, 29, 240)",
+    color:colors['disgust'],
     dataLabels:{
       color:'#000',
       style:{
@@ -189,7 +189,7 @@ function InfluencerAnalysis() {
   },{
     id:'surprise',
     name:'surprise',
-    color:"rgb(240,124,29)",
+    color:colors['surprise'],
     dataLabels:{
       color:'#000',
       style:{
@@ -199,7 +199,7 @@ function InfluencerAnalysis() {
   },{
     id:'fear',
     name:'fear',
-    color:"#616C6F",
+    color:colors['fear'],
     dataLabels:{
       color:'#000',
       style:{
@@ -209,7 +209,7 @@ function InfluencerAnalysis() {
   },{
     id:'trust',
     name:'trust',
-    color:"rgb(217, 202, 202)",
+    color:colors['trust'],
     dataLabels:{
       color:'#000',
       style:{

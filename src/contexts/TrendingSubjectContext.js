@@ -14,6 +14,8 @@ export const TrendingSubjectContext = ({ children }) => {
     const [to, setTo] = useState(addMonths(new Date(), 0));
     const [moods, setMoods] = useState([])
     const [mood, setmood] = useState('joy');
+    const [sentiment, setSentiment] = useState('positive');
+    const [sentiments, setSentiments] = useState(['positive','negative','neutral']);
     const [keywords, setKeywords] = useState([])
     const [keywordType, setKeywordType] = useState('Entire Data')
   
@@ -26,6 +28,10 @@ export const TrendingSubjectContext = ({ children }) => {
         setSubSources,
         subSource, 
         setSubSource,
+        sentiment,
+        setSentiment,
+        sentiments,
+        setSentiments,
         languages, 
         setLanguages,
         language, 

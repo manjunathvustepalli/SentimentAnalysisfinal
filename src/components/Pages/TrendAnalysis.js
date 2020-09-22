@@ -130,17 +130,17 @@ function TrendAnalysis(props) {
           })
         })
       })
-      let availableSourceKeys = {}
-      uniqueSourceKeys.forEach(source =>{
-          availableSourceKeys[source] = true
-      })
-      setSources(availableSourceKeys)
-
       let availableLanguageKeys = {}
       uniqueLanguageKeys.forEach(lang =>{
           availableLanguageKeys[lang] = true
       })
       setLanguages(availableLanguageKeys)
+
+      let availableSourceKeys = {}
+      uniqueSourceKeys.forEach(source =>{
+          availableSourceKeys[source] = true
+      })
+      setSources(availableSourceKeys)
     })
     .catch(err=>{
       console.log(err)
@@ -152,7 +152,7 @@ function TrendAnalysis(props) {
       let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
       return data
     })
-  },[languages,sources])
+  },[sources,languages])
 
   useEffect(() => {
     let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)

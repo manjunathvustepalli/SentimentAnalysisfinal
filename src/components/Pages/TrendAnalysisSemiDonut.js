@@ -180,12 +180,12 @@ function TrendAnalysisSemiDonut() {
                   <FormControl variant="outlined" className={classes.formControl}>
                       <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
                       <Select
-                                  labelId="demo-simple-select-outlined-label"
-                                  id="demo-simple-select-outlined"
-                                  label="Change Chart Type"
-                                  value={chartType}
-                                  onChange={(e) => setChartType(e.target.value)}
-                              >
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          label="Change Chart Type"
+                          value={chartType}
+                          onChange={(e) => setChartType(e.target.value)}
+                      >
                           <MenuItem value={'bar'}>Bar chart</MenuItem>
                           <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
                           <MenuItem value={'area'}>Area chart</MenuItem>                            
@@ -198,7 +198,7 @@ function TrendAnalysisSemiDonut() {
                         {
                           Object.keys(pieData).map((source) =>{
                             return (
-                            <Grid item xs={12} sm={6} md={4} lg={4} align='center' >
+                            <Grid item xs={12} sm={6} md={3} lg={3} align='center' >
                               <SemiDonutChart data={pieData[source]} />
                               <Button variant='outlined' color='primary'>
                                     {source}

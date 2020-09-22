@@ -38,7 +38,6 @@ import { useEffect } from 'react';
 import PageviewIcon from '@material-ui/icons/Pageview';
 
 const drawerWidth = 260;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -85,7 +84,6 @@ const SideNavBar = ( props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
         return {color:'rgb(67,176,42)'}
@@ -93,7 +91,7 @@ const SideNavBar = ( props) => {
     else{
         return {color:"black"}
     }
-}
+  }
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -131,7 +129,7 @@ const SideNavBar = ( props) => {
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/line-chart','/trend-analysis/stacked-bar-chart'],
+      path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
     }, 
     {
       name:'Global Search',

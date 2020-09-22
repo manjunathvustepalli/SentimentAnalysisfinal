@@ -63,8 +63,8 @@ function SummaryDashBoard() {
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
                         <div className={'keyword-wrapper'}>
-                        <Card style={{backgroundColor:'#2C3335'}} >
-                            <IconWithText style={{margin:'10px 10px 0 10px'}}>
+                        <Card style={{backgroundColor:'#2C3335',height:'130px'}} >
+                            <IconWithText style={{margin:'15px'}}>
                                 <FilterListIcon style={{color:'white'}} /> 
                                 <p style={{color:'white'}} > FILTERS </p>
                             </IconWithText>

@@ -43,7 +43,7 @@ function TrendingSubjectsBarChart(props) {
     },
     yAxis: {
       title: {
-        text: "data",
+        text: props.y || "data",
       },
     },
     legend: {
@@ -81,7 +81,7 @@ function TrendingSubjectsBarChart(props) {
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
       pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>',
+        '<span style="color:{point.color}">{point.name}</span>, frequency : <b>{point.y}</b><br/>',
     },
 
     series: [

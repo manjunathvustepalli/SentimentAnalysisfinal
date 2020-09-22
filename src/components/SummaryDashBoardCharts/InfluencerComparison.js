@@ -305,7 +305,7 @@ function InfluencerComparison({from,to}) {
             </Grid>
             <Grid item xs={7}  >
                 <Grid container style={{marginTop:'15px'}}>
-                <Grid item xs={4} >
+                <Grid item xs={5} >
                   <FormControl variant="outlined" style={{width:'100%'}} >
                     <InputLabel id="select-source" >Source</InputLabel>
                       <Select 
@@ -322,7 +322,7 @@ function InfluencerComparison({from,to}) {
                   </FormControl>
                 </Grid>
             <Grid item xs={1}/>
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <FormControl variant="outlined" style={{width:'100%'}} >
               <InputLabel id="Select-type">Select Type </InputLabel>
                     <Select
