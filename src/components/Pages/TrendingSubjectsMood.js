@@ -80,7 +80,6 @@ function InfluencerAnalysis() {
     setFrom,
     to,
     setTo,
-    moods,
     setMoods,
     mood,
     setmood,
@@ -198,7 +197,6 @@ function InfluencerAnalysis() {
         })
         let selectedLanguage 
         let selectedSource 
-        let selectedSubSource
     setLanguages(languageKeys)
     setLanguage(prev => {
       if(languageKeys.includes(prev)){

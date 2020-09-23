@@ -6,7 +6,6 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import CodeIcon from '@material-ui/icons/Code';
-import TranslateIcon from '@material-ui/icons/Translate';
 import MoodIcon from '@material-ui/icons/Mood';
 import styled from 'styled-components';
 import Keywords from './Keywords';

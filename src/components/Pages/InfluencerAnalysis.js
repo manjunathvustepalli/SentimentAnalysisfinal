@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from "prop-types";
-import {Box, Grid, Typography, Card, CardContent, makeStyles, Tab, Tabs, Avatar } from '@material-ui/core'
+import {Box, Grid, Typography, Card, CardContent, makeStyles, Tab, Tabs, Avatar, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import FilterHeader from '../Filters/FilterHeader'
@@ -16,6 +16,8 @@ import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import colors from '../../helpers/colors';
 import CustomLegend from '../CustomLegend';
+
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -58,7 +60,6 @@ function InfluencerAnalysis() {
     const [data, setData] = useState([])
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
-
     const useStyles = makeStyles((theme) => ({
       root: {
         display: 'flex',
@@ -102,7 +103,6 @@ function InfluencerAnalysis() {
             marginBottom: '10px'
         }
     }));
-
     const parentSentiment = [{
       id: 'negative',
       name: 'Negative',
@@ -134,8 +134,7 @@ function InfluencerAnalysis() {
         }
       }
     }]
-  
-  const parentMood = [{
+    const parentMood = [{
     id:'joy',
     name:'Joy',
     color:colors['joy'],                
@@ -215,7 +214,7 @@ function InfluencerAnalysis() {
           textOutline:'none'
       }
   }
-  }]
+    }]
 
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
@@ -429,10 +428,25 @@ function InfluencerAnalysis() {
                         <Grid item xs={12}>
                             <Card className={classes.main}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={8}>
+                                    <Grid item xs={12} md={7}>
                                         <CardContent>
                                             Top Influencers
                                         </CardContent>
+                                    </Grid>
+                                    <Grid xs={12} md={5}>
+                                    <FormControl variant="outlined" className={classes.formControl}>
+							                        <InputLabel id="top-influencers">Select Influencers Count</InputLabel>
+							                        <Select
+							                        	labelId="top-influencers"
+							                        	id="top-influencers-select"
+                                        label="Select Influencers Count"
+                                        variant={'outlined'}
+                                        fullWidth
+							                        >
+							                        <MenuItem value='pie'> Top 10 Influencers </MenuItem>
+							                        <MenuItem value='semi pie'> Top 25 Influencers </MenuItem>
+							                        </Select>
+							                      </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
                                         {

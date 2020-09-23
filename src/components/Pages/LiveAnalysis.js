@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import LaunchIcon from '@material-ui/icons/Launch';
-import HtmlToPdf from 'html-to-pdf'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,9 +55,9 @@ function LiveAnalysis() {
     const [data, setData] = useState([]);
     const [liveReloading, setLiveReloading] = useState(false);
     const [reloadInterval, setReloadInterval] = useState(10000);
-    const [to, setTo] = useState(new Date());
-    const [from, setFrom] = useState(new Date());
-    const [keyword, setKeyword] = useState('');
+    const [to] = useState(new Date());
+    const [from] = useState(new Date());
+    const [keyword] = useState('');
     const [source, setSource] = useState('twitter');
     const [columns, setColumns] = useState([
         {title:'Name',field:'name'},
@@ -113,7 +112,7 @@ function LiveAnalysis() {
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
                       if(post.MediaURLHttps){
                         return (
-                          <a target="_blank" style={{textDecoration:'none',color:'white'}} href={post.MediaURLHttps}>
+                          <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={post.MediaURLHttps}>
                             <Button
                               endIcon={<LaunchIcon/>}
                               className={classes.root}
@@ -122,7 +121,7 @@ function LiveAnalysis() {
                         ) 
                       } else{
                         return (
-                            <a target="_blank" style={{textDecoration:'none',color:'white'}} href={post.MediaURL}>
+                            <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={post.MediaURL}>
                               <Button
                           className={classes.root}
                           endIcon={<LaunchIcon/>}
@@ -132,25 +131,25 @@ function LiveAnalysis() {
                       }
                     })
                     if(user._source.MediaEntities[0].ExpandedURL){
-                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].ExpandedURL}>
+                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].ExpandedURL}>
                       <Button
                         className={classes.root}
                         endIcon={<LaunchIcon/>}
                       > Click Here </Button></a> 
                     } else if(user._source.MediaEntities[0].DisplayURL){
-                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].DisplayURL}>
+                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].DisplayURL}>
                       <Button
                         className={classes.root}
                         endIcon={<LaunchIcon/>}
                       > Click Here </Button></a> 
                     } else if(user._source.MediaEntities[0].Text){
-                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].Text}>
+                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].Text}>
                       <Button
                         className={classes.root}
                         endIcon={<LaunchIcon/>}
                       > Click Here </Button></a> 
                     } else if(user._source.MediaEntities[0].URL){
-                      obj.postUrl = <a target="_blank" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].URL}>
+                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].URL}>
                       <Button
                         className={classes.root}
                         endIcon={<LaunchIcon/>}

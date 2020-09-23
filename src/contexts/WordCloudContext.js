@@ -106,7 +106,7 @@ export const WordCloudContext = ({ children }) => {
         }
         Axios.post(process.env.REACT_APP_URL,query)
           .then(fetchedData =>{
-            var sourceKeys,subSourceKeys,moodKeys
+            var sourceKeys,subSourceKeys
             var uniqueSourceKeys = []
             var uniqueSubSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
@@ -125,7 +125,6 @@ export const WordCloudContext = ({ children }) => {
                             uniqueSubSourceKeys.push(subSource)
                         }
                         let moodBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
-                        moodKeys = getKeyArray(moodBuckets)
                     })
                 })
             })

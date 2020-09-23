@@ -9,8 +9,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
-import ArtTrackIcon from '@material-ui/icons/ArtTrack';
-import { green } from '@material-ui/core/colors';
 
 const columns = [
   { id: 'newspaper', label: 'News Paper',align:'center' },

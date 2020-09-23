@@ -137,7 +137,7 @@ export default function MoodAnalysisSemiDonutChart() {
             }
         })
         .then(fetchedData => {
-            var sourceKeys,sourceBuckets,perDayKeys,perDayBuckets
+            var sourceKeys,sourceBuckets,perDayBuckets
             var uniqueSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
             var languageKeys = getKeyArray(languageBuckets)

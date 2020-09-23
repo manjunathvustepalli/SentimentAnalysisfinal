@@ -9,11 +9,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography, Grid, FormControl, InputLabel, Select, MenuItem, Avatar } from '@material-ui/core';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
-import ShareIcon from '@material-ui/icons/Share';
-import { green } from '@material-ui/core/colors';
 
 const columns = [
   { id: 'influencer', label: 'Influencer',align:'center' },
