@@ -9,6 +9,18 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { addMonths } from '../../helpers'
 
+
+const dateFormatter = (unix) => {
+    var date = new Date(unix);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var month = date.getMonth()+1
+    var year = date.getFullYear()
+    var todayDate = date.getDate()
+    return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+  }
+
 const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
@@ -59,6 +71,7 @@ function ExportData() {
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
                 }
+                obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
@@ -130,6 +143,7 @@ function ExportData() {
                         <MaterialTable 
                             title='Export Data'
                             columns={[
+                                {title:'Date',field:'date',editable:'never'},
                                 {title:'Name',field:'name',editable:'never'},
                                 {title:'Screen Name',field:'screenName',editable:'never',cellStyle: { whiteSpace: "nowrap" },
                                 headerStyle: { whiteSpace: "nowrap" }},

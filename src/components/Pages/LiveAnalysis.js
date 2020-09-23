@@ -9,6 +9,18 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import LaunchIcon from '@material-ui/icons/Launch';
 
+const dateFormatter = (unix) => {
+  var date = new Date(unix);
+  var hours = date.getHours();
+  var minutes = "0" + date.getMinutes();
+  var seconds = "0" + date.getSeconds();
+  var month = date.getMonth()+1
+  var year = date.getFullYear()
+  var todayDate = date.getDate()
+  return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
+
+
 const useStyles = makeStyles((theme) => ({
     root: {
       background: 'rgb(67, 176, 42)',
@@ -112,6 +124,7 @@ function LiveAnalysis() {
               
                 let obj = {}
                 if(user._source.User){
+
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
@@ -164,6 +177,7 @@ function LiveAnalysis() {
                       > Click Here </Button></a> 
                     }
                 }
+                obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
@@ -173,6 +187,7 @@ function LiveAnalysis() {
             setData(final)
             if(source === 'twitter'){
                 setColumns([
+                    {title:'Date',field:'date'},
                     {title:'Name',field:'name'},
                     {title:'Screen Name',field:'screenName',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
@@ -197,6 +212,7 @@ function LiveAnalysis() {
                 ])
             } else if( source === 'facebook'){
                 setColumns([
+                    {title:'Date',field:'date'},
                     {title:'Post',field:'tweet'},
                     {title:'Replies',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
@@ -210,6 +226,7 @@ function LiveAnalysis() {
                 ])
             } else if( source === 'newspaper' ){
                 setColumns([
+                    {title:'Date',field:'date'},
                     {title:'Post',field:'tweet'},
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},

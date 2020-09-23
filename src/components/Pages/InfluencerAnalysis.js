@@ -442,9 +442,11 @@ function InfluencerAnalysis() {
                                         label="Select Influencers Count"
                                         variant={'outlined'}
                                         fullWidth
+                                        value={10}
 							                        >
-							                        <MenuItem value='pie'> Top 10 Influencers </MenuItem>
-							                        <MenuItem value='semi pie'> Top 25 Influencers </MenuItem>
+							                        <MenuItem value={10}> Top 10 Influencers </MenuItem>
+							                        <MenuItem value={25}> Top 25 Influencers </MenuItem>
+							                        <MenuItem value={50}> Top 50 Influencers </MenuItem>
 							                        </Select>
 							                      </FormControl>
                                     </Grid>

@@ -70,13 +70,13 @@ function Login() {
                             <label htmlfor="userName-input" style={{display:'block',width:'100%'}} >
                             <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
                                 <AccountCircle style={{marginLeft:'40px',color:'#aaa'}}/>
-                                <input type='text'  placeholder="Enter User Id" id="userName-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                                <input type='text'  placeholder="Enter User Id" id="userName-input" style={{width:'70%',marginLeft:'40px',height:'25px',border:'none',outline:'none'}} />
                             </div>
                             </label>
                             <label htmlfor="password-input" style={{display:'block',width:'100%'}}>
                                 <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
                                     <LockRoundedIcon style={{marginLeft:'40px',color:'#aaa'}} />
-                                    <input type='password' placeholder="Enter Password" id="password-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                                    <input type='password' placeholder="Enter Password" id="password-input" style={{width:'70%',marginLeft:'40px',height:'25px',border:'none',outline:'none'}} />
                                 </div>
                             </label>
                         <div>
