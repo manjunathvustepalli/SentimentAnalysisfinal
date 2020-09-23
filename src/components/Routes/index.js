@@ -5,7 +5,6 @@ import SentimentalAnalysisLineChart from "../Pages/SentimentAnalysisLineChart";
 import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
 import SentimentalAnalysisSemiDonutChart from "../Pages/SentimentAnalysisSemiDonutChart";
 import SentimentAnalysisBarChart from "../Pages/SentimentAnalysisBarChart";
-import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
 import MoodAnalysisPieChart from "../Pages/MoodAnalysisPieChart";
 import MoodAnalysisLineChart from "../Pages/MoodAnalysisLineChart";
@@ -36,10 +35,12 @@ import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
 import SideNav from "../Navigation/SideNav";
 import { WordCloudContext } from "../../contexts/WordCloudContext";
 import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
+import { TrendAnalysisContext } from "../../contexts/TrendAnalysisContext";
 
 
 function Routes() {
   return (
+    <TrendAnalysisContext>
     <TrendingSubjectContext>
     <WordCloudContext>
     <MoodAnalysisContext>
@@ -133,13 +134,14 @@ function Routes() {
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
         </SideNav>
-        <Route component={SideNavBar} />
+        <Route component={SideNav} />
       </Switch>
     </BrowserRouter>
     </SentimentAnalysisContext>
     </MoodAnalysisContext>
     </WordCloudContext>
     </TrendingSubjectContext>
+    </TrendAnalysisContext>
   );
 }
 

@@ -6,7 +6,6 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import SideNav from '../Navigation/SideNav'
 import { Grid } from '@material-ui/core';
 import SearchBar from "material-ui-search-bar";
 import Axios from 'axios';

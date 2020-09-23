@@ -13,7 +13,7 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
+import { getKeyArray } from "../../helpers";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
 import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
@@ -63,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
 function InfluencerAnalysis() {
 
   const trendingSubjectsFilters = useContext(TrendingSubjectFiltersContext)
-
   const {
     sources, 
     setSources,
@@ -90,12 +89,10 @@ function InfluencerAnalysis() {
     keywordType,
     setKeywordType
 } = trendingSubjectsFilters
-
   const [refresh, setRefresh] = useState(true);
   const [data, setData] = useState([])
   const [noData, setnoData] = useState(false)
   const classes = useStyles();
-
   const fetchData = () => {
     let query = {
       "aggs": {
@@ -223,7 +220,13 @@ function InfluencerAnalysis() {
       }
     })
     setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
-    setSubSource(Object.keys(sortedData[selectedLanguage][selectedSource])[0])
+    setSubSource(prev =>{
+      if(Object.keys(sortedData[selectedLanguage][selectedSource]).includes(prev)){
+        return prev
+      } else {
+        return Object.keys(sortedData[selectedLanguage][selectedSource])[0] 
+      }
+    })
     setMoods(uniqueMoodKeys)
     setmood(prev =>{
       if(uniqueMoodKeys.includes(prev)){

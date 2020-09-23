@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import SideNav from "../Navigation/SideNav";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   Typography,
@@ -21,19 +20,28 @@ import Axios from "axios";
 import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../../helpers/filter";
 import AreaChart from "../charts/AreaChart";
 import { Redirect } from "react-router-dom";
+import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
+import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+
 
 var sortedData = {}
 
 function TrendAnalysisAreaChart() {
+  const trendAnalysisFilters = useContext(TrendAnalysisFiltersContext)
+  const  {
+    sources,
+    setSources,
+    languages,
+    setLanguages,
+    from,
+    to,
+    setFrom,
+    setTo
+} = trendAnalysisFilters
   const [refresh, setRefresh] = useState(true);
-  const [sources, setSources] = useState({});
-  const [languages, setLanguages] = useState({});
-  const [from, setFrom] = useState(addMonths(new Date(), -1));
-  const [to, setTo] = useState(addMonths(new Date(), 0));
   const [barData, setBarData] = useState([[],[]])
   const [lineData, setLineData] = useState([])
   const [chartType, setChartType] = useState('area')
-
   const useStyles = makeStyles((theme) => ({
     main: {
       fontSize: 16,
@@ -65,10 +73,8 @@ function TrendAnalysisAreaChart() {
       marginBottom: "20px !important",
     },
   }));
-
   const classes = useStyles();
-
-  useEffect(() => {
+  const fetchData = (changeInState) => {
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -130,29 +136,53 @@ function TrendAnalysisAreaChart() {
           })
         })
       })
-      let availableSourceKeys = {}
-      uniqueSourceKeys.forEach(source =>{
-          availableSourceKeys[source] = true
-      })
-      setSources(availableSourceKeys)
-
-      let availableLanguageKeys = {}
-      uniqueLanguageKeys.forEach(lang =>{
-          availableLanguageKeys[lang] = true
-      })
-      setLanguages(availableLanguageKeys)
+      if(changeInState){
+        setLanguages(prev => {
+          let availableLanguageKeys = {}
+        uniqueLanguageKeys.forEach(lang =>{
+            availableLanguageKeys[lang] = !!prev[lang]
+        })
+        return availableLanguageKeys
+        })
+  
+        setSources(prev => {
+          let availableSourceKeys = {}
+          uniqueSourceKeys.forEach(source =>{
+              availableSourceKeys[source] = !!prev[source]
+          })
+          return availableSourceKeys
+        })  
+      } else {
+        let availableLanguageKeys = {}
+        uniqueLanguageKeys.forEach(lang =>{
+            availableLanguageKeys[lang] = true
+        })
+        setLanguages(availableLanguageKeys)
+  
+        let availableSourceKeys = {}
+        uniqueSourceKeys.forEach(source =>{
+            availableSourceKeys[source] = true
+        })
+        setSources(availableSourceKeys)  
+      }
     })
     .catch(err=>{
       console.log(err)
     })
-  }, [from,to,refresh])
+  }
+
+  useMountAndUpdateEffect(()=>{
+    fetchData(false)
+},()=>{
+    fetchData(true)
+},[from,to,refresh])
 
   useEffect(()=>{
     setBarData((prev) => {
       let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
       return data
     })
-  },[languages,sources])
+  },[sources])
 
   useEffect(() => {
     let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
@@ -184,18 +214,18 @@ function TrendAnalysisAreaChart() {
                 <FormControl variant="outlined" className={classes.formControl}>
                     <InputLabel id="demo-simple-select-outlined-label">Change Chart Type</InputLabel>
                     <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                label="Change Chart Type"
-                                value={chartType}
-                                onChange={(e) => setChartType(e.target.value)}
-                            >
-                          <MenuItem value={'bar'}>Bar chart</MenuItem>
-                          <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
-                          <MenuItem value={'area'}>Area chart</MenuItem>                            
-                          <MenuItem value={'line'}>Line chart</MenuItem>                            
-                          <MenuItem value={'pie'}>Pie chart</MenuItem>                            
-                          <MenuItem value={'semi-pie'}>Semi Pie chart</MenuItem>
+                        labelId="demo-simple-select-outlined-label"
+                        id="demo-simple-select-outlined"
+                        label="Change Chart Type"
+                        value={chartType}
+                        onChange={(e) => setChartType(e.target.value)}
+                    >
+                        <MenuItem value={'bar'}>Bar chart</MenuItem>
+                        <MenuItem value={'stack'}>Stacked Bar chart</MenuItem>                            
+                        <MenuItem value={'area'}>Area chart</MenuItem>                            
+                        <MenuItem value={'line'}>Line chart</MenuItem>                            
+                        <MenuItem value={'pie'}>Pie chart</MenuItem>                            
+                        <MenuItem value={'semi-pie'}>Semi Pie chart</MenuItem>
                     </Select>
                 </FormControl>
                 </Grid>

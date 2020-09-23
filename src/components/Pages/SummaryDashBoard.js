@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import SideNav from '../Navigation/SideNav'
 import { Typography, Grid, Card, CardContent } from '@material-ui/core'
 import FilterHeader from '../Filters/FilterHeader'
 import styled from 'styled-components';

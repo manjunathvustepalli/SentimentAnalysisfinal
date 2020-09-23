@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import SideNav from '../Navigation/SideNav'
 import { Grid, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, makeStyles } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
 import FilterHeader from '../Filters/FilterHeader'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
-import { addMonths, getKeyArray, getDocCountByKey } from '../../helpers'
+import { getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';

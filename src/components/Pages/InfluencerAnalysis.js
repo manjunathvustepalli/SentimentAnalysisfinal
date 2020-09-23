@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import SideNav from '../Navigation/SideNav'
 import PropTypes from "prop-types";
 import {Box, Grid, Typography, Card, CardContent, makeStyles, Tab, Tabs, Avatar } from '@material-ui/core'
 import FilterWrapper from '../Filters/FilterWrapper'

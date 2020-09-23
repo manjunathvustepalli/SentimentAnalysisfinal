@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import SideNav from "../Navigation/SideNav";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   Typography,
@@ -15,27 +14,34 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
-import TrendAnalysisChart from "../charts/TrendAnalysisChart";
+import { getKeyArray } from "../../helpers";
 import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
-import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter, TrendAnalysisPieChartFilter } from "../../helpers/filter";
+import { TrendAnalysisLineChartFilter, TrendAnalysisPieChartFilter } from "../../helpers/filter";
 import { Redirect } from "react-router-dom";
 import PieChart from "../charts/PieChart";
+import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
 
 var sortedData = {}
 
 function TrendAnalysisPieChart() {
+  const trendAnalysisFilters = useContext(TrendAnalysisFiltersContext)
+  const  {
+    sources,
+    setSources,
+    languages,
+    setLanguages,
+    from,
+    to,
+    setFrom,
+    setTo
+} = trendAnalysisFilters
     const [refresh, setRefresh] = useState(true);
-    const [sources, setSources] = useState({});
     const [chartType, setChartType] = useState('pie')
-    const [languages, setLanguages] = useState({});
-    const [from, setFrom] = useState(addMonths(new Date(), -1));
-    const [to, setTo] = useState(addMonths(new Date(), 0));
     const [pieData, setPieData] = useState({})
     const [lineData, setLineData] = useState([])
-  
     const useStyles = makeStyles((theme) => ({
       main: {
         fontSize: 16,
@@ -67,10 +73,9 @@ function TrendAnalysisPieChart() {
         marginBottom: "20px !important",
       },
     }));
-  
     const classes = useStyles();
   
-    useEffect(() => {
+    const fetchData = (changeInState) => {
       Axios.post(process.env.REACT_APP_URL,{
         "aggs": {
           "date-based-range": {
@@ -132,23 +137,47 @@ function TrendAnalysisPieChart() {
             })
           })
         })
-        let availableSourceKeys = {}
-        uniqueSourceKeys.forEach(source =>{
-            availableSourceKeys[source] = true
-        })
-        setSources(availableSourceKeys)
-  
-        let availableLanguageKeys = {}
-        uniqueLanguageKeys.forEach(lang =>{
-            availableLanguageKeys[lang] = true
-        })
-        setLanguages(availableLanguageKeys)
+        if(changeInState){
+          setLanguages(prev => {
+            let availableLanguageKeys = {}
+          uniqueLanguageKeys.forEach(lang =>{
+              availableLanguageKeys[lang] = !!prev[lang]
+          })
+          return availableLanguageKeys
+          })
+    
+          setSources(prev => {
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source =>{
+                availableSourceKeys[source] = !!prev[source]
+            })
+            return availableSourceKeys
+          })  
+        } else {
+          let availableLanguageKeys = {}
+          uniqueLanguageKeys.forEach(lang =>{
+              availableLanguageKeys[lang] = true
+          })
+          setLanguages(availableLanguageKeys)
+    
+          let availableSourceKeys = {}
+          uniqueSourceKeys.forEach(source =>{
+              availableSourceKeys[source] = true
+          })
+          setSources(availableSourceKeys)  
+        }
       })
       .catch(err=>{
         console.log(err)
       })
-    }, [from,to,refresh])
+    }
   
+  useMountAndUpdateEffect(()=>{
+      fetchData(false)
+  },()=>{
+      fetchData(true)
+  },[from,to,refresh])
+    
     useEffect(() => {
         let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
         if(temp){

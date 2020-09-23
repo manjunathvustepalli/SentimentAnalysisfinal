@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import SideNav from "../Navigation/SideNav";
 import {
   Grid,
   Typography,
@@ -216,9 +215,15 @@ setSource(prev => {
     selectedSource = uniqueSources[0] 
     return uniqueSources[0]
   }
-})
+})    
 setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
-setSubSource(Object.keys(sortedData[selectedLanguage][selectedSource])[0])
+setSubSource(prev =>{
+  if(Object.keys(sortedData[selectedLanguage][selectedSource]).includes(prev)){
+    return prev
+  } else {
+    return Object.keys(sortedData[selectedLanguage][selectedSource])[0] 
+  }
+})
   })
   .catch(err=>{
     console.log(err)

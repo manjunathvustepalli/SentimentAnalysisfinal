@@ -77,9 +77,7 @@ export default function SentimentalAnalysisAreaChart() {
     const [data, setData] = useState({})
     const [open, setOpen] = useState(true)
     const classes = useStyles();
-    const handleChange = (e) => {
-        setChartType(e.target.value)
-    }
+    const handleChange = (e) => setChartType(e.target.value)
 
     const fetchData = (changeInState) => {
         let query = {
@@ -263,7 +261,7 @@ export default function SentimentalAnalysisAreaChart() {
     }
 
     useMountAndUpdateEffect(()=>{
-        fetchData(true)
+        fetchData(false)
     },()=>{
         fetchData(true)
     },[from,to,refresh,keywords])

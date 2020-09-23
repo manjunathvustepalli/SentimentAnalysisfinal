@@ -1,5 +1,4 @@
 import React, { useState,useEffect } from 'react'
-import SideNav from '../Navigation/SideNav'
 import { Card, Grid, Switch, FormControlLabel, Button } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'

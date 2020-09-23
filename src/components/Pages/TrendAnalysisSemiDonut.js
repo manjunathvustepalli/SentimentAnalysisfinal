@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import SideNav from "../Navigation/SideNav";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   Typography,
@@ -10,32 +9,39 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Button
+  Button 
 } from "@material-ui/core";
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
+import { getKeyArray } from "../../helpers";
 import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
 import {  TrendAnalysisLineChartFilter, TrendAnalysisPieChartFilter } from "../../helpers/filter";
 import { Redirect } from "react-router-dom";
 import SemiDonutChart from '../charts/SemiDonutChart';
-
+import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
 
 var sortedData = {}
 
 function TrendAnalysisSemiDonut() {
+  const trendAnalysisFilters = useContext(TrendAnalysisFiltersContext)
+  const  {
+    sources,
+    setSources,
+    languages,
+    setLanguages,
+    from,
+    to,
+    setFrom,
+    setTo
+      } = trendAnalysisFilters
     const [refresh, setRefresh] = useState(true);
-    const [sources, setSources] = useState({});
     const [chartType, setChartType] = useState('semi-pie')
-    const [languages, setLanguages] = useState({});
-    const [from, setFrom] = useState(addMonths(new Date(), -1));
-    const [to, setTo] = useState(addMonths(new Date(), 0));
     const [pieData, setPieData] = useState({})
     const [lineData, setLineData] = useState([])
-  
     const useStyles = makeStyles((theme) => ({
       main: {
         fontSize: 16,
@@ -67,10 +73,9 @@ function TrendAnalysisSemiDonut() {
         marginBottom: "20px !important",
       },
     }));
-  
     const classes = useStyles();
   
-    useEffect(() => {
+    const fetchData = (changeInState) => {
       Axios.post(process.env.REACT_APP_URL,{
         "aggs": {
           "date-based-range": {
@@ -132,22 +137,46 @@ function TrendAnalysisSemiDonut() {
             })
           })
         })
-        let availableSourceKeys = {}
-        uniqueSourceKeys.forEach(source =>{
-            availableSourceKeys[source] = true
-        })
-        setSources(availableSourceKeys)
-  
-        let availableLanguageKeys = {}
-        uniqueLanguageKeys.forEach(lang =>{
-            availableLanguageKeys[lang] = true
-        })
-        setLanguages(availableLanguageKeys)
+        if(changeInState){
+          setLanguages(prev => {
+            let availableLanguageKeys = {}
+          uniqueLanguageKeys.forEach(lang =>{
+              availableLanguageKeys[lang] = !!prev[lang]
+          })
+          return availableLanguageKeys
+          })
+    
+          setSources(prev => {
+            let availableSourceKeys = {}
+            uniqueSourceKeys.forEach(source =>{
+                availableSourceKeys[source] = !!prev[source]
+            })
+            return availableSourceKeys
+          })  
+        } else {
+          let availableLanguageKeys = {}
+          uniqueLanguageKeys.forEach(lang =>{
+              availableLanguageKeys[lang] = true
+          })
+          setLanguages(availableLanguageKeys)
+    
+          let availableSourceKeys = {}
+          uniqueSourceKeys.forEach(source =>{
+              availableSourceKeys[source] = true
+          })
+          setSources(availableSourceKeys)  
+        }
       })
       .catch(err=>{
         console.log(err)
       })
-    }, [from,to,refresh])
+    }
+  
+  useMountAndUpdateEffect(()=>{
+      fetchData(false)
+  },()=>{
+      fetchData(true)
+  },[from,to,refresh])
   
     useEffect(() => {
         let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
