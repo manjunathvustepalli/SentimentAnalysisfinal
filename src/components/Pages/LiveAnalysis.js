@@ -87,6 +87,13 @@ function LiveAnalysis() {
                         source
                       ]
                     }
+                  },
+                  {
+                    "terms": {
+                      "predictedLang.keyword": [
+                        'bengali'
+                      ]
+                    }
                   }
                 ]
               }
@@ -102,6 +109,7 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
+              
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name

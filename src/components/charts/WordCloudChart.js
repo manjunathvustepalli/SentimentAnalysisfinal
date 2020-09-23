@@ -37,6 +37,18 @@ function WordCloud(props) {
             },            
             series: [{
                 type: 'wordcloud',
+                events: {
+                    click: function (event) {
+                        console.log(event)
+                        alert(
+                            this.name + ' clicked\n' +
+                            'Alt: ' + event.altKey + '\n' +
+                            'Control: ' + event.ctrlKey + '\n' +
+                            'Meta: ' + event.metaKey + '\n' +
+                            'Shift: ' + event.shiftKey
+                        );
+                    }
+                },
                 data: props.data,
             }],
             title: {
