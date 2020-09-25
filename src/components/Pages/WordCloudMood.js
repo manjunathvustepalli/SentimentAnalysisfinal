@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { Typography, Button, FormControl, InputLabel, Select, MenuItem, Dialog } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
@@ -19,11 +19,27 @@ import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import colors from '../../helpers/colors'
 import CustomLegend from '../CustomLegend';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+import MaterialTable from 'material-table';
 
+const dateFormatter = (unix) => {
+    var date = new Date(unix);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var month = date.getMonth()+1
+    var year = date.getFullYear()
+    var todayDate = date.getDate()
+    return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-  
+
     return (
       <div
         role="tabpanel"
@@ -48,11 +64,19 @@ function TabPanel(props) {
     };
   }
 
+
   const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         width: '100%',
         backgroundColor: theme.palette.background.paper,
+      },
+      appBar: {
+        position: 'relative',
+      },
+      title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
       },
     main: {
         fontSize: 16,
@@ -78,7 +102,7 @@ function TabPanel(props) {
     },
     paper: {
         height: 140,
-        width: 130,        
+        width: 130,
       },
       buttonStyle:{
         border:'1px solid green',
@@ -92,6 +116,7 @@ function TabPanel(props) {
 
 var sortedData = {}
 
+
 function WordCloudSentiment() {
 
     const classes = useStyles();
@@ -100,7 +125,7 @@ function WordCloudSentiment() {
     const {
         keywords,
         setKeywords,
-        keywordType, 
+        keywordType,
         setKeywordType,
         from,
         setFrom,
@@ -112,7 +137,7 @@ function WordCloudSentiment() {
         setSubSources,
         moods,
         setMoods,
-        wordCount, 
+        wordCount,
         setWordCount,
         value,
         setValue
@@ -120,6 +145,101 @@ function WordCloudSentiment() {
 
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
+    const [open, setOpen] = useState(false);
+    const [word, setWord] = useState('');
+    const [tableData, setTableData] = useState([]);
+    const [columns, setColumns] = useState([
+        {
+            title:'Date',
+            field:'date',
+        },
+        {
+            title:'Source',
+            field:'source'
+        },
+        {
+            title:'Sub Source',
+            field:'subSource'
+        },
+        {
+            title:'Name',
+            field:'name',
+        },
+        {
+            title:'Screen Name',
+            field:'screenName',
+        },
+        {
+            title:'Post',
+            field:'post',
+        },
+        {
+            title:'Sentiment',
+            field:'sentiment',
+        },
+        {
+            title:'Mood',
+            field:'mood',
+        },
+        {
+            title:'Language',
+            field:'language',
+        }
+    ])
+
+    const searchWordData = () => {
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            "query": {
+              "bool": {
+                "must": [
+                  {"terms": {"HashtagEntities.Text.keyword": [word]}}
+                ]
+              }
+            },
+            "size": 50,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
+                }
+              }
+            ]
+          })
+          .then(fetchedData => {
+            setTableData(fetchedData.data.hits.hits.map((postObj)=>{
+                if(!postObj._source.User){
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang
+                    }
+                } else {
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang,
+                        followersCount:postObj._source.User.FollowersCount,
+                        location:postObj._source.User.Location,
+                        name:postObj._source.User.Name,
+                        screenName:postObj._source.User.ScreenName
+                    }
+                }
+            }))
+    })}
+
+        const handleClose = () => {
+          setOpen(false);
+        };
 
     const fetchData = (changeInState) => {
         let query = {
@@ -231,7 +351,7 @@ function WordCloudSentiment() {
                     })
                     return availableSourceKeys
                 })
-    
+
                 setSubSources(prev =>{
                     let availableSubSourceKeys = {}
                     uniqueSubSourceKeys.forEach(subSource =>{
@@ -239,40 +359,38 @@ function WordCloudSentiment() {
                     })
                     return availableSubSourceKeys
                 })
-    
+
                 setMoods(prev =>{
                     if(Object.keys(prev).length){
                         return prev
                     } else {
                        return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                    }}) 
+                    }})
             } else {
                 let availableSourceKeys = {}
                 uniqueSourceKeys.forEach(source =>{
                     availableSourceKeys[source] = true
                 })
                 setSources(availableSourceKeys)
-    
+
                 let availableSubSourceKeys = {}
                 uniqueSubSourceKeys.forEach(subSource =>{
                     availableSubSourceKeys[subSource]  = true
                 })
                 setSubSources(availableSubSourceKeys)
-    
+
                 setMoods(prev =>{
                     if(Object.keys(prev).length){
                         return prev
                     } else {
                        return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                    }}) 
+                    }})
             }
           })
           .catch(err => {
               console.log(err)
           })
     }
-
-
 
 	useMountAndUpdateEffect(()=>{
         fetchData(false)
@@ -285,7 +403,7 @@ function WordCloudSentiment() {
             fetchData(false)
         }
 	},[keywordType])
-	
+
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
         Object.keys(temp).forEach(language => {
@@ -295,6 +413,20 @@ function WordCloudSentiment() {
         })
         setData(temp)
     },[sources,subSources,moods,wordCount])
+
+    useDidUpdateEffect(() => {
+        searchWordData()
+        console.log(word)
+    },[word])
+
+    const SearchResult = () => (
+        <MaterialTable
+            data={tableData}
+            columns={columns}
+            style={{padding:'20px'}}
+            title={`Keyword Records`}
+        />
+    )
 
     return (
         <>
@@ -342,7 +474,7 @@ function WordCloudSentiment() {
                                         component={Link}
                                         to="/word-cloud/sentiment"
                                     >
-                                        Sentiment                                                                       
+                                        Sentiment
                                     </Button>
                             </Grid>
                             <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
@@ -368,7 +500,7 @@ function WordCloudSentiment() {
                                     Object.keys(data).map((lang,i) => {
                                         return (
                                             <TabPanel value={value} index={i}>
-                                                <WordCloud data={data[lang]} />
+                                                <WordCloud clickable setOpen={setOpen} setWord={setWord} data={data[lang]} />
                                                 <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
                                                 {
                                                     ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
@@ -389,9 +521,9 @@ function WordCloudSentiment() {
                         </Grid>
                         <Grid item xs={12}>
                             <FilterWrapper>
-                                <AccordianFilters  
-                                    toFromDatesHandlers={[setFrom,setTo,from,to]} 
-                                    sources={[sources, setSources]} 
+                                <AccordianFilters
+                                    toFromDatesHandlers={[setFrom,setTo,from,to]}
+                                    sources={[sources, setSources]}
                                     // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
@@ -403,6 +535,21 @@ function WordCloudSentiment() {
                     </Grid>
                 </Grid>
             </Grid>
+            <Dialog fullScreen open={open} onClose={handleClose}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              {word}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        {
+            SearchResult()
+        }
+      </Dialog>
         </div>
         </>
     )
