@@ -24,7 +24,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import MaterialTable from 'material-table';
+import TableWithData from '../Tables/TableWithData'
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
 const dateFormatter = (unix) => {
     var date = new Date(unix);
@@ -117,7 +121,7 @@ function TabPanel(props) {
 var sortedData = {}
 
 
-function WordCloudSentiment() {
+function WordCloudMood() {
 
     const classes = useStyles();
     const handleTabChange = (event, newValue) => setValue(newValue)
@@ -148,45 +152,6 @@ function WordCloudSentiment() {
     const [open, setOpen] = useState(false);
     const [word, setWord] = useState('');
     const [tableData, setTableData] = useState([]);
-    const [columns, setColumns] = useState([
-        {
-            title:'Date',
-            field:'date',
-        },
-        {
-            title:'Source',
-            field:'source'
-        },
-        {
-            title:'Sub Source',
-            field:'subSource'
-        },
-        {
-            title:'Name',
-            field:'name',
-        },
-        {
-            title:'Screen Name',
-            field:'screenName',
-        },
-        {
-            title:'Post',
-            field:'post',
-        },
-        {
-            title:'Sentiment',
-            field:'sentiment',
-        },
-        {
-            title:'Mood',
-            field:'mood',
-        },
-        {
-            title:'Language',
-            field:'language',
-        }
-    ])
-
     const searchWordData = () => {
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
@@ -237,9 +202,9 @@ function WordCloudSentiment() {
             }))
     })}
 
-        const handleClose = () => {
-          setOpen(false);
-        };
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const fetchData = (changeInState) => {
         let query = {
@@ -388,7 +353,8 @@ function WordCloudSentiment() {
             }
           })
           .catch(err => {
-              console.log(err)
+              console.log(err.response)
+
           })
     }
 
@@ -416,17 +382,7 @@ function WordCloudSentiment() {
 
     useDidUpdateEffect(() => {
         searchWordData()
-        console.log(word)
     },[word])
-
-    const SearchResult = () => (
-        <MaterialTable
-            data={tableData}
-            columns={columns}
-            style={{padding:'20px'}}
-            title={`Keyword Records`}
-        />
-    )
 
     return (
         <>
@@ -478,7 +434,7 @@ function WordCloudSentiment() {
                                     </Button>
                             </Grid>
                             <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
-                            <Grid item xs={7}>
+                            <Grid item xs={12}>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -535,7 +491,7 @@ function WordCloudSentiment() {
                     </Grid>
                 </Grid>
             </Grid>
-            <Dialog fullScreen open={open} onClose={handleClose}>
+            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -546,13 +502,11 @@ function WordCloudSentiment() {
             </Typography>
           </Toolbar>
         </AppBar>
-        {
-            SearchResult()
-        }
+        <TableWithData rows={tableData} />
       </Dialog>
         </div>
         </>
     )
 }
 
-export default WordCloudSentiment
+export default WordCloudMood

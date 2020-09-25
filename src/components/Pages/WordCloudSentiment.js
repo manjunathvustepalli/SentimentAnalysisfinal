@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography, Button, MenuItem, Select, InputLabel, FormControl } from '@material-ui/core';
+import { Typography, Button, MenuItem, Select, InputLabel, FormControl, Slide, Dialog, AppBar, Toolbar, IconButton } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
@@ -19,7 +19,23 @@ import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
+import CloseIcon from '@material-ui/icons/Close';
+import TableWithData from '../Tables/TableWithData'
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
+const dateFormatter = (unix) => {
+    var date = new Date(unix);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var month = date.getMonth()+1
+    var year = date.getFullYear()
+    var todayDate = date.getDate()
+    return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -53,6 +69,13 @@ function TabPanel(props) {
         flexGrow: 1,
         width: '100%',
         backgroundColor: theme.palette.background.paper,
+      },
+      appBar: {
+        position: 'relative',
+      },
+      title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
       },
     main: {
         fontSize: 16,
@@ -120,6 +143,62 @@ function WordCloudSentiment() {
 
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
+    const [open, setOpen] = useState(false);
+    const [word, setWord] = useState('');
+    const [tableData, setTableData] = useState([]);
+    const searchWordData = () => {
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            "query": {
+              "bool": {
+                "must": [
+                  {"terms": {"HashtagEntities.Text.keyword": [word]}}
+                ]
+              }
+            },
+            "size": 50,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
+                }
+              }
+            ]
+          })
+          .then(fetchedData => {
+            setTableData(fetchedData.data.hits.hits.map((postObj)=>{
+                if(!postObj._source.User){
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang
+                    }
+                } else {
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang,
+                        followersCount:postObj._source.User.FollowersCount,
+                        location:postObj._source.User.Location,
+                        name:postObj._source.User.Name,
+                        screenName:postObj._source.User.ScreenName
+                    }
+                }
+            }))
+    })}
+ 
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const fetchData = (changeInState) => {
         let query = {
@@ -310,6 +389,10 @@ function WordCloudSentiment() {
         setData(temp) 
     },[sources,subSources,sentiments,wordCount])
 
+    useDidUpdateEffect(() => {
+        searchWordData()
+    },[word])
+
     return (
         <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
@@ -360,7 +443,7 @@ function WordCloudSentiment() {
                                 </Button>
                             </Grid>
                             <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
-                            <Grid item xs={7} align='right'>
+                            <Grid item xs={12} align='right'>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -382,7 +465,7 @@ function WordCloudSentiment() {
                                     Object.keys(data).map((lang,i) => {
                                         return (
                                             <TabPanel value={value} index={i}>
-                                                <WordCloud data={data[lang]} />
+                                                <WordCloud clickable setOpen={setOpen} setWord={setWord} data={data[lang]} />
                                                 <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
                                                 {
                                                     ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
@@ -417,6 +500,19 @@ function WordCloudSentiment() {
                     </Grid>
                 </Grid>
             </Grid>
+            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              {word}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <TableWithData rows={tableData} />
+      </Dialog>
         </div>
         </>
     )

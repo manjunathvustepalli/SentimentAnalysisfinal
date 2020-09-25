@@ -125,15 +125,15 @@ function LiveAnalysis() {
             ]
           })
         .then(fetchedData => {
+            console.log(fetchedData.data.hits.hits)
             let final =  fetchedData.data.hits.hits.map(user => {
-              
                 let obj = {}
                 if(user._source.User){
-
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
                 }
+
                 if(user._source.MediaEntities && user._source.MediaEntities.length){
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
                       if(post.MediaURLHttps){
@@ -181,6 +181,13 @@ function LiveAnalysis() {
                         endIcon={<LaunchIcon/>}
                       > Click Here </Button></a> 
                     }
+                }else if(user._source.URLEntities && user._source.URLEntities.length){
+                  obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.URLEntities[0].URL}>
+                  <Button
+                    className={classes.root}
+                    endIcon={<LaunchIcon/>}
+                  > Click Here </Button></a>
+                  
                 }
                 obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
@@ -226,6 +233,10 @@ function LiveAnalysis() {
                       title:'Media Urls',field:'mediaUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
+                    {
+                      title:'Post Url',field:'postUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
@@ -233,12 +244,16 @@ function LiveAnalysis() {
                 setColumns([
                     {title:'Date',field:'date'},
                     {title:'Post',field:'tweet'},
+                    {
+                      title:'Post Url',field:'postUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
             }
         })
-        .catch(err => {console.log(err.response)})
+        .catch(err => {console.log(err.response,err)})
 
     }
 
@@ -340,7 +355,6 @@ function LiveAnalysis() {
           console.log(err)
         })
     }, [])
-    console.log(Object.keys(dataObject).length,Object.keys(dataObject),dataObject)
 
     return (
         <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
@@ -367,7 +381,7 @@ function LiveAnalysis() {
                     <Grid xs={2}>
 
                     </Grid>
-                <Grid item xs={1} align="left">
+                <Grid item xs={3} align="left">
                             <FormControlLabel
                                 control={<Switch 
                                     color="primary"
@@ -389,8 +403,14 @@ function LiveAnalysis() {
                               fullWidth
                               id="tags-outlined"
                               value={languages}
-                              onChange={(e,arr) => setLanguages(arr)}
-                              options={dataObject[source]}
+                              onChange={(e,arr) => {
+                                if(arr.includes('All')){
+                                  setLanguages([...dataObject[source]])
+                                } else {
+                                  setLanguages(arr)
+                                }
+                              }}
+                              options={[...dataObject[source],'All']}
                               getOptionLabel={(option) => option}
                               renderTags={(value, getTagProps) =>
                                   value.map((option, index) => (
@@ -411,6 +431,7 @@ function LiveAnalysis() {
                           ) :('')
                         }
                     </Grid>
+                    <Grid item align={'right'} xs={2} />
                     <Grid item xs={2}>
                         {
                             liveReloading && (

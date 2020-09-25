@@ -31,13 +31,11 @@ function GlobalSearch() {
     const submitData = () => {
         setopen(true)
         if(source === 'twitter'){
-            Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            let query = {
                 "query": {
                   "bool": {
                     "must": [
-                      {"terms": {"Source.keyword": [source]}},
-                      {"terms": {"User.ScreenName.keyword": handles}},
-                      {"terms": {"HashtagEntities.Text.keyword": keywords}}
+                        {"terms": {"Source.keyword": [source]}},
                     ]
                   }
                 },
@@ -49,7 +47,22 @@ function GlobalSearch() {
                     }
                   }
                 ]
-              })
+              }
+              if(handles.length){
+                  query.query.bool.must.push({
+                      "terms":{
+                          "SubSource.keyword":handles
+                      }
+                  })
+              }
+              if(keywords.length){
+                query.query.bool.must.push({
+                    "terms":{
+                        "HashtagEntities.Text.keyword":keywords
+                    }
+                })
+              }
+            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(data =>{
                   console.log(data.data)
                 setData(data.data.hits.hits.map((postObj)=>{
@@ -93,6 +106,7 @@ function GlobalSearch() {
                     {
                         title:'Post',
                         field:'post',
+                        width:300
                     },
                     {
                         title:'Followers Count',
@@ -122,13 +136,11 @@ function GlobalSearch() {
               })
         }else if(source === 'facebook') {
             setopen(true)
-            Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            let query = {
                 "query": {
                   "bool": {
                     "must": [
                       {"terms": {"Source.keyword": [source]}},
-                      {"terms": {"SubSource.keyword": handles}},
-                      {"terms": {"HashtagEntities.Text.keyword": keywords}}
                     ]
                   }
                 },
@@ -140,12 +152,27 @@ function GlobalSearch() {
                     }
                   }
                 ]
+              }
+              if(handles.length){
+                query.query.bool.must.push({
+                    "terms":{
+                        "SubSource.keyword":handles
+                    }
+                })
+            }
+            if(keywords.length){
+              query.query.bool.must.push({
+                  "terms":{
+                      "HashtagEntities.Text.keyword":keywords
+                  }
               })
+            }
+            console.log(query)
+            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(data=>{
                 console.log(data.data)
                 setData(data.data.hits.hits.map((postObj,i)=>{
                     return {
-                        id:i,
                         date:dateFormatter(postObj._source.CreatedAt),
                         post:postObj._source.Text,
                         favouriteCount:postObj._source.FavoriteCount,
@@ -188,13 +215,11 @@ function GlobalSearch() {
               })            
         }else if(source === 'newspaper') {
             setopen(true)
-            Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            let query = {
                 "query": {
                   "bool": {
                     "must": [
                       {"terms": {"Source.keyword": [source]}},
-                      {"terms": {"SubSource.keyword": handles}},
-                      {"terms": {"HashtagEntities.Text.keyword": keywords}}
                     ]
                   }
                 },
@@ -206,12 +231,26 @@ function GlobalSearch() {
                     }
                   }
                 ]
+              }
+              if(handles.length){
+                query.query.bool.must.push({
+                    "terms":{
+                        "SubSource.keyword":handles
+                    }
+                })
+            }
+            if(keywords.length){
+              query.query.bool.must.push({
+                  "terms":{
+                      "HashtagEntities.Text.keyword":keywords
+                  }
               })
+            }
+            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(data=>{
                 console.log(data.data)
                 setData(data.data.hits.hits.map((postObj,i)=>{
                     return {
-                        id:i,
                         date:dateFormatter(postObj._source.CreatedAt),
                         post:postObj._source.Text,
                         favouriteCount:postObj._source.FavoriteCount,
@@ -318,7 +357,6 @@ function GlobalSearch() {
                             })
                         }}
                     />
-
             </Grid>
                     <Grid item sm={12} md={4} lg={3} >
                         <ChipInput 

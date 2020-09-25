@@ -199,7 +199,7 @@ const SideNavBar = ( props) => {
               </Grid>
             </Grid>
           </div>
-      <Divider />
+      <Divider style={{marginTop:'150px'}} />
       <List >
         {menus.map((menuItem, index) => (
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
