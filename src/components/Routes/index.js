@@ -36,7 +36,7 @@ import SideNav from "../Navigation/SideNav";
 import { WordCloudContext } from "../../contexts/WordCloudContext";
 import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
 import { TrendAnalysisContext } from "../../contexts/TrendAnalysisContext";
-
+import SearchFromDB from "../Pages/SearchFromDB.js";
 
 function Routes() {
   return (
@@ -129,6 +129,7 @@ function Routes() {
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
         <Route path="/global-search" exact component={GlobalSearch} />
+        <Route path="/search-from-db" exact component={SearchFromDB} />
         <Route path="/admin" exact component={AdminPage} />
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />

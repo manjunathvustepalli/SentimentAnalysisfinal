@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { Card, Grid, Switch, FormControlLabel, Button } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel, Button, Chip, TextField } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +8,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import LaunchIcon from '@material-ui/icons/Launch';
+import { getKeyArray } from '../../helpers'
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Source } from 'react-mapbox-gl';
+
 
 const dateFormatter = (unix) => {
   var date = new Date(unix);
@@ -60,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
         }
     }
   }));
+var sortedData = {}
 
 function LiveAnalysis() {
 
@@ -70,7 +75,9 @@ function LiveAnalysis() {
     const [to] = useState(new Date());
     const [from] = useState(new Date());
     const [keyword] = useState('');
+    const [languages, setLanguages] = useState(['bengali']);
     const [source, setSource] = useState('twitter');
+    const [dataObject, setDataObject] = useState({})
     const [columns, setColumns] = useState([
         {title:'Name',field:'name'},
         {title:'Screen Name',field:'screenName',width: "1%",
@@ -102,9 +109,7 @@ function LiveAnalysis() {
                   },
                   {
                     "terms": {
-                      "predictedLang.keyword": [
-                        'bengali'
-                      ]
+                      "predictedLang.keyword": languages
                     }
                   }
                 ]
@@ -302,12 +307,44 @@ function LiveAnalysis() {
             }
           }, reloadInterval);
           return () => clearInterval(interval);
-    }, [reloadInterval,liveReloading,from,to,source])
+    }, [reloadInterval,liveReloading,from,to,source,languages])
+
+    useEffect(() => {
+      Axios.post(process.env.REACT_APP_URL,{
+        
+            "aggs": {
+              "Source": {
+                "terms": {
+                  "field": "Source.keyword"
+                },
+                "aggs": {
+                  "Lang": {
+                    "terms": {
+                        "field": "predictedLang.keyword"
+                      }
+                    }
+                  }
+                }
+              }
+        })
+        .then(data => {
+          let sourceBuckets = data.data.aggregations.Source.buckets
+          let sourceKeys = getKeyArray(sourceBuckets)
+          sourceKeys.forEach((source,i) => {
+            sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets)
+          })
+          console.log(sortedData)
+          setDataObject(sortedData)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }, [])
+    console.log(Object.keys(dataObject).length,Object.keys(dataObject),dataObject)
 
     return (
-        <>
-            <Card>
-                <Grid container spacing={2} style={{padding:'20px'}}>
+        <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+                <Grid container spacing={2}>
                     <Grid item xs={10}>
                         <Grid container>
                             <Grid item xs={4} sm={3} md={2} lg={2}
@@ -330,7 +367,7 @@ function LiveAnalysis() {
                     <Grid xs={2}>
 
                     </Grid>
-                <Grid item xs={2} align="left">
+                <Grid item xs={1} align="left">
                             <FormControlLabel
                                 control={<Switch 
                                     color="primary"
@@ -342,16 +379,37 @@ function LiveAnalysis() {
                                 labelPlacement="end"
                             />
                     </Grid>
-                   <Grid item xs={2}  >
-                    {/* <TextField id="keyword" style={{transform:'translateY(10px)'}} label="Enter Keyword" variant="outlined" /> */}
-                    </Grid>
+                    <Grid item xs={1} align="left"/>
                     <Grid item xs={4} align="left">
-                        {/* <GridTimeFilter toFromDatesHandlers={[setTo,setFrom]} /> */}
-                    </Grid>
-                    <Grid item xs={2} align="left">
-                    {/* <Button style={{transform:"translateY(10px)"}} onClick={() => fetchFromKeyword()} className={classes.button} >
-                        Search
-                    </Button> */}
+                        {
+                          Object.keys(dataObject).length  ? (
+                            <div style={{width:'100%'}}>
+                              <Autocomplete
+                              multiple
+                              fullWidth
+                              id="tags-outlined"
+                              value={languages}
+                              onChange={(e,arr) => setLanguages(arr)}
+                              options={dataObject[source]}
+                              getOptionLabel={(option) => option}
+                              renderTags={(value, getTagProps) =>
+                                  value.map((option, index) => (
+                                    <Chip variant="outlined"  label={option} {...getTagProps({ index })} />
+                                  )) 
+                                }
+                              renderInput={(params) => (
+                                <TextField
+                                  fullWidth
+                                  {...params}
+                                  variant="outlined"
+                                  label="Select Languages"
+                                  placeholder="Languages"
+                                />
+                              )}
+                            />
+                          </div>
+                          ) :('')
+                        }
                     </Grid>
                     <Grid item xs={2}>
                         {
@@ -374,7 +432,6 @@ function LiveAnalysis() {
                         }
                     </Grid>
                     <Grid item xs={12}>
-                      <div style={{width:'80%'}}>
                       <MaterialTable 
                             title='Live Analysis'
                             columns={columns}
@@ -396,11 +453,9 @@ function LiveAnalysis() {
                                 }
                             }}
                         />
-                      </div>
                     </Grid>
                 </Grid>
-            </Card>
-        </>
+        </div>
     )
 }
 

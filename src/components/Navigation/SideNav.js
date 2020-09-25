@@ -36,6 +36,7 @@ import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import { useEffect } from 'react';
 import PageviewIcon from '@material-ui/icons/Pageview';
+import StorageIcon from '@material-ui/icons/Storage';
 
 const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
@@ -75,7 +76,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor:'rgb(67,176,42)'
   },
   content: {
-    flexGrow: 1,
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
   },
 }));
 
@@ -155,6 +158,11 @@ const SideNavBar = ( props) => {
       name:'Search Image',
       icon:<ImageSearchIcon/>,
       path:['/image-gallery'],
+    },
+    {
+      name:'Search Database',
+      icon:<StorageIcon/>,
+      path:['/search-from-db'],
     },
     {
       name:'Geo HotSpot Analysis',

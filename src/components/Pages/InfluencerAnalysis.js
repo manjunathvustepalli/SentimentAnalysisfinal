@@ -17,8 +17,6 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import colors from '../../helpers/colors';
 import CustomLegend from '../CustomLegend';
 
-
-
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
     return (
@@ -60,6 +58,7 @@ function InfluencerAnalysis() {
     const [data, setData] = useState([])
     const [moodData, setMoodData] = useState([])
     const [sentimentData, setSentimentData] = useState([])
+    const [size, setSize] = useState(10)
     const useStyles = makeStyles((theme) => ({
       root: {
         display: 'flex',
@@ -243,7 +242,8 @@ function InfluencerAnalysis() {
                 "aggs": {
                   "Users": {
                     "terms": {
-                      "field": "User.ScreenName.keyword"
+                      "field": "User.ScreenName.keyword",
+                      "size": 1000
                     },
                     "aggs": {
                       "Followers": {
@@ -271,7 +271,8 @@ function InfluencerAnalysis() {
                             {
                               "influenceWeight": {"order": "desc"}
                             }
-                          ]
+                          ],
+                          "size":size,
                         }
                       },
                       "Sentiment": {
@@ -291,6 +292,7 @@ function InfluencerAnalysis() {
             }
           })
             .then(res => {
+                console.log(res)
                 setData(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                     return {
                         influencer: <div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} >{doc.key.split('')[0].toUpperCase()}</Avatar> &nbsp;&nbsp; {doc.key} </div>,
@@ -353,7 +355,7 @@ function InfluencerAnalysis() {
               "aggs": {
                 "newspaperInfluencers": {
                   "terms": {
-                    "field": "SubSource.keyword"
+                    "field": "SubSource.keyword",
                   },
                   "aggs": {
                     "ArticleCount": {
@@ -367,7 +369,9 @@ function InfluencerAnalysis() {
                           {
                             "ArticleCount": {"order": "desc"}
                           }
-                        ]
+                        ],
+                        "size":size,
+                        "from":0
                       }
                     },
                     "Sentiment": {
@@ -387,6 +391,7 @@ function InfluencerAnalysis() {
           }
         })
           .then(res => {
+              console.log(res)
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                   return {
                       newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > <ArtTrackIcon/> </Avatar> &nbsp;&nbsp; {doc.key} </div>,
@@ -414,7 +419,7 @@ function InfluencerAnalysis() {
               console.log(err)
           })
     }
-      },[from,to,source])
+      },[from,to,source,size])
   
     return (
         <>
@@ -442,7 +447,8 @@ function InfluencerAnalysis() {
                                         label="Select Influencers Count"
                                         variant={'outlined'}
                                         fullWidth
-                                        value={10}
+                                        value={size}
+                                        onChange={e => setSize(e.target.value)}
 							                        >
 							                        <MenuItem value={10}> Top 10 Influencers </MenuItem>
 							                        <MenuItem value={25}> Top 25 Influencers </MenuItem>
