@@ -13,7 +13,7 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
+import { getKeyArray } from "../../helpers";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
 import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
@@ -337,12 +337,14 @@ useEffect(() => {
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
               {
-                  noData && (
+                  sources.length && subSources.length && languages.length && noData ? (
                     <Grid item xs={12}>
                     <Alert variant="filled" severity="error">
                         No Data available, Please change the Filters
                     </Alert>
                   </Grid>
+                  ) : (
+                    <span></span>
                   )
               }
               <Grid item xs={12}>
