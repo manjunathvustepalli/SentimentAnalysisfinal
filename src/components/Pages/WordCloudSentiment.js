@@ -290,24 +290,10 @@ function WordCloudSentiment() {
                         sentimentKeys = getKeyArray(sentimentBuckets)
                         sentimentKeys.forEach((sentiment,l)=>{
                             sortedData[key][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
-                                if(sentiment === 'negative'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(255,0,0)'
-                                    }
-                                } else if(sentiment === 'positive'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(0,255,0)'
-                                    }
-                                } else {
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(255,255,0)'
-                                    }
+                                return {
+                                    name:wordObj.key,
+                                    weight:wordObj.doc_count,
+                                    color:colors[sentiment]
                                 }
                             })
                         })
@@ -480,7 +466,7 @@ function WordCloudSentiment() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>

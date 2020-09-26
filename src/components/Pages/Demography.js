@@ -123,14 +123,16 @@ function TrendAnalysis() {
                 <Card className={classes.main}>
                   <CardContent>Martial Status</CardContent>
                   <DemographyDonutChart 
-                  
-                  color1="#f21649" color2="#349eeb" />
+                  data={[{name:'Married',y:90,color:'#f21649'},{name:'Unmarried',y:65,color:'rgba(237, 230, 230)'}]}
+                 />
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Card className={classes.main}>
                   <CardContent>Parental Status</CardContent>
-                  <DemographyDonutChart color1="#9e1c39" color2="#2ce654" />
+                  <DemographyDonutChart 
+                  data={[{name:'2 Children',y:70,color:'#9e1c39'},{name:'3 children',y:65,color:'rgba(237, 230, 230)'}]}
+                  />
                 </Card>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -148,7 +150,7 @@ function TrendAnalysis() {
             </Grid>
           </Grid>
           <Grid item md={4} sm={12} >
-            <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+            <Grid container spacing={1} style={{position:'sticky',top:'60px'}} >
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>

@@ -1,5 +1,5 @@
 import './sidebar.css';
-import React from 'react';
+import React,{ useEffect } from 'react';
 import { Link, withRouter } from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -34,7 +34,6 @@ import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import { useEffect } from 'react';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import StorageIcon from '@material-ui/icons/Storage';
 

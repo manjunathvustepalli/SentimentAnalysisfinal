@@ -25,6 +25,7 @@ function InfluencerComparison({from,to}) {
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
     const [data, setData] = useState([])
+    const [size, setSize] = useState(10)
  
     const parent = [{
         id: 'negative',
@@ -137,7 +138,7 @@ function InfluencerComparison({from,to}) {
         }
     }
     }]
-
+ 
     useEffect(() => {
         if(source === 'twitter'){
             Axios.post(process.env.REACT_APP_URL,
@@ -159,12 +160,13 @@ function InfluencerComparison({from,to}) {
                     "aggs": {
                       "Users": {
                         "terms": {
-                          "field": "User.ScreenName.keyword"
+                          "field": "User.ScreenName.keyword",
+                          "size":1000
                         },
                         "aggs": {
                           "Followers": {
                             "max": {
-                              "field": "User.FollowersCount"
+                              "field": "User.FollowersCount",
                             }
                           },
                           "Posts": {
@@ -187,7 +189,8 @@ function InfluencerComparison({from,to}) {
                                 {
                                   "influenceWeight": {"order": "desc"}
                                 }
-                              ]
+                              ],
+                              "size":size,
                             }
                           },
                           "Sentiment": {
@@ -222,7 +225,7 @@ function InfluencerComparison({from,to}) {
                       })))
                 })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err,err.response)
                 })    
         } else {
             Axios.post(process.env.REACT_APP_URL,{
@@ -243,7 +246,7 @@ function InfluencerComparison({from,to}) {
                   "aggs": {
                     "newspaperInfluencers": {
                       "terms": {
-                        "field": "SubSource.keyword"
+                        "field": "SubSource.keyword",
                       },
                       "aggs": {
                         "ArticleCount": {
@@ -257,7 +260,9 @@ function InfluencerComparison({from,to}) {
                               {
                                 "ArticleCount": {"order": "desc"}
                               }
-                            ]
+                            ],
+                            "size":size,
+                            "from":0
                           }
                         },
                         "Sentiment": {
@@ -295,17 +300,17 @@ function InfluencerComparison({from,to}) {
                   console.log(err)
               })
             }
-          },[from,to,source,type])
+          },[from,to,source,type,size])
 
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
-        <Grid container spacing={3} > 
-            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'15px 20px'}} >
+        <Grid container spacing={1}> 
+            <Grid item xs={4} style={{height:'70px',lineHeight:'70px',padding:'10px'}} >
                 Influence Comparison
             </Grid>
-            <Grid item xs={7}  >
+            <Grid item xs={8}  >
                 <Grid container style={{marginTop:'15px'}}>
-                <Grid item xs={5} >
+                <Grid item xs={4} style={{padding:'10px'}}>
                   <FormControl variant="outlined" style={{width:'100%'}} >
                     <InputLabel id="select-source" >Source</InputLabel>
                       <Select 
@@ -321,9 +326,8 @@ function InfluencerComparison({from,to}) {
                     </Select>
                   </FormControl>
                 </Grid>
-            <Grid item xs={1}/>
-            <Grid item xs={5}>
-              <FormControl variant="outlined" style={{width:'100%'}} >
+            <Grid item xs={4} style={{padding:'10px'}}>
+              <FormControl variant="outlined" style={{width:'100%',}} >
               <InputLabel id="Select-type">Select Type </InputLabel>
                     <Select
                     variant="outlined"
@@ -339,6 +343,25 @@ function InfluencerComparison({from,to}) {
                     </Select>
               </FormControl>
             </Grid>
+            <Grid item xs={4} style={{padding:'10px'}} >
+              <FormControl variant="outlined" style={{width:'100%'}} >
+              <InputLabel id="Select-count">Influencer Count </InputLabel>
+                    <Select
+                    variant="outlined"
+                    labelId="Select-count"
+                    label="Influencer Count"
+                    id="demo-simple-select-helper"
+                    fullWidth
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                    >
+                    <MenuItem value={10}>10 Top Influencers </MenuItem>
+                    <MenuItem value={25}>25 Top Influencers</MenuItem>
+                    <MenuItem value={50}>50 Top Influencers</MenuItem>
+                    </Select>
+              </FormControl>
+            </Grid>
+
                 </Grid>
             </Grid>
             <Grid item xs={12}>

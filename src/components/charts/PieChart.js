@@ -49,7 +49,7 @@ export default class PieChart extends Component {
                     dataLabels: {
                         enabled: true,
                         format: '{point.percentage:.1f} %',
-                        distance: -50,
+                        distance: 10,
                         style: {
                             fontWeight: 'bold',
                             color: 'black',
