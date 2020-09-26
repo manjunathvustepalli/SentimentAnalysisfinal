@@ -136,7 +136,7 @@ const SideNavBar = ( props) => {
       path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
     }, 
     {
-      name:'Fetch Media',
+      name:'Fetch',
       icon:<PageviewIcon/>,
       path:['/global-search']
     },
