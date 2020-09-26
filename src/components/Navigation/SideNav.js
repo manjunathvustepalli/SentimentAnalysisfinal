@@ -38,13 +38,13 @@ import { useEffect } from 'react';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import StorageIcon from '@material-ui/icons/Storage';
 
-const drawerWidth = 260;
+const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
   listItemText:{
-    fontSize:'16px',
+    fontSize:'12px',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
