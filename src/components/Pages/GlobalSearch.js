@@ -302,7 +302,7 @@ function GlobalSearch() {
     return (
         <>
             <Loader open={open} />
-            <Grid container spacing={3} style={{padding:'30px'}}>
+            <Grid container spacing={1}style={{padding:'30px'}}>
             <Grid item xs={10}>
                 <Grid container>
                     <Grid item xs={4} sm={3} md={2} lg={2}

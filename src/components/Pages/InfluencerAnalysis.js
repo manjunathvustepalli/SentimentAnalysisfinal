@@ -511,7 +511,7 @@ function InfluencerAnalysis() {
                     </Grid>
                 </Grid>
                 <Grid item md={4} sm={12} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                    <Grid container spacing={1} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]} />
                         </Grid>

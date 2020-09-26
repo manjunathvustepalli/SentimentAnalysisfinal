@@ -159,7 +159,6 @@ function OverallAnalysis({to, from}) {
               setSourceData(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}))
               let obj = []
             let sum = 0
-            setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key)
           res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}).forEach(source => {
             if(Object.keys(source)[0] !== res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key){
                 sum += source[Object.keys(source)[0]]
@@ -197,9 +196,17 @@ function OverallAnalysis({to, from}) {
             }
           })
         })
-        let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
-        setSentiments(sortedData[s].sentiment)
-        setMoods(sortedData[s].mood)
+        if(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key !== 'new-twitter'){
+          setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key)
+          let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
+          setSentiments(sortedData[s].sentiment)
+          setMoods(sortedData[s].mood)
+        } else {    
+          setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[1].key)
+          let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[1].key
+          setSentiments(sortedData[s].sentiment)
+          setMoods(sortedData[s].mood)
+        }
       })
     }, [from,to])
 
@@ -208,7 +215,7 @@ function OverallAnalysis({to, from}) {
         <Grid container spacing={0} className={classes.gridposition}>
             <Grid item xs={3}>
             <CardContent >Overall Analysis</CardContent>
-            <FormControl variant="outlined" className={classes.formControl} style={{margin:'30px'}} >
+            <FormControl variant="outlined" className={classes.formControl} style={{margin:'20px'}} >
                 <InputLabel id="Source-label">Source</InputLabel>
                     <Select 
                       labelId="Source-label"
@@ -219,11 +226,11 @@ function OverallAnalysis({to, from}) {
                       onChange={(e) => handleChange(e.target.value)}
                     >
                         {
-                            sources.map((source,i) => <MenuItem key={i} value={source}>{source}</MenuItem> )
+                                    sources.filter((source)=> source !== 'new-twitter').map((source,i) => <MenuItem key={i} value={source}>{source}</MenuItem> )
                         }
                     </Select>
                 </FormControl>
-                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'30px'}} align='center'>
+                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'20px'}} align='center'>
                     <Typography variant='subtitle1' >
                         {nFormatter(mainSourceData.length && (
                           mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)
