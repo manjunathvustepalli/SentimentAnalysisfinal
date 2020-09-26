@@ -73,7 +73,7 @@ function TreeMap(props) {
             levels: [{
                 level: 1,
                 dataLabels: {
-                    enabled: true,
+                    enabled: false,
                     align: 'left',
                     verticalAlign: 'top',
                     style: {
