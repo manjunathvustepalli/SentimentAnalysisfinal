@@ -352,12 +352,14 @@ useEffect(() => {
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
               {
-                  noData && (
+                  sources.length && subSources.length && languages.length && mood && noData ? (
                     <Grid item xs={12}>
                     <Alert variant="filled" severity="error">
                         No Data available, Please change the Filters
                     </Alert>
                   </Grid>
+                  ) :(
+                    <span/>
                   )
               }
               <Grid item xs={12}>
