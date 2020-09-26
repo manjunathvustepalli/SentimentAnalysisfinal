@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GeoTaggingSummary() {
 
-    const [sources, setSources] = useState(['newspaper','twitter'])
+    const [sources] = useState(['newspaper','twitter'])
     const [source, setSource] = useState('newspaper')
     const [sentiment, setSentiment] = useState('positive')
     const [mood, setMood] = useState('joy')
@@ -29,12 +29,12 @@ function GeoTaggingSummary() {
     return (
         <Card style={{height:'530px'}}>
             <Grid container>
-                <Grid item xs={5} style={{fontSize: 12,fontWeight: "bold",color: "#CB0038",height:'70px',lineHeight:'70px',padding:'10px 0 0 20px'}}>
-                    Geo Tagging Summary
+                <Grid item xs={4} style={{fontSize: 12,fontWeight: "bold",color: "#CB0038",height:'70px',lineHeight:'70px',paddingLeft:'20px'}}>
+                    Geo Summary
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={8}>
                 { sources && sources.length && (
-                    <Grid container spacing={2} style={{marginTop:'10px'}}>
+                    <Grid container spacing={1} style={{marginTop:'10px'}}>
                     <Grid item xs={4} >
                         <FormControl variant="outlined" style={{width:'100%'}}>
                             <InputLabel id="select-source"  >Source</InputLabel>

@@ -3,6 +3,7 @@ import { Tabs, Tab, Box, Grid } from '@material-ui/core';
 import AdminPageTable from '../Tables/AdminPageTable';
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
 import Axios from 'axios';
+import Loader from '../LoaderWithBackDrop'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -36,8 +37,7 @@ function TabPanel(props) {
 function AdminPage() {
     const [value, setValue] = React.useState(0);
     const [data, setData] = useState({})
-    const [keywords, setKeywords] = useState([])
-    const [screenNames, setScreenNames] = useState([])
+    const [open, setOpen] = useState(true)
     const [keywordColumns] = useState([
       {
         title:'Keyword',
@@ -65,7 +65,8 @@ function AdminPage() {
                 screenName:handle
               }
             })
-          }) 
+          })
+          setOpen(false)
         })
     }, [])
 
@@ -84,6 +85,7 @@ function AdminPage() {
     const handleChange = (event, newValue) => setValue(newValue)
     return (
             <Grid container style={{marginTop:'40px'}}>
+                <Loader open={open} />
                 <Grid item xs={1}/>
                 <Grid item xs={10}>
                     <Tabs

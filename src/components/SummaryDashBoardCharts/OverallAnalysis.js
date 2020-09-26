@@ -248,10 +248,10 @@ function OverallAnalysis({to, from}) {
             <Grid item xs={6} >
                 <SemiDonutChart height={250} data={mainSourceData} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
                 <PieChart height={200}  data={sentiments} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={7}>
                 <PieChart height={220} data={moods} />
             </Grid>
         </Grid>
