@@ -30,170 +30,96 @@ function GlobalSearch() {
 
     const submitData = () => {
         setopen(true)
+        let keywordsString = keywords.join(',')
+        let handlesString = handles.join(',')
         if(source === 'twitter'){
-            let query = {
-                "query": {
-                  "bool": {
-                    "must": [
-                        {"terms": {"Source.keyword": [source]}},
-                    ]
-                  }
-                },
-                "size": 50,
-                "sort": [
-                  {
-                    "CreatedAt": {
-                      "order": "desc"
-                    }
-                  }
-                ]
-              }
-              if(handles.length){
-                  query.query.bool.must.push({
-                      "terms":{
-                          "SubSource.keyword":handles
-                      }
-                  })
-              }
-              if(keywords.length){
-                query.query.bool.must.push({
-                    "terms":{
-                        "HashtagEntities.Text.keyword":keywords
-                    }
-                })
-              }
-            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-              .then(data =>{
-                  console.log(data.data)
-                setData(data.data.hits.hits.map((postObj)=>{
-                    if(!postObj._source.User){
-                        return {
-                            date:dateFormatter(postObj._source.CreatedAt),
-                            post:postObj._source.Text,
-                            favouriteCount:postObj._source.FavoriteCount,
-                            sentiment:postObj._source.predictedSentiment,
-                            mood:postObj._source.predictedMood,
-                            language:postObj._source.predictedLang
-                        }
-                    } else {
-                        return {
-                            date:dateFormatter(postObj._source.CreatedAt),
-                            post:postObj._source.Text,
-                            favouriteCount:postObj._source.FavoriteCount,
-                            sentiment:postObj._source.predictedSentiment,
-                            mood:postObj._source.predictedMood,
-                            language:postObj._source.predictedLang,
-                            followersCount:postObj._source.User.FollowersCount,
-                            location:postObj._source.User.Location,
-                            name:postObj._source.User.Name,
-                            screenName:postObj._source.User.ScreenName
-                        }
-                    }
-                }))
-                setColumns([
-                    {
-                        title:'Date',
-                        field:'date',   
-                    },
-                    {
-                        title:'Name',
-                        field:'name',   
-                    },
-                    {
-                        title:'Screen Name',
-                        field:'screenName',   
-                    },
-                    {
-                        title:'Post',
-                        field:'post',
-                        width:300
-                    },
-                    {
-                        title:'Followers Count',
-                        field:'followersCount',   
-                    },
-                    {
-                        title:'Location',
-                        field:'location',   
-                    },
-                    {
-                        title:'Sentiment',
-                        field:'sentiment',   
-                    },
-                    {
-                        title:'Mood',
-                        field:'mood',   
-                    },
-                    {
-                        title:'Language',
-                        field:'language',   
-                    }
-                ])
-                setopen(false)
-            })
-              .catch(err =>{
-                  console.log(err)
-              })
-        }else if(source === 'facebook') {
-            setopen(true)
-            let query = {
-                "query": {
-                  "bool": {
-                    "must": [
-                      {"terms": {"Source.keyword": [source]}},
-                    ]
-                  }
-                },
-                "size": 50,
-                "sort": [
-                  {
-                    "CreatedAt": {
-                      "order": "desc"
-                    }
-                  }
-                ]
-              }
-              if(handles.length){
-                query.query.bool.must.push({
-                    "terms":{
-                        "SubSource.keyword":handles
-                    }
-                })
-            }
-            if(keywords.length){
-              query.query.bool.must.push({
-                  "terms":{
-                      "HashtagEntities.Text.keyword":keywords
-                  }
-              })
-            }
-            console.log(query)
-            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-              .then(data=>{
-                console.log(data.data)
-                setData(data.data.hits.hits.map((postObj,i)=>{
-                    return {
-                        date:dateFormatter(postObj._source.CreatedAt),
-                        post:postObj._source.Text,
-                        favouriteCount:postObj._source.FavoriteCount,
-                        sentiment:postObj._source.predictedSentiment,
-                        mood:postObj._source.predictedMood,
-                        language:postObj._source.predictedLang,
-                        screenName:postObj._source.SubSource
-                    }
-                }))
-                setColumns([
+            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-e979c0f6.localhost.run/bsma-webservice/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
+                .then(res =>{
+                    if(res.data.status === 'ACCEPTED'){
+                        let query = {
+                            "query": {
+                              "bool": {
+                                "must": [
+                                    {"terms": {"Source.keyword": [source]}},
+                                ]
+                              }
+                            },
+                            "size": 50,
+                            "sort": [
+                              {
+                                "CreatedAt": {
+                                  "order": "desc"
+                                }
+                              }
+                            ]
+                          }
+                          if(handles.length){
+                              query.query.bool.must.push({
+                                  "terms":{
+                                      "User.ScreenName.keyword":handles
+                                  }
+                              })
+                          }
+                          if(keywords.length){
+                            query.query.bool.must.push({
+                                "terms":{
+                                    "HashtagEntities.Text.keyword":keywords
+                                }
+                            })
+                          }
+                        Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                          .then(data =>{
+                              console.log(query);
+                              console.log(data.data)
+                            setData(data.data.hits.hits.map((postObj)=>{
+                                if(!postObj._source.User){
+                                    return {
+                                        date:dateFormatter(postObj._source.CreatedAt),
+                                        post:postObj._source.Text,
+                                        favouriteCount:postObj._source.FavoriteCount,
+                                        sentiment:postObj._source.predictedSentiment,
+                                        mood:postObj._source.predictedMood,
+                                        language:postObj._source.predictedLang
+                                    }
+                                } else {
+                                    return {
+                                        date:dateFormatter(postObj._source.CreatedAt),
+                                        post:postObj._source.Text,
+                                        favouriteCount:postObj._source.FavoriteCount,
+                                        sentiment:postObj._source.predictedSentiment,
+                                        mood:postObj._source.predictedMood,
+                                        language:postObj._source.predictedLang,
+                                        followersCount:postObj._source.User.FollowersCount,
+                                        location:postObj._source.User.Location,
+                                        name:postObj._source.User.Name,
+                                        screenName:postObj._source.User.ScreenName
+                                    }
+                                }
+                            }))
+                            setColumns([
                                 {
                                     title:'Date',
                                     field:'date',   
                                 },
                                 {
+                                    title:'Name',
+                                    field:'name',   
+                                },
+                                {
                                     title:'Screen Name',
-                                    field:'screenName',
+                                    field:'screenName',   
                                 },
                                 {
                                     title:'Post',
                                     field:'post',
+                                },
+                                {
+                                    title:'Followers Count',
+                                    field:'followersCount',   
+                                },
+                                {
+                                    title:'Location',
+                                    field:'location',   
                                 },
                                 {
                                     title:'Sentiment',
@@ -208,11 +134,105 @@ function GlobalSearch() {
                                     field:'language',   
                                 }
                             ])
-                setopen(false)            
+                            setopen(false)
+                        })
+                          .catch(err =>{
+                                console.log(err);
+                                setopen(false)
+                          })            
+                    }
+            })
+            .catch(err =>{
+                console.log(err);
+                setopen(false)
+            })
+        }else if(source === 'facebook') {
+            Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-e979c0f6.localhost.run/bsma-webservice/fetchdatafromfb?fbpage=${handlesString}`)
+                .then(res =>{
+                    console.log(res.data);
+                    let query = {
+                        "query": {
+                          "bool": {
+                            "must": [
+                              {"terms": {"Source.keyword": [source]}},
+                            ]
+                          }
+                        },
+                        "size": 50,
+                        "sort": [
+                          {
+                            "CreatedAt": {
+                              "order": "desc"
+                            }
+                          }
+                        ]
+                      }
+                      if(handles.length){
+                        query.query.bool.must.push({
+                            "terms":{
+                                "SubSource.keyword":handles
+                            }
+                        })
+                    }
+                    if(keywords.length){
+                      query.query.bool.must.push({
+                          "terms":{
+                              "HashtagEntities.Text.keyword":keywords
+                          }
+                      })
+                    }
+                    console.log(query)
+                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                      .then(data=>{
+                        console.log(data.data)
+                        setData(data.data.hits.hits.map((postObj,i)=>{
+                            return {
+                                date:dateFormatter(postObj._source.CreatedAt),
+                                post:postObj._source.Text,
+                                favouriteCount:postObj._source.FavoriteCount,
+                                sentiment:postObj._source.predictedSentiment,
+                                mood:postObj._source.predictedMood,
+                                language:postObj._source.predictedLang,
+                                screenName:postObj._source.SubSource
+                            }
+                        }))
+                        setColumns([
+                                        {
+                                            title:'Date',
+                                            field:'date',   
+                                        },
+                                        {
+                                            title:'Screen Name',
+                                            field:'screenName',
+                                        },
+                                        {
+                                            title:'Post',
+                                            field:'post',
+                                        },
+                                        {
+                                            title:'Sentiment',
+                                            field:'sentiment',   
+                                        },
+                                        {
+                                            title:'Mood',
+                                            field:'mood',   
+                                        },
+                                        {
+                                            title:'Language',
+                                            field:'language',   
+                                        }
+                                    ])
+                        setopen(false)            
+                        })
+                      .catch(err =>{
+                        console.log(err)
+                        setopen(false)
+                      })                    
                 })
-              .catch(err =>{
-                  console.log(err)
-              })            
+                .catch(err =>{
+                    console.log(err);
+                    setopen(false)
+                })
         }else if(source === 'newspaper') {
             setopen(true)
             let query = {
@@ -294,7 +314,8 @@ function GlobalSearch() {
                 setopen(false)            
                 })
               .catch(err =>{
-                  console.log(err)
+                    console.log(err)
+                    setopen(false)
               })            
         }
     }
@@ -325,7 +346,7 @@ function GlobalSearch() {
                         style={{backgroundColor:source==='facebook'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='facebook'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         FACEBOOK
                     </Grid>
-                    <Grid item xs={4} sm={3} md={2} lg={2} 
+                    {/* <Grid item xs={4} sm={3} md={2} lg={2} 
                         onClick={() => {
                             setData([])
                             setSource('newspaper')
@@ -334,7 +355,7 @@ function GlobalSearch() {
                         }}
                         style={{backgroundColor:source==='newspaper'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='newspaper'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
                         NEWSPAPER
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Grid>
             <Grid item xs={2} />

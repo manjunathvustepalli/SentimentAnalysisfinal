@@ -205,14 +205,6 @@ function LiveAnalysis() {
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" }},
                     {title:'Post',field:'tweet'},
-                    {
-                      title:'Media Urls',field:'mediaUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                    {
-                      title:'Post Url',field:'postUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
                     {title:'Followers Count',field:'followersCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
@@ -221,14 +213,6 @@ function LiveAnalysis() {
                     headerStyle: { whiteSpace: "nowrap" },},
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
-                ])
-            } else if( source === 'facebook'){
-                setColumns([
-                    {title:'Date',field:'date'},
-                    {title:'Post',field:'tweet'},
-                    {title:'Replies',field:'retweetCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
                     {
                       title:'Media Urls',field:'mediaUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
@@ -237,6 +221,14 @@ function LiveAnalysis() {
                       title:'Post Url',field:'postUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
+                ])
+            } else if( source === 'facebook'){
+                setColumns([
+                    {title:'Date',field:'date'},
+                    {title:'Post',field:'tweet'},
+                    {title:'Replies',field:'retweetCount',width: "1%",
+                    cellStyle: { whiteSpace: "nowrap" },
+                    headerStyle: { whiteSpace: "nowrap" },},
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                 ])
@@ -244,12 +236,20 @@ function LiveAnalysis() {
                 setColumns([
                     {title:'Date',field:'date'},
                     {title:'Post',field:'tweet'},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
+                    {
+                      title:'Media Urls',field:'mediaUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                     {
                       title:'Post Url',field:'postUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
-                    {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
+                    {
+                      title:'Post Url',field:'postUrl',width: "1%",
+                      headerStyle: { whiteSpace: "nowrap" }
+                    },
                 ])
             }
         })

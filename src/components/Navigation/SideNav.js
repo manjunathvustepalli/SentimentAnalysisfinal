@@ -36,6 +36,8 @@ import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import StorageIcon from '@material-ui/icons/Storage';
+import SearchIcon from '@material-ui/icons/Search';
+
 
 const drawerWidth = 180;
 const useStyles = makeStyles((theme) => ({
@@ -134,7 +136,7 @@ const SideNavBar = ( props) => {
       path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
     }, 
     {
-      name:'Global Search',
+      name:'Fetch Media',
       icon:<PageviewIcon/>,
       path:['/global-search']
     },
@@ -159,8 +161,8 @@ const SideNavBar = ( props) => {
       path:['/image-gallery'],
     },
     {
-      name:'Search Database',
-      icon:<StorageIcon/>,
+      name:'Search',
+      icon:<SearchIcon/>,
       path:['/search-from-db'],
     },
     {
