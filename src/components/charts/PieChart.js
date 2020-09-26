@@ -24,7 +24,8 @@ export default class PieChart extends Component {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                height:this.props.height
             },
             CSSObject:{
                 color:'rbg(0,0,0)',

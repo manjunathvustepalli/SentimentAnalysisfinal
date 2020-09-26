@@ -30,9 +30,10 @@ function nFormatter(num, digits) {
 
 const useStyles = makeStyles((theme) => ({
     main: {
-        fontSize: 16,
+        fontSize: '12px',
         fontWeight: "bold",
         color: "#CB0038",
+        height:'450px'
     },
     formControl: {
       margin: '10px',
@@ -212,8 +213,8 @@ function OverallAnalysis({to, from}) {
 
     return (
         <Card className={classes.main}>
-        <Grid container spacing={0} className={classes.gridposition}>
-            <Grid item xs={3}>
+        <Grid container className={classes.gridposition}>
+            <Grid item xs={6}>
             <CardContent >Overall Analysis</CardContent>
             <FormControl variant="outlined" className={classes.formControl} style={{margin:'20px'}} >
                 <InputLabel id="Source-label">Source</InputLabel>
@@ -244,14 +245,14 @@ function OverallAnalysis({to, from}) {
                     </Typography>
                 </Card>
             </Grid>
-            <Grid item xs={3} >
-                <SemiDonutChart data={mainSourceData} />
+            <Grid item xs={6} >
+                <SemiDonutChart height={250} data={mainSourceData} />
             </Grid>
-            <Grid item xs={3}>
-                <PieChart  data={sentiments} />
+            <Grid item xs={6}>
+                <PieChart height={200}  data={sentiments} />
             </Grid>
-            <Grid item xs={3}>
-                <PieChart data={moods} />
+            <Grid item xs={6}>
+                <PieChart height={220} data={moods} />
             </Grid>
         </Grid>
     </Card>

@@ -1,5 +1,5 @@
 import './sidebar.css';
-import React,{ useEffect } from 'react';
+import React,{ useEffect, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -37,7 +37,7 @@ import ImageSearchIcon from '@material-ui/icons/ImageSearch';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import StorageIcon from '@material-ui/icons/Storage';
 
-const drawerWidth = 200;
+const drawerWidth = 180;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -85,13 +85,13 @@ const SideNavBar = ( props) => {
   const { window,children,history } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:'rgb(67,176,42)'}
+        return {color:'rgb(67,176,42)',minWidth:'30px'}
     }
     else{
-        return {color:"black"}
+        return {color:"black",minWidth:'30px'}
     }
   }
   const handleDrawerToggle = () => {
@@ -198,7 +198,7 @@ const SideNavBar = ( props) => {
               </Grid>
             </Grid>
           </div>
-      <Divider style={{marginTop:'150px'}} />
+      <Divider style={{marginTop:'120px'}} />
       <List >
         {menus.map((menuItem, index) => (
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>

@@ -28,7 +28,7 @@ const IconWithText = styled.div`
 
 const useStyles = makeStyles((theme) => ({
     main: {
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: "bold",
         color: "#CB0038",
     },
@@ -55,16 +55,16 @@ function SummaryDashBoard() {
     const [to, setTo] = useState(addMonths(new Date(),0))
 
     return (
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
-                <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
+            <div style={{ backgroundColor: '#F7F7F7', padding:'10px 20px'}}>
+                <Typography style={{color:'#43B02A',marginBottom:'5px'}} variant='h4' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
                         <div className={'keyword-wrapper'}>
-                        <Card style={{backgroundColor:'#2C3335',height:'130px'}} >
-                            <IconWithText style={{margin:'15px'}}>
-                                <FilterListIcon style={{color:'white'}} /> 
+                        <Card style={{backgroundColor:'#2C3335',minHeight:'120px'}} >
+                            <IconWithText style={{margin:'10px'}}>
+                                <FilterListIcon style={{color:'white',marginRight:'10px'}} /> 
                                 <p style={{color:'white'}} > FILTERS </p>
                             </IconWithText>
                             <Grid container>    
@@ -96,35 +96,35 @@ function SummaryDashBoard() {
                         </div>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
-                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                            <FilterHeader height={120} refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12} >
                         <div id="summary-dashboard" style={{width:'100%'}}>
                         <Grid container spacing={2}>                     
-                            <Grid item xl={4} md={12} xs={12}>
+                            <Grid item xl={4} md={4} xs={12} >
                                 <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
                             </Grid>
-                            <Grid item xl={4} md={6} sm={12} xs={12}>
+                            <Grid item xl={4} md={4} sm={12} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Mood Analysis</CardContent> 
                                     <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
                                 </Card>
                             </Grid>                    
-                            <Grid item xl={4} md={6} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Sentiment Analysis</CardContent>
                                     <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
                                 </Card>
                             </Grid>                   
-                            <Grid item xl={4} md={6} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <InfluencerComparison from={from} to={to} />
                             </Grid>
-                            <Grid item xl={4} md={6} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
                                    <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
                                 </Card>
                             </Grid>
-                            <Grid item xl={4} md={12} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <GeoTaggingSummary/>
                             </Grid>
                         </Grid>

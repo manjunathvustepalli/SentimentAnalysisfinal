@@ -14,7 +14,7 @@ const IconWithText = styled.div`
 
 function FilterWrapper( {children} ) {
     return (
-        <Card style={{backgroundColor:'#2C3335',minHeight:'68vh'}}>
+        <Card style={{backgroundColor:'#2C3335',minHeight:'73vh'}}>
             <CardContent>
                 <Grid container>
                     <Grid item xs={12}>

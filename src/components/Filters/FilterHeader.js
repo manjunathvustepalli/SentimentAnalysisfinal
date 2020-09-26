@@ -58,7 +58,7 @@ function FilterHeader(props) {
     minutes = minutes < 10 ? '0'+minutes : minutes;
 
     return (
-        <Card style={{backgroundColor:'#43B02A',height:'130px'}}>
+        <Card style={{backgroundColor:'#43B02A',height: props.height ? props.height : '90px'}}>
             <CardContent>
                 <Grid container>
                     <Grid xs={5} item align='left'>
@@ -69,11 +69,11 @@ function FilterHeader(props) {
                         
                     </Grid>
                 <Grid xs={7} item align='right'>
-                    <Typography style={{fontSize:'15px',color:'white'}}>
+                    <Typography style={{fontSize:'10px',color:'white'}}>
                         Last Refresh at {mnth + '-' + dt + '-'+ yr + ' ' + hour + ':'+ minutes + ':'+ seconds + ' ' + ampm}
                     </Typography>
                     <Button
-                    style={{marginTop:'13px'}}
+                    style={{marginTop:props.height ? '30px' :'13px'}}
                     variant="outlined"
                     color="primary"
                     className={classes.buttonStyle}

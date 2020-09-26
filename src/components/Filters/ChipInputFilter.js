@@ -15,7 +15,7 @@ function ChipInputFilter(props) {
             color:'white'
         }}}
         InputProps={{style:{
-            color:'white'
+            color:'white',
         }}}
         style={{transform:props.transform ? 'translateY(20%)' : ''}}
         onChange={(chips) => {
