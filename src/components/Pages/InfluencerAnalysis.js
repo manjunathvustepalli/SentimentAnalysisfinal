@@ -298,7 +298,7 @@ function InfluencerAnalysis() {
                         influencer: <div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} >{doc.key.split('')[0].toUpperCase()}</Avatar> &nbsp;&nbsp; {doc.key} </div>,
                         posts: <span> <EmailIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Posts.value} </span>,
                         followers: <span> <SupervisorAccountIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.Followers.value} </span>,
-                        mood: doc.Moods.buckets[0] ? (<span style={{color:colors[doc.Moods.buckets[0].key]}} > {doc.Moods.buckets[0].key} </span> ) : (<span style={{color:'#aaa'}} > unknown </span> ),
+                        mood: doc.Moods.buckets[0] ? (<span style={{color:doc.Moods.buckets[0].key !== 'sad' ? colors[doc.Moods.buckets[0].key] : ('#ddd')}} > {doc.Moods.buckets[0].key} </span> ) : (<span style={{color:'#aaa'}} > unknown </span> ),
                         sentiment: doc.Sentiment.buckets[0] ? (<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span>) : (<span style={{color:'#aaa'}} > unknown </span>)  
                     }
                 }))
@@ -391,12 +391,11 @@ function InfluencerAnalysis() {
           }
         })
           .then(res => {
-              console.log(res)
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                   return {
                       newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > <ArtTrackIcon/> </Avatar> &nbsp;&nbsp; {doc.key} </div>,
                       articles: <span> <AssignmentIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
-                      mood:<span style={{color:colors[doc.Mood.buckets[0].key]}} > {doc.Mood.buckets[0].key} </span> ,
+                      mood:<span style={{color:doc.Mood.buckets[0].key !== 'sad' ? colors[doc.Mood.buckets[0].key] : ('#000')}} > {doc.Mood.buckets[0].key} </span> ,
                       sentiment:<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
                   }
               }))

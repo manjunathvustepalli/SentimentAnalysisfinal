@@ -1,8 +1,10 @@
-import { Button, Grid, Typography } from '@material-ui/core'
+import { Button, Chip, Grid, TextField, Typography } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios';
 import ChipInput from 'material-ui-chip-input';
 import MaterialTable from 'material-table';
+import { getKeyArray } from '../../helpers';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 const dateFormatter = (unix) => {
     var date = new Date(unix);
     var hours = date.getHours();
@@ -17,6 +19,9 @@ const dateFormatter = (unix) => {
 function SearchFromDB() {
     const [keywords, setKeywords] = useState([])
     const [data, setData] = useState([])
+    const [sources, setSources] = useState([])
+    const [selectedSources, setSelectedSources] = useState([])
+    const [handles, setHandles] = useState([])
     const [columns, setColumns] = useState([
         {
             title:'Date',
@@ -57,25 +62,45 @@ function SearchFromDB() {
     ])
 
     const fetchData = () => {
-        console.log('hello')
-        if(keywords.length){
-            Axios.post(process.env.REACT_APP_SEARCH_URL,{
-                "query": {
-                  "bool": {
-                    "must": [
-                      {"terms": {"HashtagEntities.Text.keyword": keywords}}
-                    ]
-                  }
-                },
-                "size": 50,
-                "sort": [
-                  {
-                    "CreatedAt": {
-                      "order": "desc"
-                    }
-                  }
+        let query = {
+            "query": {
+              "bool": {
+                "must": [
                 ]
+              }
+            },
+            "size": 50,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+          if(selectedSources.length){
+              query.query.bool.must.push({
+                "terms": {"Source.keyword":selectedSources}  
               })
+          }
+          if(selectedSources.length === 1 && handles.length){
+            if(selectedSources[0] === 'twitter' || selectedSources[0] === 'new-twitter'){
+                query.query.bool.must.push({
+                    "terms": {"User.ScreenName.keyword":handles}  
+                  })
+            }else{
+                query.query.bool.must.push({
+                    "terms": {"SubSource.keyword":handles}  
+                })
+            }
+          }
+          if(keywords.length){
+            query.query.bool.must.push({
+                "terms": {"HashtagEntities.Text.keyword":keywords}  
+            })
+          }
+          console.log(query)
+            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(fetchedData => {
                 setData(fetchedData.data.hits.hits.map((postObj)=>{
                     if(!postObj._source.User){
@@ -110,10 +135,26 @@ function SearchFromDB() {
               .catch(err => {
                   console.log(err)
               })
-        } else {
-            setData([])
-        }
     }
+
+    useEffect(() => {
+        Axios.post(process.env.REACT_APP_URL,{
+              "aggs": {
+                "Source": {
+                  "terms": {
+                    "field": "Source.keyword"
+                  }
+                  }
+                }
+          })
+          .then(data => {
+             setSources(getKeyArray(data.data.aggregations.Source.buckets))
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }, [])
+  
     return (
         <Grid container>
                 <Grid item xs={2} />
@@ -124,8 +165,58 @@ function SearchFromDB() {
                     
                 </Grid>
                 <Grid item xs={2} />
-                <Grid item xs={2} />
-                <Grid item xs={6} style={{marginTop:'20px'}}>
+                <Grid item xs={1} />
+                <Grid item xs={3} style={{marginTop:'20px'}}>
+                <div style={{width:'100%',padding:'0 10px'}}>
+                              <Autocomplete
+                              multiple
+                              fullWidth
+                              id="tags-outlined"
+                              value={selectedSources}
+                              onChange={(e,arr) => {
+                                if(arr.includes('All')){
+                                    setSelectedSources([...sources])
+                                } else {
+                                    setSelectedSources(arr)
+                                }
+                              }}
+                              options={[...sources,'All']}
+                              getOptionLabel={(option) => option}
+                              renderTags={(value, getTagProps) =>
+                                  value.map((option, index) => (
+                                    <Chip variant="outlined"  label={option} {...getTagProps({ index })} />
+                                  )) 
+                                }
+                              renderInput={(params) => (
+                                <TextField
+                                  fullWidth
+                                  {...params}
+                                  variant="outlined"
+                                  label="Select Sources"
+                                  placeholder="Sources"
+                                />
+                              )}
+                            />
+                          </div>
+                </Grid>
+                {
+                    selectedSources.length === 1 ? (
+                        <Grid item xs={2} style={{marginTop:'20px',marginLeft:'10px'}}>
+                        <ChipInput
+                            fullWidth
+                            variant="outlined"
+                            label={`Type ${selectedSources[0] ? selectedSources[0] : '' } Handle to Search`}
+                            defaultValue={handles}                        
+                            onChange={(chips) => {
+                                setHandles(chips)
+                            }}
+                        />
+                    </Grid>       
+                    ) : (
+                        <span/>
+                    ) 
+                }
+                <Grid item xs={2} style={{marginTop:'20px',marginLeft:'10px'}}>
                     <ChipInput
                         fullWidth
                         variant="outlined"
@@ -137,7 +228,7 @@ function SearchFromDB() {
                     />
                 </Grid>
                 <Grid item xs={2} style={{marginTop:'20px'}}>
-                <Button style={{backgroundColor:'rgb(67, 176, 42)',color:'white',height:'100%',marginLeft:'10px'}} onClick={() => fetchData()} fullWidth>
+                <Button style={{backgroundColor:'rgb(67, 176, 42)',color:'white',height:'50px',marginLeft:'10px'}} onClick={() => fetchData()} fullWidth>
                     Search
                 </Button>
                 </Grid>    
