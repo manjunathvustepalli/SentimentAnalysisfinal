@@ -68,6 +68,7 @@ function TreeMap(props) {
         },
         series: [{
             type: "treemap",
+            enableMouseTracking: false,
             layoutAlgorithm: 'stripes',
             alternateStartingDirection: true,
             levels: [{

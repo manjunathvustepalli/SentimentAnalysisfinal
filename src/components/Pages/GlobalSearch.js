@@ -154,7 +154,7 @@ function GlobalSearch() {
                         "query": {
                           "bool": {
                             "must": [
-                              {"terms": {"Source.keyword": [source]}},
+                              {"terms": {"Source.keyword": [source]}}
                             ]
                           }
                         },
@@ -181,53 +181,55 @@ function GlobalSearch() {
                           }
                       })
                     }
-                    console.log(query)
-                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                      .then(data=>{
-                        console.log(data.data)
-                        setData(data.data.hits.hits.map((postObj,i)=>{
-                            return {
-                                date:dateFormatter(postObj._source.CreatedAt),
-                                post:postObj._source.Text,
-                                favouriteCount:postObj._source.FavoriteCount,
-                                sentiment:postObj._source.predictedSentiment,
-                                mood:postObj._source.predictedMood,
-                                language:postObj._source.predictedLang,
-                                screenName:postObj._source.SubSource
-                            }
-                        }))
-                        setColumns([
-                                        {
-                                            title:'Date',
-                                            field:'date',   
-                                        },
-                                        {
-                                            title:'Screen Name',
-                                            field:'screenName',
-                                        },
-                                        {
-                                            title:'Post',
-                                            field:'post',
-                                        },
-                                        {
-                                            title:'Sentiment',
-                                            field:'sentiment',   
-                                        },
-                                        {
-                                            title:'Mood',
-                                            field:'mood',   
-                                        },
-                                        {
-                                            title:'Language',
-                                            field:'language',   
-                                        }
-                                    ])
-                        setopen(false)            
-                        })
-                      .catch(err =>{
-                        console.log(err)
-                        setopen(false)
-                      })                    
+                    setTimeout(() => {
+                        console.log(query)
+                        Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                          .then(data=>{
+                            console.log(data.data)
+                            setData(data.data.hits.hits.map((postObj,i)=>{
+                                return {
+                                    date:dateFormatter(postObj._source.CreatedAt),
+                                    post:postObj._source.Text,
+                                    favouriteCount:postObj._source.FavoriteCount,
+                                    sentiment:postObj._source.predictedSentiment,
+                                    mood:postObj._source.predictedMood,
+                                    language:postObj._source.predictedLang,
+                                    screenName:postObj._source.SubSource
+                                }
+                            }))
+                            setColumns([
+                                            {
+                                                title:'Date',
+                                                field:'date',   
+                                            },
+                                            {
+                                                title:'Screen Name',
+                                                field:'screenName',
+                                            },
+                                            {
+                                                title:'Post',
+                                                field:'post',
+                                            },
+                                            {
+                                                title:'Sentiment',
+                                                field:'sentiment',   
+                                            },
+                                            {
+                                                title:'Mood',
+                                                field:'mood',   
+                                            },
+                                            {
+                                                title:'Language',
+                                                field:'language',   
+                                            }
+                                        ])
+                            setopen(false)            
+                            })
+                          .catch(err =>{
+                            console.log(err)
+                            setopen(false)
+                          })
+                    }, 10000);                   
                 })
                 .catch(err =>{
                     console.log(err);
