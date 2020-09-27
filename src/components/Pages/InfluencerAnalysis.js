@@ -227,8 +227,11 @@ function InfluencerAnalysis() {
         Axios.post(process.env.REACT_APP_URL,
           {
             "query": {
-              "terms": {
-                "Source.keyword": ["twitter", "new-twitter"],
+              "bool": {
+                "must": [
+                  {"terms": {"Source.keyword": ["twitter"]}},
+                  {"terms": {"Place.Country.keyword": ["Bangladesh"]}}
+                ]
               }
             },
             "aggs": {
