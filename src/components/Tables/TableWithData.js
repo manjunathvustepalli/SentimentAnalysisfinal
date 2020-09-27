@@ -40,11 +40,11 @@ const columns = [
     id:'sentiment',
     minWidth:50
   },
-  {
-    label:'Mood',
-    id:'mood',
-    minWidth:50
-  },
+  // {
+  //   label:'Mood',
+  //   id:'mood',
+  //   minWidth:50
+  // },
   {
     label:'Language',
     id:'language',
