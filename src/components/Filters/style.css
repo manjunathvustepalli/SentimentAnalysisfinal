@@ -68,3 +68,7 @@ ul.MuiList-padding{
 #autocomplete-subsource input{
     color: white;
 }
+
+#treemap-wrapper text{
+    color: black !important;
+}

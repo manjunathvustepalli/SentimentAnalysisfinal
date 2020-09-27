@@ -84,7 +84,7 @@ function TreeMap(props) {
                     }
                 }
             }],
-            data: props.data ,
+            data: props.data,
         }],
         title: {
             text: props.title || ''

@@ -16,6 +16,7 @@ import ArtTrackIcon from '@material-ui/icons/ArtTrack';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import colors from '../../helpers/colors';
 import CustomLegend from '../CustomLegend';
+import FacebookIcon from '@material-ui/icons/Facebook';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -51,7 +52,7 @@ function a11yProps(index) {
 
 function InfluencerAnalysis() {
     const [refresh, setRefresh] = useState(true)
-    const [sources,setSources] = useState(['Twitter','Newspaper'])
+    const [sources,setSources] = useState(['Twitter','Newspaper','Facebook'])
     const [source,setSource] = useState('Twitter')
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
@@ -336,11 +337,11 @@ function InfluencerAnalysis() {
             .catch(err => {
                 console.log(err)
             })    
-    } else {
+    } else if(source === 'Newspaper'|| source === 'Facebook') {
         Axios.post(process.env.REACT_APP_URL,{
           "query": {
             "terms": {
-              "Source.keyword": ["newspaper"]
+              "Source.keyword": [source.toLowerCase()]
             }
           },
           "aggs": {
@@ -392,27 +393,27 @@ function InfluencerAnalysis() {
         })
           .then(res => {
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
-                  return {
-                      newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > <ArtTrackIcon/> </Avatar> &nbsp;&nbsp; {doc.key} </div>,
-                      articles: <span> <AssignmentIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
-                      mood:<span style={{color:doc.Mood.buckets[0].key !== 'sad' ? colors[doc.Mood.buckets[0].key] : ('#000')}} > {doc.Mood.buckets[0].key} </span> ,
-                      sentiment:<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
-                  }
-              }))
-              setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                 return {
-                    name:doc.key,
-                    value:doc.ArticleCount.value,
-                    parent:doc.Mood.buckets[0].key,
+                    newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > {source === 'Newspaper' ? <ArtTrackIcon/> : <FacebookIcon/>} </Avatar> &nbsp;&nbsp; {doc.key} </div>,
+                    articles: <span> <AssignmentIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
+                    mood:<span style={{color:doc.Mood.buckets[0].key !== 'sad' ? colors[doc.Mood.buckets[0].key] : ('#000')}} > {doc.Mood.buckets[0].key} </span> ,
+                    sentiment:<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
                 }
-            })))
-            setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+            }))
+            setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
               return {
                   name:doc.key,
                   value:doc.ArticleCount.value,
-                  parent:doc.Sentiment.buckets[0].key,
+                  parent:doc.Mood.buckets[0].key,
               }
           })))
+          setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+            return {
+                name:doc.key,
+                value:doc.ArticleCount.value,
+                parent:doc.Sentiment.buckets[0].key,
+            }
+        })))
           })
           .catch(err => {
               console.log(err)
@@ -457,7 +458,7 @@ function InfluencerAnalysis() {
                                     </Grid>
                                     <Grid item xs={12}>
                                         {
-                                            source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} />)
+                                            source === 'Twitter' ? (<Table2 data={data} />) : (<Table3 data={data} facebook={source === 'Facebook'} />)
                                         }
                                     </Grid>
                                 </Grid>
@@ -497,7 +498,9 @@ function InfluencerAnalysis() {
                                         </div>
                                     </TabPanel>
                                     <TabPanel value={value} index={1}>
-                                        <TreeMap title={`${source} Influence comparison Treemap based on Mood`} data={moodData} />
+                                      <div id="treemap-wrapper" style={{width:'100%'}}>
+                                        <TreeMap title={`${source} Influence comparison Treemap based on Mood`} data={moodData} />                                        
+                                      </div>
                                         <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
                                           {
                                             ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)

@@ -10,21 +10,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 
-const columns = [
-  { id: 'newspaper', label: 'News Paper',align:'center' },
-  { id: 'articles', label: 'Articles',align:'center' },
-  {
-    id: 'mood',
-    label: 'Mood',
-    align:'center'
-  },
-  {
-    id: 'sentiment',
-    label: 'Sentiment',
-    align:'center'
-  }
-];
-
 const useStyles = makeStyles({
   root: {
     width: '100%',
@@ -60,8 +45,37 @@ const StyledTableRow = withStyles((theme) => ({
 
 export default function StickyHeadTable(props) {
   const classes = useStyles();
+  const { facebook } = props
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const columns = !facebook ? [
+    { id: 'newspaper', label: 'News Paper',align:'center' },
+    { id: 'articles', label: 'Articles',align:'center' },
+    {
+      id: 'mood',
+      label: 'Mood',
+      align:'center'
+    },
+    {
+      id: 'sentiment',
+      label: 'Sentiment',
+      align:'center'
+    }
+  ] : [
+    { id: 'newspaper', label: 'Facebook Handle',align:'center' },
+    { id: 'articles', label: 'Total Posts',align:'center' },
+    {
+      id: 'mood',
+      label: 'Mood',
+      align:'center'
+    },
+    {
+      id: 'sentiment',
+      label: 'Sentiment',
+      align:'center'
+    }
+  ]
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
