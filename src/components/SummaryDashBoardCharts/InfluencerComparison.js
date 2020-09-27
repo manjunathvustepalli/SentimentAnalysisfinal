@@ -144,8 +144,11 @@ function InfluencerComparison({from,to}) {
             Axios.post(process.env.REACT_APP_URL,
               {
                 "query": {
-                  "terms": {
-                    "Source.keyword": ["twitter", "new-twitter"]
+                  "bool": {
+                    "must": [
+                      {"terms": {"Source.keyword": ["twitter"]}},
+                      {"terms": {"Place.Country.keyword": ["Bangladesh"]}}
+                    ]
                   }
                 },
                 "aggs": {
@@ -231,7 +234,7 @@ function InfluencerComparison({from,to}) {
             Axios.post(process.env.REACT_APP_URL,{
               "query": {
                 "terms": {
-                  "Source.keyword": ["newspaper"]
+                  "Source.keyword": [source]
                 }
               },
               "aggs": {
@@ -308,7 +311,7 @@ function InfluencerComparison({from,to}) {
             <Grid item xs={4} style={{height:'70px',lineHeight:'70px',padding:'10px'}} >
                 Influence Comparison
             </Grid>
-            <Grid item xs={8}  >
+            <Grid item xs={8}  > 
                 <Grid container style={{marginTop:'15px'}}>
                 <Grid item xs={4} style={{padding:'10px'}}>
                   <FormControl variant="outlined" style={{width:'100%'}} >
@@ -323,6 +326,7 @@ function InfluencerComparison({from,to}) {
                       >
                         <MenuItem value={'twitter'} > Twitter </MenuItem>                    
                         <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
+                        <MenuItem value={'facebook'} > Facebook </MenuItem>                    
                     </Select>
                   </FormControl>
                 </Grid>
