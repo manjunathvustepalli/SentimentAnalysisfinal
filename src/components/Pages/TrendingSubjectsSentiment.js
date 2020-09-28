@@ -87,189 +87,15 @@ function InfluencerAnalysis() {
     keywords,
     setKeywords,
     keywordType,
-    setKeywordType
+    setKeywordType,
+    sentimentData,
+    changeData
 } = trendingSubjectsFilters
 
 
   const [refresh, setRefresh] = useState(true);
-  const [data, setData] = useState([])
   const [noData, setnoData] = useState(false)
   const classes = useStyles();
-  const fetchData = () => {
-    let query = {
-      "aggs": {
-          "date-based-range": {
-              "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [{
-                      "from": from,
-                      "to": to
-                  }]
-              },
-              "aggs": {
-                  "lang": {
-                      "terms": {
-                          "field": "predictedLang.keyword"
-                      },
-                      "aggs": {
-                          "Source": {
-                              "terms": {
-                                  "field": "Source.keyword"
-                              },
-                              "aggs":{
-                                  "SubSource":{
-                                      "terms":{
-                                          "field":"SubSource.keyword"
-                                      },
-                                      "aggs":{
-                                          "Daily-Sentiment-Distro": {
-                                              "terms": {
-                                                "field": "predictedSentiment.keyword"
-                                              },
-                                                  "aggs":{
-                                                    "Words":{
-                                                      "terms":{
-                                                        "field":"HashtagEntities.Text.keyword"
-                                                      }
-                                                  }
-                                              }
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  }
-  
-  if(keywordType === 'Screen Name'){
-    query["query"] = {
-        "terms": {
-          "User.ScreenName.keyword": keywords
-        }
-      }
-  } else if (keywordType === 'Hash Tags') {
-    query["query"] =  {
-        "terms": {
-          "HashtagEntities.Text.keyword": keywords
-        }
-    }
-  }
-    Axios.post(process.env.REACT_APP_URL,query)
-  .then(fetchedData => {
-    let uniqueSources = []
-    let uniqueSubSources = []
-    let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-    let languageKeys = getKeyArray(languageBuckets)
-    languageKeys.forEach((language,i) => {
-      sortedData[language] = {}
-      let sourceBuckets = languageBuckets[i].Source.buckets
-      let sourceKeys = getKeyArray(sourceBuckets)
-      sourceKeys.forEach((source,j) =>{
-        if(!uniqueSources.includes(source)){
-          uniqueSources.push(source)
-        }
-        sortedData[language][source] = {}
-        let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-        let subSourceKeys = getKeyArray(subSourceBuckets)
-        subSourceKeys.forEach((subSource,k) => {
-          if(!uniqueSubSources.includes(subSource)){
-            uniqueSubSources.push(subSource)
-          }
-          sortedData[language][source][subSource] = {}
-          let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
-          let sentimentKeys = getKeyArray(sentimentBuckets)
-          sentimentKeys.forEach((sentiment,l)=>{
-              sortedData[language][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
-                  return {
-                    name:wordObj.key,
-                    y:wordObj.doc_count
-                  }
-                })
-          })
-        })
-      })
-    })
-    let selectedLanguage 
-    let selectedSource 
-setLanguages(languageKeys)
-setLanguage(prev => {
-  if(languageKeys.includes(prev)){
-    selectedLanguage = prev
-    return prev
-  } else {
-    selectedLanguage = languageKeys[0] 
-   return languageKeys[0]
-  }
-} )
-setSources(uniqueSources)
-setSource(prev => {
-  if(uniqueSources.includes(prev)){
-    selectedSource = prev
-    return prev
-  } else {
-    selectedSource = uniqueSources[0] 
-    return uniqueSources[0]
-  }
-})    
-setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
-setSubSource(prev =>{
-  if(Object.keys(sortedData[selectedLanguage][selectedSource]).includes(prev)){
-    return prev
-  } else {
-    return Object.keys(sortedData[selectedLanguage][selectedSource])[0] 
-  }
-})
-  })
-  .catch(err=>{
-    console.log(err)
-  })  
-}
-
-
-useEffect(()=>{
-  fetchData()
-},[from,to,refresh,keywords,keywordType])
-
-useEffect(() => {
-   try{
-     if(sortedData[language][source][subSource][sentiment]){
-       setData(sortedData[language][source][subSource][sentiment])
-       setnoData(false)
-     } else {
-         setnoData(true)
-         setData([])
-     }
-   }
-   catch(err){
-        setData([])
-        setnoData(true)
-   }
-}, [subSource,sentiment])
-
-useEffect(() => {
-  try{
-    if(sortedData[language][source][subSource][sentiment]){
-      setData(sortedData[language][source][subSource][sentiment])
-      setnoData(false)
-    }
-  } catch(err){
-    if(sortedData[language]){
-      if(sortedData[language][source]){
-        setSubSources(Object.keys(sortedData[language][source]))
-        setSubSource(Object.keys(sortedData[language][source])[0])
-      }
-    }
-    setnoData(true)
-    console.log(err)
-  }
-
-}, [source,language])
-
   return (
     <>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
@@ -292,13 +118,14 @@ useEffect(() => {
                       varient="outlined"
                       label="Select Sentiment"
                       value={sentiment}
-                      onChange={(e) => setSentiment(e.target.value)}
+                      onChange={(e) => {
+                        setSentiment(e.target.value)
+                        changeData('sentiment',e.target.value)
+                      }}
                     >
-                      <MenuItem value="positive">
-                        Positive
-                      </MenuItem>
-                      <MenuItem value="negative">Negative</MenuItem>
-                      <MenuItem value="neutral">Neutral</MenuItem>
+                      {
+                        sentiments.map((sentiment,i) => <MenuItem key={i} value={sentiment} >{sentiment}</MenuItem>)
+                      }
                     </Select>
                   </FormControl>
                 </Grid>
@@ -320,14 +147,11 @@ useEffect(() => {
                                     >
                                         Sentiment                                                                       
                                     </Button>
-                            </Grid>
+                            </Grid> 
 
                 <Grid item xs={12} className={classes.tablecenter}>
-                  <TrendingSubjectsBarChart data={data} />
+                  <TrendingSubjectsBarChart title={`Trending subjects of ${language} Language in ${source} of ${subSource} under ${sentiment} sentiment`} y={'frequency'} data={sentimentData} />
                 </Grid>
-                {/* <Grid item xs={11}>
-                  <TrendingSubjectsTable />
-                </Grid> */}
               </Grid>
             </Card>
           </Grid>
@@ -337,7 +161,7 @@ useEffect(() => {
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
               {
-                  sources.length && subSources.length && languages.length && noData ? (
+                  sources.length && languages.length && noData ? (
                     <Grid item xs={12}>
                     <Alert variant="filled" severity="error">
                         No Data available, Please change the Filters
@@ -351,9 +175,9 @@ useEffect(() => {
                 <FilterWrapper>
                   <AccordianFilters
                     toFromDatesHandlers={[setFrom, setTo,from,to]}
-                    radioSources={[source,setSource,sources]}
-                    radioLanguages={[language,setLanguage,languages]}
-                    AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    radioSources={[source,setSource,sources,changeData,'source']}
+                    radioLanguages={[language,setLanguage,languages,changeData,'language']}
+                    AutoCompleteSubSources={[subSource,setSubSource,subSources,changeData,'subSource']}
                     setKeywords={setKeywords}
                     keywords={keywords}
                     keywordTypes={[keywordType, setKeywordType]}
