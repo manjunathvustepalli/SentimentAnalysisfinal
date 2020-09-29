@@ -48,8 +48,9 @@ export default class PieChart extends Component {
                 pie: {
                     showInLegend: true,
                     dataLabels: {
-                        enabled: false,
-                        distance: -70,
+                        enabled: true,
+                        format: '{point.percentage:.1f} %',
+                        distance: 20,
                         style: {
                             fontWeight: 'bold',
                             color: 'black',
@@ -59,7 +60,7 @@ export default class PieChart extends Component {
                     startAngle: -90,
                     endAngle: 90,
                     center: ['50%', '75%'],
-                    size: '110%',
+                    size: '60%',
                 }
             },
             series: [{

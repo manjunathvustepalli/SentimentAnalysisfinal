@@ -407,6 +407,12 @@ function InfluencerAnalysis() {
                     name:doc.key,
                     value:doc.ArticleCount.value,
                     parent:doc.Mood.buckets[0].key,
+                    dataLabels:{
+                      color:'#000',
+                      style:{
+                          textOutline:'none'
+                      }
+                  }
                 }
             })))
             setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
@@ -414,6 +420,12 @@ function InfluencerAnalysis() {
                   name:doc.key,
                   value:doc.ArticleCount.value,
                   parent:doc.Sentiment.buckets[0].key,
+                  dataLabels:{
+                    color:'#000',
+                    style:{
+                        textOutline:'none'
+                    }
+                }
               }
           })))
           })
@@ -425,7 +437,7 @@ function InfluencerAnalysis() {
   
     return (
         <>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+          <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -529,7 +541,7 @@ function InfluencerAnalysis() {
                 </Grid>
             </Grid>
         </div>
-        </>
+      </>
       )
 }
 

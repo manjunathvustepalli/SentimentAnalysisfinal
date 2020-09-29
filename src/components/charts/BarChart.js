@@ -53,7 +53,6 @@ function BarChart(props) {
     plotOptions: {
       column:{
         stacking:props.stacking || ''
-
       },
       series: {
         borderWidth: 0,

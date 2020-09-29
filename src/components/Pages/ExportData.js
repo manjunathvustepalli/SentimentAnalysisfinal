@@ -95,7 +95,7 @@ function ExportData() {
 
     return (
             <Card style={{padding:'20px'}}>
-                <Grid container spacing={5} style={{width:'80vw'}}>
+                <Grid container spacing={5}>
                 <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 

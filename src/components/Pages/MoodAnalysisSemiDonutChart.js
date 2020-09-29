@@ -231,7 +231,7 @@ export default function MoodAnalysisSemiDonutChart() {
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <SemiDonutChart data ={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
@@ -239,14 +239,14 @@ export default function MoodAnalysisSemiDonutChart() {
                             </Grid>)
                             }
                             )}
-                            <Grid item align='right' xs={10} style={{margin:'30px'}}>
+                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
                                 </Button>
                             </Grid>
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>

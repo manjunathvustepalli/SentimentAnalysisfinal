@@ -68,6 +68,10 @@ function AdminPage() {
           })
           setOpen(false)
         })
+        .catch(err =>{
+          console.log(err);
+          setOpen(false)
+        })
     }, [])
 
     useDidUpdateEffect(()=>{
