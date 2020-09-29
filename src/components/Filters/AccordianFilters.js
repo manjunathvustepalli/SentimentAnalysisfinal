@@ -216,6 +216,30 @@ export default function ControlledAccordions(props) {
       </Accordion>
       )}
       {
+        radioLanguages && (
+          <Accordion expanded={expanded === 'panel9'} className={classes.accordianStyling} onChange={handleChange('panel9')}>
+          <AccordionSummary
+            style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderBottom:expanded === 'panel9' ? 'none' : '1px solid white'}}
+            expandIcon={ expanded !== 'panel9' ? <AddIcon style={{color:'white'}} /> : <RemoveIcon style={{color:'white'}} />}
+            aria-controls="panel7bh-content"
+            id="panel9bh-header"
+          >
+              <IconWithText>
+                  <FormatSizeIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                    Select Language
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails
+          style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderTop:expanded === 'panel9' ? 'none' : '1px solid white'}}
+          >
+            <RadioButtons radio={radioLanguages}  />
+          </AccordionDetails>
+        </Accordion>  
+        )
+      }
+      {
         radioSources && (
           <Accordion expanded={expanded === 'panel7'} className={classes.accordianStyling} onChange={handleChange('panel7')}>
           <AccordionSummary
@@ -261,30 +285,6 @@ export default function ControlledAccordions(props) {
             <RadioButtons radio={radioSubSources}  />
           </AccordionDetails>
         </Accordion>
-        )
-      }
-      {
-        radioLanguages && (
-          <Accordion expanded={expanded === 'panel9'} className={classes.accordianStyling} onChange={handleChange('panel9')}>
-          <AccordionSummary
-            style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderBottom:expanded === 'panel9' ? 'none' : '1px solid white'}}
-            expandIcon={ expanded !== 'panel9' ? <AddIcon style={{color:'white'}} /> : <RemoveIcon style={{color:'white'}} />}
-            aria-controls="panel7bh-content"
-            id="panel9bh-header"
-          >
-              <IconWithText>
-                  <FormatSizeIcon style={{marginRight:'10px'}} /> 
-                  <p>
-                    Select Language
-                  </p>
-              </IconWithText>
-          </AccordionSummary>
-          <AccordionDetails
-          style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderTop:expanded === 'panel9' ? 'none' : '1px solid white'}}
-          >
-            <RadioButtons radio={radioLanguages}  />
-          </AccordionDetails>
-        </Accordion>  
         )
       }
       {

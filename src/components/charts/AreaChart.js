@@ -55,7 +55,7 @@ function AreaChart(props) {
         plotOptions: {
             area: {
                 marker: {
-                    enabled: false,
+                    enabled: true,
                     symbol: 'circle',
                     radius: 2,
                     states: {

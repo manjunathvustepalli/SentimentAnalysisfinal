@@ -22,7 +22,7 @@ function TrendingSubjectsBarChart(props) {
       type: "column",
     },
     title: {
-      text: "",
+      text: props.title || "",
     },
     subtitle: {
       text: "",

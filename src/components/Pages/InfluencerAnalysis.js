@@ -397,17 +397,28 @@ function InfluencerAnalysis() {
           .then(res => {
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                 return {
-                    newspaper:<div style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > {source === 'Newspaper' ? <ArtTrackIcon/> : <FacebookIcon/>} </Avatar> &nbsp;&nbsp; {doc.key} </div>,
-                    articles: <span> <AssignmentIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
-                    mood:<span style={{color:doc.Mood.buckets[0].key !== 'sad' ? colors[doc.Mood.buckets[0].key] : ('#000')}} > {doc.Mood.buckets[0].key} </span> ,
-                    sentiment:<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span> 
+                    name:doc.key,
+                    value:doc.ArticleCount.value,
+                    parent:doc.Mood.buckets[0].key,
+                    dataLabels:{
+                      color:'#000',
+                      style:{
+                          textOutline:'none'
+                      }
+                  }
                 }
             }))
             setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
               return {
                   name:doc.key,
                   value:doc.ArticleCount.value,
-                  parent:doc.Mood.buckets[0].key,
+                  parent:doc.Sentiment.buckets[0].key,
+                  dataLabels:{
+                    color:'#000',
+                    style:{
+                        textOutline:'none'
+                    }
+                }
               }
           })))
           setSentimentData(parentSentiment.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
@@ -426,7 +437,7 @@ function InfluencerAnalysis() {
   
     return (
         <>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+          <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>
@@ -532,7 +543,7 @@ function InfluencerAnalysis() {
                 </Grid>
             </Grid>
         </div>
-        </>
+      </>
       )
 }
 

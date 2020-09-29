@@ -121,12 +121,12 @@ const SideNavBar = ( props) => {
       path:['/influencer-analysis'],
     },
     {
-      name:'Word cloud',
+      name:'Word Cloud',
       icon:<AppsIcon/>,
       path:['/word-cloud/sentiment','/word-cloud/mood'],
     },
     {
-      name:'Trending Subject',
+      name:'Trending Subjects',
       icon:<TrendingUpIcon/>,
       path:['/trending-subject/sentiment','/trending-subject/mood'],
     },
@@ -134,11 +134,6 @@ const SideNavBar = ( props) => {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
       path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
-    }, 
-    {
-      name:'Fetch',
-      icon:<PageviewIcon/>,
-      path:['/global-search']
     },
     {
       name:'Live Analysis',
@@ -156,14 +151,19 @@ const SideNavBar = ( props) => {
       path:['/admin'],
     },
     {
-      name:'Search Image',
-      icon:<ImageSearchIcon/>,
-      path:['/image-gallery'],
+      name:'Fetch',
+      icon:<PageviewIcon/>,
+      path:['/global-search']
     },
     {
       name:'Search',
       icon:<SearchIcon/>,
       path:['/search-from-db'],
+    },
+    {
+      name:'Search Image',
+      icon:<ImageSearchIcon/>,
+      path:['/image-gallery'],
     },
     {
       name:'Geo HotSpot Analysis',

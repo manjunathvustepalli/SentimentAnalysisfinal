@@ -228,7 +228,7 @@ function SentimentAnalysisSemiDonutChart() {
                             </Grid>
                             {Object.keys(data).map((source,i) => {
                                 let mainData = data[source]
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <SemiDonutChart data={mainData} />
                                 <Button variant='outlined' color='primary'>
                                     {source}

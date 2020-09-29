@@ -61,227 +61,36 @@ const useStyles = makeStyles((theme) => ({
 
 
 function InfluencerAnalysis() {
+  const [noData, setnoData] = useState(false)
 
   const trendingSubjectsFilters = useContext(TrendingSubjectFiltersContext)
   const {
     sources, 
-    setSources,
     source, 
     setSource,
     subSources,
-    setSubSources,
     subSource, 
     setSubSource,
     languages, 
-    setLanguages,
     language, 
     setLanguage,
     from, 
     setFrom,
     to,
     setTo,
-    setMoods,
     mood,
+    moods,
     setmood,
     keywords,
     setKeywords,
     keywordType,
-    setKeywordType
+    setKeywordType,
+    refresh, 
+    setRefresh,
+    moodData,
+    changeData
 } = trendingSubjectsFilters
-  const [refresh, setRefresh] = useState(true);
-  const [data, setData] = useState([])
-  const [noData, setnoData] = useState(false)
   const classes = useStyles();
-  const fetchData = () => {
-    let query = {
-      "aggs": {
-          "date-based-range": {
-              "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [{
-                      "from": from,
-                      "to": to
-                  }]
-              },
-              "aggs": {
-                  "lang": {
-                      "terms": {
-                          "field": "predictedLang.keyword"
-                      },
-                      "aggs": {
-                          "Source": {
-                              "terms": {
-                                  "field": "Source.keyword"
-                              },
-                              "aggs":{
-                                  "SubSource":{
-                                      "terms":{
-                                          "field":"SubSource.keyword"
-                                      },
-                                      "aggs":{
-                                          "Daily-mood-Distro": {
-                                              "terms": {
-                                                "field": "predictedMood.keyword"
-                                              },
-                                                  "aggs":{
-                                                    "Words":{
-                                                      "terms":{
-                                                        "field":"HashtagEntities.Text.keyword"
-                                                      }
-                                                  }
-                                              }
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  }
-  
-  if(keywordType === 'Screen Name'){
-    query["query"] = {
-        "terms": {
-          "User.ScreenName.keyword": keywords
-        }
-      }
-  } else if (keywordType === 'Hash Tags') {
-    query["query"] =  {
-        "terms": {
-          "HashtagEntities.Text.keyword": keywords
-        }
-    }
-  }
-    Axios.post(process.env.REACT_APP_URL,query)
-  .then(fetchedData => {
-    let uniqueSources = []
-    let uniqueSubSources = []
-    let uniqueMoodKeys = []
-    let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-    let languageKeys = getKeyArray(languageBuckets)
-    languageKeys.forEach((language,i) => {
-      sortedData[language] = {}
-      let sourceBuckets = languageBuckets[i].Source.buckets
-      let sourceKeys = getKeyArray(sourceBuckets)
-      sourceKeys.forEach((source,j) =>{
-        if(!uniqueSources.includes(source)){
-          uniqueSources.push(source)
-        }
-        sortedData[language][source] = {}
-        let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-        let subSourceKeys = getKeyArray(subSourceBuckets)
-        subSourceKeys.forEach((subSource,k) => {
-          if(!uniqueSubSources.includes(subSource)){
-            uniqueSubSources.push(subSource)
-          }
-          sortedData[language][source][subSource] = {}
-          let moodBuckets = subSourceBuckets[k]['Daily-mood-Distro'].buckets
-          let moodKeys = getKeyArray(moodBuckets)
-          moodKeys.forEach((mood,l)=>{
-              if(!uniqueMoodKeys.includes(mood)){
-                uniqueMoodKeys.push(mood)
-              }
-              sortedData[language][source][subSource][mood] = moodBuckets[l].Words.buckets.map(wordObj => {
-                  return {
-                    name:wordObj.key,
-                    y:wordObj.doc_count
-                  }
-                }) 
-              })
-            })
-          })
-        })
-        let selectedLanguage 
-        let selectedSource 
-    setLanguages(languageKeys)
-    setLanguage(prev => {
-      if(languageKeys.includes(prev)){
-        selectedLanguage = prev
-        return prev
-      } else {
-        selectedLanguage = languageKeys[0] 
-       return languageKeys[0]
-      }
-    } )
-    setSources(uniqueSources)
-    setSource(prev => {
-      if(uniqueSources.includes(prev)){
-        selectedSource = prev
-        return prev
-      } else {
-        selectedSource = uniqueSources[0] 
-        return uniqueSources[0]
-      }
-    })
-    setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
-    setSubSource(prev =>{
-      if(Object.keys(sortedData[selectedLanguage][selectedSource]).includes(prev)){
-        return prev
-      } else {
-        return Object.keys(sortedData[selectedLanguage][selectedSource])[0] 
-      }
-    })
-    setMoods(uniqueMoodKeys)
-    setmood(prev =>{
-      if(uniqueMoodKeys.includes(prev)){
-        return prev
-      } else {
-        return uniqueMoodKeys[0]
-      }
-    })
-
-  })
-  .catch(err=>{
-    console.log(err)
-  })  
-  }
-
-useEffect(()=>{
-  fetchData()  
-},[from,to,refresh,keywords,keywordType])
-
-useEffect(() => {
-   try{
-     if(sortedData[language][source][subSource][mood].length){
-       setData(sortedData[language][source][subSource][mood])
-       setnoData(false)
-     } else {
-         setnoData(true)
-         setData([])
-     }
-   }
-   catch(err){
-        setData([])
-        setnoData(true)
-   }
-}, [subSource,mood])
-
-useEffect(() => {
-  try{
-    if(sortedData[language][source][subSource][mood].length){
-      setData(sortedData[language][source][subSource][mood])
-      setnoData(false)
-    } else {
-      setnoData(true)
-      setData([])      
-    }
-  } catch(err){
-    if(sortedData[language]){
-      if(sortedData[language][source]){
-        setSubSources(Object.keys(sortedData[language][source]))
-        setSubSource(Object.keys(sortedData[language][source])[0])
-      }
-    }
-    setData([])
-    setnoData(true)
-    console.log(err)
-  }
-
-}, [source,language])
 
   return (
     <>
@@ -305,16 +114,14 @@ useEffect(() => {
                       variant="outlined"
                       label="Select Mood"
                       value={mood}
-                      onChange={(e) => setmood(e.target.value)}
+                      onChange={(e) => {
+                        setmood(e.target.value)
+                        changeData('mood',e.target.value)
+                      }}
                     >
-                    <MenuItem value="joy">Joy</MenuItem>
-                    <MenuItem value="sad">Sad</MenuItem>
-                    <MenuItem value="anger">Anger</MenuItem>
-                    <MenuItem value="anticipation">Anticipation</MenuItem>
-                    <MenuItem value="disgust">Disgust</MenuItem>
-                    <MenuItem value="surprise">Surprise</MenuItem>
-                    <MenuItem value="fear">Fear</MenuItem>
-                    <MenuItem value="trust">Trust</MenuItem>
+                      {
+                        moods.map((mood,i) => <MenuItem key={i} value={mood}>{mood}</MenuItem>)
+                      }
                     </Select>
                   </FormControl>
                 </Grid>
@@ -336,13 +143,10 @@ useEffect(() => {
                   >
                       Sentiment                                                                       
                   </Button>
-                </Grid>
+                </Grid> 
                 <Grid item xs={12} className={classes.tablecenter}>
-                  <TrendingSubjectsBarChart y={'frequency'} data={data} />
+                  <TrendingSubjectsBarChart title={`Trending subjects of ${language} Language in ${source} of ${subSource} under ${mood} mood`} y={'frequency'} data={moodData} />
                 </Grid>
-                {/* <Grid item xs={11}>
-                  <TrendingSubjectsTable />
-                </Grid> */}
               </Grid>
             </Card>
           </Grid>
@@ -352,7 +156,7 @@ useEffect(() => {
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
               {
-                  sources.length && subSources.length && languages.length && mood && noData ? (
+                  sources.length &&  languages.length && mood && noData ? (
                     <Grid item xs={12}>
                     <Alert variant="filled" severity="error">
                         No Data available, Please change the Filters
@@ -366,9 +170,9 @@ useEffect(() => {
                 <FilterWrapper>
                   <AccordianFilters
                     toFromDatesHandlers={[setFrom, setTo,from,to]}
-                    radioSources={[source,setSource,sources]}
-                    radioLanguages={[language,setLanguage,languages]}
-                    AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    radioSources={[source,setSource,sources,changeData,'source']}
+                    radioLanguages={[language,setLanguage,languages,changeData,'language']}
+                    AutoCompleteSubSources={[subSource,setSubSource,subSources,changeData,'subSource']}
                     setKeywords={setKeywords}
                     keywords={keywords}
                     keywordTypes={[keywordType, setKeywordType]}
