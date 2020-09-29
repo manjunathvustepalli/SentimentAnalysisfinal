@@ -17,6 +17,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import colors from '../../helpers/colors';
 import CustomLegend from '../CustomLegend';
 import FacebookIcon from '@material-ui/icons/Facebook';
+import { ArtTrack } from '@material-ui/icons';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -396,23 +397,20 @@ function InfluencerAnalysis() {
         })
           .then(res => {
               setData(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+                console.log('data',doc)
                 return {
-                    name:doc.key,
-                    value:doc.ArticleCount.value,
-                    parent:doc.Mood.buckets[0].key,
-                    dataLabels:{
-                      color:'#000',
-                      style:{
-                          textOutline:'none'
-                      }
-                  }
+                    newspaper:<div className={classes.root} style={{display:'flex',alignItems:'center',justifyContent:'left'}} > <Avatar style={{backgroundColor:green[400] }} > {source === 'Newspaper' ? (<ArtTrackIcon/>) : (<FacebookIcon/>)} </Avatar> &nbsp;&nbsp; {doc.key} </div>,
+                    articles: <span> <EmailIcon style={{transform:'translateY(7px)'}} />&nbsp;&nbsp;&nbsp;{doc.ArticleCount.value} </span>,
+                    mood:doc.Mood.buckets[0] ? (<span style={{color:doc.Mood.buckets[0].key !== 'sad' ? colors[doc.Mood.buckets[0].key] : ('#ddd')}} > {doc.Mood.buckets[0].key} </span> ) : (<span style={{color:'#aaa'}} > unknown </span> ),
+                    sentiment:doc.Sentiment.buckets[0] ? (<span style={{color:colors[doc.Sentiment.buckets[0].key]}} > {doc.Sentiment.buckets[0].key} </span>) : (<span style={{color:'#aaa'}} > unknown </span>),
                 }
             }))
             setMoodData(parentMood.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
+              console.log('mood',doc)
               return {
                   name:doc.key,
                   value:doc.ArticleCount.value,
-                  parent:doc.Sentiment.buckets[0].key,
+                  parent:doc.Mood.buckets[0].key,
                   dataLabels:{
                     color:'#000',
                     style:{
@@ -426,6 +424,12 @@ function InfluencerAnalysis() {
                 name:doc.key,
                 value:doc.ArticleCount.value,
                 parent:doc.Sentiment.buckets[0].key,
+                dataLabels:{
+                  color:'#000',
+                  style:{
+                      textOutline:'none'
+                  }
+              }
             }
         })))
           })
