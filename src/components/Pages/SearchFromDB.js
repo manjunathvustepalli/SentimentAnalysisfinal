@@ -99,7 +99,6 @@ function SearchFromDB() {
                 "terms": {"HashtagEntities.Text.keyword":keywords}  
             })
           }
-          console.log(query)
             Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(fetchedData => {
                 setData(fetchedData.data.hits.hits.map((postObj)=>{

@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { Card, Grid, Switch, FormControlLabel, Button, Chip, TextField } from '@material-ui/core'
+import { Card, Grid, Switch, FormControlLabel, Button, Chip, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,8 +10,14 @@ import Select from '@material-ui/core/Select';
 import LaunchIcon from '@material-ui/icons/Launch';
 import { getKeyArray } from '../../helpers'
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Source } from 'react-mapbox-gl';
+import Slide from '@material-ui/core/Slide';
+import ImageIcon from '@material-ui/icons/Image';
+import Image from 'material-ui-image'
 
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const dateFormatter = (unix) => {
   var date = new Date(unix);
@@ -24,12 +30,9 @@ const dateFormatter = (unix) => {
   return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 }
 
-
 const useStyles = makeStyles((theme) => ({
     root: {
       background: 'rgb(67, 176, 42)',
-      borderRadius: 3,
-      border: 0,
       color: 'white',
       height: 'auto',
       width:'120px',
@@ -38,8 +41,6 @@ const useStyles = makeStyles((theme) => ({
       padding: '10px',
       '&:hover': {
         background: 'rgb(67, 176, 42)',
-        borderRadius: 3,
-        border: 0,
         color: 'white',
         height: 'auto',
         width:'120px',
@@ -93,7 +94,14 @@ function LiveAnalysis() {
         {title:'Mood',field:'mood'},
         {title:'Sentiment',field:'sentiment'},
     ])
-
+    const [open, setOpen] = React.useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+    const [type, setType] = useState('image');
+    const [content, setContent] = useState('');
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
     function fetchData(){
 
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
@@ -125,7 +133,6 @@ function LiveAnalysis() {
             ]
           })
         .then(fetchedData => {
-            console.log(fetchedData.data.hits.hits)
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -136,59 +143,34 @@ function LiveAnalysis() {
 
                 if(user._source.MediaEntities && user._source.MediaEntities.length){
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
-                      if(post.MediaURLHttps){
-                        return (
-                          <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={post.MediaURLHttps}>
-                            <Button
-                              endIcon={<LaunchIcon/>}
-                              className={classes.root}
-                        > Open Image {i+1} </Button> 
-                          </a>
-                        ) 
-                      } else{
-                        return (
-                            <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={post.MediaURL}>
-                              <Button
-                          className={classes.root}
-                          endIcon={<LaunchIcon/>}
-                        >
-                          Open Image {i+1}
-                          </Button></a>) 
-                      }
+                      return (<Button
+                        className={classes.root}
+                        endIcon={<LaunchIcon/>}
+                        onClick = {() => {
+                          setOpen(true)
+                          setType('image')
+                          if(post.MediaURLHttps){
+                            setImageUrl(post.MediaURLHttps);
+                          } else{
+                            setImageUrl(post.MediaURL);
+                          }
+                        }}
+                      >
+                        {`open Image ${i+1}`}
+                      </Button>) 
                     })
-                    if(user._source.MediaEntities[0].ExpandedURL){
-                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].ExpandedURL}>
-                      <Button
-                        className={classes.root}
-                        endIcon={<LaunchIcon/>}
-                      > Click Here </Button></a> 
-                    } else if(user._source.MediaEntities[0].DisplayURL){
-                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].DisplayURL}>
-                      <Button
-                        className={classes.root}
-                        endIcon={<LaunchIcon/>}
-                      > Click Here </Button></a> 
-                    } else if(user._source.MediaEntities[0].Text){
-                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].Text}>
-                      <Button
-                        className={classes.root}
-                        endIcon={<LaunchIcon/>}
-                      > Click Here </Button></a> 
-                    } else if(user._source.MediaEntities[0].URL){
-                      obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.MediaEntities[0].URL}>
-                      <Button
-                        className={classes.root}
-                        endIcon={<LaunchIcon/>}
-                      > Click Here </Button></a> 
-                    }
-                }else if(user._source.URLEntities && user._source.URLEntities.length){
-                  obj.postUrl = <a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={user._source.URLEntities[0].URL}>
-                  <Button
-                    className={classes.root}
-                    endIcon={<LaunchIcon/>}
-                  > Click Here </Button></a>
-                  
                 }
+                obj.postUrl = (<Button 
+                  onClick={() =>{
+                    setOpen(true)
+                    setType('post')
+                    if(user._source.TextBody){
+                      setContent(user._source.TextBody)
+                    } else{
+                      setContent(user._source.Text)
+                    }
+                  }}
+                  className={classes.root} endIcon={<LaunchIcon/>} > Click Here </Button>)
                 obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
@@ -214,11 +196,11 @@ function LiveAnalysis() {
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                     {
-                      title:'Media Urls',field:'mediaUrl',width: "1%",
+                      title:'Media',field:'mediaUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
                     {
-                      title:'Post Url',field:'postUrl',width: "1%",
+                      title:'Post',field:'postUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
                 ])
@@ -239,15 +221,11 @@ function LiveAnalysis() {
                     {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                     {
-                      title:'Media Urls',field:'mediaUrl',width: "1%",
+                      title:'Media',field:'mediaUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
                     {
-                      title:'Post Url',field:'postUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                    {
-                      title:'Post Url',field:'postUrl',width: "1%",
+                      title:'Post',field:'postUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
                     },
                 ])
@@ -289,7 +267,6 @@ function LiveAnalysis() {
             ]
           })
           .then(fetchedData =>{
-            console.log(fetchedData.data.hits.hits);
               let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
                 if(user._source.User){
@@ -348,7 +325,6 @@ function LiveAnalysis() {
           sourceKeys.forEach((source,i) => {
             sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets)
           })
-          console.log(sortedData)
           setDataObject(sortedData)
         })
         .catch(err => {
@@ -384,10 +360,10 @@ function LiveAnalysis() {
                 <Grid item xs={3} align="left">
                             <FormControlLabel
                                 control={<Switch 
-                                    color="primary"
-                                    checked={liveReloading}
-                                    onChange={(e) => setLiveReloading(e.target.checked)}
-                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                color="primary"
+                                checked={liveReloading}
+                                onChange={(e) => setLiveReloading(e.target.checked)}
+                                inputProps={{ 'aria-label': 'primary checkbox' }}
                                     />}
                                 label="Live Reload"
                                 labelPlacement="end"
@@ -476,6 +452,32 @@ function LiveAnalysis() {
                         />
                     </Grid>
                 </Grid>
+                <Dialog
+                fullWidth
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title"> {type === 'image' ? ('Image') : ('Post')} </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {type ==='image' ? (
+              <Image src={imageUrl} style={{width:'100%'}} />
+            ) : (
+              <span>{content}</span> 
+            )}
+            
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button  className={classes.root} onClick={handleClose} >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
         </div>
     )
 }

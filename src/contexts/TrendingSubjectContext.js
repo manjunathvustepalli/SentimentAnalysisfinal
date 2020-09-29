@@ -158,7 +158,6 @@ export const TrendingSubjectContext = ({ children }) => {
                   })
                 })
               })
-          console.log(sortedData)
           setLanguages(languageKeys)
           setLanguage(selectedLanguage)
           setSources(Object.keys(sortedData[selectedLanguage]))

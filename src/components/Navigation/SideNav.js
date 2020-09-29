@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideNavBar = ( props) => {
+const SideNavBar = (props) => {
   const { window,children,history } = props;
   const classes = useStyles();
   const theme = useTheme();

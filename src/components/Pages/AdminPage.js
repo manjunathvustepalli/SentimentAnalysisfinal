@@ -75,7 +75,6 @@ function AdminPage() {
     }, [])
 
     useDidUpdateEffect(()=>{
-      console.log(data.screenNames.map(screenNameObj => screenNameObj.screenName).join(','))
       Axios.post(`http://cors-anywhere.herokuapp.com/http://arijit-ef55be0e.localhost.run/bsma-webservice/setasynctwitterconfig?keywords=${data.keywords.map(keywordObj => keywordObj.keyword).join(',')}&handles=${data.screenNames.map(screenNameObj => screenNameObj.screenName).join(',')}`)
         .then(data => {
           console.log(data)

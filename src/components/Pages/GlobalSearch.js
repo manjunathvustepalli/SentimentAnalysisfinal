@@ -69,8 +69,6 @@ function GlobalSearch() {
                           }
                         Axios.post(process.env.REACT_APP_SEARCH_URL,query)
                           .then(data =>{
-                              console.log(query);
-                              console.log(data.data)
                             setData(data.data.hits.hits.map((postObj)=>{
                                 if(!postObj._source.User){
                                     return {
@@ -149,7 +147,6 @@ function GlobalSearch() {
         }else if(source === 'facebook') {
             Axios.get(`http://cors-anywhere.herokuapp.com/http://arijit-ef55be0e.localhost.run/bsma-webservice/fetchdatafromfb?fbpage=${handlesString}`)
                 .then(res =>{
-                    console.log(res.data);
                     let query = {
                         "query": {
                           "bool": {
@@ -182,10 +179,8 @@ function GlobalSearch() {
                       })
                     }
                     setTimeout(() => {
-                        console.log(query)
                         Axios.post(process.env.REACT_APP_SEARCH_URL,query)
                           .then(data=>{
-                            console.log(data.data)
                             setData(data.data.hits.hits.map((postObj,i)=>{
                                 return {
                                     date:dateFormatter(postObj._source.CreatedAt),
@@ -270,7 +265,6 @@ function GlobalSearch() {
             }
             Axios.post(process.env.REACT_APP_SEARCH_URL,query)
               .then(data=>{
-                console.log(data.data)
                 setData(data.data.hits.hits.map((postObj,i)=>{
                     return {
                         date:dateFormatter(postObj._source.CreatedAt),
