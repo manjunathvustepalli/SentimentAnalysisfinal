@@ -27,7 +27,7 @@ function GeoTaggingSummary() {
     const classes = useStyles();
 
     return (
-        <Card style={{height:'530px'}}>
+        <Card style={{height:'505px'}}>
             <Grid container>
                 <Grid item xs={4} style={{fontSize: 12,fontWeight: "bold",color: "#CB0038",height:'70px',lineHeight:'70px',paddingLeft:'20px'}}>
                     Geo Summary
@@ -43,6 +43,7 @@ function GeoTaggingSummary() {
                             id="select-source-main"
                             variant="outlined"
                             label="Source"
+                            style={{fontSize:'7px',height:'30px'}}
                             fullWidth
                             value = {source}
                             onChange = { (e) => setSource(e.target.value) }
@@ -61,6 +62,7 @@ function GeoTaggingSummary() {
                             id="select-type-main"
                             fullWidth
                             label="Type"
+                            style={{fontSize:'7px',height:'30px'}}
                             variant="outlined"
                             value={type}
                             onChange = {(e) => setType(e.target.value)}
@@ -79,6 +81,7 @@ function GeoTaggingSummary() {
                                     labelId="sentiment-select"
                                     id="sentiment-select-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Sentiment"
                                     value={sentiment}
                                     onChange = {(e) => setSentiment(e.target.value)}

@@ -11,9 +11,8 @@ import LaunchIcon from '@material-ui/icons/Launch';
 import { getKeyArray } from '../../helpers'
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Slide from '@material-ui/core/Slide';
-import ImageIcon from '@material-ui/icons/Image';
 import Image from 'material-ui-image'
-
+import { Tweet } from 'react-twitter-widgets'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
       background: 'rgb(67, 176, 42)',
       color: 'white',
       height: 'auto',
-      width:'120px',
       margin:'10px',
       fontSize:'10px',
       padding: '10px',
@@ -43,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
         background: 'rgb(67, 176, 42)',
         color: 'white',
         height: 'auto',
-        width:'120px',
         margin:'10px',
         fontSize:'10px',
         padding: '10px',
@@ -75,6 +72,7 @@ function LiveAnalysis() {
     const [reloadInterval, setReloadInterval] = useState(10000);
     const [to] = useState(new Date());
     const [from] = useState(new Date());
+    const [actualUrl, setactualUrl] = useState('');
     const [keyword] = useState('');
     const [languages, setLanguages] = useState(['bengali']);
     const [source, setSource] = useState('twitter');
@@ -99,11 +97,22 @@ function LiveAnalysis() {
     const [type, setType] = useState('image');
     const [content, setContent] = useState('');
   
+
+    const getTwitterEmbed = (url) =>{
+      Axios.get(`http://cors-anywhere.herokuapp.com/https://api.twitter.com/1/statuses/oembed.json?url=${url}`)
+      .then(data => {
+        console.log(data.data.html)
+        setContent(data.data.html)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+
     const handleClose = () => {
       setOpen(false);
     };
     function fetchData(){
-
         Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
               "bool": {
@@ -134,43 +143,58 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
+              console.log(user._source.MediaEntities)
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
                 }
-
                 if(user._source.MediaEntities && user._source.MediaEntities.length){
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
-                      return (<Button
+                      return (<IconButton
                         className={classes.root}
-                        endIcon={<LaunchIcon/>}
                         onClick = {() => {
                           setOpen(true)
                           setType('image')
                           if(post.MediaURLHttps){
+                            setactualUrl(post.MediaURLHttps)
                             setImageUrl(post.MediaURLHttps);
                           } else{
+                            setactualUrl(post.MediaURL)
                             setImageUrl(post.MediaURL);
                           }
                         }}
                       >
-                        {`open Image ${i+1}`}
-                      </Button>) 
+                        <LaunchIcon/>
+                      </IconButton>) 
                     })
-                }
-                obj.postUrl = (<Button 
-                  onClick={() =>{
-                    setOpen(true)
-                    setType('post')
-                    if(user._source.TextBody){
-                      setContent(user._source.TextBody)
-                    } else{
-                      setContent(user._source.Text)
+                     if(user._source.MediaEntities[0].ExpandedURL){
+                      obj.postUrl =<IconButton 
+                      onClick={() =>{
+                        
+                        setOpen(true)
+                        setType('post')
+                        let splittedUrl = user._source.MediaEntities[0].ExpandedURL.split('/photo')[0].split('/')
+                        let id = splittedUrl[splittedUrl.length - 1]
+                        setContent(id)
+                        setactualUrl(user._source.MediaEntities[0].ExpandedURL)
+                      }}
+                      className={classes.root} > <LaunchIcon/> </IconButton>
                     }
-                  }}
-                  className={classes.root} endIcon={<LaunchIcon/>} > Click Here </Button>)
+                } else if(user._source.URLEntities && source !== 'twitter') {
+                  if(user._source.URLEntities[0]){
+                    obj.postUrl =<IconButton 
+                    onClick={() =>{
+                      setOpen(true)
+                      setType('post')
+                      setContent(user._source.URLEntities[0].URL)
+                      setactualUrl(user._source.URLEntities[0].URL)
+                    }}
+                    className={classes.root} > <LaunchIcon/> </IconButton>
+                  }                  
+                }
+                
                 obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
@@ -454,6 +478,7 @@ function LiveAnalysis() {
                 </Grid>
                 <Dialog
                 fullWidth
+                style={{height:'700px'}}
         open={open}
         TransitionComponent={Transition}
         keepMounted
@@ -467,12 +492,16 @@ function LiveAnalysis() {
             {type ==='image' ? (
               <Image src={imageUrl} style={{width:'100%'}} />
             ) : (
-              <span>{content}</span> 
-            )}
-            
+              source === 'twitter' ? (<Tweet style={{width:'100%',height:'70vh'}} tweetId={content} />) : (<iframe border={0} frameborder={0} style={{width:'500px',height:'70vh'}} sandbox="" title={'post'} src={content}></iframe>) 
+            )}             
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+          <a href={actualUrl} style={{textDecoration:'none'}} target="_blank" rel="noopener noreferrer" >
+          <Button  className={classes.root} >
+            Visit
+          </Button>
+          </a>
           <Button  className={classes.root} onClick={handleClose} >
             Close
           </Button>

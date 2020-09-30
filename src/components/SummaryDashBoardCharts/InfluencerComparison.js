@@ -313,7 +313,7 @@ function InfluencerComparison({from,to}) {
             </Grid>
             <Grid item xs={8}  > 
                 <Grid container style={{marginTop:'15px'}}>
-                <Grid item xs={4} style={{padding:'10px'}}>
+                <Grid item xs={4} style={{padding:'5px'}}>
                   <FormControl variant="outlined" style={{width:'100%'}} >
                     <InputLabel id="select-source" >Source</InputLabel>
                       <Select 
@@ -322,51 +322,53 @@ function InfluencerComparison({from,to}) {
                         id="select-source-main"
                         fullWidth
                         value={source}
+                        style={{fontSize:'7px',height:'30px'}}
                         onChange={(e) => setSource(e.target.value)}
                       >
-                        <MenuItem value={'twitter'} > Twitter </MenuItem>                    
+                        <MenuItem value={'twitter'}  > Twitter </MenuItem>                    
                         <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
                         <MenuItem value={'facebook'} > Facebook </MenuItem>                    
                     </Select>
                   </FormControl>
                 </Grid>
-            <Grid item xs={4} style={{padding:'10px'}}>
+            <Grid item xs={4} style={{padding:'5px'}}>
               <FormControl variant="outlined" style={{width:'100%',}} >
-              <InputLabel id="Select-type">Select Type </InputLabel>
+              <InputLabel id="Select-type">Type </InputLabel>
                     <Select
                     variant="outlined"
                     labelId="Select-type"
-                    label="Select Type"
+                    label="Type"
                     id="demo-simple-select-helper"
                     fullWidth
+                    style={{fontSize:'7px',height:'30px'}}
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     >
-                    <MenuItem value='Sentiment'>Sentiment</MenuItem>
+                    <MenuItem value='Sentiment' >Sentiment</MenuItem>
                     <MenuItem value='Mood'>Mood</MenuItem>
                     </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={4} style={{padding:'10px'}} >
+            <Grid item xs={4} style={{padding:'5px'}} >
               <FormControl variant="outlined" style={{width:'100%'}} >
-              <InputLabel id="Select-count">Influencer Count </InputLabel>
+              <InputLabel id="Select-count">Count </InputLabel>
                     <Select
                     variant="outlined"
                     labelId="Select-count"
-                    label="Influencer Count"
+                    label="Count"
                     id="demo-simple-select-helper"
+                    style={{fontSize:'7px',height:'30px'}}
                     fullWidth
                     value={size}
                     onChange={(e) => setSize(e.target.value)}
                     >
-                    <MenuItem value={10}>10 Top Influencers </MenuItem>
-                    <MenuItem value={25}>25 Top Influencers</MenuItem>
-                    <MenuItem value={50}>50 Top Influencers</MenuItem>
+                    <MenuItem value={10}>Top 10  </MenuItem>
+                    <MenuItem value={25}>Top 25 </MenuItem>
+                    <MenuItem value={50}>Top 25 </MenuItem>
                     </Select>
               </FormControl>
             </Grid>
-
-                </Grid>
+          </Grid>
             </Grid>
             <Grid item xs={12}>
             <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>

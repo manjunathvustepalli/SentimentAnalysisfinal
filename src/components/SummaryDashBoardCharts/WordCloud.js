@@ -178,6 +178,7 @@ function WordCloud(props) {
                             labelId="select-source"
                             id="select-source-main"
                             variant="outlined"
+                            style={{fontSize:'7px',height:'30px'}}
                             label="Source"
                             fullWidth
                             value = {source}
@@ -195,6 +196,7 @@ function WordCloud(props) {
                         <Select
                             labelId="Select-type"
                             id="select-type-main"
+                            style={{fontSize:'7px',height:'30px'}}
                             fullWidth
                             label="Type"
                             variant="outlined"
@@ -215,6 +217,7 @@ function WordCloud(props) {
                                     labelId="sentiment-select"
                                     id="sentiment-select-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Sentiment"
                                     value={sentiment}
                                     onChange = {(e) => setSentiment(e.target.value)}
