@@ -16,7 +16,9 @@ import { Button, Typography } from '@material-ui/core';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
-import { addMonths } from '../../helpers/index'
+import { addMonths } from '../../helpers/index';
+import Loader from '../LoaderWithBackDrop';
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -50,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 export default function SentimentalAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
-    const [showTable, setShowTable] = useState(false)
     const [sentiments, setSentiments] = useState({})
     const [sources, setSources] = useState({})
     const [languages, setLanguages] = useState({})
@@ -190,6 +191,7 @@ export default function SentimentalAnalysisPieChart() {
 
     return (
         <>
+            <Loader />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
@@ -236,14 +238,6 @@ export default function SentimentalAnalysisPieChart() {
                             </Grid>)
                             }
                             )}
-                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12} >
-                                {showTable && (<Table1/>)}
-                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>

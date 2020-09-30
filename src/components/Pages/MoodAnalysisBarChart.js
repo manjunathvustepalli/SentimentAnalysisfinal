@@ -11,7 +11,8 @@ import BarChart from '../charts/BarChart'
 import { MoodAnalysisFiltersContext } from '../../contexts/MoodAnalysisContext'
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect'
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
-
+import Loader from '../LoaderWithBackDrop';
+import colors from '../../helpers/colors';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -44,19 +45,6 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 
 function MoodAnalysisBarChart(props) {
-	var colors = {
-		'joy':'#4C7A00',
-		'sad':'#D8D8D8',
-		'anger':'#FF5151',
-		'anticipation':'#111D31',
-		'disgust':'#D512CF',
-		'surprise':'#FF6600',
-		'fear':'#2000FF',
-		'trust':'#0099FF',
-		'positive':'#04E46C',
-		'negative':'#CB0038',
-		'neutral':'#FFC400'
-	  }
     const classes = useStyles()
 	const moodFilters = useContext(MoodAnalysisFiltersContext)
 	const {
@@ -78,6 +66,7 @@ function MoodAnalysisBarChart(props) {
 		setMoods
 	} = moodFilters
 	const [refresh, setRefresh] = useState(true)
+	const [open, setOpen] = useState(true)
 	const [chartType, setChartType] = useState(props.stack ? 'stack' :'bar') 
     const [data, setData] = useState({})
     const [dates, setDates] = useState([])
@@ -86,7 +75,7 @@ function MoodAnalysisBarChart(props) {
 	}
 
 	const fetchData = (changeInState) => {
-		
+		setOpen(true)
 		let query = {
 			"aggs": {
 			  "date-based-range": {
@@ -195,7 +184,6 @@ function MoodAnalysisBarChart(props) {
 			   });
 			})
 			if(changeInState){
-
 				setSources(prev =>{
 					let availableSourceKeys = {}
 					uniqueSourceKeys.forEach(source =>{
@@ -262,6 +250,7 @@ function MoodAnalysisBarChart(props) {
 			 setMoods({})
 			 sortedData = {}
 		 }
+		 setOpen(false)
 			 })
 	 .catch(err => {
 		 console.log(err)
@@ -272,7 +261,16 @@ function MoodAnalysisBarChart(props) {
         fetchData(true)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+	},[from,to,keywords])
+	
+	useDidUpdateEffect(() =>{
+        setData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
@@ -319,6 +317,7 @@ function MoodAnalysisBarChart(props) {
 
     return (
         <>
+			<Loader open={open} />
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}

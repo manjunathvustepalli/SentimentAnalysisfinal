@@ -164,7 +164,7 @@ function InfluencerComparison({from,to}) {
                       "Users": {
                         "terms": {
                           "field": "User.ScreenName.keyword",
-                          "size":1000
+                          "size":100
                         },
                         "aggs": {
                           "Followers": {

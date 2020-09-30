@@ -13,7 +13,7 @@ import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
-import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
+import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
@@ -268,13 +268,22 @@ export default function SentimentalAnalysisLineChart() {
         fetchData(false)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
             fetchData(true)
         }
     },[keywordType])
+
+    useDidUpdateEffect(() =>{
+        setData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
 
     useEffect(() => {
         const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)

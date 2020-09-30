@@ -22,6 +22,8 @@ import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../..
 import { Redirect } from "react-router-dom";
 import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
 import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
+import Loader from '../LoaderWithBackDrop'
 
 var sortedData = {}
 
@@ -40,6 +42,7 @@ function TrendAnalysis(props) {
 } = trendAnalysisFilters
 
   const [refresh, setRefresh] = useState(true);
+  const [open, setOpen] = useState(true);
   const [chartType, setChartType] = useState( props.stacking ? 'stack' : 'bar')
   const [barData, setBarData] = useState([])
   const [lineData, setLineData] = useState([])
@@ -76,6 +79,7 @@ function TrendAnalysis(props) {
   }));
   const classes = useStyles();
   const fetchData = (changeInState) => {
+    setOpen(true)
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -166,6 +170,7 @@ function TrendAnalysis(props) {
         })
         setSources(availableSourceKeys)  
       }
+      setOpen(false)
     })
     .catch(err=>{
       console.log(err)
@@ -176,7 +181,7 @@ function TrendAnalysis(props) {
     fetchData(false)
 },()=>{
     fetchData(true)
-},[from,to,refresh])
+},[from,to])
 
   useEffect(()=>{
     setBarData((prev) => {
@@ -192,8 +197,20 @@ function TrendAnalysis(props) {
     }
   },[languages,sources])
 
+  
+  useDidUpdateEffect(() =>{
+    setBarData([[],[]])
+    setLineData([])
+    setOpen(true)
+    setTimeout(() => {
+        fetchData(true)
+    }, 1000);
+},[refresh])
+
+
   return (
     <>
+      <Loader open={open} />
       {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
       {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
       {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}

@@ -8,10 +8,11 @@ import { getKeyArray, getDocCountByKey } from '../../helpers'
 import Axios from 'axios';
 import { MoodAnalysisAreaChartFilter } from '../../helpers/filter';
 import AreaChart from '../charts/AreaChart';
-import { MoodAnalysisFiltersContext } from '../../contexts/MoodAnalysisContext'
-import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect'
-import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
-
+import { MoodAnalysisFiltersContext } from '../../contexts/MoodAnalysisContext';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
+import Loader from '../LoaderWithBackDrop';
+import colors from '../../helpers/colors';
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -63,20 +64,8 @@ export default function MoodAnalysisAreaChart() {
 		moods,
 		setMoods
 	} = moodFilters
-	var colors = {
-		'joy':'#4C7A00',
-		'sad':'#D8D8D8',
-		'anger':'#FF5151',
-		'anticipation':'#111D31',
-		'disgust':'#D512CF',
-		'surprise':'#FF6600',
-		'fear':'#2000FF',
-		'trust':'#0099FF',
-		'positive':'#04E46C',
-		'negative':'#CB0038',
-		'neutral':'#FFC400'
-	  }
 	const classes = useStyles()
+	const [open, setOpen] = useState(true)
 	const [refresh, setRefresh] = useState(true)
 	const [chartType, setChartType] = useState('area')
 	const [data, setData] = useState({})
@@ -85,7 +74,7 @@ export default function MoodAnalysisAreaChart() {
 	}
 
 	const fetchData = (changeInState) => {
-		
+		setOpen(true)
 		let query = {
 			"aggs": {
 			  "date-based-range": {
@@ -261,8 +250,10 @@ export default function MoodAnalysisAreaChart() {
 			 setMoods({})
 			 sortedData = {}
 		 }
-			 })
+		setOpen(false)	 
+		})
 	 .catch(err => {
+		 setOpen(true)
 		 console.log(err)
 	 })
 	}
@@ -271,13 +262,22 @@ export default function MoodAnalysisAreaChart() {
         fetchData(true)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
             fetchData(false)
         }
 	},[keywordType])
+
+	useDidUpdateEffect(() =>{
+        setData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
 	
 	useEffect(() => {
 		const [finalData]  = MoodAnalysisAreaChartFilter(languages,moods,sources,subSources,sortedData,from,to)
@@ -297,6 +297,7 @@ export default function MoodAnalysisAreaChart() {
 
 	return (
 		<>
+			<Loader open={open} />
 			<div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px', }}>
 			{chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}
 			{chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}

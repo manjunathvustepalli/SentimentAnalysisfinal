@@ -22,6 +22,10 @@ import LineChart from "../charts/TrendAnalysisLineChart"
 import { Redirect } from "react-router-dom";
 import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
 import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
+import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
+import Loader from '../LoaderWithBackDrop'
+
+
 
 var sortedData = {}
 
@@ -38,6 +42,7 @@ function TrendAnalysisLineChart() {
     setTo
 } = trendAnalysisFilters
   const [refresh, setRefresh] = useState(true);
+  const [open, setOpen] = useState(true);
   const [barData, setBarData] = useState([[],[]])
   const [lineData, setLineData] = useState([])
   const [chartType, setChartType] = useState('line')
@@ -75,6 +80,7 @@ function TrendAnalysisLineChart() {
   const classes = useStyles();
 
   const fetchData = (changeInState) => {
+    setOpen(true)
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -165,8 +171,10 @@ function TrendAnalysisLineChart() {
         })
         setSources(availableSourceKeys)  
       }
+      setOpen(false)
     })
     .catch(err=>{
+      setOpen(false)
       console.log(err)
     })
   }
@@ -191,6 +199,15 @@ function TrendAnalysisLineChart() {
     }
   },[languages,sources])
 
+  useDidUpdateEffect(() =>{
+    setBarData([[],[]])
+    setLineData([])
+    setOpen(true)
+    setTimeout(() => {
+        fetchData(true)
+    }, 1000);
+},[refresh])
+
   return (
     <>
         {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
@@ -198,7 +215,7 @@ function TrendAnalysisLineChart() {
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
         {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
         {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
-
+        <Loader open={open} />
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>

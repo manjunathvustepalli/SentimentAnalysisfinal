@@ -13,7 +13,7 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
+import { getKeyArray } from "../../helpers";
 import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
@@ -22,6 +22,8 @@ import AreaChart from "../charts/AreaChart";
 import { Redirect } from "react-router-dom";
 import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
 import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
+import Loader from '../LoaderWithBackDrop'
 
 
 var sortedData = {}
@@ -39,6 +41,7 @@ function TrendAnalysisAreaChart() {
     setTo
 } = trendAnalysisFilters
   const [refresh, setRefresh] = useState(true);
+  const [open, setOpen] = useState(true);
   const [barData, setBarData] = useState([[],[]])
   const [lineData, setLineData] = useState([])
   const [chartType, setChartType] = useState('area')
@@ -75,6 +78,7 @@ function TrendAnalysisAreaChart() {
   }));
   const classes = useStyles();
   const fetchData = (changeInState) => {
+    setOpen(true)
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -165,8 +169,10 @@ function TrendAnalysisAreaChart() {
         })
         setSources(availableSourceKeys)  
       }
+      setOpen(false)
     })
     .catch(err=>{
+      setOpen(false)
       console.log(err)
     })
   }
@@ -191,8 +197,18 @@ function TrendAnalysisAreaChart() {
     }
   },[languages,sources])
 
+  useDidUpdateEffect(() =>{
+    setBarData([[],[]])
+    setLineData([])
+    setOpen(true)
+    setTimeout(() => {
+        fetchData(true)
+    }, 1000);
+},[refresh])
+
   return (
     <>
+        <Loader open={open} />
         {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
         {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}

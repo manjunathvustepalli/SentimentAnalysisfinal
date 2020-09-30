@@ -264,13 +264,22 @@ export default function SentimentalAnalysisAreaChart() {
         fetchData(false)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
             fetchData(false)
         }
-    },[keywordType])
+    },[keywordType]) 
+
+    useDidUpdateEffect(() =>{
+        setData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
 
 
     useEffect(() => {

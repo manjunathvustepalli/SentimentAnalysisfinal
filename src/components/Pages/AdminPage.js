@@ -52,7 +52,7 @@ function AdminPage() {
     ])
 
     useEffect(() => {
-      Axios.get('http://cors-anywhere.herokuapp.com/http://arijit-ef55be0e.localhost.run/bsma-webservice/getasynctwitterconfig')
+      Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/getasynctwitterconfig`)
         .then(fetchedData =>{
           setData( {
             keywords:fetchedData.data.keywords.map(keyword => {
@@ -75,7 +75,7 @@ function AdminPage() {
     }, [])
 
     useDidUpdateEffect(()=>{
-      Axios.post(`http://cors-anywhere.herokuapp.com/http://arijit-ef55be0e.localhost.run/bsma-webservice/setasynctwitterconfig?keywords=${data.keywords.map(keywordObj => keywordObj.keyword).join(',')}&handles=${data.screenNames.map(screenNameObj => screenNameObj.screenName).join(',')}`)
+      Axios.post(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/setasynctwitterconfig?keywords=${data.keywords.map(keywordObj => keywordObj.keyword).join(',')}&handles=${data.screenNames.map(screenNameObj => screenNameObj.screenName).join(',')}`)
         .then(data => {
           console.log(data)
         })

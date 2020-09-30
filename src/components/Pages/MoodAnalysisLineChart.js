@@ -11,7 +11,8 @@ import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
 import { MoodAnalysisFiltersContext } from '../../contexts/MoodAnalysisContext'
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect'
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
-
+import Loader from '../LoaderWithBackDrop';
+import colors from '../../helpers/colors';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -45,19 +46,7 @@ var sortedData = {}
 
 
 function MoodAnalysisLineChart() {
-	var colors = {
-		'joy':'#4C7A00',
-		'sad':'#D8D8D8',
-		'anger':'#FF5151',
-		'anticipation':'#111D31',
-		'disgust':'#D512CF',
-		'surprise':'#FF6600',
-		'fear':'#2000FF',
-		'trust':'#0099FF',
-		'positive':'#04E46C',
-		'negative':'#CB0038',
-		'neutral':'#FFC400'
-	  }
+
 	const moodFilters = useContext(MoodAnalysisFiltersContext)
 	const {
 		keywords,
@@ -81,7 +70,9 @@ function MoodAnalysisLineChart() {
 	const [refresh, setRefresh] = useState(true)
 	const [chartType, setChartType] = useState('line')
     const [data, setData] = useState({})
-    const [dates, setDates] = useState([])
+	const [dates, setDates] = useState([])
+	const [open, setOpen] = useState(true)
+	
 	const handleChange = (e) => {
 		setChartType(e.target.value)
 	}
@@ -263,8 +254,10 @@ function MoodAnalysisLineChart() {
 			 setMoods({})
 			 sortedData = {}
 		 }
+		 setOpen(false)
 			 })
 	 .catch(err => {
+		 setOpen(false)
 		 console.log(err)
 	 })
 	}
@@ -273,7 +266,7 @@ function MoodAnalysisLineChart() {
         fetchData(true)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
@@ -296,10 +289,21 @@ function MoodAnalysisLineChart() {
                 availableSubSourceKeys[subSource]  = true
             })
         setSubSources(availableSubSourceKeys)
-    },[sources])
+	},[sources])
+	
+	useDidUpdateEffect(() =>{
+		setData([])
+		setDates([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
  
     return (
         <>
+			<Loader open={open} />
         <div style={{ backgroundColor: '#F7F7F7',padding:'20px', }}>            
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'pie' && <Redirect to='/mood-analysis/pie-chart' />}

@@ -23,6 +23,9 @@ import { Redirect } from "react-router-dom";
 import SemiDonutChart from '../charts/SemiDonutChart';
 import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
 import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
+import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
+import Loader from '../LoaderWithBackDrop'
+
 
 var sortedData = {}
 
@@ -39,6 +42,7 @@ function TrendAnalysisSemiDonut() {
     setTo
       } = trendAnalysisFilters
     const [refresh, setRefresh] = useState(true);
+    const [open, setOpen] = useState(true);
     const [chartType, setChartType] = useState('semi-pie')
     const [pieData, setPieData] = useState({})
     const [lineData, setLineData] = useState([])
@@ -76,6 +80,7 @@ function TrendAnalysisSemiDonut() {
     const classes = useStyles();
   
     const fetchData = (changeInState) => {
+      setOpen(true)
       Axios.post(process.env.REACT_APP_URL,{
         "aggs": {
           "date-based-range": {
@@ -166,6 +171,7 @@ function TrendAnalysisSemiDonut() {
           })
           setSources(availableSourceKeys)  
         }
+        setOpen(false)
       })
       .catch(err=>{
         console.log(err)
@@ -176,7 +182,7 @@ function TrendAnalysisSemiDonut() {
       fetchData(false)
   },()=>{
       fetchData(true)
-  },[from,to,refresh])
+  },[from,to])
   
     useEffect(() => {
         let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
@@ -185,9 +191,19 @@ function TrendAnalysisSemiDonut() {
         }
         setPieData(TrendAnalysisPieChartFilter(languages,sources,sortedData)) 
       },[languages,sources])
+
+      useDidUpdateEffect(() =>{
+        setPieData({})
+        setLineData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(true)
+        }, 1000);
+    },[refresh])
     
     return (
         <>
+        <Loader open={open} />
         {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
         {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
