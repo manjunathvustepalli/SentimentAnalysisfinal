@@ -202,10 +202,7 @@ function TrendAnalysisLineChart() {
   useDidUpdateEffect(() =>{
     setBarData([[],[]])
     setLineData([])
-    setOpen(true)
-    setTimeout(() => {
-        fetchData(true)
-    }, 1000);
+    fetchData(true)
 },[refresh])
 
   return (
@@ -215,8 +212,8 @@ function TrendAnalysisLineChart() {
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
         {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
         {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
-        <Loader open={open} />
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px",position:'relative' }}>
+        <Loader open={open} style={{position:'absolute'}} />
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
           <Typography style={{ color: "#43B02A", fontSize: "30px" }}>

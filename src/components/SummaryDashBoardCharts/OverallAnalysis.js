@@ -5,6 +5,7 @@ import SemiDonutChart from '../charts/SemiDonutChart'
 import Axios from 'axios';
 import PieChart from '../charts/PieChart';
 import { getKeyArray } from '../../helpers';
+import colors from '../../helpers/colors';
 
 var sortedData =  {}
 
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-function OverallAnalysis({to, from}) {
+function OverallAnalysis({to, from,refresh}) {
     const classes = useStyles();
     const [sentiments, setSentiments] = useState([])
     const [moods, setMoods] = useState([])
@@ -102,21 +103,10 @@ function OverallAnalysis({to, from}) {
         setMoods(sortedData[value].mood)
     }
 
-    var colors = {
-      'joy':'#4C7A00',
-      'sad':'#D8D8D8',
-      'anger':'#FF5151',
-      'anticipation':'#111D31',
-      'disgust':'#D512CF',
-      'surprise':'#FF6600',
-      'fear':'#2000FF',
-      'trust':'#0099FF',
-      'positive':'#04E46C',
-      'negative':'#CB0038',
-      'neutral':'#FFC400'
-    }
-
     useEffect(() => {
+      setMainSourceData({})
+      setSentiments([])
+      setMoods([])
         Axios.post(process.env.REACT_APP_URL,{
             "aggs": {
               "date-based-range": {
@@ -209,7 +199,11 @@ function OverallAnalysis({to, from}) {
           setMoods(sortedData[s].mood)
         }
       })
-    }, [from,to])
+    }, [from,to,refresh])
+
+    useEffect(() => {
+      
+    }, [refresh])
 
     return (
         <Card className={classes.main}>

@@ -13,15 +13,12 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { getKeyArray } from "../../helpers";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
-import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
 import { Link } from "react-router-dom";
 import { TrendingSubjectFiltersContext } from "../../contexts/TrendingSubjectContext";
 
 
-var sortedData = {}
 const useStyles = makeStyles((theme) => ({
   main: {
     fontSize: 16,
@@ -69,11 +66,9 @@ function InfluencerAnalysis() {
     source, 
     setSource,
     subSources,
-    setSubSources,
     subSource, 
     setSubSource,
     languages, 
-    setLanguages,
     language, 
     setLanguage,
     from, 
@@ -83,18 +78,17 @@ function InfluencerAnalysis() {
     sentiment,
     sentiments,
     setSentiment,
-    setSentiments,
     keywords,
     setKeywords,
     keywordType,
     setKeywordType,
     sentimentData,
-    changeData
+    changeData,
+    refresh,
+    setRefresh
 } = trendingSubjectsFilters
 
 
-  const [refresh, setRefresh] = useState(true);
-  const [noData, setnoData] = useState(false)
   const classes = useStyles();
   return (
     <>
@@ -160,17 +154,6 @@ function InfluencerAnalysis() {
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
-              {
-                  sources.length && languages.length && noData ? (
-                    <Grid item xs={12}>
-                    <Alert variant="filled" severity="error">
-                        No Data available, Please change the Filters
-                    </Alert>
-                  </Grid>
-                  ) : (
-                    <span></span>
-                  )
-              }
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters

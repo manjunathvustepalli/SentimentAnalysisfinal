@@ -253,7 +253,7 @@ export default function MoodAnalysisAreaChart() {
 		setOpen(false)	 
 		})
 	 .catch(err => {
-		 setOpen(true)
+		 setOpen(false)
 		 console.log(err)
 	 })
 	}

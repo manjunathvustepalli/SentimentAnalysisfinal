@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
 import AreaChart from '../charts/AreaChart'
+import colors from '../../helpers/colors'
 
-function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
+function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
 
     const [ from,to ] = toFromDateHandlers
     const [data, setData] = useState([])
     const [dates, setDates] = useState([])
 
     useEffect(() => {
+      setData([])
+      setDates([])
       let query = {
         "aggs": {
           "date-based-range": {
@@ -62,19 +65,6 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
          let perDayKeys = perDayBuckets.map(keyObj => keyObj.key_as_string)
          let sortedData = []
          let sentiments = ['positive','negative','neutral']
-         var colors = {
-          'joy':'#4C7A00',
-          'sad':'#D8D8D8',
-          'anger':'#FF5151',
-          'anticipation':'#111D31',
-          'disgust':'#D512CF',
-          'surprise':'#FF6600',
-          'fear':'#2000FF',
-          'trust':'#0099FF',
-          'positive':'#04E46C',
-          'negative':'#CB0038',
-          'neutral':'#FFC400'
-        }
     
          sentiments.forEach((sentiment,i) => {
              sortedData.push({
@@ -94,7 +84,7 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType}) {
          setData(sortedData)
          setDates(perDayKeys)
      })
-    }, [from,to,keywords,keywordType])
+    }, [from,to,keywords,keywordType,refresh])
 
     return (
         <div>

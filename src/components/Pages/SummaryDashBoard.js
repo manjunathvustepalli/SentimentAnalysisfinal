@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Typography, Grid, Card, CardContent } from '@material-ui/core'
 import FilterHeader from '../Filters/FilterHeader'
 import styled from 'styled-components';
@@ -17,6 +17,8 @@ import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
 import ChipInputFilter from '../Filters/ChipInputFilter';
 import GeoTaggingSummary from '../SummaryDashBoardCharts/GeoTaggingSummary';
+import Loader from '../LoaderWithBackDrop';
+
 
 const IconWithText = styled.div`
   display: flex;
@@ -53,9 +55,19 @@ function SummaryDashBoard() {
     const [keywordType, setKeywordType] = useState('Entire Data')
     const [keywords, setKeywords] = useState([])
     const [to, setTo] = useState(addMonths(new Date(),0))
+    const [open, setOpen] = useState(true)
+
+    useEffect(() => {
+        setOpen(true)
+        const timer = setTimeout(() => {
+            setOpen(false)
+        }, 1000);
+        return () => clearTimeout(timer)
+    }, [refresh])
 
     return (
-            <div style={{ backgroundColor: '#F7F7F7', padding:'10px 20px'}}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'10px 20px',position:'relative'}}>
+                <Loader open={open} style={{position:'absolute'}} />
                 <Typography style={{color:'#43B02A',marginBottom:'5px'}} variant='h4' >
                     Summary Dashboard
                 </Typography>
@@ -102,26 +114,26 @@ function SummaryDashBoard() {
                         <div id="summary-dashboard" style={{width:'100%'}}>
                         <Grid container spacing={2}>                     
                             <Grid item xl={4} md={4} xs={12} >
-                                <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
+                                <OverallAnalysis to={to} from={from} refresh={refresh}  keywords={keywords} keywordType={keywordType} />
                             </Grid>
                             <Grid item xl={4} md={4} sm={12} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Mood Analysis</CardContent> 
-                                    <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
+                                    <MoodAnalysis keywordType={keywordType} keywords={keywords} refresh={refresh} toFromDateHandlers={[from,to]} />
                                 </Card>
                             </Grid>                    
                             <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Sentiment Analysis</CardContent>
-                                    <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
+                                    <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} refresh={refresh} />
                                 </Card>
                             </Grid>                   
                             <Grid item xl={4} md={4} xs={12}>
-                                <InfluencerComparison from={from} to={to} />
+                                <InfluencerComparison from={from} to={to} refresh={refresh} />
                             </Grid>
                             <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
-                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
+                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} refresh={refresh} />
                                 </Card>
                             </Grid>
                             <Grid item xl={4} md={4} xs={12}>

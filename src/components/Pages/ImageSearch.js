@@ -93,7 +93,7 @@ useEffect(() =>{
   return (
     <div className={classes.root}>
         <>
-            <Grid container>
+            {/* <Grid container>
                 <Grid item xs={2} />
                 <Grid item xs={8} style={{marginTop:'30px'}}>
                     <SearchBar
@@ -102,7 +102,7 @@ useEffect(() =>{
                     />
                 </Grid>
                 <Grid item xs={2} />
-            </Grid>
+            </Grid> */}
             <GridList style={{padding:'40px'}}  cellHeight={400} className={classes.gridList}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
             <ListSubheader component="div">Search Results</ListSubheader>

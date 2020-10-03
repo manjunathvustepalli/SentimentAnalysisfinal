@@ -26,6 +26,8 @@ export const TrendingSubjectContext = ({ children }) => {
     const [sentimentData, setSentimentData] = useState([])
 
     useEffect(()=>{
+        setMoodData([])
+        setSentimentData([])
         let query = {
             "aggs": {
                 "date-based-range": {
@@ -174,7 +176,7 @@ export const TrendingSubjectContext = ({ children }) => {
         .catch(err=>{
           console.log(err,err.response)
         })        
-    },[keywords,keywordType,from,to])
+    },[keywords,keywordType,from,to,refresh])
 
     const changeData = (type,value) => {
       if(type === 'language'){

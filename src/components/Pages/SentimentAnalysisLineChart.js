@@ -280,7 +280,7 @@ export default function SentimentalAnalysisLineChart() {
         setData([])
         setOpen(true)
         setTimeout(() => {
-            fetchData(true)
+            fetchData(false)
             setOpen(false)
         }, 1000);
     },[refresh])
@@ -304,8 +304,8 @@ export default function SentimentalAnalysisLineChart() {
 
     return (
         <>
-            <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}

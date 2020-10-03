@@ -80,6 +80,8 @@ function TrendAnalysis(props) {
   const classes = useStyles();
   const fetchData = (changeInState) => {
     setOpen(true)
+    setLineData([])
+    setBarData([[],[]])
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -199,27 +201,20 @@ function TrendAnalysis(props) {
 
   
   useDidUpdateEffect(() =>{
-    setBarData([[],[]])
-    setLineData([])
-    setOpen(true)
-    setTimeout(() => {
         fetchData(true)
-    }, 1000);
-},[refresh])
+  },[refresh])
 
 
   return (
     <>
-      <Loader open={open} />
       {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
       {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
       {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
       {chartType === 'line' && <Redirect to="/trend-analysis/line-chart" />}
       {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
       {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
-
-
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px",position:'relative' }}>
+      <Loader open={open} style={{position:'absolute'}} />
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
           <Typography style={{ color: "#43B02A", fontSize: "30px" }}>

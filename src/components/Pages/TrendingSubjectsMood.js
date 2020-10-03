@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   Grid,
   Typography,
@@ -13,14 +13,11 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { getKeyArray } from "../../helpers";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
-import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
 import { Link } from "react-router-dom";
 import { TrendingSubjectFiltersContext } from "../../contexts/TrendingSubjectContext";
 
-var sortedData = {}
 const useStyles = makeStyles((theme) => ({
   main: {
     fontSize: 16,
@@ -61,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function InfluencerAnalysis() {
-  const [noData, setnoData] = useState(false)
+  const [noData] = useState(false)
 
   const trendingSubjectsFilters = useContext(TrendingSubjectFiltersContext)
   const {

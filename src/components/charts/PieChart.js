@@ -47,6 +47,7 @@ export default class PieChart extends Component {
                     allowPointSelect: true,
                     showInLegend: true,
                     cursor: 'pointer',
+                    size:'70%',
                     dataLabels: {
                         enabled: true,
                         format: '{point.percentage:.1f} %',

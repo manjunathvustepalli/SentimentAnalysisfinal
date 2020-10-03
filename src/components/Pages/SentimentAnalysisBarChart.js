@@ -85,6 +85,7 @@ export default function SentimentalAnalysisAreaChart(props) {
     }
 
     const fetchData = (changeInState) => {
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -157,7 +158,6 @@ export default function SentimentalAnalysisAreaChart(props) {
            }
        })
     .then(fetchedData => {
-        setOpen(true)
         var sourceKeys,subSourceKeys
         var uniqueSourceKeys = []
         var uniqueSubSourceKeys = []
@@ -280,11 +280,7 @@ export default function SentimentalAnalysisAreaChart(props) {
 
     useDidUpdateEffect(() =>{
         setData([])
-        setOpen(true)
-        setTimeout(() => {
-            fetchData(true)
-            setOpen(false)
-        }, 1000);
+        fetchData(false)
     },[refresh])
 
 
@@ -327,8 +323,8 @@ export default function SentimentalAnalysisAreaChart(props) {
 
     return (
         <>
-            <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }

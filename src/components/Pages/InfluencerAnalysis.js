@@ -221,9 +221,7 @@ function InfluencerAnalysis() {
 
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleChange = (event, newValue) => setValue(newValue);
 
   const fetchData = () => {
     if(source === 'Twitter'){
@@ -452,15 +450,13 @@ function InfluencerAnalysis() {
         setData([])
         setSentimentData([])
         setMoodData([])
-        setTimeout(() => {
-          fetchData()
-        }, 1000);
+        fetchData()
       },[refresh])
   
     return (
         <>
-          <Loader open={open} />
-          <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+          <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+          <Loader open={open} style={{position:"absolute"}} />
             <Grid container spacing={2} >
                 <Grid item md={8} sm={12}>
                     <Typography style={{ color:'#43B02A',fontSize:'30px'}}>

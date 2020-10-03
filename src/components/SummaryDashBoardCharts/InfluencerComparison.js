@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function InfluencerComparison({from,to}) {
+function InfluencerComparison({from,to,refresh}) {
     const classes = useStyles();
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
@@ -140,6 +140,7 @@ function InfluencerComparison({from,to}) {
     }]
  
     useEffect(() => {
+        setData([])
         if(source === 'twitter'){
             Axios.post(process.env.REACT_APP_URL,
               {
@@ -303,7 +304,7 @@ function InfluencerComparison({from,to}) {
                   console.log(err)
               })
             }
-          },[from,to,source,type,size])
+          },[from,to,source,type,size,refresh])
 
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >

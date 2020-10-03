@@ -17,7 +17,9 @@ import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { moodAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
-import { addMonths } from '../../helpers/index'
+import { addMonths } from '../../helpers/index';
+import Loader from '../LoaderWithBackDrop';
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -68,13 +70,16 @@ export default function MoodAnalysisPieChart() {
     const [languages,setLanguages] = useState([])
     const [moods, setMoods] = useState([])
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true)
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
+        setData({})
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -179,11 +184,13 @@ export default function MoodAnalysisPieChart() {
                     return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
                 }
             })
+            setOpen(false)
         })
         .catch(err => {
+            setOpen(false)
             console.log(err)
         })
-    }, [from,to,refresh,keywords,keywordType])
+    }, [from,to,keywords,keywordType,refresh])
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
@@ -191,10 +198,12 @@ export default function MoodAnalysisPieChart() {
             setData(temp)
         }
     },[moods,languages,sources])
+    
 
     return (
         <>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
@@ -241,11 +250,6 @@ export default function MoodAnalysisPieChart() {
                             </Grid>)
                             }
                             )}
-                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid> */}
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
                             </Grid>

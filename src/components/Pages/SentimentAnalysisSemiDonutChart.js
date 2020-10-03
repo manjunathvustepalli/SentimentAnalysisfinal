@@ -17,6 +17,8 @@ import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
+import Loader from '../LoaderWithBackDrop';
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -50,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 function SentimentAnalysisSemiDonutChart() {
     const [chartType, setChartType] = useState('semi-pie')
-    const [showTable, setShowTable] = useState(false)
     const [sentiments, setSentiments] = useState({})
     const [sources, setSources] = useState({})
     const [languages, setLanguages] = useState({})
@@ -59,14 +60,17 @@ function SentimentAnalysisSemiDonutChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true);
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     } 
 
     useEffect(() => {
-        let query =         {
+        setData([])
+        setOpen(true)
+        let query ={
             "aggs": {
               "date-based-range": {
                 "date_range": {
@@ -173,8 +177,10 @@ function SentimentAnalysisSemiDonutChart() {
             setSentiments({})
             sortedData = {}
         }
+        setOpen(false)
         })
         .catch(err => {
+            setOpen(false)
             console.log(err)
         })        
 
@@ -189,7 +195,8 @@ function SentimentAnalysisSemiDonutChart() {
 
     return (
         <>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />    
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }

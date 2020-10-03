@@ -18,7 +18,6 @@ import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
 import { addMonths } from '../../helpers/index';
 import Loader from '../LoaderWithBackDrop';
-import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -60,13 +59,16 @@ export default function SentimentalAnalysisPieChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true)
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
+        setData([])
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -175,9 +177,11 @@ export default function SentimentalAnalysisPieChart() {
             setSentiments({})
             sortedData = {}
         }
+        setOpen(false)
         })
         .catch(err => {
-            console.log(err)
+        setOpen(false)
+        console.log(err)
         })        
 
     }, [from,to,refresh,keywords,keywordType])
@@ -191,8 +195,8 @@ export default function SentimentalAnalysisPieChart() {
 
     return (
         <>
-            <Loader />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
