@@ -611,7 +611,7 @@ function GlobalSearch() {
 
     return (
         <>
-            <Grid container spacing={1}style={{padding:'30px',position:'relative'}}>
+            <Grid container spacing={1}style={{padding:'30px',position:'relative',height:'90vh'}}>
             <Loader open={open}  style={{position:'absolute'}} />
                 <Grid item sm={12} md={3}>
                     <FormControl style={{width:'100%'}} variant="outlined" >
@@ -674,7 +674,7 @@ function GlobalSearch() {
                     />
                 </Grid>
             <Grid item  xs={12} md={2} >
-                <Button style={{backgroundColor:'rgb(67, 176, 42)',color:'white',height:'100%'}} onClick={() => submitData()} fullWidth>
+                <Button style={{backgroundColor:'rgb(67, 176, 42)',color:'white',height:'50px'}} onClick={() => submitData()} fullWidth>
                     Search
                 </Button>
             </Grid>
