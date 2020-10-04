@@ -68,13 +68,12 @@ function LiveAnalysis() {
 
     const classes = useStyles();
     const [data, setData] = useState([]);
-    const [liveReloading, setLiveReloading] = useState(false);
+    const [liveReloading, setLiveReloading] = useState(true);
     const [reloadInterval, setReloadInterval] = useState(10000);
     const [to] = useState(new Date());
     const [from] = useState(new Date());
     const [actualUrl, setactualUrl] = useState('');
-    const [keyword] = useState('');
-    const [languages, setLanguages] = useState(['bengali']);
+    const [languages, setLanguages] = useState(['english']);
     const [source, setSource] = useState('twitter');
     const [dataObject, setDataObject] = useState({})
     const [columns, setColumns] = useState([
@@ -125,12 +124,17 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
-              console.log(user._source.MediaEntities)
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
+                }
+                if(user._source.Place){
+                  obj.location = user._source.Place.FullName
+                }
+                if(user._source.HashtagEntities){
+                  obj.hashTags = user._source.HashtagEntities.map(hashTag => <Chip label={hashTag.Text} size="small" style={{margin:'5px',backgroundColor:'rgb(67,176,42)',color:'white'}} />)
                 }
                 if(user._source.MediaEntities && user._source.MediaEntities.length){
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
@@ -191,13 +195,15 @@ function LiveAnalysis() {
                     {title:'Name',field:'name'},
                     {title:'Screen Name',field:'screenName'},
                     {title:'Post',field:'tweet'},
+                    {title:'Location',field:'location'},
+                    {title:'HashTags',field:'hashTags'},
                     {title:'Followers Count',field:'followersCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
                     {title:'Retweet Count',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
-                    {title:'Mood',field:'mood'},
+                    // {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                     {
                       title:'Media',field:'mediaUrl',width: "1%",
@@ -238,67 +244,10 @@ function LiveAnalysis() {
         .catch(err => {console.log(err.response,err)})
 
     }
-
-    function fetchFromKeyword(){
-        Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "query": {
-              "bool": {
-                "must": [
-                  {
-                    "terms": {
-                      "Source.keyword": [
-                        source
-                      ]
-                    }
-                  }
-                ], 
-                "should": [
-                  {
-                    "terms": {
-                      "User.ScreenName.keyword": [keyword]
-                    }
-                  }
-                ]
-              }
-            },
-            "size": 50,
-            "sort": [
-              {
-                "CreatedAt": {
-                  "order": "desc"
-                }
-              }
-            ]
-          })
-          .then(fetchedData =>{
-              let final =  fetchedData.data.hits.hits.map(user => {
-                let obj = {}
-                if(user._source.User){
-                    obj.name =  user._source.User.Name
-                    obj.screenName =  user._source.User.ScreenName
-                    obj.followersCount =  user._source.User.FollowersCount
-                }
-                obj.tweet =  user._source.Text
-                obj.retweetCount =  user._source.RetweetCount
-                obj.mood = user._source.predictedMood
-                obj.sentiment = user._source.predictedSentiment
-                return obj
-            })
-            setData(final)
-          })
-          .catch(err => {
-              console.log(err)
-          })
-    }    
-
     useEffect(() => {
-        if(!keyword){ 
             fetchData()
-        } else {
-            fetchFromKeyword()
-        }
         const interval = setInterval(() => {
-            if(liveReloading && !keyword){
+            if(liveReloading){
                 fetchData()
             }
           }, reloadInterval);

@@ -36,6 +36,7 @@ function GlobalSearch() {
         setopen(true)
         let keywordsString = keywords.join(',')
         let handlesString = handles.join(',')
+        let temp = []
         if(source === 'twitter'){
             Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
                 .then(res =>{
@@ -662,7 +663,15 @@ function GlobalSearch() {
                         label="Type Keywords"
                         value={keywords}
                         onAdd={(chip) =>{
-                            setKeywords(prev => [...prev,chip])
+                            setKeywords(prev => {
+                                let otherChip = ''
+                                if(chip.startsWith('#')){
+                                    otherChip = chip.slice(1,chip.length)
+                                }else {
+                                    otherChip = '#' + chip
+                                }
+                                return [...prev,otherChip,chip]
+                            })
                         }}
                         onDelete={(chip,i) =>{
                             setKeywords(prev => {

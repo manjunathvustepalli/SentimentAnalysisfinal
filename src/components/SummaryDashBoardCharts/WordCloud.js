@@ -5,21 +5,9 @@ import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
 import CustomLegend from '../CustomLegend'
 import colors from '../../helpers/colors'
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
 
 var sortedData = {}
-const useStyles = makeStyles((theme) => ({
-    filterDefault: {
-        borderColor: "#43B02A",
-        borderStyle: "solid",
-        borderWidth: "1px",
-        padding: '5px',
-        color: "#43B02A",
-    },
-    filterColorDefault:{
-        color: "#43B02A"
-    },
-
-}));
 
 function WordCloud({ from,to,keywords,keywordType,refresh }) {
 
@@ -29,7 +17,6 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
     const [mood, setMood] = useState('joy')
     const [data, setData] = useState([])
     const [type, setType] = useState('sentiment')
-    const classes = useStyles();
 
     useEffect(()=>{
         setData([])
@@ -97,8 +84,6 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
         .then(fetchedData => {
             let sourceBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].Source.buckets
             let sourceKeys = getKeyArray(sourceBuckets)
-            setSources(sourceKeys)
-            setSource(sourceKeys[0])
             sourceKeys.forEach((source,i) => {
                 sortedData[source] = {}
                 let sentimentBuckets = sourceBuckets[i]['Daily-Sentiment-Distro'].buckets
@@ -128,13 +113,15 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                     })
                 })
             })
+            setSources(sourceKeys)
+            setSource(sourceKeys[0])
         })
         .catch(err => {
             console.log(err)
         })
     },[to,from,keywords,keywordType])
 
-    useEffect(() => {
+    useDidUpdateEffect(() => {
         setData(prev => {
             try{
                 if(type==='sentiment'){
@@ -142,7 +129,8 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                 } else {
                     return sortedData[source].mood[mood]
                 }
-            } catch {
+            } catch (err){
+                console.log(err)
                 return []
             }
         })
@@ -220,6 +208,7 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                                     labelId="select-mood"
                                     id="select-mood-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Mood"
                                     value = {mood}
                                     onChange = {(e) => setMood(e.target.value)}
