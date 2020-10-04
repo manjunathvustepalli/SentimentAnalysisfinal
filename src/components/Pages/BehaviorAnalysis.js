@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SideNav from "../Navigation/SideNav";
 import {
   Grid,
   Typography,
@@ -70,7 +69,6 @@ function BehaviorAnalysis() {
   const classes = useStyles();
 
   return (
-    <SideNav>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
@@ -127,7 +125,7 @@ function BehaviorAnalysis() {
               </Grid>
           </Grid>
           <Grid item sm={12} md={4}>
-            <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+            <Grid container spacing={1} style={{position:'sticky',top:'60px'}} >
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
@@ -146,7 +144,6 @@ function BehaviorAnalysis() {
           </Grid>
         </Grid>
       </div>
-    </SideNav>
   );
 }
 

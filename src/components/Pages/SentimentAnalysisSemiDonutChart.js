@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
 import FilterHeader from '../Filters/FilterHeader';
@@ -18,6 +17,8 @@ import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
+import Loader from '../LoaderWithBackDrop';
+
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -51,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 function SentimentAnalysisSemiDonutChart() {
     const [chartType, setChartType] = useState('semi-pie')
-    const [showTable, setShowTable] = useState(false)
     const [sentiments, setSentiments] = useState({})
     const [sources, setSources] = useState({})
     const [languages, setLanguages] = useState({})
@@ -60,14 +60,17 @@ function SentimentAnalysisSemiDonutChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true);
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     } 
 
     useEffect(() => {
-        let query =         {
+        setData([])
+        setOpen(true)
+        let query ={
             "aggs": {
               "date-based-range": {
                 "date_range": {
@@ -174,8 +177,10 @@ function SentimentAnalysisSemiDonutChart() {
             setSentiments({})
             sortedData = {}
         }
+        setOpen(false)
         })
         .catch(err => {
+            setOpen(false)
             console.log(err)
         })        
 
@@ -189,8 +194,9 @@ function SentimentAnalysisSemiDonutChart() {
     }, [languages,sentiments,sources])
 
     return (
-        <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+        <>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />    
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
@@ -229,7 +235,7 @@ function SentimentAnalysisSemiDonutChart() {
                             </Grid>
                             {Object.keys(data).map((source,i) => {
                                 let mainData = data[source]
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <SemiDonutChart data={mainData} />
                                 <Button variant='outlined' color='primary'>
                                     {source}
@@ -249,7 +255,7 @@ function SentimentAnalysisSemiDonutChart() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -269,7 +275,7 @@ function SentimentAnalysisSemiDonutChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
 
     )
 }

@@ -7,13 +7,11 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Button, Typography } from '@material-ui/core';
-import Table1 from '../Tables/Table1'
 import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { moodAnalysisPieChartFilter} from '../../helpers/filter';
@@ -138,7 +136,7 @@ export default function MoodAnalysisSemiDonutChart() {
             }
         })
         .then(fetchedData => {
-            var sourceKeys,sourceBuckets,perDayKeys,perDayBuckets
+            var sourceKeys,sourceBuckets,perDayBuckets
             var uniqueSourceKeys = []
             let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
             var languageKeys = getKeyArray(languageBuckets)
@@ -193,7 +191,7 @@ export default function MoodAnalysisSemiDonutChart() {
     },[moods,languages,sources,keywords,keywordType])
  
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
@@ -232,7 +230,7 @@ export default function MoodAnalysisSemiDonutChart() {
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <SemiDonutChart data ={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
@@ -240,19 +238,19 @@ export default function MoodAnalysisSemiDonutChart() {
                             </Grid>)
                             }
                             )}
-                            <Grid item align='right' xs={10} style={{margin:'30px'}}>
+                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
                                 <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
                                     {showTable ? 'Close' : 'View Source'}
                                 </Button>
                             </Grid>
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -272,6 +270,6 @@ export default function MoodAnalysisSemiDonutChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

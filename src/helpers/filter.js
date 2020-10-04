@@ -315,9 +315,9 @@ export const trendAnalysisBarGraphFilter = (languages,sources,sortedData) => {
                         let langs = Object.keys(sortedData[date][source])
                         let sum = 0
                         langs.forEach(lang => {
-                            if(languages[lang]){
+                            // if(languages[lang]){
                                 sum = sum + sortedData[date][source][lang]
-                            }
+                            // }
                         })
                         return sum
                     }

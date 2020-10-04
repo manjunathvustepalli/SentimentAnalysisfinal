@@ -6,7 +6,6 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import SideNav from '../Navigation/SideNav'
 import { Grid } from '@material-ui/core';
 import SearchBar from "material-ui-search-bar";
 import Axios from 'axios';
@@ -93,8 +92,8 @@ useEffect(() =>{
 
   return (
     <div className={classes.root}>
-        <SideNav>
-            <Grid container>
+        <>
+            {/* <Grid container>
                 <Grid item xs={2} />
                 <Grid item xs={8} style={{marginTop:'30px'}}>
                     <SearchBar
@@ -103,7 +102,7 @@ useEffect(() =>{
                     />
                 </Grid>
                 <Grid item xs={2} />
-            </Grid>
+            </Grid> */}
             <GridList style={{padding:'40px'}}  cellHeight={400} className={classes.gridList}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
             <ListSubheader component="div">Search Results</ListSubheader>
@@ -123,7 +122,7 @@ useEffect(() =>{
             </GridListTile>
             ))}
         </GridList>
-        </SideNav>
+        </>
     </div>
   );
 }

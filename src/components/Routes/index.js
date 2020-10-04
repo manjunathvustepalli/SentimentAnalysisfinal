@@ -5,7 +5,6 @@ import SentimentalAnalysisLineChart from "../Pages/SentimentAnalysisLineChart";
 import SentimentalAnalysisPieChart from "../Pages/SentimentAnalysisPieChart";
 import SentimentalAnalysisSemiDonutChart from "../Pages/SentimentAnalysisSemiDonutChart";
 import SentimentAnalysisBarChart from "../Pages/SentimentAnalysisBarChart";
-import SideNavBar from "../Navigation/SideNav";
 import MoodAnalysisAreaChart from "../Pages/MoodAnalysisAreaChart";
 import MoodAnalysisPieChart from "../Pages/MoodAnalysisPieChart";
 import MoodAnalysisLineChart from "../Pages/MoodAnalysisLineChart";
@@ -33,22 +32,29 @@ import TrendAnalysisAreaChart from "../Pages/TrendAnalysisAreaChart";
 import TrendAnalysisLineChart from "../Pages/TrendAnalysisLineChart";
 import TrendAnalysisPieChart from "../Pages/TrendAnalysisPieChart";
 import TrendAnalysisSemiDonut from "../Pages/TrendAnalysisSemiDonut";
-import Test from "../Pages/Test";
-
+import SideNav from "../Navigation/SideNav";
+import { WordCloudContext } from "../../contexts/WordCloudContext";
+import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
+import { TrendAnalysisContext } from "../../contexts/TrendAnalysisContext";
+import SearchFromDB from "../Pages/SearchFromDB.js";
 
 function Routes() {
   return (
+    <TrendAnalysisContext>
+    <TrendingSubjectContext>
+    <WordCloudContext>
     <MoodAnalysisContext>
     <SentimentAnalysisContext>
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={Login} />
-        <Route path="/summary-dashboard" exact component={SummaryDashBoard} />
-        <Route
+        <SideNav>
+          <Route path="/summary-dashboard" exact component={SummaryDashBoard} />
+          <Route
           path="/sentimental-analysis/area-chart"
           exact
           component={SentimentalAnalysisAreaChart}
-        />
+          />
         <Route
           path="/sentimental-analysis/pie-chart"
           exact
@@ -123,16 +129,20 @@ function Routes() {
         <Route path="/live-analysis" exact component={LiveAnalysis} />
         <Route path="/export-data" exact component={ExportData} />
         <Route path="/global-search" exact component={GlobalSearch} />
+        <Route path="/search-from-db" exact component={SearchFromDB} />
         <Route path="/admin" exact component={AdminPage} />
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />
-        <Route path="/test" exact component={Test} />
-        <Route component={SideNavBar} />
+        </SideNav>
+        <Route component={SideNav} />
       </Switch>
     </BrowserRouter>
     </SentimentAnalysisContext>
     </MoodAnalysisContext>
+    </WordCloudContext>
+    </TrendingSubjectContext>
+    </TrendAnalysisContext>
   );
 }
 

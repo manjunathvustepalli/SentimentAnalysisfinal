@@ -3,24 +3,11 @@ import { Grid, makeStyles, InputLabel, Select, MenuItem, FormControl } from '@ma
 import Axios from 'axios'
 import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
+import CustomLegend from '../CustomLegend'
+import colors from '../../helpers/colors'
 
 var sortedData = {}
-
-var colors = {
-    'joy':'#4C7A00',
-    'sad':'#D8D8D8',
-    'anger':'#FF5151',
-    'anticipation':'#111D31',
-    'disgust':'#D512CF',
-    'surprise':'#FF6600',
-    'fear':'#2000FF',
-    'trust':'#0099FF',
-    'positive':'#04E46C',
-    'negative':'#CB0038',
-    'neutral':'#FFC400'
-  }
-
-  const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
     filterDefault: {
         borderColor: "#43B02A",
         borderStyle: "solid",
@@ -34,9 +21,8 @@ var colors = {
 
 }));
 
-function WordCloud(props) {
+function WordCloud({ from,to,keywords,keywordType,refresh }) {
 
-    const { from,to,keywords,keywordType } = props
     const [sources, setSources] = useState([])
     const [source, setSource] = useState('.')
     const [sentiment, setSentiment] = useState('positive')
@@ -46,6 +32,7 @@ function WordCloud(props) {
     const classes = useStyles();
 
     useEffect(()=>{
+        setData([])
         let query = {
             "aggs": {
                 "date-based-range": {
@@ -177,6 +164,7 @@ function WordCloud(props) {
                             labelId="select-source"
                             id="select-source-main"
                             variant="outlined"
+                            style={{fontSize:'7px',height:'30px'}}
                             label="Source"
                             fullWidth
                             value = {source}
@@ -194,6 +182,7 @@ function WordCloud(props) {
                         <Select
                             labelId="Select-type"
                             id="select-type-main"
+                            style={{fontSize:'7px',height:'30px'}}
                             fullWidth
                             label="Type"
                             variant="outlined"
@@ -214,6 +203,7 @@ function WordCloud(props) {
                                     labelId="sentiment-select"
                                     id="sentiment-select-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Sentiment"
                                     value={sentiment}
                                     onChange = {(e) => setSentiment(e.target.value)}
@@ -252,6 +242,9 @@ function WordCloud(props) {
             </Grid>
             <Grid item xs={12}>
                 <WordCloudChart title={`${capitalizeString(source)}  ${type==='sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} ${ capitalizeString(type)} Word Cloud`} data={data} />
+                <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <CustomLegend color={ type === 'sentiment' ? colors[sentiment] : colors[mood]} word={type === 'sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} />    
+                </div>
             </Grid>
         </Grid>
     )

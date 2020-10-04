@@ -1,5 +1,4 @@
 import React, { useState,useEffect } from 'react'
-import SideNav from '../Navigation/SideNav'
 import { Card, Grid, Switch, FormControlLabel } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
@@ -12,6 +11,18 @@ import { addMonths } from '../../helpers'
 import FilterHeader from '../Filters/FilterHeader'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
+
+
+const dateFormatter = (unix) => {
+    var date = new Date(unix);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var month = date.getMonth()+1
+    var year = date.getFullYear()
+    var todayDate = date.getDate()
+    return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+  }
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -83,6 +94,7 @@ function ExportData() {
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
                 }
+                obj.date = dateFormatter(user._source.CreatedAt)
                 obj.tweet =  user._source.Text
                 obj.retweetCount =  user._source.RetweetCount
                 obj.mood = user._source.predictedMood
@@ -105,9 +117,8 @@ function ExportData() {
     }, [reloadInterval,liveReloading,languages,sources,subSources])
 
     return (
-        <SideNav>
             <Card style={{padding:'20px'}}>
-                <Grid container spacing={5} style={{width:'80vw'}}>
+                <Grid container spacing={5}>
                 <Grid item xs={2} align="left">
                             <FormControlLabel
                                 control={<Switch 
@@ -155,6 +166,7 @@ function ExportData() {
                         <MaterialTable 
                             title='Export Data'
                             columns={[
+                                {title:'Date',field:'date',editable:'never'},
                                 {title:'Name',field:'name',editable:'never'},
                                 {title:'Screen Name',field:'screenName',editable:'never'},
                                 {title:'Tweet',field:'tweet',editable:'never'},
@@ -211,7 +223,6 @@ function ExportData() {
                 </Grid> */}
                 </Grid>
             </Card>
-        </SideNav>
     )
 }
 

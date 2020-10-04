@@ -53,12 +53,11 @@ function BarChart(props) {
     plotOptions: {
       column:{
         stacking:props.stacking || ''
-
       },
       series: {
         borderWidth: 0,
         dataLabels: {
-          enabled: true,
+          enabled: false,
           format: "{point.y}",
           style: {
             fontWeight: 'bold',

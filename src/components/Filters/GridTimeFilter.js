@@ -70,6 +70,7 @@ function GridTimeFilter(props) {
               id="end-date-picker-dialog"
               label="End Date"
               value = {endDate}
+              style={{height:'40px'}}
               onChange = {handleEndDateChange}
               format="dd-MM-yyyy"
               variant="outlined"

@@ -36,8 +36,8 @@ function DemographyDonutChart(props) {
         cursor: "pointer",
         showInLegend:'true',
         dataLabels: {
-          enabled: true,
-          distance: -10,
+          enabled: false,
+          distance: -20,
           style:{
             color:'black',
             textOutline:'none',

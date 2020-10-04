@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import SideNav from "../Navigation/SideNav";
+import React, { useContext, useState } from "react";
 import {
   Grid,
   Typography,
@@ -14,26 +13,39 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
+import { getKeyArray } from "../../helpers";
 import TabbarMUI from "./TabbarMUI";
 import { useEffect } from "react";
 import Axios from "axios";
 import { trendAnalysisBarGraphFilter, TrendAnalysisLineChartFilter } from "../../helpers/filter";
 import LineChart from "../charts/TrendAnalysisLineChart"
 import { Redirect } from "react-router-dom";
+import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
+import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
+import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
+import Loader from '../LoaderWithBackDrop'
+
+
 
 var sortedData = {}
 
 function TrendAnalysisLineChart() {
+  const trendAnalysisFilters = useContext(TrendAnalysisFiltersContext)
+  const  {
+    sources,
+    setSources,
+    languages,
+    setLanguages,
+    from,
+    to,
+    setFrom,
+    setTo
+} = trendAnalysisFilters
   const [refresh, setRefresh] = useState(true);
-  const [sources, setSources] = useState({});
-  const [languages, setLanguages] = useState({});
-  const [from, setFrom] = useState(addMonths(new Date(), -1));
-  const [to, setTo] = useState(addMonths(new Date(), 0));
+  const [open, setOpen] = useState(true);
   const [barData, setBarData] = useState([[],[]])
   const [lineData, setLineData] = useState([])
   const [chartType, setChartType] = useState('line')
-
   const useStyles = makeStyles((theme) => ({
     main: {
       fontSize: 16,
@@ -65,10 +77,10 @@ function TrendAnalysisLineChart() {
       marginBottom: "20px !important",
     },
   }));
-
   const classes = useStyles();
 
-  useEffect(() => {
+  const fetchData = (changeInState) => {
+    setOpen(true)
     Axios.post(process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
@@ -130,29 +142,55 @@ function TrendAnalysisLineChart() {
           })
         })
       })
-      let availableSourceKeys = {}
-      uniqueSourceKeys.forEach(source =>{
-          availableSourceKeys[source] = true
-      })
-      setSources(availableSourceKeys)
-
-      let availableLanguageKeys = {}
-      uniqueLanguageKeys.forEach(lang =>{
-          availableLanguageKeys[lang] = true
-      })
-      setLanguages(availableLanguageKeys)
+      if(changeInState){
+        setLanguages(prev => {
+          let availableLanguageKeys = {}
+        uniqueLanguageKeys.forEach(lang =>{
+            availableLanguageKeys[lang] = !!prev[lang]
+        })
+        return availableLanguageKeys
+        })
+  
+        setSources(prev => {
+          let availableSourceKeys = {}
+          uniqueSourceKeys.forEach(source =>{
+              availableSourceKeys[source] = !!prev[source]
+          })
+          return availableSourceKeys
+        })  
+      } else {
+        let availableLanguageKeys = {}
+        uniqueLanguageKeys.forEach(lang =>{
+            availableLanguageKeys[lang] = true
+        })
+        setLanguages(availableLanguageKeys)
+  
+        let availableSourceKeys = {}
+        uniqueSourceKeys.forEach(source =>{
+            availableSourceKeys[source] = true
+        })
+        setSources(availableSourceKeys)  
+      }
+      setOpen(false)
     })
     .catch(err=>{
+      setOpen(false)
       console.log(err)
     })
-  }, [from,to,refresh])
+  }
+
+  useMountAndUpdateEffect(()=>{
+    fetchData(false)
+},()=>{
+    fetchData(true)
+},[from,to,refresh])
 
   useEffect(()=>{
     setBarData((prev) => {
       let data = trendAnalysisBarGraphFilter(languages,sources,sortedData)
       return data
     })
-  },[languages,sources])
+  },[sources])
 
   useEffect(() => {
     let temp = TrendAnalysisLineChartFilter(languages,sources,sortedData)
@@ -161,15 +199,21 @@ function TrendAnalysisLineChart() {
     }
   },[languages,sources])
 
+  useDidUpdateEffect(() =>{
+    setBarData([[],[]])
+    setLineData([])
+    fetchData(true)
+},[refresh])
+
   return (
-    <SideNav>
+    <>
         {chartType === 'area' && <Redirect to="/trend-analysis/area-chart" />}
         {chartType === 'stack' && <Redirect to="/trend-analysis/stacked-bar-chart" />}
         {chartType === 'bar' && <Redirect to="/trend-analysis/bar-chart" />}
         {chartType === 'pie' && <Redirect to="/trend-analysis/pie-chart" />}
         {chartType === 'semi-pie' && <Redirect to="/trend-analysis/semi-pie-chart" />} 
-
-      <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
+      <div style={{ backgroundColor: "#F7F7F7", padding: "20px",position:'relative' }}>
+        <Loader open={open} style={{position:'absolute'}} />
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
           <Typography style={{ color: "#43B02A", fontSize: "30px" }}>
@@ -209,7 +253,7 @@ function TrendAnalysisLineChart() {
             </Card>
           </Grid>
           <Grid item sm={12} md={4}>
-            <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+            <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
@@ -226,7 +270,7 @@ function TrendAnalysisLineChart() {
           </Grid>
         </Grid>
       </div>
-    </SideNav>
+    </>
   );
 }
 

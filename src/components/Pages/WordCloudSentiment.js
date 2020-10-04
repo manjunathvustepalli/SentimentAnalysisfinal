@@ -1,22 +1,41 @@
-import React,{useState, useEffect} from 'react'
-import SideNav from '../Navigation/SideNav'
+import React,{useState, useEffect, useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography, Button, MenuItem, Select, InputLabel, FormControl } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
+import { Typography, Button, MenuItem, Select, InputLabel, FormControl, Slide, Dialog, AppBar, Toolbar, IconButton } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import WordCloud from '../charts/WordCloudChart';
-import {addMonths, getKeyArray} from '../../helpers'
-import { green } from '@material-ui/core/colors';
+import { capitalizeString, getKeyArray} from '../../helpers'
 import Axios from 'axios';
 import {wordCloudSentimentFilter} from '../../helpers/filter';
+import { WordCloudFiltersContext } from '../../contexts/WordCloudContext';
+import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
+import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
+import CustomLegend from '../CustomLegend';
+import colors from '../../helpers/colors'
+import CloseIcon from '@material-ui/icons/Close';
+import TableWithData from '../Tables/TableWithData'
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
+const dateFormatter = (unix) => {
+    var date = new Date(unix);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var month = date.getMonth()+1
+    var year = date.getFullYear()
+    var todayDate = date.getDate()
+    return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+}
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -50,6 +69,13 @@ function TabPanel(props) {
         flexGrow: 1,
         width: '100%',
         backgroundColor: theme.palette.background.paper,
+      },
+      appBar: {
+        position: 'relative',
+      },
+      title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
       },
     main: {
         fontSize: 16,
@@ -92,25 +118,89 @@ var sortedData = {}
 function WordCloudSentiment() {
 
     const classes = useStyles();
+    const handleTabChange = (event, newValue) => setValue(newValue)
+    const wordCloudFilters = useContext(WordCloudFiltersContext)
+    const {
+        keywords,
+        setKeywords,
+        keywordType, 
+        setKeywordType,
+        from,
+        setFrom,
+        to,
+        setTo,
+        sources,
+        setSources,
+        subSources,
+        setSubSources,
+        sentiments,
+        setSentiments,
+        wordCount, 
+        setWordCount,
+        value,
+        setValue,
+    } = wordCloudFilters
 
-    const handleTabChange = (event, newValue) => {
-        setValue(newValue);
-      };
-
-    const [sentiments, setSentiments] = useState({negative:true,positive:true,neutral:true})
-    const [sources, setSources] = useState({})
-    const [subSources,setSubSources] = useState({})
-    const [from, setFrom] = useState(addMonths(new Date(),-1))
-    const [to, setTo] = useState(addMonths(new Date(),0))
-    const [value, setValue] = useState(0);
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
-    const [wordCount, setWordCount] = useState(30)
-    const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [open, setOpen] = useState(false);
+    const [word, setWord] = useState('');
+    const [tableData, setTableData] = useState([]);
+    const searchWordData = () => {
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
+            "query": {
+              "bool": {
+                "must": [
+                  {"terms": {"HashtagEntities.Text.keyword": [word]}}
+                ]
+              }
+            },
+            "size": 50,
+            "sort": [
+              {
+                "CreatedAt": {
+                  "order": "desc"
+                }
+              }
+            ]
+          })
+          .then(fetchedData => {
+            setTableData(fetchedData.data.hits.hits.map((postObj)=>{
+                if(!postObj._source.User){
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang
+                    }
+                } else {
+                    return {
+                        date:dateFormatter(postObj._source.CreatedAt),
+                        post:postObj._source.Text,
+                        source:postObj._source.Source,
+                        subSource:postObj._source.SubSource,
+                        favouriteCount:postObj._source.FavoriteCount,
+                        sentiment:postObj._source.predictedSentiment,
+                        mood:postObj._source.predictedMood,
+                        language:postObj._source.predictedLang,
+                        followersCount:postObj._source.User.FollowersCount,
+                        location:postObj._source.User.Location,
+                        name:postObj._source.User.Name,
+                        screenName:postObj._source.User.ScreenName
+                    }
+                }
+            }))
+    })}
+ 
+    const handleClose = () => {
+        setOpen(false);
+    };
 
-
-    useEffect( () => {
+    const fetchData = (changeInState) => {
         let query = {
             "aggs": {
                 "date-based-range": {
@@ -200,55 +290,80 @@ function WordCloudSentiment() {
                         sentimentKeys = getKeyArray(sentimentBuckets)
                         sentimentKeys.forEach((sentiment,l)=>{
                             sortedData[key][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
-                                if(sentiment === 'negative'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(255,0,0)'
-                                    }
-                                } else if(sentiment === 'positive'){
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(0,255,0)'
-                                    }
-                                } else {
-                                    return {
-                                        name:wordObj.key,
-                                        weight:wordObj.doc_count,
-                                        color:'rgb(255,255,0)'
-                                    }
+                                return {
+                                    name:wordObj.key,
+                                    weight:wordObj.doc_count,
+                                    color:colors[sentiment]
                                 }
                             })
                         })
                     })
                 })
             })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+            if(changeInState){
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
-            })
-            setSubSources(availableSubSourceKeys)
-
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-
+                setSources(prev =>{
+                    let availableSourceKeys = {}
+                    uniqueSourceKeys.forEach(source =>{
+                        availableSourceKeys[source] = !!prev[source]
+                    })
+                    return availableSourceKeys
+                })
+    
+                setSubSources(prev =>{
+                    let availableSubSourceKeys = {}
+                    uniqueSubSourceKeys.forEach(subSource =>{
+                        availableSubSourceKeys[subSource]  = !!prev[subSource]
+                    })
+                    return availableSubSourceKeys
+                })
+    
+                setSentiments(prev => {
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                        return {negative:true,positive:true,neutral:true}
+                    }
+                })    
+            } else {
+                let availableSourceKeys = {}
+                uniqueSourceKeys.forEach(source =>{
+                    availableSourceKeys[source] = true
+                })
+                setSources(availableSourceKeys)
+    
+                let availableSubSourceKeys = {}
+                uniqueSubSourceKeys.forEach(subSource =>{
+                    availableSubSourceKeys[subSource]  = true
+                })
+                setSubSources(availableSubSourceKeys)
+    
+                setSentiments(prev => {
+                    if(Object.keys(prev).length){
+                        return prev
+                    } else {
+                        return {negative:true,positive:true,neutral:true}
+                    }
+                })
+    
+            }
           })
           .catch(err => {
               console.log(err.response)
           })
-    },[to,from,refresh,keywords,keywordType])
+    }
+
+	useMountAndUpdateEffect(()=>{
+        fetchData(false)
+    },()=>{
+        fetchData(true)
+    },[from,to,refresh,keywords])
+
+    useDidUpdateEffect(()=>{
+        if(keywordType === 'Entire Data'){
+            fetchData(false)
+        }
+	},[keywordType])
 
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
@@ -261,8 +376,12 @@ function WordCloudSentiment() {
         setData(temp) 
     },[sources,subSources,sentiments,wordCount])
 
+    useDidUpdateEffect(() => {
+        searchWordData()
+    },[word])
+
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
             <Grid container spacing={2} >
                 <Grid item sm={12} md={8}>
@@ -311,7 +430,7 @@ function WordCloudSentiment() {
                                 </Button>
                             </Grid>
                             <div style={{width: 280*Object.keys(data).length+'px',marginLeft:'20px'}}>
-                            <Grid item xs={7} align='right'>
+                            <Grid item xs={12} align='right'>
                                 <Tabs
                                 value={value}
                                 onChange={handleTabChange}
@@ -330,18 +449,25 @@ function WordCloudSentiment() {
                             </div>
                             <Grid item xs={12}>
                                 {
-                                    Object.keys(data).map((lang,i) => (
-                                        <TabPanel value={value} index={i}>
-                                            <WordCloud data={data[lang]} />
-                                        </TabPanel>
-                                    ))
+                                    Object.keys(data).map((lang,i) => {
+                                        return (
+                                            <TabPanel value={value} index={i}>
+                                                <WordCloud clickable setOpen={setOpen} setWord={setWord} data={data[lang]} />
+                                                <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                                {
+                                                    ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                                                }
+                                                </div>
+                                            </TabPanel>
+                                        )
+                                    })
                                 }
                             </Grid>
                         </Grid>
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -354,14 +480,28 @@ function WordCloudSentiment() {
                                     // subSources={[subSources,setSubSources]}
                                     setKeywords={setKeywords}
                                     keywordTypes={[keywordType, setKeywordType]}
+                                    keywords={keywords}
                                 />
                             </FilterWrapper>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
+            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              {word}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <TableWithData rows={tableData} />
+      </Dialog>
         </div>
-        </SideNav>
+        </>
     )
 }
 

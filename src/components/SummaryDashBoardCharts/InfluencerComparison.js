@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl } from '@material-ui/core'
+import { Card, Grid, InputLabel, Select, MenuItem,makeStyles, FormControl} from '@material-ui/core'
 import TreeMap from '../charts/TreeMap'
-import InlineFilter from '../Filters/InlineFilter'
-import { green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import { useEffect } from 'react';
 import { capitalizeString } from '../../helpers';
+import CustomLegend from '../CustomLegend';
+import colors from '../../helpers/colors'
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -20,11 +20,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function InfluencerComparison({from,to}) {
+function InfluencerComparison({from,to,refresh}) {
     const classes = useStyles();
     const [source, setSource] = useState('twitter')
     const [type, setType] = useState('Sentiment')
     const [data, setData] = useState([])
+    const [size, setSize] = useState(10)
  
     const parent = [{
         id: 'negative',
@@ -137,14 +138,18 @@ function InfluencerComparison({from,to}) {
         }
     }
     }]
-
+ 
     useEffect(() => {
+        setData([])
         if(source === 'twitter'){
             Axios.post(process.env.REACT_APP_URL,
               {
                 "query": {
-                  "terms": {
-                    "Source.keyword": ["twitter", "new-twitter"]
+                  "bool": {
+                    "must": [
+                      {"terms": {"Source.keyword": ["twitter"]}},
+                      {"terms": {"Place.Country.keyword": ["Bangladesh"]}}
+                    ]
                   }
                 },
                 "aggs": {
@@ -159,12 +164,13 @@ function InfluencerComparison({from,to}) {
                     "aggs": {
                       "Users": {
                         "terms": {
-                          "field": "User.ScreenName.keyword"
+                          "field": "User.ScreenName.keyword",
+                          "size":100
                         },
                         "aggs": {
                           "Followers": {
                             "max": {
-                              "field": "User.FollowersCount"
+                              "field": "User.FollowersCount",
                             }
                           },
                           "Posts": {
@@ -187,7 +193,8 @@ function InfluencerComparison({from,to}) {
                                 {
                                   "influenceWeight": {"order": "desc"}
                                 }
-                              ]
+                              ],
+                              "size":size,
                             }
                           },
                           "Sentiment": {
@@ -210,7 +217,7 @@ function InfluencerComparison({from,to}) {
                     setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                           return {
                               name: doc.key,
-                              parent:doc[type].buckets[0].key,
+                              parent: doc[type].buckets[0] ? doc[type].buckets[0].key : 'unknown',
                               value:doc.influenceWeight.value,
                               dataLabels:{
                                 color:'#000',
@@ -222,13 +229,13 @@ function InfluencerComparison({from,to}) {
                       })))
                 })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err,err.response)
                 })    
         } else {
             Axios.post(process.env.REACT_APP_URL,{
               "query": {
                 "terms": {
-                  "Source.keyword": ["newspaper"]
+                  "Source.keyword": [source]
                 }
               },
               "aggs": {
@@ -243,7 +250,7 @@ function InfluencerComparison({from,to}) {
                   "aggs": {
                     "newspaperInfluencers": {
                       "terms": {
-                        "field": "SubSource.keyword"
+                        "field": "SubSource.keyword",
                       },
                       "aggs": {
                         "ArticleCount": {
@@ -257,7 +264,9 @@ function InfluencerComparison({from,to}) {
                               {
                                 "ArticleCount": {"order": "desc"}
                               }
-                            ]
+                            ],
+                            "size":size,
+                            "from":0
                           }
                         },
                         "Sentiment": {
@@ -281,7 +290,7 @@ function InfluencerComparison({from,to}) {
                     return {
                         name:doc.key,
                         value:doc.ArticleCount.value,
-                        parent:doc[type].buckets[0].key,
+                        parent: doc[type].buckets[0] ? doc[type].buckets[0].key : 'unknown',
                         dataLabels:{
                           color:'#000',
                           style:{
@@ -294,18 +303,18 @@ function InfluencerComparison({from,to}) {
               .catch(err => {
                   console.log(err)
               })
-        }
-          },[from,to,source,type])
+            }
+          },[from,to,source,type,size,refresh])
 
     return (
         <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
-        <Grid container spacing={3} > 
-            <Grid item xs={5} style={{height:'70px',lineHeight:'70px',padding:'15px 20px'}} >
+        <Grid container spacing={1}> 
+            <Grid item xs={4} style={{height:'70px',lineHeight:'70px',padding:'10px'}} >
                 Influence Comparison
             </Grid>
-            <Grid item xs={7}  >
+            <Grid item xs={8}  > 
                 <Grid container style={{marginTop:'15px'}}>
-                <Grid item xs={4} >
+                <Grid item xs={4} style={{padding:'5px'}}>
                   <FormControl variant="outlined" style={{width:'100%'}} >
                     <InputLabel id="select-source" >Source</InputLabel>
                       <Select 
@@ -314,35 +323,65 @@ function InfluencerComparison({from,to}) {
                         id="select-source-main"
                         fullWidth
                         value={source}
+                        style={{fontSize:'7px',height:'30px'}}
                         onChange={(e) => setSource(e.target.value)}
                       >
-                        <MenuItem value={'twitter'} > Twitter </MenuItem>                    
+                        <MenuItem value={'twitter'}  > Twitter </MenuItem>                    
                         <MenuItem value={'newspaper'} > Newspaper </MenuItem>                    
+                        <MenuItem value={'facebook'} > Facebook </MenuItem>                    
                     </Select>
                   </FormControl>
                 </Grid>
-            <Grid item xs={1}/>
-            <Grid item xs={4}>
-              <FormControl variant="outlined" style={{width:'100%'}} >
-              <InputLabel id="Select-type">Select Type </InputLabel>
+            <Grid item xs={4} style={{padding:'5px'}}>
+              <FormControl variant="outlined" style={{width:'100%',}} >
+              <InputLabel id="Select-type">Type </InputLabel>
                     <Select
                     variant="outlined"
                     labelId="Select-type"
-                    label="Select Type"
+                    label="Type"
                     id="demo-simple-select-helper"
                     fullWidth
+                    style={{fontSize:'7px',height:'30px'}}
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     >
-                    <MenuItem value='Sentiment'>Sentiment</MenuItem>
+                    <MenuItem value='Sentiment' >Sentiment</MenuItem>
                     <MenuItem value='Mood'>Mood</MenuItem>
                     </Select>
               </FormControl>
             </Grid>
-                </Grid>
+            <Grid item xs={4} style={{padding:'5px'}} >
+              <FormControl variant="outlined" style={{width:'100%'}} >
+              <InputLabel id="Select-count">Count </InputLabel>
+                    <Select
+                    variant="outlined"
+                    labelId="Select-count"
+                    label="Count"
+                    id="demo-simple-select-helper"
+                    style={{fontSize:'7px',height:'30px'}}
+                    fullWidth
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                    >
+                    <MenuItem value={10}>Top 10  </MenuItem>
+                    <MenuItem value={25}>Top 25 </MenuItem>
+                    <MenuItem value={50}>Top 25 </MenuItem>
+                    </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
             </Grid>
             <Grid item xs={12}>
             <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>
+            <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {
+                type === 'Sentiment' ? (
+                  ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                ) : (
+                  ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                )
+              }
+            </div>
             </Grid>
         </Grid>
     </Card>

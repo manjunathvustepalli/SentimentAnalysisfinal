@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Highcharts from 'highcharts'
+import { Height } from '@material-ui/icons';
 require('highcharts/modules/exporting')(Highcharts);
 const ReactHighcharts = require('react-highcharts');
 
@@ -23,7 +24,8 @@ export default class PieChart extends Component {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: 0,
-                plotShadow: false
+                plotShadow: false,
+                height:this.props.height
             },
             title: {
                 text: '',
@@ -47,7 +49,8 @@ export default class PieChart extends Component {
                     showInLegend: true,
                     dataLabels: {
                         enabled: true,
-                        distance: -70,
+                        format: '{point.percentage:.1f} %',
+                        distance: 20,
                         style: {
                             fontWeight: 'bold',
                             color: 'black',
@@ -57,7 +60,7 @@ export default class PieChart extends Component {
                     startAngle: -90,
                     endAngle: 90,
                     center: ['50%', '75%'],
-                    size: '110%',
+                    size: '60%',
                 }
             },
             series: [{

@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import SideNav from '../Navigation/SideNav'
+import React, { useEffect, useState } from 'react'
 import { Typography, Grid, Card, CardContent } from '@material-ui/core'
 import FilterHeader from '../Filters/FilterHeader'
 import styled from 'styled-components';
@@ -18,6 +17,8 @@ import OverallAnalysis from '../SummaryDashBoardCharts/OverallAnalysis';
 import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison';
 import ChipInputFilter from '../Filters/ChipInputFilter';
 import GeoTaggingSummary from '../SummaryDashBoardCharts/GeoTaggingSummary';
+import Loader from '../LoaderWithBackDrop';
+
 
 const IconWithText = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ const IconWithText = styled.div`
 
 const useStyles = makeStyles((theme) => ({
     main: {
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: "bold",
         color: "#CB0038",
     },
@@ -54,19 +55,28 @@ function SummaryDashBoard() {
     const [keywordType, setKeywordType] = useState('Entire Data')
     const [keywords, setKeywords] = useState([])
     const [to, setTo] = useState(addMonths(new Date(),0))
+    const [open, setOpen] = useState(true)
+
+    useEffect(() => {
+        setOpen(true)
+        const timer = setTimeout(() => {
+            setOpen(false)
+        }, 1000);
+        return () => clearTimeout(timer)
+    }, [refresh])
 
     return (
-        <SideNav>    
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px'}}>
-                <Typography style={{color:'#43B02A',fontSize:'30px',marginBottom:'10px'}} variant='h5' >
+            <div style={{ backgroundColor: '#F7F7F7', padding:'10px 20px',position:'relative'}}>
+                <Loader open={open} style={{position:'absolute'}} />
+                <Typography style={{color:'#43B02A',marginBottom:'5px'}} variant='h4' >
                     Summary Dashboard
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item md={8} sm={12} xs={12}>
                         <div className={'keyword-wrapper'}>
-                        <Card style={{backgroundColor:'#2C3335'}} >
-                            <IconWithText style={{margin:'10px 10px 0 10px'}}>
-                                <FilterListIcon style={{color:'white'}} /> 
+                        <Card style={{backgroundColor:'#2C3335',minHeight:'120px'}} >
+                            <IconWithText style={{margin:'10px'}}>
+                                <FilterListIcon style={{color:'white',marginRight:'10px'}} /> 
                                 <p style={{color:'white'}} > FILTERS </p>
                             </IconWithText>
                             <Grid container>    
@@ -98,35 +108,35 @@ function SummaryDashBoard() {
                         </div>
                     </Grid>
                     <Grid item md={4} sm={12} xs={12}>
-                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                            <FilterHeader height={120} refresh={[refresh,setRefresh]}/>
                         </Grid>
                         <Grid item xs={12} >
                         <div id="summary-dashboard" style={{width:'100%'}}>
                         <Grid container spacing={2}>                     
-                            <Grid item xl={4} md={12} xs={12}>
-                                <OverallAnalysis to={to} from={from}  keywords={keywords} keywordType={keywordType} />
+                            <Grid item xl={4} md={4} xs={12} >
+                                <OverallAnalysis to={to} from={from} refresh={refresh}  keywords={keywords} keywordType={keywordType} />
                             </Grid>
-                            <Grid item xl={4} md={6} sm={12} xs={12}>
+                            <Grid item xl={4} md={4} sm={12} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Mood Analysis</CardContent> 
-                                    <MoodAnalysis keywordType={keywordType} keywords={keywords} toFromDateHandlers={[from,to]} />
+                                    <MoodAnalysis keywordType={keywordType} keywords={keywords} refresh={refresh} toFromDateHandlers={[from,to]} />
                                 </Card>
                             </Grid>                    
-                            <Grid item xl={4} md={6} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
                                     <CardContent>Sentiment Analysis</CardContent>
-                                    <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} />
+                                    <SentimentAnalysis keywords={keywords} keywordType={keywordType}  toFromDateHandlers={[from,to]} refresh={refresh} />
                                 </Card>
                             </Grid>                   
-                            <Grid item xl={4} md={6} xs={12}>
-                                <InfluencerComparison from={from} to={to} />
+                            <Grid item xl={4} md={4} xs={12}>
+                                <InfluencerComparison from={from} to={to} refresh={refresh} />
                             </Grid>
-                            <Grid item xl={4} md={6} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <Card className={classes.main} >
-                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} />
+                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} refresh={refresh} />
                                 </Card>
                             </Grid>
-                            <Grid item xl={4} md={12} xs={12}>
+                            <Grid item xl={4} md={4} xs={12}>
                                 <GeoTaggingSummary/>
                             </Grid>
                         </Grid>
@@ -134,7 +144,6 @@ function SummaryDashBoard() {
                     </Grid>
                 </Grid>
             </div>
-        </SideNav>
     )
 }
 

@@ -41,9 +41,24 @@ function FilterHeader(props) {
     })
 
     const classes = useStyles()
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    var date = new Date();
+    //get mm dd yyyy
+    var mnth = monthNames[date.getMonth()];
+    var dt = date.getDate();
+    var yr = date.getFullYear();
+    //get hh mm ss
+    var seconds = date.getSeconds();
+    var minutes = date.getMinutes();
+    var hour = date.getHours();
+    //get AM/PM 
+    var ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
 
     return (
-        <Card style={{backgroundColor:'#43B02A'}}>
+        <Card style={{backgroundColor:'#43B02A',height: props.height ? props.height : '90px'}}>
             <CardContent>
                 <Grid container>
                     <Grid xs={5} item align='left'>
@@ -54,11 +69,11 @@ function FilterHeader(props) {
                         
                     </Grid>
                 <Grid xs={7} item align='right'>
-                    <Typography style={{fontSize:'15px',color:'white'}}>
-                        Last Refresh at {new Date().toTimeString().split('GMT')[0]}
+                    <Typography style={{fontSize:'10px',color:'white'}}>
+                        Last Refresh at {mnth + '-' + dt + '-'+ yr + ' ' + hour + ':'+ minutes + ':'+ seconds + ' ' + ampm}
                     </Typography>
                     <Button
-                    style={{marginTop:'13px'}}
+                    style={{marginTop:props.height ? '30px' :'13px'}}
                     variant="outlined"
                     color="primary"
                     className={classes.buttonStyle}

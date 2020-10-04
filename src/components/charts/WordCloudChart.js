@@ -37,6 +37,12 @@ function WordCloud(props) {
             },            
             series: [{
                 type: 'wordcloud',
+                events: {
+                    click: props.clickable && (function (event) {
+                        props.setWord(event.point.name)
+                        props.setOpen(true)                            
+                    })
+                },
                 data: props.data,
                 name: 'Occurrences',
             }],

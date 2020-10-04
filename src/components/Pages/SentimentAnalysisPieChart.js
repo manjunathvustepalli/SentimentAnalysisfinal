@@ -7,18 +7,17 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Button, Typography } from '@material-ui/core';
-import Table1 from '../Tables/Table1'
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
-import { addMonths } from '../../helpers/index'
+import { addMonths } from '../../helpers/index';
+import Loader from '../LoaderWithBackDrop';
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -52,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
 var sortedData = {}
 export default function SentimentalAnalysisPieChart() {
     const [chartType, setChartType] = useState('pie')
-    const [showTable, setShowTable] = useState(false)
     const [sentiments, setSentiments] = useState({})
     const [sources, setSources] = useState({})
     const [languages, setLanguages] = useState({})
@@ -61,13 +59,16 @@ export default function SentimentalAnalysisPieChart() {
     const [from, setFrom] = useState(addMonths(new Date(),-1))
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true)
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
+        setData([])
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -176,9 +177,11 @@ export default function SentimentalAnalysisPieChart() {
             setSentiments({})
             sortedData = {}
         }
+        setOpen(false)
         })
         .catch(err => {
-            console.log(err)
+        setOpen(false)
+        console.log(err)
         })        
 
     }, [from,to,refresh,keywords,keywordType])
@@ -191,8 +194,9 @@ export default function SentimentalAnalysisPieChart() {
     }, [languages,sentiments,sources])
 
     return (
-        <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+        <>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'area' && (<Redirect to='/sentimental-analysis/area-chart' />) }
@@ -230,7 +234,7 @@ export default function SentimentalAnalysisPieChart() {
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <PieChart data={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
@@ -238,19 +242,11 @@ export default function SentimentalAnalysisPieChart() {
                             </Grid>)
                             }
                             )}
-                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12} >
-                                {showTable && (<Table1/>)}
-                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -270,6 +266,6 @@ export default function SentimentalAnalysisPieChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

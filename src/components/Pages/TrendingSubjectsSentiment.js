@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import SideNav from "../Navigation/SideNav";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   Typography,
   Card,
-  CardContent,
   FormControl,
   InputLabel,
   MenuItem,
@@ -15,221 +13,85 @@ import {
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
 import FilterHeader from "../Filters/FilterHeader";
-import { addMonths, getKeyArray } from "../../helpers";
 import TrendingSubjectsBarChart from "../charts/TrendingSubjectsBarChart";
-import Axios from "axios";
 import Alert from '@material-ui/lab/Alert';
 import { Link } from "react-router-dom";
+import { TrendingSubjectFiltersContext } from "../../contexts/TrendingSubjectContext";
 
-var sortedData = {}
+
+const useStyles = makeStyles((theme) => ({
+  main: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#CB0038",
+  },
+  formControl: {
+    margin: "20px",
+    display: "flex",
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  dataDate: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "black",
+    marginTop: 50,
+  },
+  paper: {
+    height: 140,
+    width: 130,
+  },
+  tablecenter: {
+    marginLeft: "30px !important",
+  },
+  buttonStyle:{
+    border:'1px solid green',
+    color:'white',
+    backgroundColor:"green",
+    '&:hover': {
+        backgroundColor:"green",
+    }
+}
+}));
+
 
 function InfluencerAnalysis() {
-  const [refresh, setRefresh] = useState(true);
-  const [sources, setSources] = useState([]);
-  const [source, setSource] = useState('');
-  const [subSources,setSubSources] = useState([]);
-  const [subSource, setSubSource] = useState('');
-  const [languages, setLanguages] = useState([]);
-  const [language, setLanguage] = useState('');
-  const [from, setFrom] = useState(addMonths(new Date(), -1));
-  const [to, setTo] = useState(addMonths(new Date(), 0));
-  const [sentiment, setSentiment] = useState('positive');
-  const [data, setData] = useState([])
-  const [noData, setnoData] = useState(true)
-  const [keywords, setKeywords] = useState([])
-  const [keywordType, setKeywordType] = useState('Entire Data')
+  const trendingSubjectsFilters = useContext(TrendingSubjectFiltersContext)
+  const {
+    sources, 
+    setSources,
+    source, 
+    setSource,
+    subSources,
+    subSource, 
+    setSubSource,
+    languages, 
+    language, 
+    setLanguage,
+    from, 
+    setFrom,
+    to,
+    setTo,
+    sentiment,
+    sentiments,
+    setSentiment,
+    keywords,
+    setKeywords,
+    keywordType,
+    setKeywordType,
+    sentimentData,
+    changeData,
+    refresh,
+    setRefresh
+} = trendingSubjectsFilters
 
-
-  const useStyles = makeStyles((theme) => ({
-    main: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: "#CB0038",
-    },
-    formControl: {
-      margin: "20px",
-      display: "flex",
-    },
-    bullet: {
-      display: "inline-block",
-      margin: "0 2px",
-      transform: "scale(0.8)",
-    },
-    dataDate: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "black",
-      marginTop: 50,
-    },
-    paper: {
-      height: 140,
-      width: 130,
-    },
-    tablecenter: {
-      marginLeft: "30px !important",
-    },
-    buttonStyle:{
-      border:'1px solid green',
-      color:'white',
-      backgroundColor:"green",
-      '&:hover': {
-          backgroundColor:"green",
-      }
-  }
-  }));
 
   const classes = useStyles();
-
-
-useEffect(()=>{
-  let query = {
-    "aggs": {
-        "date-based-range": {
-            "date_range": {
-                "field": "CreatedAt",
-                "format": "dd-MM-yyyy",
-                "ranges": [{
-                    "from": from,
-                    "to": to
-                }]
-            },
-            "aggs": {
-                "lang": {
-                    "terms": {
-                        "field": "predictedLang.keyword"
-                    },
-                    "aggs": {
-                        "Source": {
-                            "terms": {
-                                "field": "Source.keyword"
-                            },
-                            "aggs":{
-                                "SubSource":{
-                                    "terms":{
-                                        "field":"SubSource.keyword"
-                                    },
-                                    "aggs":{
-                                        "Daily-Sentiment-Distro": {
-                                            "terms": {
-                                              "field": "predictedSentiment.keyword"
-                                            },
-                                                "aggs":{
-                                                  "Words":{
-                                                    "terms":{
-                                                      "field":"HashtagEntities.Text.keyword"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-if(keywordType === 'Screen Name'){
-  query["query"] = {
-      "terms": {
-        "User.ScreenName.keyword": keywords
-      }
-    }
-} else if (keywordType === 'Hash Tags') {
-  query["query"] =  {
-      "terms": {
-        "HashtagEntities.Text.keyword": keywords
-      }
-  }
-}
-  Axios.post(process.env.REACT_APP_URL,query)
-.then(fetchedData => {
-  let uniqueSources = []
-  let uniqueSubSources = []
-  let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-  let languageKeys = getKeyArray(languageBuckets)
-  languageKeys.forEach((language,i) => {
-    sortedData[language] = {}
-    let sourceBuckets = languageBuckets[i].Source.buckets
-    let sourceKeys = getKeyArray(sourceBuckets)
-    sourceKeys.forEach((source,j) =>{
-      if(!uniqueSources.includes(source)){
-        uniqueSources.push(source)
-      }
-      sortedData[language][source] = {}
-      let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-      let subSourceKeys = getKeyArray(subSourceBuckets)
-      subSourceKeys.forEach((subSource,k) => {
-        if(!uniqueSubSources.includes(subSource)){
-          uniqueSubSources.push(subSource)
-        }
-        sortedData[language][source][subSource] = {}
-        let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
-        let sentimentKeys = getKeyArray(sentimentBuckets)
-        sentimentKeys.forEach((sentiment,l)=>{
-            sortedData[language][source][subSource][sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
-                return {
-                  name:wordObj.key,
-                  y:wordObj.doc_count
-                }
-              })
-        })
-      })
-    })
-  })
-  setLanguages(languageKeys)
-  setLanguage(languageKeys[0])
-  setSources(uniqueSources)
-  setSource(uniqueSources[0])  
-  setSubSources(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]]))
-  setSubSource(Object.keys(sortedData[languageKeys[0]][uniqueSources[0]])[0])
-
-})
-.catch(err=>{
-  console.log(err)
-})
-},[from,to,refresh,keywords,keywordType])
-
-useEffect(() => {
-   try{
-     if(sortedData[language][source][subSource][sentiment]){
-       setData(sortedData[language][source][subSource][sentiment])
-       setnoData(false)
-     } else {
-         setnoData(true)
-         setData([])
-     }
-   }
-   catch(err){
-        setData([])
-        setnoData(true)
-   }
-}, [subSource,sentiment])
-
-useEffect(() => {
-  try{
-    if(sortedData[language][source][subSource][sentiment]){
-      setData(sortedData[language][source][subSource][sentiment])
-      setnoData(false)
-    }
-  } catch(err){
-    if(sortedData[language]){
-      if(sortedData[language][source]){
-        setSubSources(Object.keys(sortedData[language][source]))
-        setSubSource(Object.keys(sortedData[language][source])[0])
-      }
-    }
-    setnoData(true)
-    console.log(err)
-  }
-
-}, [source,language])
-
   return (
-    <SideNav>
+    <>
       <div style={{ backgroundColor: "#F7F7F7", padding: "20px" }}>
         <Grid container spacing={2}>
           <Grid item md={8} sm={12}>
@@ -250,13 +112,14 @@ useEffect(() => {
                       varient="outlined"
                       label="Select Sentiment"
                       value={sentiment}
-                      onChange={(e) => setSentiment(e.target.value)}
+                      onChange={(e) => {
+                        setSentiment(e.target.value)
+                        changeData('sentiment',e.target.value)
+                      }}
                     >
-                      <MenuItem value="positive">
-                        Positive
-                      </MenuItem>
-                      <MenuItem value="negative">Negative</MenuItem>
-                      <MenuItem value="neutral">Neutral</MenuItem>
+                      {
+                        sentiments.map((sentiment,i) => <MenuItem key={i} value={sentiment} >{sentiment}</MenuItem>)
+                      }
                     </Select>
                   </FormControl>
                 </Grid>
@@ -278,39 +141,28 @@ useEffect(() => {
                                     >
                                         Sentiment                                                                       
                                     </Button>
-                            </Grid>
+                            </Grid> 
 
                 <Grid item xs={12} className={classes.tablecenter}>
-                  <TrendingSubjectsBarChart data={data} />
+                  <TrendingSubjectsBarChart title={`Trending subjects of ${language} Language in ${source} of ${subSource} under ${sentiment} sentiment`} y={'frequency'} data={sentimentData} />
                 </Grid>
-                {/* <Grid item xs={11}>
-                  <TrendingSubjectsTable />
-                </Grid> */}
               </Grid>
             </Card>
           </Grid>
           <Grid item sm={12} md={4}>
-            <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+            <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
               <Grid item xs={12}>
                 <FilterHeader refresh={[refresh, setRefresh]} />
               </Grid>
-              {
-                  noData && (
-                    <Grid item xs={12}>
-                    <Alert variant="filled" severity="error">
-                        No Data available, Please change the Filters
-                    </Alert>
-                  </Grid>
-                  )
-              }
               <Grid item xs={12}>
                 <FilterWrapper>
                   <AccordianFilters
                     toFromDatesHandlers={[setFrom, setTo,from,to]}
-                    radioSources={[source,setSource,sources]}
-                    radioLanguages={[language,setLanguage,languages]}
-                    AutoCompleteSubSources={[subSource,setSubSource,subSources]}
+                    radioSources={[source,setSource,sources,changeData,'source']}
+                    radioLanguages={[language,setLanguage,languages,changeData,'language']}
+                    AutoCompleteSubSources={[subSource,setSubSource,subSources,changeData,'subSource']}
                     setKeywords={setKeywords}
+                    keywords={keywords}
                     keywordTypes={[keywordType, setKeywordType]}
                   />
                 </FilterWrapper>
@@ -319,7 +171,7 @@ useEffect(() => {
           </Grid>
         </Grid>
       </div>
-    </SideNav>
+    </>
     );
 }
 

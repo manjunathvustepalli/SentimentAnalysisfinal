@@ -1,5 +1,5 @@
 import './sidebar.css';
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -34,17 +34,18 @@ import { Button, Tooltip } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import { useEffect } from 'react';
 import PageviewIcon from '@material-ui/icons/Pageview';
+import StorageIcon from '@material-ui/icons/Storage';
+import SearchIcon from '@material-ui/icons/Search';
 
-const drawerWidth = 260;
 
+const drawerWidth = 180;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
   listItemText:{
-    fontSize:'16px',
+    fontSize:'12px',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -76,27 +77,25 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor:'rgb(67,176,42)'
   },
   content: {
-    flexGrow: 1,
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
 }));
 
-const SideNavBar = ( props) => {
+const SideNavBar = (props) => {
   const { window,children,history } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
+  const [mobileOpen, setMobileOpen] = useState(false);
   const currentTab = (history,path)=>{
     if(path.includes(history.location.pathname)){
-        return {color:'rgb(67,176,42)'}
+        return {color:'rgb(67,176,42)',minWidth:'30px'}
     }
     else{
-        return {color:"black"}
+        return {color:"black",minWidth:'30px'}
     }
-}
+  }
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -122,24 +121,19 @@ const SideNavBar = ( props) => {
       path:['/influencer-analysis'],
     },
     {
-      name:'Word cloud',
+      name:'Word Cloud',
       icon:<AppsIcon/>,
       path:['/word-cloud/sentiment'/*,'/word-cloud/mood'*/],
     },
     {
-      name:'Trending Subject',
+      name:'Trending Subjects',
       icon:<TrendingUpIcon/>,
       path:['/trending-subject/sentiment','/trending-subject/mood'],
     },
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
-      path:['/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/line-chart','/trend-analysis/stacked-bar-chart'],
-    }, 
-    {
-      name:'Global Search',
-      icon:<PageviewIcon/>,
-      path:['/global-search']
+      path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
     },
     {
       name:'Live Analysis',
@@ -151,31 +145,41 @@ const SideNavBar = ( props) => {
       icon:<MoveToInboxIcon/>,
       path:['/export-data'],
     },
-    // {
-    //   name:'Admin Page',
-    //   icon:<PermDataSettingIcon/>,
-    //   path:['/admin'],
-    // },
-    // {
-    //   name:'Search Image',
-    //   icon:<ImageSearchIcon/>,
-    //   path:['/image-gallery'],
-    // },
-    // {
-    //   name:'Geo HotSpot Analysis',
-    //   icon:<PublicIcon/>,
-    //   path:['/geo-hotspot'],
-    // },
-    // {
-    //   name:'Demography',
-    //   icon:<DeviceHubIcon/>,
-    //   path:['/demography'],
-    // },    
-    // {
-    //   name:'Behavior Analysis',
-    //   icon:<HdrWeakIcon/>,
-    //   path:['/behavior-analysis'],
-    // }, 
+    {
+      name:'Admin Page',
+      icon:<PermDataSettingIcon/>,
+      path:['/admin'],
+    },
+    {
+      name:'Fetch',
+      icon:<PageviewIcon/>,
+      path:['/global-search']
+    },
+    {
+      name:'Search',
+      icon:<SearchIcon/>,
+      path:['/search-from-db'],
+    },
+    {
+      name:'Search Image',
+      icon:<ImageSearchIcon/>,
+      path:['/image-gallery'],
+    },
+    {
+      name:'Geo HotSpot Analysis',
+      icon:<PublicIcon/>,
+      path:['/geo-hotspot'],
+    },
+    {
+      name:'Demography',
+      icon:<DeviceHubIcon/>,
+      path:['/demography'],
+    },    
+    {
+      name:'Behavior Analysis',
+      icon:<HdrWeakIcon/>,
+      path:['/behavior-analysis'],
+    }, 
   ]
     
   useEffect(() => {
@@ -196,7 +200,7 @@ const SideNavBar = ( props) => {
               </Grid>
             </Grid>
           </div>
-      <Divider />
+      <Divider style={{marginTop:'120px'}} />
       <List >
         {menus.map((menuItem, index) => (
           <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>

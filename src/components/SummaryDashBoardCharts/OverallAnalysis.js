@@ -5,6 +5,7 @@ import SemiDonutChart from '../charts/SemiDonutChart'
 import Axios from 'axios';
 import PieChart from '../charts/PieChart';
 import { getKeyArray } from '../../helpers';
+import colors from '../../helpers/colors';
 
 var sortedData =  {}
 
@@ -30,9 +31,10 @@ function nFormatter(num, digits) {
 
 const useStyles = makeStyles((theme) => ({
     main: {
-        fontSize: 16,
+        fontSize: '12px',
         fontWeight: "bold",
         color: "#CB0038",
+        height:'450px'
     },
     formControl: {
       margin: '10px',
@@ -48,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-function OverallAnalysis({to, from}) {
+function OverallAnalysis({to, from,refresh}) {
     const classes = useStyles();
     const [sentiments, setSentiments] = useState([])
     const [moods, setMoods] = useState([])
@@ -101,21 +103,10 @@ function OverallAnalysis({to, from}) {
         setMoods(sortedData[value].mood)
     }
 
-    var colors = {
-      'joy':'#4C7A00',
-      'sad':'#D8D8D8',
-      'anger':'#FF5151',
-      'anticipation':'#111D31',
-      'disgust':'#D512CF',
-      'surprise':'#FF6600',
-      'fear':'#2000FF',
-      'trust':'#0099FF',
-      'positive':'#04E46C',
-      'negative':'#CB0038',
-      'neutral':'#FFC400'
-    }
-
     useEffect(() => {
+      setMainSourceData({})
+      setSentiments([])
+      setMoods([])
         Axios.post(process.env.REACT_APP_URL,{
             "aggs": {
               "date-based-range": {
@@ -159,7 +150,6 @@ function OverallAnalysis({to, from}) {
               setSourceData(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}))
               let obj = []
             let sum = 0
-            setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key)
           res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}).forEach(source => {
             if(Object.keys(source)[0] !== res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key){
                 sum += source[Object.keys(source)[0]]
@@ -197,18 +187,30 @@ function OverallAnalysis({to, from}) {
             }
           })
         })
-        let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
-        setSentiments(sortedData[s].sentiment)
-        setMoods(sortedData[s].mood)
+        if(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key !== 'new-twitter'){
+          setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key)
+          let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[0].key
+          setSentiments(sortedData[s].sentiment)
+          setMoods(sortedData[s].mood)
+        } else {    
+          setSource(res.data.aggregations['date-based-range'].buckets[0].Source.buckets[1].key)
+          let s = res.data.aggregations['date-based-range'].buckets[0].Source.buckets[1].key
+          setSentiments(sortedData[s].sentiment)
+          setMoods(sortedData[s].mood)
+        }
       })
-    }, [from,to])
+    }, [from,to,refresh])
+
+    useEffect(() => {
+      
+    }, [refresh])
 
     return (
         <Card className={classes.main}>
-        <Grid container spacing={0} className={classes.gridposition}>
-            <Grid item xs={3}>
+        <Grid container className={classes.gridposition}>
+            <Grid item xs={6}>
             <CardContent >Overall Analysis</CardContent>
-            <FormControl variant="outlined" className={classes.formControl} style={{margin:'30px'}} >
+            <FormControl variant="outlined" className={classes.formControl} style={{margin:'20px'}} >
                 <InputLabel id="Source-label">Source</InputLabel>
                     <Select 
                       labelId="Source-label"
@@ -219,11 +221,11 @@ function OverallAnalysis({to, from}) {
                       onChange={(e) => handleChange(e.target.value)}
                     >
                         {
-                            sources.map((source,i) => <MenuItem key={i} value={source}>{source}</MenuItem> )
+                                    sources.filter((source)=> source !== 'new-twitter').map((source,i) => <MenuItem key={i} value={source}>{source}</MenuItem> )
                         }
                     </Select>
                 </FormControl>
-                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'30px'}} align='center'>
+                <Card style={{backgroundColor:'#2F363F',color:'white',margin:'20px'}} align='center'>
                     <Typography variant='subtitle1' >
                         {nFormatter(mainSourceData.length && (
                           mainSourceData[0].name === source ? (mainSourceData[0].y) : (mainSourceData[1].y)
@@ -237,14 +239,14 @@ function OverallAnalysis({to, from}) {
                     </Typography>
                 </Card>
             </Grid>
-            <Grid item xs={3} >
-                <SemiDonutChart data={mainSourceData} />
+            <Grid item xs={6} >
+                <SemiDonutChart height={250} data={mainSourceData} />
             </Grid>
-            <Grid item xs={3}>
-                <PieChart  data={sentiments} />
+            <Grid item xs={5}>
+                <PieChart height={200}  data={sentiments} />
             </Grid>
-            <Grid item xs={3}>
-                <PieChart data={moods} />
+            <Grid item xs={7}>
+                <PieChart height={220} data={moods} />
             </Grid>
         </Grid>
     </Card>

@@ -3,10 +3,15 @@
     background-color: #d7d7d7 !important;
 }
 #userMenuHeader{
-  background-color: rgb(67,176,42);
-  padding-top: 40px;
-  padding-left: 20px;
-  padding-bottom: 10px;
+    width:180px;
+    height:120px;
+    background-color: rgb(67,176,42);
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 100;
 }
 #userAvatar{
     height: 60px;

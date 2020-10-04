@@ -16,7 +16,7 @@ export default function Loader(props) {
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={props.open}>
+      <Backdrop className={classes.backdrop} style={props.style} open={props.open}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>

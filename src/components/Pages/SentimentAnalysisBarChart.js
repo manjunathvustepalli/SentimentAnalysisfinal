@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import BarChart from '../charts/BarChart';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
 import FilterHeader from '../Filters/FilterHeader';
@@ -86,6 +85,7 @@ export default function SentimentalAnalysisAreaChart(props) {
     }
 
     const fetchData = (changeInState) => {
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -158,7 +158,6 @@ export default function SentimentalAnalysisAreaChart(props) {
            }
        })
     .then(fetchedData => {
-        setOpen(true)
         var sourceKeys,subSourceKeys
         var uniqueSourceKeys = []
         var uniqueSubSourceKeys = []
@@ -271,13 +270,18 @@ export default function SentimentalAnalysisAreaChart(props) {
         fetchData(false)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
             fetchData(true)
         }
     },[keywordType])
+
+    useDidUpdateEffect(() =>{
+        setData([])
+        fetchData(false)
+    },[refresh])
 
 
     useEffect(() => {
@@ -318,9 +322,9 @@ export default function SentimentalAnalysisAreaChart(props) {
     }, [sources])
 
     return (
-        <SideNav>
-            <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+        <>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'semi-pie' && (<Redirect to='/sentimental-analysis/semi-donut-chart' />) }
             {chartType === 'line' && (<Redirect to='/sentimental-analysis/line-chart' />) }
             {chartType === 'pie' && (<Redirect to='/sentimental-analysis/pie-chart' />) }
@@ -363,7 +367,7 @@ export default function SentimentalAnalysisAreaChart(props) {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                    <Grid container spacing={1} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -385,6 +389,6 @@ export default function SentimentalAnalysisAreaChart(props) {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

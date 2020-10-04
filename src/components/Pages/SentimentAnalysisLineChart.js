@@ -7,14 +7,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
 import { Typography } from '@material-ui/core';
-import { getKeyArray,addMonths, getDocCountByKey } from '../../helpers';
+import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart';
@@ -269,13 +268,22 @@ export default function SentimentalAnalysisLineChart() {
         fetchData(false)
     },()=>{
         fetchData(true)
-    },[from,to,refresh,keywords])
+    },[from,to,keywords])
 
     useDidUpdateEffect(()=>{
         if(keywordType === 'Entire Data'){
             fetchData(true)
         }
     },[keywordType])
+
+    useDidUpdateEffect(() =>{
+        setData([])
+        setOpen(true)
+        setTimeout(() => {
+            fetchData(false)
+            setOpen(false)
+        }, 1000);
+    },[refresh])
 
     useEffect(() => {
         const [ finalData,allDates ] = sentimentAnalysisLineChartFilter(languages,subSources,sources,sentiments,sortedData,from,to)
@@ -295,9 +303,9 @@ export default function SentimentalAnalysisLineChart() {
     },[sources])
 
     return (
-        <SideNav>
-            <Loader open={open} />
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
+        <>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'pie' && <Redirect to='/sentimental-analysis/pie-chart' />}
             {chartType === 'semi-pie' && <Redirect to='/sentimental-analysis/semi-donut-chart' />}
             {chartType === 'area' && <Redirect to='/sentimental-analysis/area-chart' />}
@@ -342,7 +350,7 @@ export default function SentimentalAnalysisLineChart() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4}  >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                    <Grid container spacing={1} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
                             <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -364,6 +372,6 @@ export default function SentimentalAnalysisLineChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

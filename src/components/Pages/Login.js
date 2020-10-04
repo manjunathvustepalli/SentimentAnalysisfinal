@@ -19,6 +19,19 @@ const styles = {
         height:'100vh',
         display:'grid',
         placeItems:'center',
+    },
+    inputWrapper:{
+        borderBottom:'2px solid #aaa',
+        position:'relative',
+        width:'100%',
+        height:'20px',
+        margin:'20px 0',
+        padding:'10px 0',
+    },
+    inputIcon:{
+        position:'absolute',
+        left:'30px',
+        color:'#aaa'
     }
 }
 
@@ -64,15 +77,15 @@ function Login() {
                             SOCIAL MEDIA SENTIMENT ANALYSIS
                         </Typography>
                             <label htmlfor="userName-input" style={{display:'block',width:'100%'}} >
-                            <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
-                                <AccountCircle style={{marginLeft:'40px',color:'#aaa'}}/>
-                                <input type='text'  placeholder="Enter User Id" id="userName-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                            <div style={styles.inputWrapper}>
+                                <AccountCircle style={styles.inputIcon}/>
+                                <input type='text'  placeholder="Enter User Id" id="userName-input" style={{width:'100%',height:'25px',border:'none',outline:'none',textAlign:'center'}} />
                             </div>
                             </label>
                             <label htmlfor="password-input" style={{display:'block',width:'100%'}}>
-                                <div style={{borderBottom:'2px solid #aaa',width:'100%',height:'20px',margin:'20px 0',padding:'10px 0',display:'flex'}}>
-                                    <LockRoundedIcon style={{marginLeft:'40px',color:'#aaa'}} />
-                                    <input type='password' placeholder="Enter Password" id="password-input" style={{width:'70%',marginLeft:'20px',height:'25px',border:'none',outline:'none'}} />
+                                <div style={styles.inputWrapper}>
+                                    <LockRoundedIcon style={styles.inputIcon} />
+                                    <input type='password' placeholder="Enter Password" id="password-input" style={{width:'100%',height:'25px',border:'none',outline:'none',textAlign:'center'}} />
                                 </div>
                             </label>
                         <div>

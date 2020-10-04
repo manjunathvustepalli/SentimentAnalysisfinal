@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GeoTaggingSummary() {
 
-    const [sources, setSources] = useState(['newspaper','twitter'])
+    const [sources] = useState(['newspaper','twitter'])
     const [source, setSource] = useState('newspaper')
     const [sentiment, setSentiment] = useState('positive')
     const [mood, setMood] = useState('joy')
@@ -27,15 +27,14 @@ function GeoTaggingSummary() {
     const classes = useStyles();
 
     return (
-        <Card >
+        <Card style={{height:'505px'}}>
             <Grid container>
-                <Grid item xs={5} style={{fontSize: 16,fontWeight: "bold",color: "#CB0038",height:'90px',lineHeight:'90px',padding:'10px 0 0 20px'}}>
-                    Geo Tagging Summary
+                <Grid item xs={4} style={{fontSize: 12,fontWeight: "bold",color: "#CB0038",height:'70px',lineHeight:'70px',paddingLeft:'20px'}}>
+                    Geo Summary
                 </Grid>
-                <Grid item xs={3} />
-                <Grid item xs={4}>
+                <Grid item xs={8}>
                 { sources && sources.length && (
-                    <Grid container spacing={2} style={{marginTop:'10px'}}>
+                    <Grid container spacing={1} style={{marginTop:'10px'}}>
                     <Grid item xs={4} >
                         <FormControl variant="outlined" style={{width:'100%'}}>
                             <InputLabel id="select-source"  >Source</InputLabel>
@@ -44,6 +43,7 @@ function GeoTaggingSummary() {
                             id="select-source-main"
                             variant="outlined"
                             label="Source"
+                            style={{fontSize:'7px',height:'30px'}}
                             fullWidth
                             value = {source}
                             onChange = { (e) => setSource(e.target.value) }
@@ -62,6 +62,7 @@ function GeoTaggingSummary() {
                             id="select-type-main"
                             fullWidth
                             label="Type"
+                            style={{fontSize:'7px',height:'30px'}}
                             variant="outlined"
                             value={type}
                             onChange = {(e) => setType(e.target.value)}
@@ -80,6 +81,7 @@ function GeoTaggingSummary() {
                                     labelId="sentiment-select"
                                     id="sentiment-select-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Sentiment"
                                     value={sentiment}
                                     onChange = {(e) => setSentiment(e.target.value)}
@@ -113,6 +115,7 @@ function GeoTaggingSummary() {
                         )
                     }                        
                     </Grid>
+                <Grid item xs={1} />
                 </Grid>
                 ) }
             </Grid>

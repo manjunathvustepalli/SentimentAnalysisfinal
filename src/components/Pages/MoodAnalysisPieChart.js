@@ -7,7 +7,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
@@ -16,10 +15,10 @@ import { Button, Typography } from '@material-ui/core';
 import Table1 from '../Tables/Table1'
 import Axios from 'axios';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
-import moment from 'moment'
 import { moodAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
-import { addMonths } from '../../helpers/index'
+import { addMonths } from '../../helpers/index';
+import Loader from '../LoaderWithBackDrop';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -71,13 +70,16 @@ export default function MoodAnalysisPieChart() {
     const [languages,setLanguages] = useState([])
     const [moods, setMoods] = useState([])
     const [keywords, setKeywords] = useState([])
-    const [keywordType, setKeywordType] = useState('Entire Data')
+    const [keywordType, setKeywordType] = useState('Entire Data');
+    const [open, setOpen] = useState(true)
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
 
     useEffect(() => {
+        setData({})
+        setOpen(true)
         let query = {
             "aggs": {
               "date-based-range": {
@@ -182,11 +184,13 @@ export default function MoodAnalysisPieChart() {
                     return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
                 }
             })
+            setOpen(false)
         })
         .catch(err => {
+            setOpen(false)
             console.log(err)
         })
-    }, [from,to,refresh,keywords,keywordType])
+    }, [from,to,keywords,keywordType,refresh])
 
     useEffect(()=>{
         let temp = moodAnalysisPieChartFilter(languages,moods,sources,sortedData) 
@@ -194,10 +198,12 @@ export default function MoodAnalysisPieChart() {
             setData(temp)
         }
     },[moods,languages,sources])
+    
 
     return (
-        <SideNav>
-            <div style={{ backgroundColor: '#F7F7F7', padding:'20px' }}>
+        <>
+            <div style={{ backgroundColor: '#F7F7F7', padding:'20px',position:'relative' }}>
+            <Loader open={open} style={{position:'absolute'}} />
             {chartType === 'line' && <Redirect to='/mood-analysis/line-chart' />}
             {chartType === 'semi pie' && <Redirect to='/mood-analysis/semi-donut-chart' />}
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
@@ -236,7 +242,7 @@ export default function MoodAnalysisPieChart() {
                             </FormControl>
                             </Grid>
                             {Object.keys(data).map((source,i) => {
-                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12}>
+                                return (<Grid align='center' item key={i} lg={4} md={4} sm={6} xs={12} style={{marginBottom:'30px'}}>
                                 <PieChart data ={data[source]}/>
                                 <Button variant='outlined' color='primary'>
                                     {source}
@@ -244,11 +250,6 @@ export default function MoodAnalysisPieChart() {
                             </Grid>)
                             }
                             )}
-                            <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid>
                             <Grid item xs={12} >
                                 {showTable && (<Table1/>)}
                             </Grid>
@@ -256,7 +257,7 @@ export default function MoodAnalysisPieChart() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -276,6 +277,6 @@ export default function MoodAnalysisPieChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }

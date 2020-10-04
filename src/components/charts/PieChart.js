@@ -24,7 +24,8 @@ export default class PieChart extends Component {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                height:this.props.height
             },
             CSSObject:{
                 color:'rbg(0,0,0)',
@@ -46,10 +47,11 @@ export default class PieChart extends Component {
                     allowPointSelect: true,
                     showInLegend: true,
                     cursor: 'pointer',
+                    size:'70%',
                     dataLabels: {
                         enabled: true,
                         format: '{point.percentage:.1f} %',
-                        distance: -50,
+                        distance: 10,
                         style: {
                             fontWeight: 'bold',
                             color: 'black',

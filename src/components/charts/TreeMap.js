@@ -68,19 +68,33 @@ function TreeMap(props) {
         },
         series: [{
             type: "treemap",
+            enableMouseTracking: false,
             layoutAlgorithm: 'stripes',
             alternateStartingDirection: true,
+            treemap:{
+                label:{
+                    style:{
+                        fontWeight: 'bold',
+                        color: 'black',
+                        fontSize:'0.8rem',
+                        textOutline:'none',
+                        border:'none'
+                    }
+                }
+            },
             levels: [{
                 level: 1,
                 dataLabels: {
-                    enabled: true,
+                    enabled: false,
                     align: 'left',
                     verticalAlign: 'top',
                     style: {
-                        fontSize: '15px',
                         fontWeight: 'bold',
-                        color:'#fff'
-                    }
+                        color: 'black',
+                        fontSize:'0.8rem',
+                        textOutline:'none',
+                        border:'none'
+                      },
                 }
             }],
             data: props.data,

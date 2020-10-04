@@ -1,8 +1,7 @@
 import React from 'react'
 import MaterialTable from 'material-table';
-import { green } from '@material-ui/core/colors';
 
-function AdminPageTable({ data,setData,name,columns }) {
+function AdminPageTable({ data,setData,name,columns,objName }) {
     return (
         <MaterialTable
             style={{
@@ -15,28 +14,30 @@ function AdminPageTable({ data,setData,name,columns }) {
             editable={{
                 onRowAdd: newData =>
                 new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        setData([...data, newData]);
-                        resolve();
-                    }, 1000);
+                    setData(prev =>{
+                        return {...prev,[objName]:[...data, newData]}
+                    });
+                    resolve();
                 }),
             onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
-                    setTimeout(() => {
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;
-                    setData([...dataUpdate]);
+                    setData(prev =>{
+                        return {...prev,[objName]:[...dataUpdate]}
+                    });
                     resolve();
-                }, 1000);
-            }),
+                    }),
         onRowDelete: oldData =>
             new Promise((resolve, reject) => {
                 setTimeout(() => {
                     const dataDelete = [...data];
                     const index = oldData.tableData.id;
                     dataDelete.splice(index, 1);
-                    setData([...dataDelete]);
+                    setData(prev =>{
+                        return {...prev,[objName]:[...dataDelete]}
+                    });
                     resolve();
                 }, 1000);
             })

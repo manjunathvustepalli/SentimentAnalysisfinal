@@ -2,7 +2,6 @@ import React,{useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
-import SideNav from '../Navigation/SideNav'
 import { Redirect } from 'react-router-dom';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
@@ -180,7 +179,7 @@ export default function MoodAnalysisPieChart() {
       };
 
     return (
-        <SideNav>
+        <>
             <div style={{ backgroundColor: '#F7F7F7', padding:'20px 0px 20px 20px' }}>
             {chartType === 'area' && (<Redirect to='/mood-analysis/area-chart' />) }
             <Grid container spacing={2} >
@@ -236,7 +235,7 @@ export default function MoodAnalysisPieChart() {
                     </Card>
                 </Grid>
                 <Grid item sm={12} md={4} >
-                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}}>
+                    <Grid container spacing={1}style={{position:'sticky',top:'60px'}}>
                         <Grid item xs={12} >
                         <FilterHeader refresh={[refresh,setRefresh]}/>
                         </Grid>
@@ -249,6 +248,6 @@ export default function MoodAnalysisPieChart() {
                 </Grid>
             </Grid>
         </div>
-        </SideNav>
+        </>
     );
 }
