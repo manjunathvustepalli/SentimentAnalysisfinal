@@ -611,8 +611,8 @@ function GlobalSearch() {
 
     return (
         <>
-            <Loader open={open} />
-            <Grid container spacing={1}style={{padding:'30px'}}>
+            <Grid container spacing={1}style={{padding:'30px',position:'relative'}}>
+            <Loader open={open}  style={{position:'absolute'}} />
                 <Grid item sm={12} md={3}>
                     <FormControl style={{width:'100%'}} variant="outlined" >
 
