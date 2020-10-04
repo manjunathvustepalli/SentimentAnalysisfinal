@@ -96,18 +96,6 @@ function LiveAnalysis() {
     const [imageUrl, setImageUrl] = useState('');
     const [type, setType] = useState('image');
     const [content, setContent] = useState('');
-  
-
-    const getTwitterEmbed = (url) =>{
-      Axios.get(`http://cors-anywhere.herokuapp.com/https://api.twitter.com/1/statuses/oembed.json?url=${url}`)
-      .then(data => {
-        console.log(data.data.html)
-        setContent(data.data.html)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
 
     const handleClose = () => {
       setOpen(false);

@@ -1,11 +1,11 @@
-import { Button, Grid, } from '@material-ui/core';
+import { Button, capitalize, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Select, Slide, } from '@material-ui/core';
 import React, { useState } from 'react'
 import ChipInput from 'material-ui-chip-input';
 import Axios from 'axios';
 import MaterialTable from 'material-table';
 import Loader from '../LoaderWithBackDrop'
 import LaunchIcon from '@material-ui/icons/Launch';
-
+import Image from 'material-ui-image'
 
 const dateFormatter = (unix) => {
     var date = new Date(unix);
@@ -18,6 +18,9 @@ const dateFormatter = (unix) => {
     return  todayDate+'/'+month+'/'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 }
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="down" ref={ref} {...props} />;
+  });
 
 function GlobalSearch() {
     const [source, setSource] = useState('twitter');
@@ -26,7 +29,8 @@ function GlobalSearch() {
     const [handles, setHandles] = useState([]);
     const [keywords, setKeywords] = useState([]);
     const [open, setopen] = useState(false)
-
+    const [imageUrl, setImageUrl] = useState('');
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     const submitData = () => {
         setopen(true)
@@ -35,6 +39,7 @@ function GlobalSearch() {
         if(source === 'twitter'){
             Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
                 .then(res =>{
+                    console.log(res)
                     if(res.data.status === 'ACCEPTED'){
                         let query = {
                             "query": {
@@ -69,6 +74,7 @@ function GlobalSearch() {
                           }
                         Axios.post(process.env.REACT_APP_SEARCH_URL,query)
                           .then(data =>{
+                              console.log(data)
                             setData(data.data.hits.hits.map((postObj)=>{
                                 if(!postObj._source.User){
                                     return {
@@ -144,7 +150,7 @@ function GlobalSearch() {
                 console.log(err,err.response);
                 setopen(false)
             })
-        }else if(source === 'facebook') {
+        } else if(source === 'facebook') {
             Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromfb?fbpage=${handlesString}`)
                 .then(res =>{
                     let query = {
@@ -230,69 +236,94 @@ function GlobalSearch() {
                     console.log(err);
                     setopen(false)
                 })
-        }else if(source === 'newspaper') {
-            setopen(true)
-            let query = {
-                "query": {
-                  "bool": {
-                    "must": [
-                      {"terms": {"Source.keyword": [source]}},
-                    ]
-                  }
-                },
-                "size": 50,
-                "sort": [
-                  {
-                    "CreatedAt": {
-                      "order": "desc"
-                    }
-                  }
-                ]
-              }
-              if(handles.length){
-                query.query.bool.must.push({
-                    "terms":{
-                        "SubSource.keyword":handles
-                    }
-                })
-            }
-            if(keywords.length){
-              query.query.bool.must.push({
-                  "terms":{
-                      "HashtagEntities.Text.keyword":keywords
-                  }
-              })
-            }
-            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-              .then(data=>{
-                setData(data.data.hits.hits.map((postObj,i)=>{
-                    return {
-                        date:dateFormatter(postObj._source.CreatedAt),
-                        post:postObj._source.Text,
-                        favouriteCount:postObj._source.FavoriteCount,
-                        sentiment:postObj._source.predictedSentiment,
-                        mood:postObj._source.predictedMood,
-                        language:postObj._source.predictedLang,
-                        screenName:postObj._source.SubSource,
-                        url:<a target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'white'}} href={postObj._source.URLEntities[0].URL}>
-                        <Button
-                          endIcon={<LaunchIcon/>}
-                    > Open Post </Button> 
-                      </a>
-                    }
-                }))
-                setColumns([
+        } else if(source === 'instagram'){
+            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
+                .then(res => {
+                    console.log(res)
+                    if(res.data.status === 'ACCEPTED'){
+                        let query = {
+                            "query": {
+                              "bool": {
+                                "must": [
+                                    {"terms": {"Source.keyword": [source]}},
+                                ]
+                              }
+                            },
+                            "size": 50,
+                            "sort": [
+                              {
+                                "CreatedAt": {
+                                  "order": "desc"
+                                }
+                              }
+                            ]
+                          }
+                          if(handles.length){
+                              query.query.bool.must.push({
+                                  "terms":{
+                                      "SubSource.keyword":handles
+                                  }
+                              })
+                          }
+                          if(keywords.length){
+                            query.query.bool.must.push({
+                                "terms":{
+                                    "HashtagEntities.Text.keyword":keywords
+                                }
+                            })
+                          }
+
+                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                          .then(data =>{
+                              console.log(data.data.hits.hits)
+                            setData(data.data.hits.hits.map((postObj,i)=>{
+                                if(postObj._source.MediaEntities && postObj._source.MediaEntities.length){
+                                    return {
+                                        date:dateFormatter(postObj._source.CreatedAt),
+                                        post:postObj._source.Text,
+                                        favouriteCount:postObj._source.FavoriteCount,
+                                        sentiment:postObj._source.predictedSentiment,
+                                        mood:postObj._source.predictedMood,
+                                        language:postObj._source.predictedLang,
+                                        screenName:postObj._source.SubSource,
+                                        image:postObj._source.MediaEntities.map(image => {
+                                            if(!image.MediaURL){
+                                                return <span/> 
+                                            }
+                                            return (
+                                                <IconButton  onClick={() => {
+                                                    setImageUrl(image.MediaURL)
+                                                    setDialogOpen(true)
+                                                }} style={{backgroundColor:'rgb(67, 176, 42)',color:'white'}} >
+                                                    <LaunchIcon />
+                                                </IconButton>
+                                            )
+                                        })                                  
+                                    }
+                                }else {
+                                    return {
+                                        date:dateFormatter(postObj._source.CreatedAt),
+                                        post:postObj._source.Text,
+                                        favouriteCount:postObj._source.FavoriteCount,
+                                        sentiment:postObj._source.predictedSentiment,
+                                        mood:postObj._source.predictedMood,
+                                        language:postObj._source.predictedLang,
+                                        screenName:postObj._source.SubSource,
+                                    }
+                                }
+                            }))
+                            setColumns([
                                 {
                                     title:'Date',
                                     field:'date',   
                                 },
                                 {
-                                    title:'Post',
-                                    field:'post',
+                                    title:'Screen Name',
+                                    field:'screenName',
                                 },
                                 {
-                                    title:'Url',
-                                    field:'url'
+                                    title:'Post',
+                                    field:'post',
                                 },
                                 {
                                     title:'Sentiment',
@@ -305,58 +336,306 @@ function GlobalSearch() {
                                 {
                                     title:'Language',
                                     field:'language',   
+                                },
+                                {
+                                    title:'Media Urls',
+                                    field:'image'
                                 }
                             ])
-                setopen(false)            
-                })
-              .catch(err =>{
-                    console.log(err)
-                    setopen(false)
-              })            
+                              setopen(false)
+                          })
+                }})
+        } else if(source === 'telegram') {
+            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
+                .then(res => {
+                    console.log(res)
+                    if(res.data.status === 'ACCEPTED'){
+                        let query = {
+                            "query": {
+                              "bool": {
+                                "must": [
+                                    {"terms": {"Source.keyword": [source]}},
+                                ]
+                              }
+                            },
+                            "size": 50,
+                            "sort": [
+                              {
+                                "CreatedAt": {
+                                  "order": "desc"
+                                }
+                              }
+                            ]
+                          }
+                          if(handles.length){
+                              query.query.bool.must.push({
+                                  "terms":{
+                                      "SubSource.keyword":handles
+                                  }
+                              })
+                          }
+                          if(keywords.length){
+                            query.query.bool.must.push({
+                                "terms":{
+                                    "HashtagEntities.Text.keyword":keywords
+                                }
+                            })
+                          }
+
+                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                          .then(data =>{
+                              console.log(data)
+                            setData(data.data.hits.hits.map((postObj,i)=>{
+                                return {
+                                    date:dateFormatter(postObj._source.CreatedAt),
+                                    post:postObj._source.Text,
+                                    favouriteCount:postObj._source.FavoriteCount,
+                                    sentiment:postObj._source.predictedSentiment,
+                                    mood:postObj._source.predictedMood,
+                                    language:postObj._source.predictedLang,
+                                    screenName:postObj._source.SubSource
+                                }
+                            }))
+                            setColumns([
+                                            {
+                                                title:'Date',
+                                                field:'date',   
+                                            },
+                                            {
+                                                title:'Screen Name',
+                                                field:'screenName',
+                                            },
+                                            {
+                                                title:'Post',
+                                                field:'post',
+                                            },
+                                            {
+                                                title:'Sentiment',
+                                                field:'sentiment',   
+                                            },
+                                            {
+                                                title:'Mood',
+                                                field:'mood',   
+                                            },
+                                            {
+                                                title:'Language',
+                                                field:'language',   
+                                            }
+                                        ])
+                            setopen(false)
+                          })
+                }})
+        } else if(source === 'blogger'){
+            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
+            .then(res => {
+                console.log(res)
+                if(res.data.status === 'ACCEPTED'){
+                    let query = {
+                        "query": {
+                          "bool": {
+                            "must": [
+                                {"terms": {"Source.keyword": [source]}},
+                            ]
+                          }
+                        },
+                        "size": 50,
+                        "sort": [
+                          {
+                            "CreatedAt": {
+                              "order": "desc"
+                            }
+                          }
+                        ]
+                      }
+                      if(handles.length){
+                          query.query.bool.must.push({
+                              "terms":{
+                                  "SubSource.keyword":handles
+                              }
+                          })
+                      }
+                      if(keywords.length){
+                        query.query.bool.must.push({
+                            "terms":{
+                                "HashtagEntities.Text.keyword":keywords
+                            }
+                        })
+                      }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                      .then(data =>{
+                          console.log(data)
+                        setData(data.data.hits.hits.map((postObj,i)=>{
+                            return {
+                                date:dateFormatter(postObj._source.CreatedAt),
+                                post:postObj._source.Text,
+                                favouriteCount:postObj._source.FavoriteCount,
+                                sentiment:postObj._source.predictedSentiment,
+                                mood:postObj._source.predictedMood,
+                                language:postObj._source.predictedLang,
+                                screenName:postObj._source.SubSource
+                            }
+                        }))
+                        setColumns([
+                                        {
+                                            title:'Date',
+                                            field:'date',   
+                                        },
+                                        {
+                                            title:'Screen Name',
+                                            field:'screenName',
+                                        },
+                                        {
+                                            title:'Post',
+                                            field:'post',
+                                        },
+                                        {
+                                            title:'Sentiment',
+                                            field:'sentiment',   
+                                        },
+                                        {
+                                            title:'Mood',
+                                            field:'mood',   
+                                        },
+                                        {
+                                            title:'Language',
+                                            field:'language',   
+                                        }
+                                    ])
+                        setopen(false)
+                      })
+            }})
+        } else if(source === 'google news'){
+            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
+            .then(res => {
+                console.log(res)
+                if(res.data.status === 'ACCEPTED'){
+                    let query = {
+                        "query": {
+                          "bool": {
+                            "must": [
+                                {"terms": {"Source.keyword": ['googlenews']}},
+                            ]
+                          }
+                        },
+                        "size": 50,
+                        "sort": [
+                          {
+                            "CreatedAt": {
+                              "order": "desc"
+                            }
+                          }
+                        ]
+                      }
+                      if(handles.length){
+                          query.query.bool.must.push({
+                              "terms":{
+                                  "SubSource.keyword":handles
+                              }
+                          })
+                      }
+                      if(keywords.length){
+                        query.query.bool.must.push({
+                            "terms":{
+                                "HashtagEntities.Text.keyword":keywords
+                            }
+                        })
+                      }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL,query)
+                      .then(data =>{
+                          console.log(data)
+                        setData(data.data.hits.hits.map((postObj,i)=>{
+                            return {
+                                date:dateFormatter(postObj._source.CreatedAt),
+                                post:postObj._source.Text,
+                                favouriteCount:postObj._source.FavoriteCount,
+                                sentiment:postObj._source.predictedSentiment,
+                                mood:postObj._source.predictedMood,
+                                language:postObj._source.predictedLang,
+                                screenName:postObj._source.SubSource
+                            }
+                        }))
+                        setColumns([
+                                        {
+                                            title:'Date',
+                                            field:'date',   
+                                        },
+                                        {
+                                            title:'Screen Name',
+                                            field:'screenName',
+                                        },
+                                        {
+                                            title:'Post',
+                                            field:'post',
+                                        },
+                                        {
+                                            title:'Sentiment',
+                                            field:'sentiment',   
+                                        },
+                                        {
+                                            title:'Mood',
+                                            field:'mood',   
+                                        },
+                                        {
+                                            title:'Language',
+                                            field:'language',   
+                                        }
+                                    ])
+                        setopen(false)
+                      })
+            }})
         }
     }
+
+    const useStyles = makeStyles((theme) => ({
+        root: {
+          background: 'rgb(67, 176, 42)',
+          color: 'white',
+          height: 'auto',
+          margin:'10px',
+          fontSize:'10px',
+          padding: '10px',
+          '&:hover': {
+            background: 'rgb(67, 176, 42)',
+            color: 'white',
+            height: 'auto',
+            margin:'10px',
+            fontSize:'10px',
+            padding: '10px',
+          }
+        },
+      }));
+
+      const classes = useStyles()
 
     return (
         <>
             <Loader open={open} />
             <Grid container spacing={1}style={{padding:'30px'}}>
-            <Grid item xs={10}>
-                <Grid container>
-                    <Grid item xs={4} sm={3} md={2} lg={2}
-                            onClick={() => {
-                                setData([])
-                                setSource('twitter')
-                                setKeywords([])
-                                setHandles([])
+                <Grid item sm={12} md={3}>
+                    <FormControl style={{width:'100%'}} variant="outlined" >
+
+                        <InputLabel id="source-select-label" >Select Source</InputLabel>
+                        <Select
+                            labelId="source-select-label"
+                            id="source-select"
+                            value={source}
+                            onChange={(e) =>{
+                                    setData([])
+                                    setSource(e.target.value)
+                                    setKeywords([])
+                                    setHandles([])
                             }}
-                            style={{backgroundColor:source==='twitter'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='twitter'?'white':'black', height:'50px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
-                        TWITTER
-                    </Grid>
-                    <Grid item xs={4} sm={3} md={2} lg={2} 
-                        onClick={() => {
-                            setData([])
-                            setSource('facebook')
-                            setKeywords([])
-                            setHandles([])
-                        }}
-                        style={{backgroundColor:source==='facebook'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='facebook'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
-                        FACEBOOK
-                    </Grid>
-                    {/* <Grid item xs={4} sm={3} md={2} lg={2} 
-                        onClick={() => {
-                            setData([])
-                            setSource('newspaper')
-                            setKeywords([])
-                            setHandles([])
-                        }}
-                        style={{backgroundColor:source==='newspaper'?'rgb(67,176,42)':'',cursor:'pointer',border:'2px solid rgb(67,176,42)',color:source==='newspaper'?'white':'black',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
-                        NEWSPAPER
-                    </Grid> */}
+                            label={'Select Source'}
+                        >
+                            {
+                            ['facebook','twitter','instagram','telegram','blogger','google news'].map((source,i) => <MenuItem value={source} key={i} > {capitalize(source)} </MenuItem> )
+                            }
+                        </Select>
+                    </FormControl>
                 </Grid>
-            </Grid>
-            <Grid item xs={2} />
-            <Grid item xs={2} sm={false} />
-            <Grid item sm={12} md={4} lg={3}>
+                <Grid item sm={12} md={3}>
                         <ChipInput 
                         fullWidth
                         variant="outlined"
@@ -374,8 +653,8 @@ function GlobalSearch() {
                             })
                         }}
                     />
-            </Grid>
-                    <Grid item sm={12} md={4} lg={3} >
+                </Grid>
+                <Grid item sm={12} md={3} >
                         <ChipInput 
                         fullWidth
                         blurBehavior="add"
@@ -393,13 +672,12 @@ function GlobalSearch() {
                             })
                         }}
                     />
-                    </Grid>
+                </Grid>
             <Grid item  xs={12} md={2} >
                 <Button style={{backgroundColor:'rgb(67, 176, 42)',color:'white',height:'100%'}} onClick={() => submitData()} fullWidth>
                     Search
                 </Button>
             </Grid>
-            <Grid item xs={2} />
             <Grid item xs={12}>
                 <div style={{width:'100%'}}>
                 <MaterialTable
@@ -424,6 +702,28 @@ function GlobalSearch() {
                 </div>
             </Grid>
         </Grid>
+        <Dialog
+                fullWidth
+                style={{height:'700px'}}
+        open={dialogOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setDialogOpen(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title"> Image </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+              <Image src={imageUrl} style={{width:'100%'}} />           
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button  className={classes.root} onClick={() => setDialogOpen(false)} >
+            Close
+          </Button>
+        </DialogActions>
+        </Dialog>
         </>    
     )
 }
