@@ -192,10 +192,10 @@ function SearchFromDB() {
                         title:'Sentiment',
                         field:'sentiment',   
                     },
-                    {
-                        title:'Mood',
-                        field:'mood',   
-                    },
+                    // {
+                    //     title:'Mood',
+                    //     field:'mood',   
+                    // },
                     {
                         title:'Language',
                         field:'language',   

@@ -234,7 +234,7 @@ const SideNavBar = (props) => {
           </IconButton>
           <Avatar src={require('../../imgs/shyna.jpeg')} />
           <Typography variant="h6" noWrap>
-          &nbsp; Sentiment and Mood Analysis
+          &nbsp; Social Media Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>
