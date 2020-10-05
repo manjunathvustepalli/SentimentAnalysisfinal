@@ -120,6 +120,7 @@ function Admin() {
                     <AdminTable
                         name={`${capitalize(source)} Pages `}
                         data={data}
+                        source={source}
                         loaderOpen={loaderOpen}
                         columns={columns}
                         setNewlyAddedWord={setNewlyAddedWord}

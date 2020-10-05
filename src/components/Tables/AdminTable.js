@@ -1,7 +1,7 @@
 import React from 'react'
 import MaterialTable from 'material-table';
 
-function AdminTable({ data,name,columns,setNewlyAddedWord,setDeletedWord,loaderOpen }) {
+function AdminTable({ data,name,columns,setNewlyAddedWord,source,setDeletedWord,loaderOpen }) {
     return (
         <MaterialTable
             style={{
@@ -28,6 +28,7 @@ function AdminTable({ data,name,columns,setNewlyAddedWord,setDeletedWord,loaderO
             })
         }}
         options={{
+            addRowPosition:'first',
             paging:false,
             exportButton: true,
             maxBodyHeight:500,
