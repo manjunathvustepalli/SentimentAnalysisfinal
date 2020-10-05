@@ -1,45 +1,30 @@
 import React from 'react'
 import MaterialTable from 'material-table';
 
-function AdminPageTable({ data,setData,name,columns,objName }) {
+function AdminTable({ data,name,columns,setNewlyAddedWord,setDeletedWord,loaderOpen }) {
     return (
         <MaterialTable
             style={{
                 padding:'20px',
                 margin:'20px'
             }}
+            isLoading={loaderOpen}
             title={name}
             data={data}
             columns={columns}
             editable={{
                 onRowAdd: newData =>
                 new Promise((resolve, reject) => {
-                    setData(prev =>{
-                        return {...prev,[objName]:[...data, newData]}
-                    });
+                    setNewlyAddedWord(newData.name)
                     resolve();
                 }),
-            // onRowUpdate: (newData, oldData) =>
-            //     new Promise((resolve, reject) => {
-            //             const dataUpdate = [...data];
-            //             const index = oldData.tableData.id;
-            //             dataUpdate[index] = newData;
-            //         setData(prev =>{
-            //             return {...prev,[objName]:[...dataUpdate]}
-            //         });
-            //         resolve();
-            //         }), 
         onRowDelete: oldData =>
             new Promise((resolve, reject) => {
-                setTimeout(() => {
                     const dataDelete = [...data];
                     const index = oldData.tableData.id;
-                    dataDelete.splice(index, 1);
-                    setData(prev =>{
-                        return {...prev,[objName]:[...dataDelete]}
-                    });
+                    // setDeletedWord(dataDelete)
+                    setDeletedWord(oldData.name)
                     resolve();
-                }, 1000);
             })
         }}
         options={{
@@ -58,4 +43,4 @@ function AdminPageTable({ data,setData,name,columns,objName }) {
     )
 }
 
-export default AdminPageTable
+export default AdminTable
