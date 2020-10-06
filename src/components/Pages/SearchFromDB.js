@@ -130,7 +130,79 @@ function SearchFromDB() {
                         }
                     }
                 })
-            )})
+            )
+            if(sources.includes('twitter')){
+                setColumns([
+                    {
+                        title:'Date',
+                        field:'date',   
+                    },
+                    {
+                        title:'Source',
+                        field:'source'
+                    },
+                    {
+                        title:'Sub Source',
+                        field:'subSource'
+                    },
+                    {
+                        title:'Name',
+                        field:'name',   
+                    },
+                    {
+                        title:'Screen Name',
+                        field:'screenName',
+                    },
+                    {
+                        title:'Post',
+                        field:'post',
+                    },
+                    {
+                        title:'Sentiment',
+                        field:'sentiment',   
+                    },
+                    {
+                        title:'Mood',
+                        field:'mood',   
+                    },
+                    {
+                        title:'Language',
+                        field:'language',   
+                    }
+                ])
+            }else {
+                setColumns([
+                    {
+                        title:'Date',
+                        field:'date',   
+                    },
+                    {
+                        title:'Source',
+                        field:'source'
+                    },
+                    {
+                        title:'Sub Source',
+                        field:'subSource'
+                    },
+                    {
+                        title:'Post',
+                        field:'post',
+                    },
+                    {
+                        title:'Sentiment',
+                        field:'sentiment',   
+                    },
+                    // {
+                    //     title:'Mood',
+                    //     field:'mood',   
+                    // },
+                    {
+                        title:'Language',
+                        field:'language',   
+                    }
+                ])
+            }
+        })
               .catch(err => {
                   console.log(err)
               })

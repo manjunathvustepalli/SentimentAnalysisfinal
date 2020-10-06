@@ -366,7 +366,7 @@ function InfluencerComparison({from,to,refresh}) {
                     >
                     <MenuItem value={10}>Top 10  </MenuItem>
                     <MenuItem value={25}>Top 25 </MenuItem>
-                    <MenuItem value={50}>Top 25 </MenuItem>
+                    <MenuItem value={50}>Top 50 </MenuItem>
                     </Select>
               </FormControl>
             </Grid>
@@ -378,9 +378,9 @@ function InfluencerComparison({from,to,refresh}) {
             <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
               {
                 type === 'Sentiment' ? (
-                  ['positive','negative','neutral'].map((sentiment) => <CustomLegend word={capitalizeString(sentiment)} color={colors[sentiment]} />)
+                  ['positive','negative','neutral'].map((sentiment,i) => <CustomLegend key={i} word={capitalizeString(sentiment)} color={colors[sentiment]} />)
                 ) : (
-                  ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                  ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood,i)=> <CustomLegend key={i} word={capitalizeString(mood)} color={colors[mood]} />)
                 )
               }
             </div>

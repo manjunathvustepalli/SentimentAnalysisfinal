@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { Card, Grid, Switch, FormControlLabel, Button, Chip, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton } from '@material-ui/core'
+import { Grid, Switch, FormControlLabel, Button, Chip, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import Axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
@@ -68,27 +68,20 @@ function LiveAnalysis() {
 
     const classes = useStyles();
     const [data, setData] = useState([]);
-    const [liveReloading, setLiveReloading] = useState(false);
+    const [liveReloading, setLiveReloading] = useState(true);
     const [reloadInterval, setReloadInterval] = useState(10000);
     const [to] = useState(new Date());
     const [from] = useState(new Date());
     const [actualUrl, setactualUrl] = useState('');
-    const [keyword] = useState('');
-    const [languages, setLanguages] = useState(['bengali']);
+    const [languages, setLanguages] = useState(['english']);
     const [source, setSource] = useState('twitter');
     const [dataObject, setDataObject] = useState({})
     const [columns, setColumns] = useState([
         {title:'Name',field:'name'},
-        {title:'Screen Name',field:'screenName',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" }},
+        {title:'Screen Name',field:'screenName'},
         {title:'Post',field:'tweet'},
-        {title:'Followers Count',field:'followersCount',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" },},
-        {title:'Retweet Count',field:'retweetCount',width: "1%",
-        cellStyle: { whiteSpace: "nowrap" },
-        headerStyle: { whiteSpace: "nowrap" },},
+        {title:'Followers Count',field:'followersCount',},
+        {title:'Retweet Count',field:'retweetCount'},
         {title:'Mood',field:'mood'},
         {title:'Sentiment',field:'sentiment'},
     ])
@@ -131,12 +124,17 @@ function LiveAnalysis() {
           })
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
-              console.log(user._source.MediaEntities)
                 let obj = {}
                 if(user._source.User){
                     obj.name =  user._source.User.Name
                     obj.screenName =  user._source.User.ScreenName
                     obj.followersCount =  user._source.User.FollowersCount
+                }
+                if(user._source.Place){
+                  obj.location = user._source.Place.FullName
+                }
+                if(user._source.HashtagEntities){
+                  obj.hashTags = user._source.HashtagEntities.map(hashTag => <Chip label={hashTag.Text} size="small" style={{margin:'5px',backgroundColor:'rgb(67,176,42)',color:'white'}} />)
                 }
                 if(user._source.MediaEntities && user._source.MediaEntities.length){
                     obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
@@ -195,17 +193,17 @@ function LiveAnalysis() {
                 setColumns([
                     {title:'Date',field:'date'},
                     {title:'Name',field:'name'},
-                    {title:'Screen Name',field:'screenName',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" }},
+                    {title:'Screen Name',field:'screenName'},
                     {title:'Post',field:'tweet'},
+                    {title:'Location',field:'location'},
+                    {title:'HashTags',field:'hashTags'},
                     {title:'Followers Count',field:'followersCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
                     {title:'Retweet Count',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
-                    {title:'Mood',field:'mood'},
+                    // {title:'Mood',field:'mood'},
                     {title:'Sentiment',field:'sentiment'},
                     {
                       title:'Media',field:'mediaUrl',width: "1%",
@@ -246,67 +244,10 @@ function LiveAnalysis() {
         .catch(err => {console.log(err.response,err)})
 
     }
-
-    function fetchFromKeyword(){
-        Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "query": {
-              "bool": {
-                "must": [
-                  {
-                    "terms": {
-                      "Source.keyword": [
-                        source
-                      ]
-                    }
-                  }
-                ], 
-                "should": [
-                  {
-                    "terms": {
-                      "User.ScreenName.keyword": [keyword]
-                    }
-                  }
-                ]
-              }
-            },
-            "size": 50,
-            "sort": [
-              {
-                "CreatedAt": {
-                  "order": "desc"
-                }
-              }
-            ]
-          })
-          .then(fetchedData =>{
-              let final =  fetchedData.data.hits.hits.map(user => {
-                let obj = {}
-                if(user._source.User){
-                    obj.name =  user._source.User.Name
-                    obj.screenName =  user._source.User.ScreenName
-                    obj.followersCount =  user._source.User.FollowersCount
-                }
-                obj.tweet =  user._source.Text
-                obj.retweetCount =  user._source.RetweetCount
-                obj.mood = user._source.predictedMood
-                obj.sentiment = user._source.predictedSentiment
-                return obj
-            })
-            setData(final)
-          })
-          .catch(err => {
-              console.log(err)
-          })
-    }    
-
     useEffect(() => {
-        if(!keyword){
             fetchData()
-        } else {
-            fetchFromKeyword()
-        }
         const interval = setInterval(() => {
-            if(liveReloading && !keyword){
+            if(liveReloading){
                 fetchData()
             }
           }, reloadInterval);
@@ -345,6 +286,7 @@ function LiveAnalysis() {
     }, [])
 
     return (
+      <>
         <div style={{ backgroundColor: '#F7F7F7', padding:'20px', }}>
                 <Grid container spacing={2}>
                     <Grid item xs={10}>
@@ -445,11 +387,6 @@ function LiveAnalysis() {
                             title='Live Analysis'
                             columns={columns}
                             data={data}
-                            style={{
-                              padding:'20px',
-                              width:'100%',
-                              overflow:'scroll'
-                            }}
                             options={{
                                 grouping:!liveReloading,
                                 paging:false,
@@ -463,6 +400,22 @@ function LiveAnalysis() {
                             }}
                         />
                     </Grid>
+                    {/* <div style={{width:'26vw',padding:'20px'}}  >
+                    <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
+                        <Grid item xs={12} >
+                            <FilterHeader refresh={[refresh,setRefresh]}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FilterWrapper>
+                                <AccordianFilters 
+                                    sources={[sources,setSources]} 
+                                    languages={[languages,setLanguages]} 
+                                    subSources={[subSources,setSubSources]}
+                                />
+                            </FilterWrapper>
+                        </Grid>
+                    </Grid>
+                </div> */}
                 </Grid>
                 <Dialog
                 fullWidth
@@ -496,6 +449,7 @@ function LiveAnalysis() {
         </DialogActions>
       </Dialog>
         </div>
+        </>
     )
 }
 

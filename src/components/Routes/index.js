@@ -24,7 +24,7 @@ import ExportData from "../Pages/ExportData";
 import MoodAnalysisSemiDonutChart from "../Pages/MoodAnalysisSemiDonutChart";
 import MoodAnalysisBarChart from "../Pages/MoodAnalysisBarChart";
 import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
-import AdminPage from "../Pages/AdminPage";
+import Admin from "../Pages/Admin";
 import ImageSearch from "../Pages/ImageSearch"
 import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
 import GlobalSearch from "../Pages/GlobalSearch";
@@ -130,7 +130,7 @@ function Routes() {
         <Route path="/export-data" exact component={ExportData} />
         <Route path="/global-search" exact component={GlobalSearch} />
         <Route path="/search-from-db" exact component={SearchFromDB} />
-        <Route path="/admin" exact component={AdminPage} />
+        <Route path="/admin" exact component={Admin} />
         <Route path="/image-gallery" exact component={ImageSearch} />
         <Route path="/behavior-analysis" exact component={BehaviorAnalysis} />
         <Route path="/geo-hotspot" exact component={GeoHotSpotAnalysis} />

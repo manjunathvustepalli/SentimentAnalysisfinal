@@ -55,76 +55,59 @@ const GeoHotSpotMap = () => {
   return (
     <Map
       style="mapbox://styles/mapbox/streets-v9"
-      center={[90.3563, 23.6850]}
-      zoom={[6]}
+      center={[78.9629,20.5937]}
+      zoom={[4]}
       containerStyle={{
-        height: '80vh'
+        height: '400px'
       }}
     >
       <Marker
-        coordinates={[90.3563, 23.6850]}
+        coordinates={[77.1025, 28.7041]}
         anchor="bottom">
-        <div style={redBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[91.3575, 22.6750]}
-        anchor="bottom">
-        <div style={redBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[89.9567, 23.3951]}
-        anchor="bottom">
-        <div style={redBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[89.105344, 24.526176]}
-        anchor="bottom">
-        <div style={redBubbles} ></div>
-      </Marker>
-      
-      <Marker
-        coordinates={[91.3563, 22.6850]}
-        anchor="bottom">
-        <div style={yellowBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[88.984375, 25.776259]}
-        anchor="bottom">
-        <div style={yellowBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[88.298887, 24.718622]}
-        anchor="bottom">
-        <div style={yellowBubbles} ></div>
-      </Marker>
-      <Marker
-        coordinates={[89.891639 , 23.799580]}
-        anchor="bottom">
-        <div style={yellowBubbles} ></div>
+        <div style={redBubbles}></div>
       </Marker>
 
       <Marker
-        coordinates={[91.3563, 24.6850]}  
+        coordinates={[80.1025, 20.7041]}
+        anchor="bottom">
+        <div style={redBubbles}></div>
+      </Marker>
+      
+      <Marker
+        coordinates={[79.7400,15.9129]}
+        anchor="bottom">
+        <div style={yellowBubbles} ></div>
+      </Marker>
+            
+      <Marker
+        coordinates={[79.7400,12.9129]}
         anchor="bottom">
         <div style={yellowBubbles} ></div>
       </Marker>
       <Marker
-        coordinates={[89.41786, 23.661155]}  
+        coordinates={[79.7400,11.9129]}
         anchor="bottom">
         <div style={greenBubbles} ></div>
       </Marker>
       <Marker
-        coordinates={[89.155747, 22.390162]}  
-        anchor="bottom">
-        <div style={greenBubbles} ></div>
+        coordinates={[72.6569, 29.9734]}
+        anchor="bottom"
+      >
+      <div style={greenBubbles} ></div>
       </Marker>
-      <Marker
-        coordinates={[89.538814, 24.965616]}  
-        anchor="bottom">
-        <div style={greenBubbles} ></div>
-      </Marker>
-      
 
+      <Marker
+        coordinates={[78.6569, 22.9734]}
+        anchor="bottom"
+      >
+      <div style={greenBubbles} ></div>
+      </Marker>
+      <Marker
+        coordinates={[76.6569, 20.9734]}
+        anchor="bottom"
+      >
+      <div style={redBubbles} ></div>
+      </Marker>
     </Map>
   );
 };

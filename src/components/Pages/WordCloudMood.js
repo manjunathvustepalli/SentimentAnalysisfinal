@@ -373,9 +373,7 @@ function WordCloudMood() {
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,moods,sortedData)
         Object.keys(temp).forEach(language => {
-            temp[language] = temp[language].sort((a,b)=>{
-                return b.weight - a.weight
-            }).slice(0,wordCount)
+            temp[language] = temp[language].slice(0,wordCount)
         })
         setData(temp)
     },[sources,subSources,moods,wordCount])
@@ -453,8 +451,8 @@ function WordCloudMood() {
                             </div>
                             <Grid item xs={12}>
                                 {
-                                    Object.keys(data).map((lang,i) => {
-                                        return (
+                                    Object.keys(data).map((lang,i) => 
+                                         data[lang] && (
                                             <TabPanel value={value} index={i}>
                                                 <WordCloud clickable setOpen={setOpen} setWord={setWord} data={data[lang]} />
                                                 <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -464,7 +462,7 @@ function WordCloudMood() {
                                                 </div>
                                             </TabPanel>
                                         )
-                                    })
+                                    )
                                 }
                             </Grid>
                         </Grid>

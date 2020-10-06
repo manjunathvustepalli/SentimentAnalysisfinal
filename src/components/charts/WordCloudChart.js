@@ -44,6 +44,7 @@ function WordCloud(props) {
                     })
                 },
                 data: props.data,
+                name: 'Occurrences',
             }],
             title: {
                 text: props.title || ''

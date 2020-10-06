@@ -101,12 +101,12 @@ function AdminPage() {
                     TabIndicatorProps={{style: {background:'rgb(67, 176, 42)'}}}
                     aria-label="scrollable auto tabs example"
                     >
-                    <Tab label={'Keywords'} style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} />
-                    <Tab label={'Screen Names'} style={{color:value===1 && ('white'),backgroundColor:value===1 && ('rgb(67, 176, 42)'),border:value !== 1 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
+                    {/* <Tab label={'Keywords'} style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(0)} /> */}
+                    <Tab label={'Screen Names'} style={{color:value===0 && ('white'),backgroundColor:value===0 && ('rgb(67, 176, 42)'),border:value !== 0 && ('2px solid rgb(67, 176, 42)')}} {...a11yProps(1)} />
                     </Tabs>
-                    <TabPanel value={value} index={0}>
+                    {/* <TabPanel value={value} index={0}>
                         <AdminPageTable data={data.keywords} objName={'keywords'} columns={keywordColumns} name={'Manage Keywords'} setData={setData} />
-                    </TabPanel>
+                    </TabPanel> */}
                     <TabPanel value={value} index={1}>
                         <AdminPageTable data={data.screenNames} objName={'screenNames'} columns={screenNameColumns} name={'Manage Screen names'} setData={setData} />
                     </TabPanel>

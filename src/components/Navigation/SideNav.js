@@ -110,11 +110,11 @@ const SideNavBar = (props) => {
       icon:<SentimentVerySatisfiedIcon/>,
       path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart','/sentimental-analysis/stack-chart'],
     },
-    {
-      name:'Mood Analysis',
-      icon:<ChildCareIcon/>,
-      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart','/mood-analysis/semi-donut-chart','/mood-analysis/bar-chart','/mood-analysis/stack-chart'],
-    },
+    // {
+    //   name:'Mood Analysis',
+    //   icon:<ChildCareIcon/>,
+    //   path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
+    // },
     {
       name:'Influencer Analysis',
       icon:<EmojiPeopleIcon/>,
@@ -123,7 +123,7 @@ const SideNavBar = (props) => {
     {
       name:'Word Cloud',
       icon:<AppsIcon/>,
-      path:['/word-cloud/sentiment','/word-cloud/mood'],
+      path:['/word-cloud/sentiment'/*,'/word-cloud/mood'*/],
     },
     {
       name:'Trending Subjects',
@@ -234,9 +234,9 @@ const SideNavBar = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
+          <Avatar src={require('../../imgs/shyna.jpeg')} />
           <Typography variant="h6" noWrap>
-          &nbsp; Sentiment and Mood Analysis
+          &nbsp; Social Media Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>

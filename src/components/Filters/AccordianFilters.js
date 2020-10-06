@@ -80,27 +80,31 @@ export default function ControlledAccordions(props) {
       </Accordion>
         )
       }
-      <Accordion expanded={expanded === 'panel2'} className={classes.accordianStyling} onChange={handleChange('panel2')}>
-        <AccordionSummary
-          style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderBottom:expanded === 'panel2' ? 'none' : '1px solid white'}}
-          expandIcon={ expanded !== 'panel2' ? <AddIcon style={{color:'white'}} /> : <RemoveIcon style={{color:'white'}} />}
-          aria-controls="panel2bh-content"
-          id="panel2bh-header"
-        >
-            <IconWithText>
-                <DateRangeIcon style={{marginRight:'10px'}} /> 
-                <p>
-                Dates
-                </p>
-            </IconWithText>
-        </AccordionSummary>
-        <AccordionDetails
-          style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderTop:expanded === 'panel2' ? 'none' : '1px solid white'}}
-        >
-          {singleDate ? (<SingleDate singleDate={singleDate} />) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
-          
-        </AccordionDetails>
-      </Accordion>
+      {
+        singleDate || toFromDatesHandlers ?  (
+          <Accordion expanded={expanded === 'panel2'} className={classes.accordianStyling} onChange={handleChange('panel2')}>
+          <AccordionSummary
+            style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderBottom:expanded === 'panel2' ? 'none' : '1px solid white'}}
+            expandIcon={ expanded !== 'panel2' ? <AddIcon style={{color:'white'}} /> : <RemoveIcon style={{color:'white'}} />}
+            aria-controls="panel2bh-content"
+            id="panel2bh-header"
+          >
+              <IconWithText>
+                  <DateRangeIcon style={{marginRight:'10px'}} /> 
+                  <p>
+                  Dates
+                  </p>
+              </IconWithText>
+          </AccordionSummary>
+          <AccordionDetails
+            style={{backgroundColor:'#2C3335',color:'white',border:'1px solid white',borderTop:expanded === 'panel2' ? 'none' : '1px solid white'}}
+          >
+            {singleDate ? (<SingleDate singleDate={singleDate} />) : (<DateFilter toFromDatesHandlers={toFromDatesHandlers} />)}
+            
+          </AccordionDetails>
+        </Accordion>
+        ) :''
+      }
       {languages && (      
         <Accordion expanded={expanded === 'panel4'} className={classes.accordianStyling} onChange={handleChange('panel4')}>
         <AccordionSummary

@@ -368,6 +368,7 @@ function WordCloudSentiment() {
     useEffect(() => {
         let temp = wordCloudSentimentFilter(sources,subSources,sentiments,sortedData)
         Object.keys(temp).forEach(language => {
+
             temp[language] = temp[language].sort((a,b)=>{
                 return b.weight - a.weight
             }).slice(0,wordCount)
@@ -410,14 +411,14 @@ function WordCloudSentiment() {
                             </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6} align='right'>
-                                <Button
+                                {/* <Button
                                         variant="contained"
                                         style={{margin:"10px"}}
                                         component={Link}
                                         to="/word-cloud/mood"
                                     >
                                     Mood
-                                </Button>
+                                </Button> */}
                                 <Button
                                     variant="contained"
                                     style={{margin:"10px"}}
