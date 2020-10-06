@@ -18,6 +18,7 @@ import InfluencerComparison from '../SummaryDashBoardCharts/InfluencerComparison
 import ChipInputFilter from '../Filters/ChipInputFilter';
 import GeoTaggingSummary from '../SummaryDashBoardCharts/GeoTaggingSummary';
 import Loader from '../LoaderWithBackDrop';
+import { Link } from 'react-router-dom';
 
 
 const IconWithText = styled.div`
@@ -132,9 +133,9 @@ function SummaryDashBoard() {
                                 <InfluencerComparison from={from} to={to} refresh={refresh} />
                             </Grid>
                             <Grid item xl={4} md={4} xs={12}>
-                                <Card className={classes.main} >
-                                   <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} refresh={refresh} />
-                                </Card>
+                                    <Card className={classes.main} >
+                                        <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} refresh={refresh} />
+                                    </Card>
                             </Grid>
                             <Grid item xl={4} md={4} xs={12}>
                                 <GeoTaggingSummary/>

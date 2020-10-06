@@ -64,36 +64,24 @@ function DemographyDonutChart(props) {
     },
     exporting: {
       chartOptions: {
+          title:{
+              style:{
+                  fontSize:'10px'
+              }
+          },
           plotOptions: {
-              treemap:{
-                  dataLabels:{
-                      enabled:true,
-                      style:{
-                          color:'black'
-                      }
-                  }
-              },
               series: {
-                  treemap:{
-                      label:{
-                          enabled:true,
-                          style:{
-                              color:'black'
-                          }
-                      }
-                  },
                   dataLabels: {
                       enabled: true,
                       style:{
-                          color:'black',
-                          fontSize:'2rem'
+                          fontSize:'6px'
                       }
                   }
                   
               }
           }
       },
-      scale: 3,
+      scale: 4,
       fallbackToExportServer: false,
       buttons: {
           contextButton: {

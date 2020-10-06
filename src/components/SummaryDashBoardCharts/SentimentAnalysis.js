@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
 import AreaChart from '../charts/AreaChart'
 import colors from '../../helpers/colors'
+import { Link } from 'react-router-dom'
 
 function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
 
@@ -87,9 +88,11 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
     }, [from,to,keywords,keywordType,refresh])
 
     return (
+      <Link to="/sentimental-analysis/area-chart" style={{width:'100%'}} >
         <div>
             <AreaChart title="Date wise Sentiment Trend" dates={dates} data={data} sorted={true} />
         </div>
+      </Link>
     )
 }
 

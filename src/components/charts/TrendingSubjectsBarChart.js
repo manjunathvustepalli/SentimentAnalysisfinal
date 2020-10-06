@@ -60,16 +60,24 @@ function TrendingSubjectsBarChart(props) {
     },
     exporting: {
       chartOptions: {
+          title:{
+              style:{
+                  fontSize:'10px'
+              }
+          },
           plotOptions: {
               series: {
                   dataLabels: {
-                      enabled: true
+                      enabled: true,
+                      style:{
+                          fontSize:'6px'
+                      }
                   }
                   
               }
           }
       },
-      scale: 3,
+      scale: 4,
       fallbackToExportServer: false,
       buttons: {
           contextButton: {

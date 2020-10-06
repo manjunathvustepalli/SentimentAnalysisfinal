@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Highcharts from 'highcharts'
+import Piechart from 'highcharts-react-official'
 require('highcharts/modules/exporting')(Highcharts);
-const ReactHighcharts = require('react-highcharts');
 
 export default class PieChart extends Component {
     render(){
@@ -66,16 +66,24 @@ export default class PieChart extends Component {
             }],
             exporting: {
                 chartOptions: {
+                    title:{
+                        style:{
+                            fontSize:'10px'
+                        }
+                    },
                     plotOptions: {
                         series: {
                             dataLabels: {
-                                enabled: true
+                                enabled: true,
+                                style:{
+                                    fontSize:'6px'
+                                }
                             }
                             
                         }
                     }
                 },
-                scale: 3,
+                scale: 4,
                 fallbackToExportServer: false,
                 buttons: {
                     contextButton: {
@@ -84,6 +92,6 @@ export default class PieChart extends Component {
                 }
             },
         }
-        return <ReactHighcharts config = {config} />
+        return <Piechart highcharts={Highcharts} options = {config} />
     }
 }

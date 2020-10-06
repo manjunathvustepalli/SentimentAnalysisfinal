@@ -5,6 +5,7 @@ import { capitalizeString, getKeyArray } from '../../helpers'
 import WordCloudChart from '../charts/WordCloudChart'
 import CustomLegend from '../CustomLegend'
 import colors from '../../helpers/colors'
+import { Link } from 'react-router-dom'
 
 var sortedData = {}
 const useStyles = makeStyles((theme) => ({
@@ -220,6 +221,7 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                                     labelId="select-mood"
                                     id="select-mood-main"
                                     fullWidth
+                                    style={{fontSize:'7px',height:'30px'}}
                                     label="Mood"
                                     value = {mood}
                                     onChange = {(e) => setMood(e.target.value)}
@@ -240,12 +242,14 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                 </Grid>
                 ) }
             </Grid>
+            <Link style={{width:'100%'}} to="/word-cloud/sentiment">
             <Grid item xs={12}>
                 <WordCloudChart title={`${capitalizeString(source)}  ${type==='sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} ${ capitalizeString(type)} Word Cloud`} data={data} />
                 <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
                 <CustomLegend color={ type === 'sentiment' ? colors[sentiment] : colors[mood]} word={type === 'sentiment' ? capitalizeString(sentiment) : capitalizeString(mood)} />    
                 </div>
             </Grid>
+            </Link>
         </Grid>
     )
 }

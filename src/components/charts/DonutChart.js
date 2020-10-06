@@ -48,23 +48,33 @@ function DonutChart(props) {
       credits: {
         enabled: false
     },
-      exporting: {
-        chartOptions: {
-            plotOptions: {
-                series: {
-                    dataLabels: {
-                        enabled: true
-                    }  
-                }
-            }
-        },
-        scale: 3,
-        buttons: {
+    exporting: {
+      chartOptions: {
+          title:{
+              style:{
+                  fontSize:'10px'
+              }
+          },
+          plotOptions: {
+              series: {
+                  dataLabels: {
+                      enabled: true,
+                      style:{
+                          fontSize:'6px'
+                      }
+                  }
+                  
+              }
+          }
+      },
+      scale: 4,
+      fallbackToExportServer: false,
+      buttons: {
           contextButton: {
               symbol: 'download'
           }
       }
-    },
+  },
     }
 
   return <PieChart highcharts={highcharts} options={options} />

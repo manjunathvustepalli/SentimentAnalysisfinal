@@ -57,7 +57,7 @@ function TrendAnalysisChart(props) {
             }
         }
     },
-    scale: 3,
+    scale: 1,
     fallbackToExportServer: false,
     buttons: {
         contextButton: {

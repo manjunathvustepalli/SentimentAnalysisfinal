@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { capitalizeString } from '../../helpers';
 import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -371,6 +372,7 @@ function InfluencerComparison({from,to,refresh}) {
             </Grid>
           </Grid>
             </Grid>
+            <Link style={{width:'100%'}} to="/influencer-analysis">
             <Grid item xs={12}>
             <TreeMap title={`${capitalizeString(source)} Influencer Comparison`} data={data}/>
             <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -383,6 +385,7 @@ function InfluencerComparison({from,to,refresh}) {
               }
             </div>
             </Grid>
+            </Link>
         </Grid>
     </Card>
     )

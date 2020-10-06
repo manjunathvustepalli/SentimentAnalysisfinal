@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
 import Axios from 'axios'
 import colors from '../../helpers/colors'
+import { Link } from 'react-router-dom'
 
 function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
 
@@ -90,9 +91,11 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
     }, [from,to,keywords,keywordType,refresh])
 
     return (
+      <Link to="/mood-analysis/line-chart" style={{width:'100%'}} >
         <div>
             <TrendAnalysisLineChart title="Date wise Mood Trend" dates={dates} data={data} />
         </div>
+      </Link>
     )
 }
 

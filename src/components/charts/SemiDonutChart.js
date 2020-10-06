@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Highcharts from 'highcharts'
-import { Height } from '@material-ui/icons';
+import SemiPie from 'highcharts-react-official'
 require('highcharts/modules/exporting')(Highcharts);
-const ReactHighcharts = require('react-highcharts');
+
 
 export default class PieChart extends Component {
     render(){
@@ -71,16 +71,25 @@ export default class PieChart extends Component {
             }],
             exporting: {
                 chartOptions: {
+                    title:{
+                        style:{
+                            fontSize:'10px'
+                        }
+                    },
                     plotOptions: {
                         series: {
                             dataLabels: {
-                                enabled: true
+                                enabled: true,
+                                style:{
+                                    fontSize:'6px'
+                                }
                             }
                             
                         }
                     }
                 },
-                scale: 3,
+                scale: 4,
+                fallbackToExportServer: false,
                 buttons: {
                     contextButton: {
                         symbol: 'download'
@@ -88,6 +97,6 @@ export default class PieChart extends Component {
                 }
             },
         }
-        return <ReactHighcharts config = {config} />
+        return <SemiPie highcharts={Highcharts}  options = {config} />
     }
 }

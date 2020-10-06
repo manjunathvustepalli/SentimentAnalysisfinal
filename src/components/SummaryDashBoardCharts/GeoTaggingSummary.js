@@ -1,5 +1,6 @@
 import { Card, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select } from '@material-ui/core'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap'
 
 const useStyles = makeStyles((theme) => ({
@@ -119,9 +120,11 @@ function GeoTaggingSummary() {
                 </Grid>
                 ) }
             </Grid>
+            <Link style={{width:'100%'}} to="/geo-hotspot">
                 <Grid item xs={12} align="center">
                     <GeoHotSpotMap />
                 </Grid>
+            </Link>
             </Grid>
         </Card>
     )
