@@ -181,10 +181,7 @@ const SideNavBar = (props) => {
       path:['/behavior-analysis'],
     }, 
   ]
-    
-  useEffect(() => {
-    document.querySelector('#scroll-id').scroll(40,40)
-  },[])
+
    const drawer = (
     <div className={classes.drawerScroller} >
           <div id="userMenuHeader" >
@@ -234,9 +231,9 @@ const SideNavBar = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar src={require('../../imgs/shyna.jpeg')} />
+          <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
           <Typography variant="h6" noWrap>
-          &nbsp; Social Media Analysis
+          &nbsp; Sentiment and Mood Analysis
           </Typography>
           <span style={{marginLeft:'auto'}}>
           <Tooltip title={'Logout'}>

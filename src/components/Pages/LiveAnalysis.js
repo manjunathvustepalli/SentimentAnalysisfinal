@@ -195,6 +195,8 @@ function LiveAnalysis() {
                     {title:'Name',field:'name'},
                     {title:'Screen Name',field:'screenName'},
                     {title:'Post',field:'tweet'},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
                     {title:'Location',field:'location'},
                     {title:'HashTags',field:'hashTags'},
                     {title:'Followers Count',field:'followersCount',width: "1%",
@@ -203,8 +205,6 @@ function LiveAnalysis() {
                     {title:'Retweet Count',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
-                    // {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
                     {
                       title:'Media',field:'mediaUrl',width: "1%",
                       headerStyle: { whiteSpace: "nowrap" }
@@ -218,11 +218,11 @@ function LiveAnalysis() {
                 setColumns([
                     {title:'Date',field:'date'},
                     {title:'Post',field:'tweet'},
+                    {title:'Mood',field:'mood'},
+                    {title:'Sentiment',field:'sentiment'},
                     {title:'Replies',field:'retweetCount',width: "1%",
                     cellStyle: { whiteSpace: "nowrap" },
                     headerStyle: { whiteSpace: "nowrap" },},
-                    {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
                 ])
             } else if( source === 'newspaper' ){
                 setColumns([
