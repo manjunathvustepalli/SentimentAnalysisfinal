@@ -106,8 +106,6 @@ export default function SentimentalAnalysisAreaChart() {
                                 "terms":{
                                     "field": "SubSource.keyword"
                                 },
-                            
-    
                             "aggs": {
                                 "per-day": {
                                   "date_histogram": {
@@ -223,7 +221,7 @@ export default function SentimentalAnalysisAreaChart() {
                     return availableSourceKeys
                 })    
 
-            setLanguages(prev =>{
+            setLanguages(prev => {
                 let availableLanguageKeys = {}
                 languageKeys.forEach(lang =>{
                     availableLanguageKeys[lang] = true
@@ -244,7 +242,8 @@ export default function SentimentalAnalysisAreaChart() {
                     return {negative:true,positive:true,neutral:true}
                 }
             })
-            }     
+            } 
+            console.log(sortedData)    
             setOpen(false)
         } else {
             sortedData = {}

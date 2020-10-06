@@ -188,15 +188,17 @@ const SideNavBar = (props) => {
    const drawer = (
     <div className={classes.drawerScroller} >
           <div id="userMenuHeader" >
-            <Grid container justify='space-around' >
-              <Grid item align="left"  xs={12}>
+            <Grid container >
+              <Grid item  xs={1} />
+              <Grid item align="left"  xs={10}>
                 <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
               </Grid>
-              <Grid item align="left" className='grid-user' xs={8} >
+              <Grid item align="right" className='grid-user' xs={6} >
                 <Typography > Welcome User</Typography>
               </Grid>
+              <Grid xs={2} />
               <Grid item align="left" className='grid-user' xs={4}>
-                <Typography align="right"><ArrowDropDownIcon/></Typography>
+                <Typography align="left"><ArrowDropDownIcon/></Typography>
               </Grid>
             </Grid>
           </div>
