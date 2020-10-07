@@ -1,6 +1,7 @@
 import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+require('highcharts/modules/exporting')(Highcharts);
 
 function DemographyDonutChart(props) {
   Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
@@ -39,33 +40,6 @@ function DemographyDonutChart(props) {
         valueSuffix: "%",
       },
     },
-    exporting: {
-      chartOptions: {
-          title:{
-              style:{
-                  fontSize:'10px'
-              }
-          },
-          plotOptions: {
-              series: {
-                  dataLabels: {
-                      enabled: true,
-                      style:{
-                          fontSize:'6px'
-                      }
-                  }
-                  
-              }
-          }
-      },
-      scale: 4,
-      fallbackToExportServer: false,
-      buttons: {
-          contextButton: {
-              symbol: 'download'
-          }
-      }
-  },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -111,6 +85,33 @@ function DemographyDonutChart(props) {
         ],
       },
     ],
+    exporting: {
+      chartOptions: {
+          title:{
+              style:{
+                  fontSize:'10px'
+              }
+          },
+          plotOptions: {
+              series: {
+                  dataLabels: {
+                      enabled: true,
+                      style:{
+                          fontSize:'6px'
+                      }
+                  }
+                  
+              }
+          }
+      },
+      scale: 4,
+      fallbackToExportServer: false,
+      buttons: {
+          contextButton: {
+              symbol: 'download'
+          }
+      }
+  },
   };
   return (
     <div>
