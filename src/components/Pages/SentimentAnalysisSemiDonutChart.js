@@ -243,14 +243,6 @@ function SentimentAnalysisSemiDonutChart() {
                             </Grid>)
                             }
                             )}
-                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button color='primary' variant='contained' onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12} >
-                                {showTable && (<Table1/>)}
-                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>

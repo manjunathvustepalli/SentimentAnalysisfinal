@@ -7,7 +7,6 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import { Grid } from '@material-ui/core';
-import SearchBar from "material-ui-search-bar";
 import Axios from 'axios';
 import Image from 'material-ui-image'
 

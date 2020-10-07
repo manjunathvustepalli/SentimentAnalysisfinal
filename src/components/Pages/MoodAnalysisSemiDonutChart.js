@@ -238,14 +238,6 @@ export default function MoodAnalysisSemiDonutChart() {
                             </Grid>)
                             }
                             )}
-                            {/* <Grid item align='right' xs={10} style={{margin:'30px'}}>
-                                <Button className={classes.buttonStyle} variant="outlined" color="primary" onClick={() => setShowTable(prev => !prev)}>
-                                    {showTable ? 'Close' : 'View Source'}
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12} >
-                                {showTable && (<Table1/>)}
-                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>
