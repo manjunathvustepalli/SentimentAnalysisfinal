@@ -308,7 +308,7 @@ function InfluencerComparison({from,to,refresh}) {
           },[from,to,source,type,size,refresh])
 
     return (
-        <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px'}} >
+        <Card style={{color:"#CB0038",fontWeight:'bold',fontSize:'16px',height:'500px'}} >
         <Grid container spacing={1}> 
             <Grid item xs={4} style={{height:'70px',lineHeight:'70px',padding:'10px'}} >
                 Influence Comparison

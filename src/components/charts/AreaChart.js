@@ -95,7 +95,7 @@ function AreaChart(props) {
                 }
             }
         },
-    }
+    } 
     return <HighchartsReact  options={config}> </HighchartsReact>
 }
 

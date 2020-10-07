@@ -139,7 +139,7 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
     },[source,sentiment,mood,type])
 
     return (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} >
             <Grid item xs={3} style={{height:'70px',lineHeight:'70px',padding:'10px 0 0 20px'}}>
                 Word Cloud
             </Grid>

@@ -28,7 +28,7 @@ function GeoTaggingSummary() {
     const classes = useStyles();
 
     return (
-        <Card style={{height:'505px'}}>
+        <Card style={{height:'500px'}}>
             <Grid container>
                 <Grid item xs={4} style={{fontSize: 12,fontWeight: "bold",color: "#CB0038",height:'70px',lineHeight:'70px',paddingLeft:'20px'}}>
                     Geo Summary

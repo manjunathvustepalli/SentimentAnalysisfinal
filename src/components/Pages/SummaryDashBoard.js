@@ -133,7 +133,7 @@ function SummaryDashBoard() {
                                 <InfluencerComparison from={from} to={to} refresh={refresh} />
                             </Grid>
                             <Grid item xl={4} md={4} xs={12}>
-                                    <Card className={classes.main} >
+                                    <Card className={classes.main} style={{height:'500px'}} >
                                         <WordCloud to={to} from={from} keywords={keywords} keywordType={keywordType} refresh={refresh} />
                                     </Card>
                             </Grid>
