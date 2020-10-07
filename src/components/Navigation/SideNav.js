@@ -110,11 +110,11 @@ const SideNavBar = (props) => {
       icon:<SentimentVerySatisfiedIcon/>,
       path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart','/sentimental-analysis/stack-chart'],
     },
-    // {
-    //   name:'Mood Analysis',
-    //   icon:<ChildCareIcon/>,
-    //   path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
-    // },
+    {
+      name:'Mood Analysis',
+      icon:<ChildCareIcon/>,
+      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
+    },
     {
       name:'Influencer Analysis',
       icon:<EmojiPeopleIcon/>,
