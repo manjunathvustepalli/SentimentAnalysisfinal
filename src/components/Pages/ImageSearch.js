@@ -6,7 +6,6 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import { Grid } from '@material-ui/core';
 import Axios from 'axios';
 import Image from 'material-ui-image'
 
@@ -29,7 +28,7 @@ export default function TitlebarGridList() {
 
   
 useEffect(() =>{
-  Axios.post(process.env.REACT_APP_SEARCH_URL,{
+  Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_SEARCH_URL,{
     "query": {
       "bool": {
         "must": [
@@ -51,8 +50,14 @@ useEffect(() =>{
         }
       }
     ]
+  },{
+    auth:{
+      username:"shyenaui",
+      password:"X1Py5asktgirvC4"
+    }
   })
   .then(fetchedData=>{
+    console.log(fetchedData)
     var tileData = []
     fetchedData.data.hits.hits.forEach((post) => {
       if(post._source.User){
@@ -82,11 +87,13 @@ useEffect(() =>{
     });
     setTilesData(tileData)
   })
+  .catch(err => {
+    console.log(err,err.response)
+  })
 
 },[])
 
 
-    const [value, setValue] = useState('')
   const classes = useStyles();
 
   return (
