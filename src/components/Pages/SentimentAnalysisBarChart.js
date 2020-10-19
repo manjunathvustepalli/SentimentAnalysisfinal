@@ -22,6 +22,7 @@ import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import { useContext } from 'react';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
 import colors from '../../helpers/colors'
+import {Auth} from './Auth'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -151,119 +152,148 @@ export default function SentimentalAnalysisAreaChart(props) {
                 }
             }
         }
-       Axios.post(process.env.REACT_APP_URL,
-        query,{
-            headers:{
-               'Content-Type':'application/json'
+       Axios.post(
+         `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+         query,
+         {
+           headers: {
+             "Content-Type": "application/json",
+           },
+         },
+         Auth
+       )
+         .then((fetchedData) => {
+           var sourceKeys, subSourceKeys;
+           var uniqueSourceKeys = [];
+           var uniqueSubSourceKeys = [];
+           let languageBuckets =
+             fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+               .buckets;
+           var languageKeys = getKeyArray(languageBuckets);
+           if (languageKeys[0]) {
+             languageKeys.forEach((key, i) => {
+               let sourceBuckets = languageBuckets[i].Source.buckets;
+               sourceKeys = getKeyArray(sourceBuckets);
+               sortedData[key] = {};
+               sourceKeys.forEach((source, j) => {
+                 if (!uniqueSourceKeys.includes(source)) {
+                   uniqueSourceKeys.push(source);
+                 }
+                 let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+                 subSourceKeys = getKeyArray(subSourceBuckets);
+                 sortedData[key][source] = {};
+                 subSourceKeys.forEach((subSource, k) => {
+                   if (!uniqueSubSourceKeys.includes(subSource)) {
+                     uniqueSubSourceKeys.push(subSource);
+                   }
+                   sortedData[key][source][subSource] = {};
+                   let perDayBuckets = subSourceBuckets[k]["per-day"].buckets;
+                   let perDayKeys = subSourceBuckets[k]["per-day"].buckets.map(
+                     (item) => item.key_as_string
+                   );
+                   sortedData[key][source][subSource]["dates"] = perDayKeys;
+                   sortedData[key][source][subSource][
+                     "positive"
+                   ] = perDayBuckets.map((item) =>
+                     getDocCountByKey(
+                       item["Daily-Sentiment-Distro"].buckets,
+                       "positive"
+                     )
+                   );
+                   sortedData[key][source][subSource][
+                     "negative"
+                   ] = perDayBuckets.map((item) =>
+                     getDocCountByKey(
+                       item["Daily-Sentiment-Distro"].buckets,
+                       "negative"
+                     )
+                   );
+                   sortedData[key][source][subSource][
+                     "neutral"
+                   ] = perDayBuckets.map((item) =>
+                     getDocCountByKey(
+                       item["Daily-Sentiment-Distro"].buckets,
+                       "neutral"
+                     )
+                   );
+                 });
+               });
+             });
+
+             if (changeInState) {
+               setSources((prev) => {
+                 let availableSourceKeys = {};
+                 uniqueSourceKeys.forEach((source) => {
+                   availableSourceKeys[source] = !!prev[source];
+                 });
+                 return availableSourceKeys;
+               });
+               setLanguages((prev) => {
+                 let availableLanguageKeys = {};
+                 languageKeys.forEach((lang) => {
+                   availableLanguageKeys[lang] = !!prev[lang];
+                 });
+                 return availableLanguageKeys;
+               });
+               setSubSources((prev) => {
+                 let availableSubSourceKeys = {};
+                 uniqueSubSourceKeys.forEach((subSource) => {
+                   availableSubSourceKeys[subSource] = !!prev[subSource];
+                 });
+                 return availableSubSourceKeys;
+               });
+               setSentiments((prev) => {
+                 if (Object.keys(prev).length) {
+                   return prev;
+                 } else {
+                   return { negative: true, positive: true, neutral: true };
+                 }
+               });
+             } else {
+               setSources((prev) => {
+                 let availableSourceKeys = {};
+                 uniqueSourceKeys.forEach((source) => {
+                   availableSourceKeys[source] = true;
+                 });
+                 return availableSourceKeys;
+               });
+
+               setLanguages((prev) => {
+                 let availableLanguageKeys = {};
+                 languageKeys.forEach((lang) => {
+                   availableLanguageKeys[lang] = true;
+                 });
+                 return availableLanguageKeys;
+               });
+               setSubSources((prev) => {
+                 let availableSubSourceKeys = {};
+                 uniqueSubSourceKeys.forEach((subSource) => {
+                   availableSubSourceKeys[subSource] = true;
+                 });
+                 return availableSubSourceKeys;
+               });
+               setSentiments((prev) => {
+                 if (Object.keys(prev).length) {
+                   return prev;
+                 } else {
+                   return { negative: true, positive: true, neutral: true };
+                 }
+               });
+             }
+             setOpen(false);
+           } else {
+             sortedData = {};
+             setSources({});
+             setSubSources({});
+             setLanguages({});
+             setSentiments({});
+             setOpen(false);
            }
-       })
-    .then(fetchedData => {
-        var sourceKeys,subSourceKeys
-        var uniqueSourceKeys = []
-        var uniqueSubSourceKeys = []
-        let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-        var languageKeys = getKeyArray(languageBuckets)
-        if(languageKeys[0]){
-            languageKeys.forEach((key,i) =>{
-                let sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sortedData[key] ={}
-                sourceKeys.forEach((source,j) => {
-                    if(!uniqueSourceKeys.includes(source)){
-                        uniqueSourceKeys.push(source)
-                    }
-                    let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-                    subSourceKeys = getKeyArray(subSourceBuckets)
-                    sortedData[key][source] = {}
-                    subSourceKeys.forEach((subSource,k) => {
-                        if(!uniqueSubSourceKeys.includes(subSource)){
-                            uniqueSubSourceKeys.push(subSource)
-                        }
-                        sortedData[key][source][subSource] = {}
-                        let perDayBuckets = subSourceBuckets[k]['per-day'].buckets
-                        let perDayKeys = subSourceBuckets[k]['per-day'].buckets.map(item => item.key_as_string)
-                        sortedData[key][source][subSource]['dates'] = perDayKeys
-                        sortedData[key][source][subSource]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))
-                        sortedData[key][source][subSource]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))
-                        sortedData[key][source][subSource]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))
-                    })
-                });
-            })
-
-            if(changeInState){
-                setSources(prev =>{
-                    let availableSourceKeys = {}
-                    uniqueSourceKeys.forEach(source =>{
-                        availableSourceKeys[source] = !!prev[source]
-                    })
-                    return availableSourceKeys
-                })
-                setLanguages(prev =>{
-                    let availableLanguageKeys = {}
-                    languageKeys.forEach(lang =>{
-                        availableLanguageKeys[lang] = !!prev[lang]
-                    })
-                    return availableLanguageKeys
-                })    
-                setSubSources(prev =>{
-                    let availableSubSourceKeys = {}
-                    uniqueSubSourceKeys.forEach(subSource =>{
-                        availableSubSourceKeys[subSource]  = !!prev[subSource]
-                    })
-                    return availableSubSourceKeys
-                })
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-            } else {         
-                setSources(prev =>{
-                    let availableSourceKeys = {}
-                    uniqueSourceKeys.forEach(source =>{
-                        availableSourceKeys[source] = true
-                    })
-                    return availableSourceKeys
-                })    
-
-            setLanguages(prev =>{
-                let availableLanguageKeys = {}
-                languageKeys.forEach(lang =>{
-                    availableLanguageKeys[lang] = true
-                })
-                return availableLanguageKeys
-            })
-                setSubSources(prev =>{
-                    let availableSubSourceKeys = {}
-                    uniqueSubSourceKeys.forEach(subSource =>{
-                        availableSubSourceKeys[subSource]  = true
-                    })
-                    return availableSubSourceKeys
-                })
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-            }         
-            setOpen(false)
-        } else {
-            sortedData = {}
-            setSources({})
-            setSubSources({})
-            setLanguages({})
-            setSentiments({})
-            setOpen(false)
-        }       
-    })
-    .catch(err => {
-        console.log(err.response)
-        setOpen(false)
-    })
+         })
+         .catch((err) => {
+           console.log(err.response);
+           setOpen(false);
+         });
     }
 
     useMountAndUpdateEffect(()=>{

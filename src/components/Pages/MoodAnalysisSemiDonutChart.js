@@ -17,6 +17,7 @@ import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { moodAnalysisPieChartFilter} from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
+import {Auth} from './Auth'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -129,58 +130,117 @@ export default function MoodAnalysisSemiDonutChart() {
                     }
                 }
             }
-        Axios.post(process.env.REACT_APP_URL,
-            query,{
-             headers:{
-                'Content-Type':'application/json'
-            }
-        })
-        .then(fetchedData => {
-            var sourceKeys,sourceBuckets,perDayBuckets
-            var uniqueSourceKeys = []
-            let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-            var languageKeys = getKeyArray(languageBuckets)
-            languageKeys.forEach((key,i) =>{
-                sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sortedData[key] ={}
-                sourceKeys.forEach((source,j) => {
-                    if(!uniqueSourceKeys.includes(source)){
-                        uniqueSourceKeys.push(source)
-                    }
-                    sortedData[key][source] ={}
-                    perDayBuckets = sourceBuckets[j]['per-day'].buckets
-                    sortedData[key][source]['joy'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'joy'))[0]
-                    sortedData[key][source]['anticipation'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anticipation'))[0]
-                    sortedData[key][source]['fear'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'fear'))[0]
-                    sortedData[key][source]['disgust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'disgust'))[0]
-                    sortedData[key][source]['sad'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'sad'))[0]
-                    sortedData[key][source]['surprise'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'surprise'))[0]
-                    sortedData[key][source]['trust'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'trust'))[0]
-                    sortedData[key][source]['anger'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'anger'))[0]
-                });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source => {
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
-            setMoods(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
+        Axios.post(
+          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          query,
+          Auth,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((fetchedData) => {
+            var sourceKeys, sourceBuckets, perDayBuckets;
+            var uniqueSourceKeys = [];
+            let languageBuckets =
+              fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+                .buckets;
+            var languageKeys = getKeyArray(languageBuckets);
+            languageKeys.forEach((key, i) => {
+              sourceBuckets = languageBuckets[i].Source.buckets;
+              sourceKeys = getKeyArray(sourceBuckets);
+              sortedData[key] = {};
+              sourceKeys.forEach((source, j) => {
+                if (!uniqueSourceKeys.includes(source)) {
+                  uniqueSourceKeys.push(source);
                 }
-            })
-        })
-        .catch(err => {
-            console.log(err)
-        })
+                sortedData[key][source] = {};
+                perDayBuckets = sourceBuckets[j]["per-day"].buckets;
+                sortedData[key][source]["joy"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "joy"
+                  )
+                )[0];
+                sortedData[key][source][
+                  "anticipation"
+                ] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "anticipation"
+                  )
+                )[0];
+                sortedData[key][source]["fear"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "fear"
+                  )
+                )[0];
+                sortedData[key][source]["disgust"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "disgust"
+                  )
+                )[0];
+                sortedData[key][source]["sad"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "sad"
+                  )
+                )[0];
+                sortedData[key][source][
+                  "surprise"
+                ] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "surprise"
+                  )
+                )[0];
+                sortedData[key][source]["trust"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "trust"
+                  )
+                )[0];
+                sortedData[key][source]["anger"] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "anger"
+                  )
+                )[0];
+              });
+            });
+            let availableSourceKeys = {};
+            uniqueSourceKeys.forEach((source) => {
+              availableSourceKeys[source] = true;
+            });
+            setSources(availableSourceKeys);
+            let availableLanguageKeys = {};
+            languageKeys.forEach((lang) => {
+              availableLanguageKeys[lang] = true;
+            });
+            setLanguages(availableLanguageKeys);
+            setMoods((prev) => {
+              if (Object.keys(prev).length) {
+                return prev;
+              } else {
+                return {
+                  joy: true,
+                  anticipation: true,
+                  fear: true,
+                  disgust: true,
+                  sad: true,
+                  surprise: true,
+                  trust: true,
+                  anger: true,
+                };
+              }
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     }, [from,to,refresh,keywordType,keywords])
 
     useEffect(()=>{

@@ -5,6 +5,8 @@ import ChipInput from 'material-ui-chip-input';
 import MaterialTable from 'material-table';
 import { getKeyArray } from '../../helpers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {Auth} from './Auth'
+
 const dateFormatter = (unix) => {
     var date = new Date(unix);
     var hours = date.getHours();
@@ -99,131 +101,139 @@ function SearchFromDB() {
                 "terms": {"HashtagEntities.Text.keyword":keywords}  
             })
           }
-            Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-              .then(fetchedData => {
-                setData(fetchedData.data.hits.hits.map((postObj)=>{
-                    if(!postObj._source.User){
-                        return {
-                            date:dateFormatter(postObj._source.CreatedAt),
-                            post:postObj._source.Text,
-                            source:postObj._source.Source,
-                            subSource:postObj._source.SubSource,
-                            favouriteCount:postObj._source.FavoriteCount,
-                            sentiment:postObj._source.predictedSentiment,
-                            mood:postObj._source.predictedMood,
-                            language:postObj._source.predictedLang
-                        }
-                    } else {
-                        return {
-                            date:dateFormatter(postObj._source.CreatedAt),
-                            post:postObj._source.Text,
-                            source:postObj._source.Source,
-                            subSource:postObj._source.SubSource,
-                            favouriteCount:postObj._source.FavoriteCount,
-                            sentiment:postObj._source.predictedSentiment,
-                            mood:postObj._source.predictedMood,
-                            language:postObj._source.predictedLang,
-                            followersCount:postObj._source.User.FollowersCount,
-                            location:postObj._source.User.Location,
-                            name:postObj._source.User.Name,
-                            screenName:postObj._source.User.ScreenName
-                        }
-                    }
-                })
+            Axios.post(
+              `http://cors-anywhere.herokuapp.com/` +
+                process.env.REACT_APP_SEARCH_URL,
+              query
             )
-            if(sources.includes('twitter')){
-                setColumns([
-                    {
-                        title:'Date',
-                        field:'date',   
-                    },
-                    {
-                        title:'Source',
-                        field:'source'
-                    },
-                    {
-                        title:'Sub Source',
-                        field:'subSource'
-                    },
-                    {
-                        title:'Name',
-                        field:'name',   
-                    },
-                    {
-                        title:'Screen Name',
-                        field:'screenName',
-                    },
-                    {
-                        title:'Post',
-                        field:'post',
-                    },
-                    {
-                        title:'Sentiment',
-                        field:'sentiment',   
-                    },
-                    {
-                        title:'Mood',
-                        field:'mood',   
-                    },
-                    {
-                        title:'Language',
-                        field:'language',   
+              .then((fetchedData) => {
+                setData(
+                  fetchedData.data.hits.hits.map((postObj) => {
+                    if (!postObj._source.User) {
+                      return {
+                        date: dateFormatter(postObj._source.CreatedAt),
+                        post: postObj._source.Text,
+                        source: postObj._source.Source,
+                        subSource: postObj._source.SubSource,
+                        favouriteCount: postObj._source.FavoriteCount,
+                        sentiment: postObj._source.predictedSentiment,
+                        mood: postObj._source.predictedMood,
+                        language: postObj._source.predictedLang,
+                      };
+                    } else {
+                      return {
+                        date: dateFormatter(postObj._source.CreatedAt),
+                        post: postObj._source.Text,
+                        source: postObj._source.Source,
+                        subSource: postObj._source.SubSource,
+                        favouriteCount: postObj._source.FavoriteCount,
+                        sentiment: postObj._source.predictedSentiment,
+                        mood: postObj._source.predictedMood,
+                        language: postObj._source.predictedLang,
+                        followersCount: postObj._source.User.FollowersCount,
+                        location: postObj._source.User.Location,
+                        name: postObj._source.User.Name,
+                        screenName: postObj._source.User.ScreenName,
+                      };
                     }
-                ])
-            }else {
-                setColumns([
+                  })
+                );
+                if (sources.includes("twitter")) {
+                  setColumns([
                     {
-                        title:'Date',
-                        field:'date',   
+                      title: "Date",
+                      field: "date",
                     },
                     {
-                        title:'Source',
-                        field:'source'
+                      title: "Source",
+                      field: "source",
                     },
                     {
-                        title:'Sub Source',
-                        field:'subSource'
+                      title: "Sub Source",
+                      field: "subSource",
                     },
                     {
-                        title:'Post',
-                        field:'post',
+                      title: "Name",
+                      field: "name",
                     },
                     {
-                        title:'Sentiment',
-                        field:'sentiment',   
+                      title: "Screen Name",
+                      field: "screenName",
+                    },
+                    {
+                      title: "Post",
+                      field: "post",
+                    },
+                    {
+                      title: "Sentiment",
+                      field: "sentiment",
+                    },
+                    {
+                      title: "Mood",
+                      field: "mood",
+                    },
+                    {
+                      title: "Language",
+                      field: "language",
+                    },
+                  ]);
+                } else {
+                  setColumns([
+                    {
+                      title: "Date",
+                      field: "date",
+                    },
+                    {
+                      title: "Source",
+                      field: "source",
+                    },
+                    {
+                      title: "Sub Source",
+                      field: "subSource",
+                    },
+                    {
+                      title: "Post",
+                      field: "post",
+                    },
+                    {
+                      title: "Sentiment",
+                      field: "sentiment",
                     },
                     // {
                     //     title:'Mood',
-                    //     field:'mood',   
+                    //     field:'mood',
                     // },
                     {
-                        title:'Language',
-                        field:'language',   
-                    }
-                ])
-            }
-        })
-              .catch(err => {
-                  console.log(err)
+                      title: "Language",
+                      field: "language",
+                    },
+                  ]);
+                }
               })
+              .catch((err) => {
+                console.log(err);
+              });
     }
 
     useEffect(() => {
-        Axios.post(process.env.REACT_APP_URL,{
-              "aggs": {
-                "Source": {
-                  "terms": {
-                    "field": "Source.keyword"
-                  }
-                  }
-                }
+        Axios.post(
+          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          {
+            aggs: {
+              Source: {
+                terms: {
+                  field: "Source.keyword",
+                },
+              },
+            },
+          }
+        )
+          .then((data) => {
+            setSources(getKeyArray(data.data.aggregations.Source.buckets));
           })
-          .then(data => {
-             setSources(getKeyArray(data.data.aggregations.Source.buckets))
-          })
-          .catch(err => {
-            console.log(err)
-          })
+          .catch((err) => {
+            console.log(err);
+          });
       }, [])
   
     return (

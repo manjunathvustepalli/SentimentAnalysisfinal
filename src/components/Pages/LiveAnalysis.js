@@ -13,6 +13,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import Slide from '@material-ui/core/Slide';
 import Image from 'material-ui-image'
 import { Tweet } from 'react-twitter-widgets'
+import { Auth } from './Auth'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -94,154 +95,207 @@ function LiveAnalysis() {
       setOpen(false);
     };
     function fetchData(){
-        Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "query": {
-              "bool": {
-                "must": [
+        Axios.post(
+          `http://cors-anywhere.herokuapp.com/` +
+            process.env.REACT_APP_SEARCH_URL,
+          {
+            query: {
+              bool: {
+                must: [
                   {
-                    "terms": {
-                      "Source.keyword": [
-                        source
-                      ]
-                    }
+                    terms: {
+                      "Source.keyword": [source],
+                    },
                   },
                   {
-                    "terms": {
-                      "predictedLang.keyword": languages
-                    }
-                  }
-                ]
-              }
+                    terms: {
+                      "predictedLang.keyword": languages,
+                    },
+                  },
+                ],
+              },
             },
-            "size": 50,
-            "sort": [
+            size: 50,
+            sort: [
               {
-                "CreatedAt": {
-                  "order": "desc"
+                CreatedAt: {
+                  order: "desc",
+                },
+              },
+            ],
+          },
+          Auth
+        )
+          .then((fetchedData) => {
+            let final = fetchedData.data.hits.hits.map((user) => {
+              let obj = {};
+              if (user._source.User) {
+                obj.name = user._source.User.Name;
+                obj.screenName = user._source.User.ScreenName;
+                obj.followersCount = user._source.User.FollowersCount;
+              }
+              if (user._source.Place) {
+                obj.location = user._source.Place.FullName;
+              }
+              if (user._source.HashtagEntities) {
+                obj.hashTags = user._source.HashtagEntities.map((hashTag) => (
+                  <Chip
+                    label={hashTag.Text}
+                    size="small"
+                    style={{
+                      margin: "5px",
+                      backgroundColor: "rgb(67,176,42)",
+                      color: "white",
+                    }}
+                  />
+                ));
+              }
+              if (
+                user._source.MediaEntities &&
+                user._source.MediaEntities.length
+              ) {
+                obj.mediaUrl = user._source.MediaEntities.map((post, i) => {
+                  return (
+                    <IconButton
+                      className={classes.root}
+                      onClick={() => {
+                        setOpen(true);
+                        setType("image");
+                        if (post.MediaURLHttps) {
+                          setactualUrl(post.MediaURLHttps);
+                          setImageUrl(post.MediaURLHttps);
+                        } else {
+                          setactualUrl(post.MediaURL);
+                          setImageUrl(post.MediaURL);
+                        }
+                      }}
+                    >
+                      <LaunchIcon />
+                    </IconButton>
+                  );
+                });
+                if (user._source.MediaEntities[0].ExpandedURL) {
+                  obj.postUrl = (
+                    <IconButton
+                      onClick={() => {
+                        setOpen(true);
+                        setType("post");
+                        let splittedUrl = user._source.MediaEntities[0].ExpandedURL.split(
+                          "/photo"
+                        )[0].split("/");
+                        let id = splittedUrl[splittedUrl.length - 1];
+                        setContent(id);
+                        setactualUrl(user._source.MediaEntities[0].ExpandedURL);
+                      }}
+                      className={classes.root}
+                    >
+                      {" "}
+                      <LaunchIcon />{" "}
+                    </IconButton>
+                  );
+                }
+              } else if (user._source.URLEntities && source !== "twitter") {
+                if (user._source.URLEntities[0]) {
+                  obj.postUrl = (
+                    <IconButton
+                      onClick={() => {
+                        setOpen(true);
+                        setType("post");
+                        setContent(user._source.URLEntities[0].URL);
+                        setactualUrl(user._source.URLEntities[0].URL);
+                      }}
+                      className={classes.root}
+                    >
+                      {" "}
+                      <LaunchIcon />{" "}
+                    </IconButton>
+                  );
                 }
               }
-            ]
-          })
-        .then(fetchedData => {
-            let final =  fetchedData.data.hits.hits.map(user => {
-                let obj = {}
-                if(user._source.User){
-                    obj.name =  user._source.User.Name
-                    obj.screenName =  user._source.User.ScreenName
-                    obj.followersCount =  user._source.User.FollowersCount
-                }
-                if(user._source.Place){
-                  obj.location = user._source.Place.FullName
-                }
-                if(user._source.HashtagEntities){
-                  obj.hashTags = user._source.HashtagEntities.map(hashTag => <Chip label={hashTag.Text} size="small" style={{margin:'5px',backgroundColor:'rgb(67,176,42)',color:'white'}} />)
-                }
-                if(user._source.MediaEntities && user._source.MediaEntities.length){
-                    obj.mediaUrl = user._source.MediaEntities.map((post,i)=>{
-                      return (<IconButton
-                        className={classes.root}
-                        onClick = {() => {
-                          setOpen(true)
-                          setType('image')
-                          if(post.MediaURLHttps){
-                            setactualUrl(post.MediaURLHttps)
-                            setImageUrl(post.MediaURLHttps);
-                          } else{
-                            setactualUrl(post.MediaURL)
-                            setImageUrl(post.MediaURL);
-                          }
-                        }}
-                      >
-                        <LaunchIcon/>
-                      </IconButton>) 
-                    })
-                     if(user._source.MediaEntities[0].ExpandedURL){
-                      obj.postUrl =<IconButton 
-                      onClick={() =>{
-                        
-                        setOpen(true)
-                        setType('post')
-                        let splittedUrl = user._source.MediaEntities[0].ExpandedURL.split('/photo')[0].split('/')
-                        let id = splittedUrl[splittedUrl.length - 1]
-                        setContent(id)
-                        setactualUrl(user._source.MediaEntities[0].ExpandedURL)
-                      }}
-                      className={classes.root} > <LaunchIcon/> </IconButton>
-                    }
-                } else if(user._source.URLEntities && source !== 'twitter') {
-                  if(user._source.URLEntities[0]){
-                    obj.postUrl =<IconButton 
-                    onClick={() =>{
-                      setOpen(true)
-                      setType('post')
-                      setContent(user._source.URLEntities[0].URL)
-                      setactualUrl(user._source.URLEntities[0].URL)
-                    }}
-                    className={classes.root} > <LaunchIcon/> </IconButton>
-                  }                  
-                }
-                
-                obj.date = dateFormatter(user._source.CreatedAt)
-                obj.tweet =  user._source.Text
-                obj.retweetCount =  user._source.RetweetCount
-                obj.mood = user._source.predictedMood
-                obj.sentiment = user._source.predictedSentiment
-                return obj
-            })
-            setData(final)
-            if(source === 'twitter'){
-                setColumns([
-                    {title:'Date',field:'date'},
-                    {title:'Name',field:'name'},
-                    {title:'Screen Name',field:'screenName'},
-                    {title:'Post',field:'tweet'},
-                    {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
-                    {title:'Location',field:'location'},
-                    {title:'HashTags',field:'hashTags'},
-                    {title:'Followers Count',field:'followersCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
-                    {title:'Retweet Count',field:'retweetCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
-                    {
-                      title:'Media',field:'mediaUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                    {
-                      title:'Post',field:'postUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                ])
-            } else if( source === 'facebook'){
-                setColumns([
-                    {title:'Date',field:'date'},
-                    {title:'Post',field:'tweet'},
-                    {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
-                    {title:'Replies',field:'retweetCount',width: "1%",
-                    cellStyle: { whiteSpace: "nowrap" },
-                    headerStyle: { whiteSpace: "nowrap" },},
-                ])
-            } else if( source === 'newspaper' ){
-                setColumns([
-                    {title:'Date',field:'date'},
-                    {title:'Post',field:'tweet'},
-                    {title:'Mood',field:'mood'},
-                    {title:'Sentiment',field:'sentiment'},
-                    {
-                      title:'Media',field:'mediaUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                    {
-                      title:'Post',field:'postUrl',width: "1%",
-                      headerStyle: { whiteSpace: "nowrap" }
-                    },
-                ])
+
+              obj.date = dateFormatter(user._source.CreatedAt);
+              obj.tweet = user._source.Text;
+              obj.retweetCount = user._source.RetweetCount;
+              obj.mood = user._source.predictedMood;
+              obj.sentiment = user._source.predictedSentiment;
+              return obj;
+            });
+            setData(final);
+            if (source === "twitter") {
+              setColumns([
+                { title: "Date", field: "date" },
+                { title: "Name", field: "name" },
+                { title: "Screen Name", field: "screenName" },
+                { title: "Post", field: "tweet" },
+                { title: "Mood", field: "mood" },
+                { title: "Sentiment", field: "sentiment" },
+                { title: "Location", field: "location" },
+                { title: "HashTags", field: "hashTags" },
+                {
+                  title: "Followers Count",
+                  field: "followersCount",
+                  width: "1%",
+                  cellStyle: { whiteSpace: "nowrap" },
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Retweet Count",
+                  field: "retweetCount",
+                  width: "1%",
+                  cellStyle: { whiteSpace: "nowrap" },
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Media",
+                  field: "mediaUrl",
+                  width: "1%",
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Post",
+                  field: "postUrl",
+                  width: "1%",
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+              ]);
+            } else if (source === "facebook") {
+              setColumns([
+                { title: "Date", field: "date" },
+                { title: "Post", field: "tweet" },
+                { title: "Mood", field: "mood" },
+                { title: "Sentiment", field: "sentiment" },
+                {
+                  title: "Replies",
+                  field: "retweetCount",
+                  width: "1%",
+                  cellStyle: { whiteSpace: "nowrap" },
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+              ]);
+            } else if (source === "newspaper") {
+              setColumns([
+                { title: "Date", field: "date" },
+                { title: "Post", field: "tweet" },
+                { title: "Mood", field: "mood" },
+                { title: "Sentiment", field: "sentiment" },
+                {
+                  title: "Media",
+                  field: "mediaUrl",
+                  width: "1%",
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Post",
+                  field: "postUrl",
+                  width: "1%",
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+              ]);
             }
-        })
-        .catch(err => {console.log(err.response,err)})
+          })
+          .catch((err) => {
+            console.log(err.response, err);
+          });
 
     }
     useEffect(() => {
@@ -255,34 +309,36 @@ function LiveAnalysis() {
     }, [reloadInterval,liveReloading,from,to,source,languages])
 
     useEffect(() => {
-      Axios.post(process.env.REACT_APP_URL,{
-        
-            "aggs": {
-              "Source": {
-                "terms": {
-                  "field": "Source.keyword"
+      Axios.post(
+        `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+        {
+          aggs: {
+            Source: {
+              terms: {
+                field: "Source.keyword",
+              },
+              aggs: {
+                Lang: {
+                  terms: {
+                    field: "predictedLang.keyword",
+                  },
                 },
-                "aggs": {
-                  "Lang": {
-                    "terms": {
-                        "field": "predictedLang.keyword"
-                      }
-                    }
-                  }
-                }
-              }
+              },
+            },
+          },
+        },Auth
+      )
+        .then((data) => {
+          let sourceBuckets = data.data.aggregations.Source.buckets;
+          let sourceKeys = getKeyArray(sourceBuckets);
+          sourceKeys.forEach((source, i) => {
+            sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets);
+          });
+          setDataObject(sortedData);
         })
-        .then(data => {
-          let sourceBuckets = data.data.aggregations.Source.buckets
-          let sourceKeys = getKeyArray(sourceBuckets)
-          sourceKeys.forEach((source,i) => {
-            sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets)
-          })
-          setDataObject(sortedData)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch((err) => {
+          console.log(err);
+        });
     }, [])
 
     return (

@@ -18,6 +18,7 @@ import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
 import { addMonths } from '../../helpers/index';
 import Loader from '../LoaderWithBackDrop';
+import {Auth} from './Auth'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -126,63 +127,91 @@ export default function SentimentalAnalysisPieChart() {
                 }
             }
 
-        Axios.post(process.env.REACT_APP_URL,
-        query,{
-             headers:{
-                'Content-Type':'application/json'
-            }
-        })
-        .then(fetchedData => {
-            var sourceKeys,sourceBuckets,perDayBuckets,perDayKeys
-            var uniqueSourceKeys = []
-            let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-            var languageKeys = getKeyArray(languageBuckets)
-            if(languageKeys[0]){
-            languageKeys.forEach((key,i) =>{
-                sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sortedData[key] ={}
-                sourceKeys.forEach((source,j) => {
-                    if(!uniqueSourceKeys.includes(source)){
-                        uniqueSourceKeys.push(source)
-                    }
-                    sortedData[key][source] ={}
-                    perDayBuckets = sourceBuckets[j]['per-day'].buckets
-                    perDayKeys = sourceBuckets[j]['per-day'].buckets.map(item => item.key_as_string)
-                    sortedData[key][source]['negative'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'negative'))[0]
-                    sortedData[key][source]['positive'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'positive'))[0]
-                    sortedData[key][source]['neutral'] = perDayBuckets.map(item => getDocCountByKey(item['Daily-Sentiment-Distro'].buckets,'neutral'))[0]
+        Axios.post(
+          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          query,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((fetchedData) => {
+            var sourceKeys, sourceBuckets, perDayBuckets, perDayKeys;
+            var uniqueSourceKeys = [];
+            let languageBuckets =
+              fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+                .buckets;
+            var languageKeys = getKeyArray(languageBuckets);
+            if (languageKeys[0]) {
+              languageKeys.forEach((key, i) => {
+                sourceBuckets = languageBuckets[i].Source.buckets;
+                sourceKeys = getKeyArray(sourceBuckets);
+                sortedData[key] = {};
+                sourceKeys.forEach((source, j) => {
+                  if (!uniqueSourceKeys.includes(source)) {
+                    uniqueSourceKeys.push(source);
+                  }
+                  sortedData[key][source] = {};
+                  perDayBuckets = sourceBuckets[j]["per-day"].buckets;
+                  perDayKeys = sourceBuckets[j]["per-day"].buckets.map(
+                    (item) => item.key_as_string
+                  );
+                  sortedData[key][source][
+                    "negative"
+                  ] = perDayBuckets.map((item) =>
+                    getDocCountByKey(
+                      item["Daily-Sentiment-Distro"].buckets,
+                      "negative"
+                    )
+                  )[0];
+                  sortedData[key][source][
+                    "positive"
+                  ] = perDayBuckets.map((item) =>
+                    getDocCountByKey(
+                      item["Daily-Sentiment-Distro"].buckets,
+                      "positive"
+                    )
+                  )[0];
+                  sortedData[key][source][
+                    "neutral"
+                  ] = perDayBuckets.map((item) =>
+                    getDocCountByKey(
+                      item["Daily-Sentiment-Distro"].buckets,
+                      "neutral"
+                    )
+                  )[0];
                 });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source => {
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
+              });
+              let availableSourceKeys = {};
+              uniqueSourceKeys.forEach((source) => {
+                availableSourceKeys[source] = true;
+              });
+              setSources(availableSourceKeys);
+              let availableLanguageKeys = {};
+              languageKeys.forEach((lang) => {
+                availableLanguageKeys[lang] = true;
+              });
+              setLanguages(availableLanguageKeys);
+              setSentiments((prev) => {
+                if (Object.keys(prev).length) {
+                  return prev;
                 } else {
-                    return {negative:true,positive:true,neutral:true}
+                  return { negative: true, positive: true, neutral: true };
                 }
-            })
-        } else {
-            setLanguages({})
-            setSources({})
-            setSentiments({})
-            sortedData = {}
-        }
-        setOpen(false)
-        })
-        .catch(err => {
-        setOpen(false)
-        console.log(err)
-        })        
+              });
+            } else {
+              setLanguages({});
+              setSources({});
+              setSentiments({});
+              sortedData = {};
+            }
+            setOpen(false);
+          })
+          .catch((err) => {
+            setOpen(false);
+            console.log(err);
+          });        
 
     }, [from,to,refresh,keywords,keywordType])
 

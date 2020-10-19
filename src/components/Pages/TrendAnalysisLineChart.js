@@ -24,6 +24,7 @@ import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
 import { TrendAnalysisFiltersContext } from "../../contexts/TrendAnalysisContext";
 import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
 import Loader from '../LoaderWithBackDrop'
+import {Auth} from './Auth'
 
 
 
@@ -81,7 +82,7 @@ function TrendAnalysisLineChart() {
 
   const fetchData = (changeInState) => {
     setOpen(true)
-    Axios.post(process.env.REACT_APP_URL,{
+    Axios.post(`http://cors-anywhere.herokuapp.com/` +process.env.REACT_APP_URL,{
       "aggs": {
         "date-based-range": {
           "date_range": {
@@ -115,7 +116,7 @@ function TrendAnalysisLineChart() {
             }
           }   
         }
-      })
+      },Auth)
     .then(fetchedData =>{
       sortedData = {}
       var sourceKeys,languageKeys

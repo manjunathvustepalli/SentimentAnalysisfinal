@@ -1,7 +1,7 @@
 import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
-
+import {Auth}from '../components/Pages/Auth'
 export const MoodAnalysisFiltersContext = createContext()
 
 export const MoodAnalysisContext = ({ children }) => {
@@ -100,67 +100,79 @@ export const MoodAnalysisContext = ({ children }) => {
                     }
                 }
             }
-        Axios.post(process.env.REACT_APP_URL,
-            query,{
-             headers:{
-                'Content-Type':'application/json'
-            }
-        })
-     .then( fetchedData => {
-         var sourceKeys,subSourceKeys
-         var uniqueSourceKeys = []
-         var uniqueSubSourceKeys = []
-         let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-         var languageKeys = getKeyArray(languageBuckets)
-         if(languageKeys[0]){
-            languageKeys.forEach((key,i) =>{
-                let sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sourceKeys.forEach((source,j) => {
-                   if(!uniqueSourceKeys.includes(source)){
-                       uniqueSourceKeys.push(source)
-                   }
-                   let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-                   subSourceKeys = getKeyArray(subSourceBuckets)
-                   subSourceKeys.forEach((subSource,k) => {
-                    if(!uniqueSubSourceKeys.includes(subSource)){
-                        uniqueSubSourceKeys.push(subSource)
+        Axios.post(
+          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          query,
+          Auth
+        )
+          .then((fetchedData) => {
+            var sourceKeys, subSourceKeys;
+            var uniqueSourceKeys = [];
+            var uniqueSubSourceKeys = [];
+            let languageBuckets =
+              fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+                .buckets;
+            var languageKeys = getKeyArray(languageBuckets);
+            if (languageKeys[0]) {
+              languageKeys.forEach((key, i) => {
+                let sourceBuckets = languageBuckets[i].Source.buckets;
+                sourceKeys = getKeyArray(sourceBuckets);
+                sourceKeys.forEach((source, j) => {
+                  if (!uniqueSourceKeys.includes(source)) {
+                    uniqueSourceKeys.push(source);
+                  }
+                  let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+                  subSourceKeys = getKeyArray(subSourceBuckets);
+                  subSourceKeys.forEach((subSource, k) => {
+                    if (!uniqueSubSourceKeys.includes(subSource)) {
+                      uniqueSubSourceKeys.push(subSource);
                     }
-               });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+                  });
+                });
+                let availableSourceKeys = {};
+                uniqueSourceKeys.forEach((source) => {
+                  availableSourceKeys[source] = true;
+                });
+                setSources(availableSourceKeys);
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
+                let availableLanguageKeys = {};
+                languageKeys.forEach((lang) => {
+                  availableLanguageKeys[lang] = true;
+                });
+                setLanguages(availableLanguageKeys);
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource => {
-                availableSubSourceKeys[subSource] = true
-            })
-            setSubSources(availableSubSourceKeys)
+                let availableSubSourceKeys = {};
+                uniqueSubSourceKeys.forEach((subSource) => {
+                  availableSubSourceKeys[subSource] = true;
+                });
+                setSubSources(availableSubSourceKeys);
 
-            setMoods(prev =>{
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                   return {'joy':true,'anticipation':true,'fear':true,'disgust':true,'sad':true,'surprise':true,'trust':true,'anger':true}
-                }})   
-         })} else {
-             setSources({})
-             setLanguages({})
-             setMoods({})
-         }
-             })
-     .catch(err => {
-         console.log(err)
-     })
+                setMoods((prev) => {
+                  if (Object.keys(prev).length) {
+                    return prev;
+                  } else {
+                    return {
+                      joy: true,
+                      anticipation: true,
+                      fear: true,
+                      disgust: true,
+                      sad: true,
+                      surprise: true,
+                      trust: true,
+                      anger: true,
+                    };
+                  }
+                });
+              });
+            } else {
+              setSources({});
+              setLanguages({});
+              setMoods({});
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
      }, [])
 
 

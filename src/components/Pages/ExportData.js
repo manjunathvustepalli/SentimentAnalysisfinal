@@ -11,6 +11,7 @@ import { addMonths } from '../../helpers'
 import FilterHeader from '../Filters/FilterHeader'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
+import {Auth} from './Auth'
 
 
 const dateFormatter = (unix) => {
@@ -73,7 +74,7 @@ function ExportData() {
             languages[language] && (selectedlanguages.push(language))
         })
 
-        Axios.post(process.env.REACT_APP_SEARCH_URL,{
+        Axios.post(`http://cors-anywhere.herokuapp.com/`+process.env.REACT_APP_SEARCH_URL,{
             "query": {
               "match_all": {}
             },
@@ -85,7 +86,7 @@ function ExportData() {
                 }
               }
             ]
-          })
+          }, Auth)
         .then(fetchedData => {
             let final =  fetchedData.data.hits.hits.map(user => {
                 let obj = {}
