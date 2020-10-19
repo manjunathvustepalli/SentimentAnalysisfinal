@@ -270,7 +270,7 @@ function WordCloudSentiment() {
         }
         Axios.post(
           `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
-          query
+          query, Auth
         )
           .then((fetchedData) => {
             var sourceKeys, subSourceKeys, sentimentKeys;

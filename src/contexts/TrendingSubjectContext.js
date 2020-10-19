@@ -2,6 +2,7 @@ import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
 import useDidUpdateEffect from '../components/custom Hooks/useDidUpdateEffect'
+import {Auth} from '../components/Pages/Auth'
 
 var sortedData = {}
 
@@ -103,7 +104,7 @@ export const TrendingSubjectContext = ({ children }) => {
               }
           }
         }
-          Axios.post(process.env.REACT_APP_URL,query)
+          Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth)
         .then(fetchedData => {
           let selectedLanguage, selectedSource, selectedSubSource, selectedMood, selectedSentiment
           let gotAllData = false

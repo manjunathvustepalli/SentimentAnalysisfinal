@@ -1,6 +1,7 @@
 import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
+import { Auth } from '../components/Pages/Auth'
 
 export const WordCloudFiltersContext = createContext()
 
@@ -104,7 +105,7 @@ export const WordCloudContext = ({ children }) => {
                 }
             }
         }
-        Axios.post(process.env.REACT_APP_URL,query)
+        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth)
           .then(fetchedData =>{
             var sourceKeys,subSourceKeys
             var uniqueSourceKeys = []
