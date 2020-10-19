@@ -127,6 +127,7 @@ function LiveAnalysis() {
           Auth
         )
           .then((fetchedData) => {
+            // console.log(fetchedData);
             let final = fetchedData.data.hits.hits.map((user) => {
               let obj = {};
               if (user._source.User) {
@@ -155,6 +156,7 @@ function LiveAnalysis() {
                 user._source.MediaEntities.length
               ) {
                 obj.mediaUrl = user._source.MediaEntities.map((post, i) => {
+                  // console.log("mediaurl",post)
                   return (
                     <IconButton
                       className={classes.root}
@@ -175,6 +177,7 @@ function LiveAnalysis() {
                   );
                 });
                 if (user._source.MediaEntities[0].ExpandedURL) {
+                  //  console.log("post",user._source.MediaEntities[0].ExpandedURL);
                   obj.postUrl = (
                     <IconButton
                       onClick={() => {
@@ -269,6 +272,18 @@ function LiveAnalysis() {
                   field: "retweetCount",
                   width: "1%",
                   cellStyle: { whiteSpace: "nowrap" },
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Media",
+                  field: "mediaUrl",
+                  width: "1%",
+                  headerStyle: { whiteSpace: "nowrap" },
+                },
+                {
+                  title: "Post",
+                  field: "postUrl",
+                  width: "1%",
                   headerStyle: { whiteSpace: "nowrap" },
                 },
               ]);
