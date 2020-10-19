@@ -74,7 +74,7 @@ function ExportData() {
             languages[language] && (selectedlanguages.push(language))
         })
 
-        Axios.post(`http://cors-anywhere.herokuapp.com/`+process.env.REACT_APP_SEARCH_URL,{
+        Axios.post(process.env.REACT_APP_SEARCH_URL,{
             "query": {
               "match_all": {}
             },

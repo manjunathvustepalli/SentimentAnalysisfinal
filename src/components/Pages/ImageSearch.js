@@ -29,7 +29,7 @@ export default function TitlebarGridList() {
 
   
 useEffect(() =>{
-  Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_SEARCH_URL,{
+  Axios.post(process.env.REACT_APP_SEARCH_URL,{
     "query": {
       "bool": {
         "must": [

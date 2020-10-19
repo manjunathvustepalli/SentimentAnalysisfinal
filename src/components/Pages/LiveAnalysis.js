@@ -96,7 +96,7 @@ function LiveAnalysis() {
     };
     function fetchData(){
         Axios.post(
-          `http://cors-anywhere.herokuapp.com/` +
+          
             process.env.REACT_APP_SEARCH_URL,
           {
             query: {
@@ -310,7 +310,7 @@ function LiveAnalysis() {
 
     useEffect(() => {
       Axios.post(
-        `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+        process.env.REACT_APP_URL,
         {
           aggs: {
             Source: {

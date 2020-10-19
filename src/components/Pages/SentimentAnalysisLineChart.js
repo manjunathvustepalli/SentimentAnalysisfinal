@@ -150,7 +150,7 @@ export default function SentimentalAnalysisLineChart() {
             }
         }
        Axios.post(
-         `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+         process.env.REACT_APP_URL,
          query,
          Auth
        )

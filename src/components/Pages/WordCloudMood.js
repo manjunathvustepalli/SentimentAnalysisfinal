@@ -155,7 +155,7 @@ function WordCloudMood() {
     const [tableData, setTableData] = useState([]);
     const searchWordData = () => {
         Axios.post(
-          `http://cors-anywhere.herokuapp.com/` +
+          
             process.env.REACT_APP_SEARCH_URL,
           {
             query: {
@@ -275,7 +275,7 @@ function WordCloudMood() {
             }
         }
         Axios.post(
-          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          process.env.REACT_APP_URL,
           query
         )
           .then((fetchedData) => {

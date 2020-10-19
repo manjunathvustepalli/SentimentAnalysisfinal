@@ -56,7 +56,7 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
               }
           }
       }
-        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+        Axios.post(process.env.REACT_APP_URL,
             query, Auth)
      .then( fetchedData => {
 

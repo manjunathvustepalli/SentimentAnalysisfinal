@@ -82,7 +82,7 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                 }
             }
         }
-        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth)
+        Axios.post(process.env.REACT_APP_URL,query, Auth)
         .then(fetchedData => {
             let sourceBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].Source.buckets
             let sourceKeys = getKeyArray(sourceBuckets)

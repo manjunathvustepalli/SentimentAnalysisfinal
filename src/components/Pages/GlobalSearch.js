@@ -152,7 +152,7 @@ function GlobalSearch() {
                 setopen(false)
             })
         } else if(source === 'facebook') {
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromfb?fbpage=${handlesString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromfb?fbpage=${handlesString}`)
                 .then(res =>{
                     let query = {
                         "query": {
@@ -238,7 +238,7 @@ function GlobalSearch() {
                     setopen(false)
                 })
         } else if(source === 'instagram'){
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
                 .then(res => {
                     console.log(res)
                     if(res.data.status === 'ACCEPTED'){
@@ -347,7 +347,7 @@ function GlobalSearch() {
                           })
                 }})
         } else if(source === 'telegram') {
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
                 .then(res => {
                     console.log(res)
                     if(res.data.status === 'ACCEPTED'){
@@ -427,7 +427,7 @@ function GlobalSearch() {
                           })
                 }})
         } else if(source === 'blogger'){
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
             .then(res => {
                 console.log(res)
                 if(res.data.status === 'ACCEPTED'){
@@ -507,7 +507,7 @@ function GlobalSearch() {
                       })
             }})
         } else if(source === 'google news'){
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
             .then(res => {
                 console.log(res)
                 if(res.data.status === 'ACCEPTED'){

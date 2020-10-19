@@ -102,7 +102,7 @@ function SearchFromDB() {
             })
           }
             Axios.post(
-              `http://cors-anywhere.herokuapp.com/` +
+              
                 process.env.REACT_APP_SEARCH_URL,
               query
             )
@@ -217,7 +217,7 @@ function SearchFromDB() {
 
     useEffect(() => {
         Axios.post(
-          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+          process.env.REACT_APP_URL,
           {
             aggs: {
               Source: {

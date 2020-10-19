@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import AdminTable from '../Tables/AdminTable';
 import Loader from '../LoaderWithBackDrop'
 import {Auth} from './Auth'
+
 function Admin() {
     const sourcesQueryKeys = {
         'facebook':'/getaddedfbpages',
@@ -27,7 +28,7 @@ function Admin() {
 
     useEffect(() =>  {
         setLoaderOpen(true)
-        Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`,Auth)
+        Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
         .then(data=>{
             setData(data.data[Object.keys(data.data)[0]].map(item => {
                 return {
@@ -53,7 +54,7 @@ function Admin() {
             'googlenews':'/fetchdatafromgooglenews?googlenewspage='
             }
 
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`,Auth)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`, Auth)
             .then(data => {
                 setRefresh(prev => !prev)
                 setLoaderOpen(false)
@@ -76,7 +77,7 @@ function Admin() {
                 'telegram':'/stopcrawlingtelegramchannel?telegramchannel=',
                 'googlenews':'/stopcrawlinggooglenewspage?googlenewspage='
                 }
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}${sourceDeleteQueryStrings[source]}${deletedWord}`,Auth)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourceDeleteQueryStrings[source]}${deletedWord}`, Auth)
             .then(data =>{
                 console.log(data)
                 setLoaderOpen(false)

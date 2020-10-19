@@ -56,7 +56,7 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
               }
           }
       }
-        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth,
+        Axios.post(process.env.REACT_APP_URL,query, Auth,
             query,{
              headers:{
                 'Content-Type':'application/json'

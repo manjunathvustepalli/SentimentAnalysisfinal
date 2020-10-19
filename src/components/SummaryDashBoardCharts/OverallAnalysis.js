@@ -108,7 +108,7 @@ function OverallAnalysis({to, from,refresh}) {
       setMainSourceData({})
       setSentiments([])
       setMoods([])
-        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,{
+        Axios.post(process.env.REACT_APP_URL,{
             "aggs": {
               "date-based-range": {
                 "date_range": {

@@ -84,7 +84,7 @@ function TrendAnalysis(props) {
     setLineData([])
     setBarData([[],[]])
     Axios.post(
-      `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+      process.env.REACT_APP_URL,
       {
         aggs: {
           "date-based-range": {

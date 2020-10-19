@@ -144,7 +144,7 @@ function InfluencerComparison({from,to,refresh}) {
     useEffect(() => {
         setData([])
         if(source === 'twitter'){
-            Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+            Axios.post(process.env.REACT_APP_URL,
               {
                 "query": {
                   "bool": {
@@ -234,7 +234,7 @@ function InfluencerComparison({from,to,refresh}) {
                     console.log(err,err.response)
                 })    
         } else {
-            Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,{
+            Axios.post(process.env.REACT_APP_URL,{
               "query": {
                 "terms": {
                   "Source.keyword": [source]

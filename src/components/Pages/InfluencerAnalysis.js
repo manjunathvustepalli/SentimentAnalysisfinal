@@ -226,7 +226,7 @@ function InfluencerAnalysis() {
 
   const fetchData = () => {
     if(source === 'Twitter'){
-      Axios.post(`http://cors-anywhere.herokuapp.com/`+process.env.REACT_APP_URL,
+      Axios.post(process.env.REACT_APP_URL,
         {
           "query": {
             "bool": {
@@ -347,7 +347,7 @@ function InfluencerAnalysis() {
           })    
   } else if(source === 'Newspaper'|| source === 'Facebook') {
       Axios.post(
-        `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+        process.env.REACT_APP_URL,
         {
           query: {
             terms: {

@@ -81,7 +81,7 @@ function TrendAnalysisAreaChart() {
   const fetchData = (changeInState) => {
     setOpen(true)
     Axios.post(
-      `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+      process.env.REACT_APP_URL,
       {
         aggs: {
           "date-based-range": {
