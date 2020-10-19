@@ -1,7 +1,7 @@
 import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
- 
+ import {Auth} from '../components/Pages/Auth'
 export const SentimentAnalysisFiltersContext = createContext()
 
 export const SentimentAnalysisContext = ({ children }) => {
@@ -87,12 +87,8 @@ export const SentimentAnalysisContext = ({ children }) => {
                 }
               }
             }
-       Axios.post(process.env.REACT_APP_URL,
-        query,{
-            headers:{
-               'Content-Type':'application/json'
-           }
-       })
+       Axios.post(`http://cors-anywhere.herokuapp.com/` +process.env.REACT_APP_URL,
+        query,Auth)
     .then(fetchedData => {
         var sourceKeys,subSourceKeys
         var uniqueSourceKeys = []

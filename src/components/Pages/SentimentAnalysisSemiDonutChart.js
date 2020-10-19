@@ -130,11 +130,7 @@ function SentimentAnalysisSemiDonutChart() {
         Axios.post(
           `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
           query,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        Auth
         )
           .then((fetchedData) => {
             var sourceKeys, sourceBuckets, perDayBuckets, perDayKeys;

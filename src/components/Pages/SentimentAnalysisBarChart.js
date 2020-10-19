@@ -155,11 +155,7 @@ export default function SentimentalAnalysisAreaChart(props) {
        Axios.post(
          `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
          query,
-         {
-           headers: {
-             "Content-Type": "application/json",
-           },
-         },
+        
          Auth
        )
          .then((fetchedData) => {
