@@ -104,7 +104,7 @@ function SearchFromDB() {
             Axios.post(
               `http://cors-anywhere.herokuapp.com/` +
                 process.env.REACT_APP_SEARCH_URL,
-              query
+              query,Auth
             )
               .then((fetchedData) => {
                 setData(
@@ -226,7 +226,7 @@ function SearchFromDB() {
                 },
               },
             },
-          }
+          },Auth
         )
           .then((data) => {
             setSources(getKeyArray(data.data.aggregations.Source.buckets));
