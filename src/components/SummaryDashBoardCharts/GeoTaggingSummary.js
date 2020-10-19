@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import GeoHotSpotMap from '../charts/Maps/GeoHotSpotMap'
 
+
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
         borderColor: "#43B02A",

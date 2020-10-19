@@ -3,6 +3,7 @@ import Axios from 'axios'
 import AreaChart from '../charts/AreaChart'
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom'
+import {Auth} from '../Pages/Auth';
 
 function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
 
@@ -55,7 +56,7 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
               }
           }
       }
-        Axios.post(process.env.REACT_APP_URL,
+        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth,
             query,{
              headers:{
                 'Content-Type':'application/json'

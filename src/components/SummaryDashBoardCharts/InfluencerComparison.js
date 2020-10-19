@@ -7,6 +7,7 @@ import { capitalizeString } from '../../helpers';
 import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom';
+import {Auth} from '../Pages/Auth';
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -143,7 +144,7 @@ function InfluencerComparison({from,to,refresh}) {
     useEffect(() => {
         setData([])
         if(source === 'twitter'){
-            Axios.post(process.env.REACT_APP_URL,
+            Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
               {
                 "query": {
                   "bool": {
@@ -213,7 +214,7 @@ function InfluencerComparison({from,to,refresh}) {
                     }
                   }
                 }
-              })
+              }, Auth)
                 .then(res => {
                     setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                           return {
@@ -233,7 +234,7 @@ function InfluencerComparison({from,to,refresh}) {
                     console.log(err,err.response)
                 })    
         } else {
-            Axios.post(process.env.REACT_APP_URL,{
+            Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,{
               "query": {
                 "terms": {
                   "Source.keyword": [source]
@@ -285,7 +286,7 @@ function InfluencerComparison({from,to,refresh}) {
                   }
                 }
               }
-            })
+            }, Auth)
               .then(res => {
                   setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].newspaperInfluencers.buckets.map(doc =>{
                     return {

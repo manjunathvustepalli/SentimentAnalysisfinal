@@ -3,6 +3,7 @@ import TrendAnalysisLineChart from '../charts/TrendAnalysisLineChart'
 import Axios from 'axios'
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom'
+import {Auth} from '../Pages/Auth';
 
 function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
 
@@ -55,12 +56,8 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
               }
           }
       }
-        Axios.post(process.env.REACT_APP_URL,
-            query,{
-             headers:{
-                'Content-Type':'application/json'
-            }
-        })
+        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+            query, Auth)
      .then( fetchedData => {
 
          let perDayBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0]['per-day'].buckets

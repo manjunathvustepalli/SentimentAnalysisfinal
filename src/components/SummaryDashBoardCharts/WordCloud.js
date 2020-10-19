@@ -7,6 +7,7 @@ import CustomLegend from '../CustomLegend'
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom'
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
+import {Auth} from '../Pages/Auth';
 
 var sortedData = {}
 
@@ -81,7 +82,7 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
                 }
             }
         }
-        Axios.post(process.env.REACT_APP_URL,query)
+        Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth)
         .then(fetchedData => {
             let sourceBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].Source.buckets
             let sourceKeys = getKeyArray(sourceBuckets)
