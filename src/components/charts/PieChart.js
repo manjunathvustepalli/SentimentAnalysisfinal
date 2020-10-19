@@ -1,0 +1,97 @@
+import React, { Component } from 'react';
+import Highcharts from 'highcharts'
+import Piechart from 'highcharts-react-official'
+require('highcharts/modules/exporting')(Highcharts);
+
+export default class PieChart extends Component {
+    render(){
+        Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
+            var path = [
+                'M', x + w * 0.5, y,
+                'L', x + w * 0.5, y + h * 0.7,
+                'M', x + w * 0.3, y + h * 0.5,
+                'L', x + w * 0.5, y + h * 0.7,
+                'L', x + w * 0.7, y + h * 0.5,
+                'M', x, y + h * 0.9,
+                'L', x, y + h,
+                'L', x + w, y + h,
+                'L', x + w, y + h * 0.9
+            ];
+            return path;
+        };
+        const config = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                height:this.props.height
+            },
+            CSSObject:{
+                color:'rbg(0,0,0)',
+                fontFamily: 'monospace',
+                fontSize: '1.2rem'
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: "80%",
+                    allowPointSelect: true,
+                    showInLegend: true,
+                    cursor: 'pointer',
+                    size:'70%',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.percentage:.1f} %',
+                        distance: 10,
+                        style: {
+                            fontWeight: 'bold',
+                            color: 'black',
+                            fontSize:'0.8rem'
+                          }
+                    }
+                },
+            },
+            series: [{
+                name:this.props.name,
+                data: this.props.data,
+            }],
+            exporting: {
+                chartOptions: {
+                    title:{
+                        style:{
+                            fontSize:'10px'
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                style:{
+                                    fontSize:'6px'
+                                }
+                            }
+                            
+                        }
+                    }
+                },
+                scale: 4,
+                fallbackToExportServer: false,
+                buttons: {
+                    contextButton: {
+                        symbol: 'download'
+                    }
+                }
+            },
+        }
+        return <Piechart highcharts={Highcharts} options = {config} />
+    }
+}
