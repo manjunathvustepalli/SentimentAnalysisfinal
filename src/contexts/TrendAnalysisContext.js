@@ -1,7 +1,7 @@
 import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
-
+import {Auth} from '../components/Pages/Auth'
 export const TrendAnalysisFiltersContext = createContext()
 export const TrendAnalysisContext = ({ children }) => {
   const [sources, setSources] = useState({});
@@ -21,78 +21,85 @@ export const TrendAnalysisContext = ({ children }) => {
   }
 
   useEffect(() => {
-    Axios.post(process.env.REACT_APP_URL,{
-      "aggs": {
-        "date-based-range": {
-          "date_range": {
-            "field": "CreatedAt",
-            "format": "dd-MM-yyyy",
-            "ranges": [
-              { "from": from, "to":to }
-            ]
-          },
-          "aggs": {
-            "per-day": {
-              "date_histogram": {
-                "field": "CreatedAt",
-                "calendar_interval": "day"
-              },
-              "aggs": {
-                "Source": {
-                  "terms": {
-                    "field": "Source.keyword"
+    Axios.post(
+      `http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,
+      {
+        aggs: {
+          "date-based-range": {
+            date_range: {
+              field: "CreatedAt",
+              format: "dd-MM-yyyy",
+              ranges: [{ from: from, to: to }],
+            },
+            aggs: {
+              "per-day": {
+                date_histogram: {
+                  field: "CreatedAt",
+                  calendar_interval: "day",
+                },
+                aggs: {
+                  Source: {
+                    terms: {
+                      field: "Source.keyword",
+                    },
+                    aggs: {
+                      Lang: {
+                        terms: {
+                          field: "predictedLang.keyword",
+                        },
+                      },
+                    },
                   },
-                  "aggs": {
-                    "Lang": {
-                      "terms": {
-                          "field": "predictedLang.keyword"
-                        }
-                      }
-                    }
-                  }
-                }
+                },
+              },
+            },
+          },
+        },
+      },
+      Auth
+    )
+      .then((fetchedData) => {
+        var sourceKeys, languageKeys;
+        var uniqueSourceKeys = [];
+        var uniqueLanguageKeys = [];
+        var perDayBucket =
+          fetchedData.data.aggregations["date-based-range"].buckets[0][
+            "per-day"
+          ].buckets;
+        var perDayKeys = perDayBucket.map(
+          (key) => key.key_as_string.split("T")[0]
+        );
+        perDayKeys.forEach((dayKey, i) => {
+          let sourceBuckets = perDayBucket[i].Source.buckets;
+          sourceKeys = getKeyArray(sourceBuckets);
+          sourceKeys.forEach((source, j) => {
+            if (!uniqueSourceKeys.includes(source)) {
+              uniqueSourceKeys.push(source);
+            }
+            let languageBuckets = sourceBuckets[j].Lang.buckets;
+            languageKeys = getKeyArray(languageBuckets);
+            languageKeys.forEach((language, k) => {
+              if (!uniqueLanguageKeys.includes(language)) {
+                uniqueLanguageKeys.push(language);
               }
-            }
-          }   
-        }
-      })
-    .then(fetchedData =>{
-      var sourceKeys,languageKeys
-      var uniqueSourceKeys = []
-      var uniqueLanguageKeys = []
-      var perDayBucket =  fetchedData.data.aggregations['date-based-range'].buckets[0]['per-day'].buckets
-      var perDayKeys =  perDayBucket.map(key => key.key_as_string.split('T')[0])
-      perDayKeys.forEach((dayKey,i) => {
-        let sourceBuckets = perDayBucket[i].Source.buckets
-        sourceKeys = getKeyArray(sourceBuckets)
-        sourceKeys.forEach((source,j) => {
-          if(!uniqueSourceKeys.includes(source)){
-            uniqueSourceKeys.push(source)
-          }
-          let languageBuckets = sourceBuckets[j].Lang.buckets
-          languageKeys = getKeyArray(languageBuckets)
-          languageKeys.forEach((language,k)=>{
-            if(!uniqueLanguageKeys.includes(language)){
-              uniqueLanguageKeys.push(language)
-            }
-          })
-        })
-      })
-      let availableLanguageKeys = {}
-      uniqueLanguageKeys.forEach(lang =>{
-          availableLanguageKeys[lang] = true
-      })
-      setLanguages(availableLanguageKeys)
+            });
+          });
+        });
+        let availableLanguageKeys = {};
+        uniqueLanguageKeys.forEach((lang) => {
+          availableLanguageKeys[lang] = true;
+        });
+        setLanguages(availableLanguageKeys);
 
-      let availableSourceKeys = {}
-      uniqueSourceKeys.forEach(source =>{
-          availableSourceKeys[source] = true
+        let availableSourceKeys = {};
+        uniqueSourceKeys.forEach((source) => {
+          availableSourceKeys[source] = true;
+        });
+        setSources(availableSourceKeys);
       })
-      setSources(availableSourceKeys)
-    })
-    .catch(err=>{
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [])
 
   return(
