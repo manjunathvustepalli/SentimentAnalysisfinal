@@ -38,7 +38,7 @@ function GlobalSearch() {
         let handlesString = handles.join(',')
         let temp = []
         if(source === 'twitter'){
-            Axios.get(`http://cors-anywhere.herokuapp.com/${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
+            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
                 .then(res =>{
                     console.log(res)
                     if(res.data.status === 'ACCEPTED'){

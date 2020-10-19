@@ -104,7 +104,7 @@ export const TrendingSubjectContext = ({ children }) => {
               }
           }
         }
-          Axios.post(`http://cors-anywhere.herokuapp.com/` + process.env.REACT_APP_URL,query, Auth)
+          Axios.post(process.env.REACT_APP_URL,query, Auth)
         .then(fetchedData => {
           let selectedLanguage, selectedSource, selectedSubSource, selectedMood, selectedSentiment
           let gotAllData = false
