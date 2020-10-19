@@ -52,10 +52,7 @@ useEffect(() =>{
       }
     ]
   },{
-    auth:{
-      username:"shyenaui",
-      password:"X1Py5asktgirvC4"
-    }
+    
   })
   .then(fetchedData=>{
     console.log(fetchedData)
