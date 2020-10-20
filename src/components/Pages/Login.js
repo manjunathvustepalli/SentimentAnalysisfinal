@@ -16,6 +16,11 @@ import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 import { Label } from "@material-ui/icons";
 import cookies from "js-cookie";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+
 const styles = {
   background: {
     width: "100vw",
@@ -75,10 +80,18 @@ function Login(props) {
   const classes = useStyles();
   const [Username, setUsername] = useState();
   const [Password, setPassword] = useState();
+  const [Password2, setPassword2] = useState();
+  const [UserType, setUserType] = useState();
+
+  const [SignUpFlag, setSignUpFlag] = useState(false)
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
 
   const handleIncorrectEntry = () => {
     setIncorrectFlag(!IncorrectFlag)
+  }
+
+  const handleSignUp = () => {
+    setSignUpFlag(!IncorrectFlag)
   }
 
   const Signin = () => {
@@ -87,6 +100,7 @@ function Login(props) {
     var formdata = new FormData();
     formdata.append("username", Username);
     formdata.append("password", Password);
+    
 
     let config = {
       method: "post",
@@ -100,11 +114,6 @@ function Login(props) {
       .then((response) => {
         console.log(JSON.stringify(response));
 
-    //     {response.status === 200 ? props.history.push({
-    //       pathname: "/summary-dashboard",
-    //     })
-    //   : handleIncorrectEntry()
-    // }
         if (response.status === 200) {
           props.history.push({
             pathname: "/summary-dashboard",
@@ -119,6 +128,41 @@ function Login(props) {
       });
 
   };
+
+  const SignUp = () => {
+    let data = new FormData();
+
+    var formdata = new FormData();
+    formdata.append("username", Username);
+    formdata.append("email", Password);
+    formdata.append("password1", Password);
+    formdata.append("password2", Password2);
+    
+    let config = {
+      method: "post",
+      url:
+        "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/login/",
+
+      data: formdata,
+    };
+
+    axios(config)
+      .then((response) => {
+        console.log(JSON.stringify(response));
+
+        if (response.status === 200) {
+          props.history.push({
+            pathname: "/summary-dashboard",
+          });
+        }
+        else {
+          handleIncorrectEntry()
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   
   return (
     <div style={styles.background}>
@@ -164,7 +208,7 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {!IncorrectFlag ? <div/> : (
+                  {IncorrectFlag ? <div/> : (
                     <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
                     Incorrect username or password!
                   </Typography>
@@ -191,7 +235,7 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {!IncorrectFlag ? <div/> : (
+                  {IncorrectFlag ? <div/> : (
                     <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
                     Incorrect username or password!
                   </Typography>
@@ -199,7 +243,9 @@ function Login(props) {
                 </div>
               </label>
 
-              <label
+                {SignUpFlag ? (
+                  <> 
+                  <label
                 htmlfor="password-input"
                 style={{ display: "block", width: "100%" }}
               >
@@ -208,8 +254,8 @@ function Login(props) {
                   <input
                     type="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
-                    id="password-input"
+                    placeholder="Re-Enter Password"
+                    id="re-password-input"
                     style={{
                       width: "100%",
                       height: "25px",
@@ -218,11 +264,6 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {!IncorrectFlag ? <div/> : (
-                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
-                    Incorrect username or password!
-                  </Typography>
-                  )}
                 </div>
               </label>
 
@@ -230,30 +271,45 @@ function Login(props) {
                 htmlfor="password-input"
                 style={{ display: "block", width: "100%" }}
               >
-                <div style={styles.inputWrapper}>
-                  <LockRoundedIcon style={styles.inputIcon} />
-                  <input
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
-                    id="password-input"
-                    style={{
-                      width: "100%",
-                      height: "25px",
-                      border: "none",
-                      outline: "none",
-                      textAlign: "center",
-                    }}
-                  />
-                  {!IncorrectFlag ? <div/> : (
-                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
-                    Incorrect username or password!
-                  </Typography>
-                  )}
+                <div >
+                  {/* <LockRoundedIcon style={styles.inputIcon} /> */}
+                  <FormControl fullWidth size="small" required>
+                  <InputLabel id="companyLabel">Select User Type</InputLabel>
+                  <Select
+                    labelId="companyLabel"
+                    id="company"
+                    onChange={(e) => 
+                      setUserType(e.target.value), (e)=> console.log('event:', e.target.value)
+                    }
+                    fullWidth
+                  >
+                    <MenuItem key={"Admin"} value={"Admin"}>Admin</MenuItem>
+                    <MenuItem key={"Analyst"} value={"Analyst"}>Analyst</MenuItem>
+                  </Select>
+                </FormControl>
                 </div>
               </label>
+
+                  </>
+                ) : <div/>}
+              
               <div></div>
-              <Button
+              {SignUpFlag ? (
+                <Button
+                onClick={Signin}
+                // onClick={()=> handleIncorrectEntry()}
+                className={classes.button}
+                variant="contained"
+                style={{ margin: "10px" }}
+                component={Link}
+                // to=""
+                fullWidth
+              >
+                ENTER
+              </Button>
+              ) : (
+                <>
+                  <Button
                 onClick={Signin}
                 // onClick={()=> handleIncorrectEntry()}
                 className={classes.button}
@@ -265,8 +321,9 @@ function Login(props) {
               >
                 SIGN IN
               </Button>
+
               <Button
-                onClick={Signin}
+                onClick={handleSignUp}
                 // onClick={()=> handleIncorrectEntry()}
                 className={classes.button}
                 variant="contained"
@@ -277,6 +334,9 @@ function Login(props) {
               >
                 SIGN UP
               </Button>
+                </>
+              )}
+              
             </Card>
           </div>
         </Grid>
