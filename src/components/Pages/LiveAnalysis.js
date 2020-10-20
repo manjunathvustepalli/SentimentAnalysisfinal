@@ -127,7 +127,7 @@ function LiveAnalysis() {
           Auth
         )
           .then((fetchedData) => {
-            // console.log(fetchedData);
+            console.log('fetch',fetchedData);
             let final = fetchedData.data.hits.hits.map((user) => {
               let obj = {};
               if (user._source.User) {
@@ -150,6 +150,19 @@ function LiveAnalysis() {
                     }}
                   />
                 ));
+              }
+              if (user._source.predictedSentiment) {
+                obj.predictedSentiment = (
+                  <Chip
+                    label={user._source.predictedSentiment}
+                    size="small"
+                    style={{
+                      margin: "5px",
+                      backgroundColor: "rgb(67,176,42)",
+                      color: "white",
+                    }}
+                  />
+                );
               }
               if (
                 user._source.MediaEntities &&
@@ -221,6 +234,7 @@ function LiveAnalysis() {
               obj.retweetCount = user._source.RetweetCount;
               obj.mood = user._source.predictedMood;
               obj.sentiment = user._source.predictedSentiment;
+              obj.mediaSentiment = user._source.predictedSentiment;
               return obj;
             });
             setData(final);
@@ -231,7 +245,7 @@ function LiveAnalysis() {
                 { title: "Screen Name", field: "screenName" },
                 { title: "Post", field: "tweet" },
                 { title: "Mood", field: "mood" },
-                { title: "Media Sentiment", field: "sentiment" },
+                { title: "Media Sentiment", field: "predictedSentiment" },
                 { title: "Sentiment", field: "sentiment" },
                 { title: "Location", field: "location" },
                 { title: "HashTags", field: "hashTags" },
