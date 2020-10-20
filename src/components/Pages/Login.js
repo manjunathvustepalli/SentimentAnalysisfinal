@@ -94,7 +94,7 @@ function Login(props) {
       .then((response) => {
 
         console.log(JSON.stringify(response));
-        if (response.status) {
+        if (response.status===200) {
           props.history.push({
             pathname: "/summary-dashboard",
           });
