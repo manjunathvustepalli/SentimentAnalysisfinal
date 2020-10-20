@@ -185,7 +185,7 @@ function LiveAnalysis() {
                       size="small"
                       style={{
                         margin: "5px",
-                        backgroundColor: "#f50057",
+                        backgroundColor: "#ff1744",
                         color: "white",
                       }}
                     />
