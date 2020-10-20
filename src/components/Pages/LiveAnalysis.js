@@ -228,6 +228,7 @@ function LiveAnalysis() {
                 { title: "Screen Name", field: "screenName" },
                 { title: "Post", field: "tweet" },
                 { title: "Mood", field: "mood" },
+                { title: "Media Sentiment", field: "sentiment" },
                 { title: "Sentiment", field: "sentiment" },
                 { title: "Location", field: "location" },
                 { title: "HashTags", field: "hashTags" },
@@ -335,6 +336,7 @@ function LiveAnalysis() {
             sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets);
           });
           setDataObject(sortedData);
+          console.log('MyData:',sourceBuckets);
         })
         .catch((err) => {
           console.log(err);
@@ -483,7 +485,7 @@ function LiveAnalysis() {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title"> {type === 'image' ? ('Image') : ('Post')} </DialogTitle>
+        <DialogTitle style={{background: "rgb(67,176,42)", color: 'white'}} id="alert-dialog-slide-title"> {type === 'image' ? ('Image') : ('Post')} </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             {type ==='image' ? (
