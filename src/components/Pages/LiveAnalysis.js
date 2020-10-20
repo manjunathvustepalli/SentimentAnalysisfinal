@@ -152,7 +152,7 @@ function LiveAnalysis() {
                 ));
               }
               if (user._source.PredictedImageSentiment) {
-                console.log(user._source.PredictedImageSentiment);
+                // console.log(user._source.PredictedImageSentiment);
                 obj.predictedSentiment = user._source.PredictedImageSentiment.map(
                   (image) =>
                     image.sentiment === "neutral" ? (
@@ -171,7 +171,7 @@ function LiveAnalysis() {
                         size="small"
                         style={{
                           margin: "5px",
-                          backgroundColor: "#00b0ff",
+                          backgroundColor: "rgb(67,176,42)",
                           color: "white",
                         }}
                       />
@@ -214,7 +214,7 @@ function LiveAnalysis() {
                   );
                 });
                 if (user._source.MediaEntities[0].ExpandedURL) {
-                  //  console.log("post",user._source.MediaEntities[0].ExpandedURL);
+                   console.log("post",user._source.MediaEntities[0].ExpandedURL);
                   obj.postUrl = (
                     <IconButton
                       onClick={() => {
