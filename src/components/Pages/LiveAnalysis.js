@@ -152,17 +152,46 @@ function LiveAnalysis() {
                 ));
               }
               if (user._source.predictedSentiment) {
-                obj.predictedSentiment = (
-                  <Chip
-                    label={user._source.predictedSentiment}
-                    size="small"
-                    style={{
-                      margin: "5px",
-                      backgroundColor: "rgb(67,176,42)",
-                      color: "white",
-                    }}
-                  />
-                );
+                if (user._source.predictedSentiment === "neutral")  {
+                  obj.predictedSentiment = (
+                    <Chip
+                      label={user._source.predictedSentiment}
+                      size="small"
+                      style={{
+                        margin: "5px",
+                        backgroundColor: "#424242",
+                        color: "white",
+                      }}
+                    />
+                  );
+                }
+                if (user._source.predictedSentiment === "positive")  {
+                  obj.predictedSentiment = (
+                    <Chip
+                      label={user._source.predictedSentiment}
+                      size="small"
+                      style={{
+                        margin: "5px",
+                        backgroundColor: "#00b0ff",
+                        color: "white",
+                      }}
+                    />
+                  );
+                }
+                if (user._source.predictedSentiment === "negative")  {
+                  obj.predictedSentiment = (
+                    <Chip
+                      label={user._source.predictedSentiment}
+                      size="small"
+                      style={{
+                        margin: "5px",
+                        backgroundColor: "#f50057",
+                        color: "white",
+                      }}
+                    />
+                  );
+                }
+                
               }
               if (
                 user._source.MediaEntities &&
