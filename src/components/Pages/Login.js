@@ -15,7 +15,7 @@ import LockRoundedIcon from "@material-ui/icons/LockRounded";
 import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 import { Label } from "@material-ui/icons";
-
+import cookies from "js-cookie";
 const styles = {
   background: {
     width: "100vw",
@@ -82,26 +82,30 @@ function Login(props) {
     formdata.append("username", Username);
     formdata.append("password", Password);
 
-    var requestOptions = {
-      method: "POST",
-      body: formdata,
-      redirect: "follow",
+    let config = {
+      method: "post",
+      url:
+        "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/login/",
+
+      data: formdata,
     };
 
-    fetch(
-      "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/login/",
-      requestOptions
-    )
-      .then((response) => {if(response.status){
-  props.history.push({
-         pathname: "/summary-dashboard",
-       });}
-      })
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
+    axios(config)
+      .then((response) => {
 
-     
+        console.log(JSON.stringify(response));
+        if (response.status) {
+          props.history.push({
+            pathname: "/summary-dashboard",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
   };
+  
   return (
     <div style={styles.background}>
       <Grid container>
