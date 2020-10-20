@@ -14,8 +14,8 @@ export const TrendingSubjectContext = ({ children }) => {
     const [subSource, setSubSource] = useState('');
     const [languages, setLanguages] = useState([]);
     const [language, setLanguage] = useState('');
-    const [from, setFrom] = useState(addMonths(new Date(), -1));
-    const [to, setTo] = useState(addMonths(new Date(), 0));
+    const [from, setFrom] = useState(addMonths(new Date(), 0));
+    const [to, setTo] = useState(addMonths(new Date(), +1));
     const [moods, setMoods] = useState([])
     const [mood, setmood] = useState('joy');
     const [sentiment, setSentiment] = useState('positive');
@@ -104,7 +104,7 @@ export const TrendingSubjectContext = ({ children }) => {
               }
           }
         }
-          Axios.post(process.env.REACT_APP_URL,query, Auth)
+          Axios.post(process.env.REACT_APP_URL,query)
         .then(fetchedData => {
           let selectedLanguage, selectedSource, selectedSubSource, selectedMood, selectedSentiment
           let gotAllData = false
