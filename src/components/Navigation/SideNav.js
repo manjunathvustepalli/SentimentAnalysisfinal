@@ -125,11 +125,11 @@ const SideNavBar = (props) => {
       icon:<AppsIcon/>,
       path:['/word-cloud/sentiment'/*,'/word-cloud/mood'*/],
     },
-    {
-      name:'Trending Subjects',
-      icon:<TrendingUpIcon/>,
-      path:['/trending-subject/sentiment','/trending-subject/mood'],
-    },
+    // {
+    //   name:'Trending Subjects',
+    //   icon:<TrendingUpIcon/>,
+    //   path:['/trending-subject/sentiment','/trending-subject/mood'],
+    // },
     {
       name:'Trend Analysis',
       icon:<WhatshotIcon/>,
