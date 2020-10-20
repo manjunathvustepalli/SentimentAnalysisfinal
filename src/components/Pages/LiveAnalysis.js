@@ -151,47 +151,44 @@ function LiveAnalysis() {
                   />
                 ));
               }
-              if (user._source.predictedSentiment) {
-                if (user._source.predictedSentiment === "neutral")  {
-                  obj.predictedSentiment = (
-                    <Chip
-                      label={user._source.predictedSentiment}
-                      size="small"
-                      style={{
-                        margin: "5px",
-                        backgroundColor: "#424242",
-                        color: "white",
-                      }}
-                    />
-                  );
-                }
-                if (user._source.predictedSentiment === "positive")  {
-                  obj.predictedSentiment = (
-                    <Chip
-                      label={user._source.predictedSentiment}
-                      size="small"
-                      style={{
-                        margin: "5px",
-                        backgroundColor: "#00b0ff",
-                        color: "white",
-                      }}
-                    />
-                  );
-                }
-                if (user._source.predictedSentiment === "negative")  {
-                  obj.predictedSentiment = (
-                    <Chip
-                      label={user._source.predictedSentiment}
-                      size="small"
-                      style={{
-                        margin: "5px",
-                        backgroundColor: "#ff1744",
-                        color: "white",
-                      }}
-                    />
-                  );
-                }
-                
+              if (user._source.PredictedImageSentiment) {
+                user._source.PredictedImageSentiment.map((image) =>
+                  user._source.PredictedImageSentiment === "neutral"
+                    ? (obj.predictedSentiment = (
+                        <Chip
+                          label={image.sentiment}
+                          size="small"
+                          style={{
+                            margin: "5px",
+                            backgroundColor: "#424242",
+                            color: "white",
+                          }}
+                        />
+                      ))
+                    : user._source.PredictedImageSentiment === "positive"
+                    ? (obj.predictedSentiment = (
+                        <Chip
+                          label={image.sentiment}
+                          size="small"
+                          style={{
+                            margin: "5px",
+                            backgroundColor: "#424242",
+                            color: "white",
+                          }}
+                        />
+                      ))
+                    : (obj.predictedSentiment = (
+                        <Chip
+                          label={image.sentiment}
+                          size="small"
+                          style={{
+                            margin: "5px",
+                            backgroundColor: "#424242",
+                            color: "white",
+                          }}
+                        />
+                      ))
+                );
               }
               if (
                 user._source.MediaEntities &&
@@ -274,7 +271,6 @@ function LiveAnalysis() {
                 { title: "Screen Name", field: "screenName" },
                 { title: "Post", field: "tweet" },
                 { title: "Mood", field: "mood" },
-                { title: "Media Sentiment", field: "predictedSentiment" },
                 { title: "Sentiment", field: "sentiment" },
                 { title: "Location", field: "location" },
                 { title: "HashTags", field: "hashTags" },
@@ -292,6 +288,7 @@ function LiveAnalysis() {
                   cellStyle: { whiteSpace: "nowrap" },
                   headerStyle: { whiteSpace: "nowrap" },
                 },
+                { title: "Media Sentiment", field: "predictedSentiment" },
                 {
                   title: "Media",
                   field: "mediaUrl",
