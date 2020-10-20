@@ -15,7 +15,7 @@ import LockRoundedIcon from "@material-ui/icons/LockRounded";
 import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 import { Label } from "@material-ui/icons";
-import cookies from "js-cookie";
+import Cookies from "js-cookie";
 const styles = {
   background: {
     width: "100vw",
@@ -99,6 +99,7 @@ function Login(props) {
             pathname: "/summary-dashboard",
           });
         }
+        Cookies.set("token", response.data);
       })
       .catch((error) => {
         console.log(error);
