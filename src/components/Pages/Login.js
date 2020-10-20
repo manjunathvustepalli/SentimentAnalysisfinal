@@ -75,6 +75,12 @@ function Login(props) {
   const classes = useStyles();
   const [Username, setUsername] = useState();
   const [Password, setPassword] = useState();
+  const [IncorrectFlag, setIncorrectFlag] = useState(false);
+
+  const handleIncorrectEntry = () => {
+    setIncorrectFlag(!IncorrectFlag)
+  }
+
   const Signin = () => {
     let data = new FormData();
 
@@ -92,12 +98,20 @@ function Login(props) {
 
     axios(config)
       .then((response) => {
-
         console.log(JSON.stringify(response));
-        if (response.status===200) {
+
+    //     {response.status === 200 ? props.history.push({
+    //       pathname: "/summary-dashboard",
+    //     })
+    //   : handleIncorrectEntry()
+    // }
+        if (response.status === 200) {
           props.history.push({
             pathname: "/summary-dashboard",
           });
+        }
+        else {
+          handleIncorrectEntry()
         }
       })
       .catch((error) => {
@@ -150,8 +164,14 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
+                  {!IncorrectFlag ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Incorrect username or password!
+                  </Typography>
+                  )}
                 </div>
               </label>
+
               <label
                 htmlfor="password-input"
                 style={{ display: "block", width: "100%" }}
@@ -171,11 +191,71 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
+                  {!IncorrectFlag ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Incorrect username or password!
+                  </Typography>
+                  )}
+                </div>
+              </label>
+
+              <label
+                htmlfor="password-input"
+                style={{ display: "block", width: "100%" }}
+              >
+                <div style={styles.inputWrapper}>
+                  <LockRoundedIcon style={styles.inputIcon} />
+                  <input
+                    type="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    id="password-input"
+                    style={{
+                      width: "100%",
+                      height: "25px",
+                      border: "none",
+                      outline: "none",
+                      textAlign: "center",
+                    }}
+                  />
+                  {!IncorrectFlag ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Incorrect username or password!
+                  </Typography>
+                  )}
+                </div>
+              </label>
+
+              <label
+                htmlfor="password-input"
+                style={{ display: "block", width: "100%" }}
+              >
+                <div style={styles.inputWrapper}>
+                  <LockRoundedIcon style={styles.inputIcon} />
+                  <input
+                    type="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    id="password-input"
+                    style={{
+                      width: "100%",
+                      height: "25px",
+                      border: "none",
+                      outline: "none",
+                      textAlign: "center",
+                    }}
+                  />
+                  {!IncorrectFlag ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Incorrect username or password!
+                  </Typography>
+                  )}
                 </div>
               </label>
               <div></div>
               <Button
                 onClick={Signin}
+                // onClick={()=> handleIncorrectEntry()}
                 className={classes.button}
                 variant="contained"
                 style={{ margin: "10px" }}
@@ -183,7 +263,19 @@ function Login(props) {
                 // to=""
                 fullWidth
               >
-                Enter
+                SIGN IN
+              </Button>
+              <Button
+                onClick={Signin}
+                // onClick={()=> handleIncorrectEntry()}
+                className={classes.button}
+                variant="contained"
+                style={{ margin: "10px" }}
+                component={Link}
+                // to=""
+                fullWidth
+              >
+                SIGN UP
               </Button>
             </Card>
           </div>
