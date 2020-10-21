@@ -113,10 +113,11 @@ function Login(props) {
 
     axios(config)
       .then((response) => {
-        console.log(JSON.stringify(response));
+        console.log(JSON.stringify(response.data.email));
 
         if (response.status === 200) {
             setIncorrectFlag(false);
+          Cookies.set("token", response.data.email);
           props.history.push({
             pathname: "/summary-dashboard",
           });
@@ -125,7 +126,7 @@ function Login(props) {
              console.log("///////////////////////////")
             setIncorrectFlag(true);
          }
-         Cookies.set("token", response.data);
+         Cookies.set("token", response.data.email);
       })
       .catch((error) => {
            setIncorrectFlag(true);
@@ -155,11 +156,12 @@ function Login(props) {
       .then((response) => {
         console.log(JSON.stringify(response));
 
-        if (response.status === 200) {
-            setIncorrectFlag(false);
-          props.history.push({
-            pathname: "/summary-dashboard",
-          });
+        if (response.status === 201) {
+            //setIncorrectFlag(false);
+            setSignUpFlag(false)
+          // props.history.push({
+          //   pathname: "/summary-dashboard",
+          // });
         }
       })
       .catch((error) => {
@@ -282,13 +284,11 @@ function Login(props) {
                   <Select
                     labelId="companyLabel"
                     id="company"
-                    onChange={(e) => 
-                      setUserType(e.target.value), (e)=> console.log('event:', e.target.value)
-                    }
+                    onChange={(e) => setUserType(e.target.value)}
                     fullWidth
                   >
-                    <MenuItem key={"Admin"} value={"Admin"}>Admin</MenuItem>
-                    <MenuItem key={"Anlst"} value={"Anlst"}>Analyst</MenuItem>
+                    <MenuItem key={"admin"} value={"admin"}>Admin</MenuItem>
+                    <MenuItem key={"anlyt"} value={"anlyt"}>Analyst</MenuItem>
                   </Select>
                 </FormControl>
                 </div>
@@ -299,18 +299,33 @@ function Login(props) {
               
               <div></div>
               {SignUpFlag ? (
-                <Button
-                onClick={SignUp}
-                // onClick={()=> handleIncorrectEntry()}
-                className={classes.button}
-                variant="contained"
-                style={{ margin: "10px" }}
-                component={Link}
-                // to=""
-                fullWidth
-              >
-                ENTER
-              </Button>
+               <>
+               <Button
+                 onClick={SignUp}
+                 // onClick={()=> handleIncorrectEntry()}
+                 className={classes.button}
+                 variant="contained"
+                 style={{ margin: "10px" }}
+                 component={Link}
+                 // to=""
+                 fullWidth
+               >
+                 ENTER
+               </Button>
+
+               <Button
+                 onClick={() => setSignUpFlag(false)}
+                 // onClick={()=> handleIncorrectEntry()}
+                 className={classes.button}
+                 variant="contained"
+                 style={{ margin: "10px" }}
+                 component={Link}
+                 // to=""
+                 fullWidth
+               >
+                 BACK
+               </Button>
+             </>
               ) : (
                 <>
                   <Button

@@ -39,7 +39,7 @@ import StorageIcon from "@material-ui/icons/Storage";
 import SearchIcon from "@material-ui/icons/Search";
 import Cookies from "js-cookie";
 
-let token = JSON.parse(Cookies.get("token"));
+let token = Cookies.get("token");
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SideNavBar = (props) => {
-  console.log(token.email.substring(0, 5));
+  console.log(token.substring(0, 5));
   const { window, children, history } = props;
   const classes = useStyles();
   const theme = useTheme();
@@ -275,7 +275,7 @@ const SideNavBar = (props) => {
       </div>
       <Divider style={{ marginTop: "120px" }} />
       <List>
-        {token.email.substring(0, 5)==="admin"?menus.map((menuItem, index) => (
+        {token.substring(0, 5)==="admin"?menus.map((menuItem, index) => (
           <Link
             to={menuItem.path[0]}
             key={index}
