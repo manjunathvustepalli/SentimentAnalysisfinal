@@ -8,6 +8,8 @@ import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom';
 import {Auth} from '../Pages/Auth';
+import Cookies from "js-cookie";
+
 
 const useStyles = makeStyles((theme) => ({
     filterDefault: {
@@ -142,6 +144,7 @@ function InfluencerComparison({from,to,refresh}) {
     }]
  
     useEffect(() => {
+    
         setData([])
         if(source === 'twitter'){
             Axios.post(process.env.REACT_APP_URL,

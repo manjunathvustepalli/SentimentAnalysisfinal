@@ -15,7 +15,8 @@ import LockRoundedIcon from "@material-ui/icons/LockRounded";
 import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 import { Label } from "@material-ui/icons";
-import cookies from "js-cookie";
+
+import Cookies from "js-cookie";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -87,10 +88,11 @@ function Login(props) {
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
 
   const handleIncorrectEntry = () => {
+      console.log("///////////////////");
     setIncorrectFlag(!IncorrectFlag)
   }
 
-  const handleSignUp = () => {
+  const handleSignUpFlag = () => {
     setSignUpFlag(!IncorrectFlag)
   }
 
@@ -99,8 +101,7 @@ function Login(props) {
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("password", Password);
-    
+    formdata.append("password", Password); 
 
     let config = {
       method: "post",
@@ -115,16 +116,20 @@ function Login(props) {
         console.log(JSON.stringify(response));
 
         if (response.status === 200) {
+            setIncorrectFlag(false);
           props.history.push({
             pathname: "/summary-dashboard",
           });
         }
-        else {
-          handleIncorrectEntry()
-        }
+         else {
+             console.log("///////////////////////////")
+            setIncorrectFlag(true);
+         }
+         Cookies.set("token", response.data);
       })
       .catch((error) => {
-        console.log(error);
+           setIncorrectFlag(true);
+        console.log("//////////",error);
       });
 
   };
@@ -134,14 +139,14 @@ function Login(props) {
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("email", Password);
-    formdata.append("password1", Password);
-    formdata.append("password2", Password2);
-    
+    formdata.append("email", UserType + "@" + Username + ".com"); 
+    formdata.append("password1", Password); 
+    formdata.append("password2", Password2); 
+
     let config = {
       method: "post",
       url:
-        "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/login/",
+        "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/registration/",
 
       data: formdata,
     };
@@ -151,19 +156,18 @@ function Login(props) {
         console.log(JSON.stringify(response));
 
         if (response.status === 200) {
+            setIncorrectFlag(false);
           props.history.push({
             pathname: "/summary-dashboard",
           });
         }
-        else {
-          handleIncorrectEntry()
-        }
       })
       .catch((error) => {
-        console.log(error);
+        console.log("//////////",error);
       });
-  }
-  
+
+  };
+
   return (
     <div style={styles.background}>
       <Grid container>
@@ -208,7 +212,7 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {IncorrectFlag ? <div/> : (
+                  {!IncorrectFlag ? <div/> : (
                     <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
                     Incorrect username or password!
                   </Typography>
@@ -235,7 +239,7 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {IncorrectFlag ? <div/> : (
+                  {!IncorrectFlag ? <div/> : (
                     <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
                     Incorrect username or password!
                   </Typography>
@@ -284,7 +288,7 @@ function Login(props) {
                     fullWidth
                   >
                     <MenuItem key={"Admin"} value={"Admin"}>Admin</MenuItem>
-                    <MenuItem key={"Analyst"} value={"Analyst"}>Analyst</MenuItem>
+                    <MenuItem key={"Anlst"} value={"Anlst"}>Analyst</MenuItem>
                   </Select>
                 </FormControl>
                 </div>
@@ -296,7 +300,7 @@ function Login(props) {
               <div></div>
               {SignUpFlag ? (
                 <Button
-                onClick={Signin}
+                onClick={SignUp}
                 // onClick={()=> handleIncorrectEntry()}
                 className={classes.button}
                 variant="contained"
@@ -323,7 +327,7 @@ function Login(props) {
               </Button>
 
               <Button
-                onClick={handleSignUp}
+                onClick={handleSignUpFlag}
                 // onClick={()=> handleIncorrectEntry()}
                 className={classes.button}
                 variant="contained"
