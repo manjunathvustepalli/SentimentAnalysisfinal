@@ -106,7 +106,7 @@ function Login(props) {
     }
   };
   const handleSignUpFlag = () => {
-    setSignUpFlag(!IncorrectFlag);
+    setSignUpFlag(!SignUpFlag);
   };
 
   
