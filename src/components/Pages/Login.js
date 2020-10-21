@@ -87,6 +87,8 @@ function Login(props) {
   const [SignUpFlag, setSignUpFlag] = useState(false)
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
 
+  const [PasswordMatch, setPasswordMatch] = useState(true)
+
   const handleIncorrectEntry = () => {
       console.log("///////////////////");
     setIncorrectFlag(!IncorrectFlag)
@@ -94,6 +96,12 @@ function Login(props) {
 
   const handleSignUpFlag = () => {
     setSignUpFlag(!IncorrectFlag)
+  }
+
+  const handlePasswordMatch = () => {
+    if (Password === Password2) {
+      setPasswordMatch(false)
+    }
   }
 
   const Signin = () => {
@@ -271,6 +279,11 @@ function Login(props) {
                     }}
                   />
                 </div>
+                {Password === Password2 ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Password do not match!
+                  </Typography>
+                  )}
               </label>
 
               <label
@@ -303,6 +316,7 @@ function Login(props) {
                <Button
                  onClick={SignUp}
                  // onClick={()=> handleIncorrectEntry()}
+                //  disabled={PasswordMatch}
                  className={classes.button}
                  variant="contained"
                  style={{ margin: "10px" }}
