@@ -87,6 +87,8 @@ function Login(props) {
   const [SignUpFlag, setSignUpFlag] = useState(false);
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
 
+  const [PasswordMatch, setPasswordMatch] = useState(true)
+
   const handleIncorrectEntry = () => {
     console.log("///////////////////");
     setIncorrectFlag(!IncorrectFlag);
@@ -107,7 +109,14 @@ function Login(props) {
     setSignUpFlag(!IncorrectFlag);
   };
 
-  const Signin = async () => {
+  
+  const handlePasswordMatch = () => {
+    if (Password === Password2) {
+      setPasswordMatch(false)
+    }
+  }
+
+  const Signin = async() => {
     let data = new FormData();
 
     var formdata = new FormData();
@@ -254,26 +263,31 @@ function Login(props) {
               {SignUpFlag ? (
                 <>
                   <label
-                    htmlfor="password-input"
-                    style={{ display: "block", width: "100%" }}
-                  >
-                    <div style={styles.inputWrapper}>
-                      <LockRoundedIcon style={styles.inputIcon} />
-                      <input
-                        type="password"
-                        onChange={(e) => setPassword2(e.target.value)}
-                        placeholder="Re-Enter Password"
-                        id="re-password-input"
-                        style={{
-                          width: "100%",
-                          height: "25px",
-                          border: "none",
-                          outline: "none",
-                          textAlign: "center",
-                        }}
-                      />
-                    </div>
-                  </label>
+                htmlfor="password-input"
+                style={{ display: "block", width: "100%" }}
+              >
+                <div style={styles.inputWrapper}>
+                  <LockRoundedIcon style={styles.inputIcon} />
+                  <input
+                    type="password"
+                    onChange={(e) => setPassword2(e.target.value)}
+                    placeholder="Re-Enter Password"
+                    id="re-password-input"
+                    style={{
+                      width: "100%",
+                      height: "25px",
+                      border: "none",
+                      outline: "none",
+                      textAlign: "center",
+                    }}
+                  />
+                </div>
+                {Password === Password2 ? <div/> : (
+                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
+                    Password do not match!
+                  </Typography>
+                  )}
+              </label>
 
                   <label
                     htmlfor="password-input"
@@ -308,19 +322,20 @@ function Login(props) {
 
               <div></div>
               {SignUpFlag ? (
-                <>
-                  <Button
-                    onClick={SignUp}
-                    // onClick={()=> handleIncorrectEntry()}
-                    className={classes.button}
-                    variant="contained"
-                    style={{ margin: "10px" }}
-                    component={Link}
-                    // to=""
-                    fullWidth
-                  >
-                    ENTER
-                  </Button>
+               <>
+               <Button
+                 onClick={SignUp}
+                 // onClick={()=> handleIncorrectEntry()}
+                //  disabled={PasswordMatch}
+                 className={classes.button}
+                 variant="contained"
+                 style={{ margin: "10px" }}
+                 component={Link}
+                 // to=""
+                 fullWidth
+               >
+                 ENTER
+               </Button>
 
                   <Button
                     onClick={() => setSignUpFlag(false)}
