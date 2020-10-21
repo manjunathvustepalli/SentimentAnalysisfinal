@@ -257,7 +257,7 @@ function Login(props) {
                   <LockRoundedIcon style={styles.inputIcon} />
                   <input
                     type="password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword2(e.target.value)}
                     placeholder="Re-Enter Password"
                     id="re-password-input"
                     style={{
