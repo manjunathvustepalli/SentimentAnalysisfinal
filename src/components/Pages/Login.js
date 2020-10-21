@@ -84,24 +84,35 @@ function Login(props) {
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
 
-  const [SignUpFlag, setSignUpFlag] = useState(false)
+  const [SignUpFlag, setSignUpFlag] = useState(false);
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
 
   const handleIncorrectEntry = () => {
-      console.log("///////////////////");
-    setIncorrectFlag(!IncorrectFlag)
-  }
-
+    console.log("///////////////////");
+    setIncorrectFlag(!IncorrectFlag);
+  };
+  const setCookies = async (response) => {
+    await Cookies.set("token", response.data.email);
+    if (response.status === 200) {
+      setIncorrectFlag(false);
+      props.history.push({
+        pathname: "/summary-dashboard",
+      });
+    } else {
+      console.log("///////////////////////////");
+      setIncorrectFlag(true);
+    }
+  };
   const handleSignUpFlag = () => {
-    setSignUpFlag(!IncorrectFlag)
-  }
+    setSignUpFlag(!IncorrectFlag);
+  };
 
-  const Signin = () => {
+  const Signin = async () => {
     let data = new FormData();
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("password", Password); 
+    formdata.append("password", Password);
 
     let config = {
       method: "post",
@@ -111,28 +122,10 @@ function Login(props) {
       data: formdata,
     };
 
-    axios(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data.email));
-
-        if (response.status === 200) {
-            setIncorrectFlag(false);
-          Cookies.set("token", response.data.email);
-          props.history.push({
-            pathname: "/summary-dashboard",
-          });
-        }
-         else {
-             console.log("///////////////////////////")
-            setIncorrectFlag(true);
-         }
-         Cookies.set("token", response.data.email);
-      })
-      .catch((error) => {
-           setIncorrectFlag(true);
-        console.log("//////////",error);
-      });
-
+    let response = await axios(config).catch((error) => setIncorrectFlag(true));
+    if (response) {
+      await setCookies(response);
+    }
   };
 
   const SignUp = () => {
@@ -140,9 +133,9 @@ function Login(props) {
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("email", UserType + "@" + Username + ".com"); 
-    formdata.append("password1", Password); 
-    formdata.append("password2", Password2); 
+    formdata.append("email", UserType + "@" + Username + ".com");
+    formdata.append("password1", Password);
+    formdata.append("password2", Password2);
 
     let config = {
       method: "post",
@@ -157,17 +150,16 @@ function Login(props) {
         console.log(JSON.stringify(response));
 
         if (response.status === 201) {
-            //setIncorrectFlag(false);
-            setSignUpFlag(false)
+          //setIncorrectFlag(false);
+          setSignUpFlag(false);
           // props.history.push({
           //   pathname: "/summary-dashboard",
           // });
         }
       })
       .catch((error) => {
-        console.log("//////////",error);
+        console.log("//////////", error);
       });
-
   };
 
   return (
@@ -214,10 +206,15 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {!IncorrectFlag ? <div/> : (
-                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
-                    Incorrect username or password!
-                  </Typography>
+                  {!IncorrectFlag ? (
+                    <div />
+                  ) : (
+                    <Typography
+                      variant="subtitle2"
+                      style={{ marginTop: 10, color: "#ff1744" }}
+                    >
+                      Incorrect username or password!
+                    </Typography>
                   )}
                 </div>
               </label>
@@ -241,121 +238,132 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  {!IncorrectFlag ? <div/> : (
-                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
-                    Incorrect username or password!
-                  </Typography>
+                  {!IncorrectFlag ? (
+                    <div />
+                  ) : (
+                    <Typography
+                      variant="subtitle2"
+                      style={{ marginTop: 10, color: "#ff1744" }}
+                    >
+                      Incorrect username or password!
+                    </Typography>
                   )}
                 </div>
               </label>
 
-                {SignUpFlag ? (
-                  <> 
+              {SignUpFlag ? (
+                <>
                   <label
-                htmlfor="password-input"
-                style={{ display: "block", width: "100%" }}
-              >
-                <div style={styles.inputWrapper}>
-                  <LockRoundedIcon style={styles.inputIcon} />
-                  <input
-                    type="password"
-                    onChange={(e) => setPassword2(e.target.value)}
-                    placeholder="Re-Enter Password"
-                    id="re-password-input"
-                    style={{
-                      width: "100%",
-                      height: "25px",
-                      border: "none",
-                      outline: "none",
-                      textAlign: "center",
-                    }}
-                  />
-                </div>
-              </label>
-
-              <label
-                htmlfor="password-input"
-                style={{ display: "block", width: "100%" }}
-              >
-                <div >
-                  {/* <LockRoundedIcon style={styles.inputIcon} /> */}
-                  <FormControl fullWidth size="small" required>
-                  <InputLabel id="companyLabel">Select User Type</InputLabel>
-                  <Select
-                    labelId="companyLabel"
-                    id="company"
-                    onChange={(e) => setUserType(e.target.value)}
-                    fullWidth
+                    htmlfor="password-input"
+                    style={{ display: "block", width: "100%" }}
                   >
-                    <MenuItem key={"admin"} value={"admin"}>Admin</MenuItem>
-                    <MenuItem key={"anlyt"} value={"anlyt"}>Analyst</MenuItem>
-                  </Select>
-                </FormControl>
-                </div>
-              </label>
+                    <div style={styles.inputWrapper}>
+                      <LockRoundedIcon style={styles.inputIcon} />
+                      <input
+                        type="password"
+                        onChange={(e) => setPassword2(e.target.value)}
+                        placeholder="Re-Enter Password"
+                        id="re-password-input"
+                        style={{
+                          width: "100%",
+                          height: "25px",
+                          border: "none",
+                          outline: "none",
+                          textAlign: "center",
+                        }}
+                      />
+                    </div>
+                  </label>
 
-                  </>
-                ) : <div/>}
-              
+                  <label
+                    htmlfor="password-input"
+                    style={{ display: "block", width: "100%" }}
+                  >
+                    <div>
+                      {/* <LockRoundedIcon style={styles.inputIcon} /> */}
+                      <FormControl fullWidth size="small" required>
+                        <InputLabel id="companyLabel">
+                          Select User Type
+                        </InputLabel>
+                        <Select
+                          labelId="companyLabel"
+                          id="company"
+                          onChange={(e) => setUserType(e.target.value)}
+                          fullWidth
+                        >
+                          <MenuItem key={"admin"} value={"admin"}>
+                            Admin
+                          </MenuItem>
+                          <MenuItem key={"anlyt"} value={"anlyt"}>
+                            Analyst
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </label>
+                </>
+              ) : (
+                <div />
+              )}
+
               <div></div>
               {SignUpFlag ? (
-               <>
-               <Button
-                 onClick={SignUp}
-                 // onClick={()=> handleIncorrectEntry()}
-                 className={classes.button}
-                 variant="contained"
-                 style={{ margin: "10px" }}
-                 component={Link}
-                 // to=""
-                 fullWidth
-               >
-                 ENTER
-               </Button>
+                <>
+                  <Button
+                    onClick={SignUp}
+                    // onClick={()=> handleIncorrectEntry()}
+                    className={classes.button}
+                    variant="contained"
+                    style={{ margin: "10px" }}
+                    component={Link}
+                    // to=""
+                    fullWidth
+                  >
+                    ENTER
+                  </Button>
 
-               <Button
-                 onClick={() => setSignUpFlag(false)}
-                 // onClick={()=> handleIncorrectEntry()}
-                 className={classes.button}
-                 variant="contained"
-                 style={{ margin: "10px" }}
-                 component={Link}
-                 // to=""
-                 fullWidth
-               >
-                 BACK
-               </Button>
-             </>
+                  <Button
+                    onClick={() => setSignUpFlag(false)}
+                    // onClick={()=> handleIncorrectEntry()}
+                    className={classes.button}
+                    variant="contained"
+                    style={{ margin: "10px" }}
+                    component={Link}
+                    // to=""
+                    fullWidth
+                  >
+                    BACK
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button
-                onClick={Signin}
-                // onClick={()=> handleIncorrectEntry()}
-                className={classes.button}
-                variant="contained"
-                style={{ margin: "10px" }}
-                component={Link}
-                // to=""
-                fullWidth
-              >
-                SIGN IN
-              </Button>
+                    onClick={Signin}
+                    // onClick={()=> handleIncorrectEntry()}
+                    className={classes.button}
+                    variant="contained"
+                    style={{ margin: "10px" }}
+                    component={Link}
+                    // to=""
+                    fullWidth
+                  >
+                    SIGN IN
+                  </Button>
 
-              <Button
-                onClick={handleSignUpFlag}
-                // onClick={()=> handleIncorrectEntry()}
-                className={classes.button}
-                variant="contained"
-                style={{ margin: "10px" }}
-                component={Link}
-                // to=""
-                fullWidth
-              >
-                SIGN UP
-              </Button>
+                  <Button
+                    onClick={handleSignUpFlag}
+                    // onClick={()=> handleIncorrectEntry()}
+                    className={classes.button}
+                    variant="contained"
+                    style={{ margin: "10px" }}
+                    component={Link}
+                    // to=""
+                    fullWidth
+                  >
+                    SIGN UP
+                  </Button>
                 </>
               )}
-              
             </Card>
           </div>
         </Grid>

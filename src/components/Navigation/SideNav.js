@@ -39,7 +39,6 @@ import StorageIcon from "@material-ui/icons/Storage";
 import SearchIcon from "@material-ui/icons/Search";
 import Cookies from "js-cookie";
 
-let token = Cookies.get("token");
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,12 +83,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideNavBar = (props) => {
-  console.log(token.substring(0, 5));
+const SideNavBar =  (props) => {
   const { window, children, history } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [token] = useState(Cookies.get("token"));
+  const [isloading,setIsloading]=useState(true)
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
       return { color: "rgb(67,176,42)", minWidth: "30px" };
@@ -144,7 +144,7 @@ const SideNavBar = (props) => {
       icon: <TrendingUpIcon />,
       path: ["/trending-subject/sentiment", "/trending-subject/mood"],
     },
-    ///////
+  
 
     {
       name: "Trend Analysis",
@@ -204,7 +204,7 @@ const SideNavBar = (props) => {
       path: ["/behavior-analysis"],
     },
   ];
-
+ 
   const menus1 = [
     
     {
