@@ -204,7 +204,7 @@ function Login(props) {
                     id="userName-input"
                     style={{
                       width: "100%",
-                      height: "25px",
+                      height: "20px",
                       border: "none",
                       outline: "none",
                       textAlign: "center",
@@ -215,7 +215,7 @@ function Login(props) {
                   ) : (
                     <Typography
                       variant="subtitle2"
-                      style={{ marginTop: 10, color: "#ff1744" }}
+                      style={{ marginTop: 5, color: "#ff1744" }}
                     >
                       Incorrect username or password!
                     </Typography>
@@ -235,7 +235,7 @@ function Login(props) {
                     id="userName-input"
                     style={{
                       width: "100%",
-                      height: "25px",
+                      height: "20px",
                       border: "none",
                       outline: "none",
                       textAlign: "center",
@@ -246,7 +246,7 @@ function Login(props) {
                   ) : (
                     <Typography
                       variant="subtitle2"
-                      style={{ marginTop: 10, color: "#ff1744" }}
+                      style={{ marginTop: 5, color: "#ff1744" }}
                     >
                       Email might already exist
                     </Typography>
@@ -267,7 +267,7 @@ function Login(props) {
                     id="password-input"
                     style={{
                       width: "100%",
-                      height: "25px",
+                      height: "20px",
                       border: "none",
                       outline: "none",
                       textAlign: "center",
@@ -278,7 +278,7 @@ function Login(props) {
                   ) : (
                     <Typography
                       variant="subtitle2"
-                      style={{ marginTop: 10, color: "#ff1744" }}
+                      style={{ marginTop: 5, color: "#ff1744" }}
                     >
                       Incorrect username or password!
                     </Typography>
@@ -301,7 +301,7 @@ function Login(props) {
                         id="re-password-input"
                         style={{
                           width: "100%",
-                          height: "25px",
+                          height: "20px",
                           border: "none",
                           outline: "none",
                           textAlign: "center",
@@ -313,7 +313,7 @@ function Login(props) {
                     ) : (
                       <Typography
                         variant="subtitle2"
-                        style={{ marginTop: 10, color: "#ff1744" }}
+                        style={{ marginTop: 5, color: "#ff1744" }}
                       >
                         Password do not match!
                       </Typography>
@@ -396,7 +396,7 @@ function Login(props) {
                     SIGN IN
                   </Button>
 
-                  <Button
+                  {/* <Button
                     onClick={handleSignUpFlag}
                     // onClick={()=> handleIncorrectEntry()}
                     className={classes.button}
@@ -407,7 +407,7 @@ function Login(props) {
                     fullWidth
                   >
                     SIGN UP
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </Card>
