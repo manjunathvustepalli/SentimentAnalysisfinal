@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
 function Login(props) {
   const classes = useStyles();
   const [Username, setUsername] = useState();
+  const [email, setEmail] = useState();
   const [Password, setPassword] = useState();
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
@@ -135,9 +136,10 @@ function Login(props) {
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("email", UserType + "@" + Username + ".com");
+    formdata.append("email",email);
     formdata.append("password1", Password);
     formdata.append("password2", Password2);
+    formdata.append("userType", UserType);
 
     let config = {
       method: "post",
@@ -220,6 +222,37 @@ function Login(props) {
                   )}
                 </div>
               </label>
+               {SignUpFlag ? (<label
+                htmlfor="userName-input"
+                style={{ display: "block", width: "100%" }}
+              >
+                <div style={styles.inputWrapper}>
+                  <AccountCircle style={styles.inputIcon} />
+                  <input
+                    type="text"
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter Email"
+                    id="userName-input"
+                    style={{
+                      width: "100%",
+                      height: "25px",
+                      border: "none",
+                      outline: "none",
+                      textAlign: "center",
+                    }}
+                  />
+                  {!IncorrectFlag ? (
+                    <div />
+                  ) : (
+                    <Typography
+                      variant="subtitle2"
+                      style={{ marginTop: 10, color: "#ff1744" }}
+                    >
+                      Email might already exist
+                    </Typography>
+                  )}
+                </div>
+              </label>):null}
 
               <label
                 htmlfor="password-input"
@@ -303,10 +336,10 @@ function Login(props) {
                           onChange={(e) => setUserType(e.target.value)}
                           fullWidth
                         >
-                          <MenuItem key={"admin"} value={"admin"}>
+                          <MenuItem key={"admin"} value={"Admin"}>
                             Admin
                           </MenuItem>
-                          <MenuItem key={"anlyt"} value={"anlyt"}>
+                          <MenuItem key={"anlyt"} value={"Analyst"}>
                             Analyst
                           </MenuItem>
                         </Select>
