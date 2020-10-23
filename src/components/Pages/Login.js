@@ -49,7 +49,7 @@ const styles = {
     color: "#aaa",
   },
   visibleIcon: {
-    top:"2px",
+    top: "2px",
     position: "absolute",
     right: "10px",
     color: "#aaa",
@@ -94,7 +94,7 @@ function Login(props) {
   const [SignUpFlag, setSignUpFlag] = useState(false);
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
   const [PasswordMatch, setPasswordMatch] = useState(true);
-  const [hidden,setHidden]=useState(false);
+  const [hidden, setHidden] = useState(true);
   const handleIncorrectEntry = () => {
     setIncorrectFlag(!IncorrectFlag);
   };
@@ -146,7 +146,7 @@ function Login(props) {
 
     var formdata = new FormData();
     formdata.append("username", Username);
-    formdata.append("email",email);
+    formdata.append("email", email);
     formdata.append("password1", Password);
     formdata.append("password2", Password2);
     formdata.append("userType", UserType);
@@ -284,7 +284,6 @@ function Login(props) {
                     }}
                   />
                   <IconButton
-                   
                     onClick={() => setHidden(!hidden)}
                     style={styles.visibleIcon}
                   >
