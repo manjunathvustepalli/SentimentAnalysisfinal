@@ -88,7 +88,7 @@ const SideNavBar =  (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [token] = useState(Cookies.get("token"));
+  const [role] = useState(Cookies.get("role"));
   const [isloading,setIsloading]=useState(true)
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
@@ -275,7 +275,7 @@ const SideNavBar =  (props) => {
       </div>
       <Divider style={{ marginTop: "120px" }} />
       <List>
-        {token.substring(0, 5)==="admin"?menus.map((menuItem, index) => (
+        {role==="Admin"?menus.map((menuItem, index) => (
           <Link
             to={menuItem.path[0]}
             key={index}

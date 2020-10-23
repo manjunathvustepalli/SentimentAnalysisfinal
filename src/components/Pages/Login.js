@@ -15,13 +15,11 @@ import LockRoundedIcon from "@material-ui/icons/LockRounded";
 import green from "@material-ui/core/colors/green";
 import { Link } from "react-router-dom";
 import { Label } from "@material-ui/icons";
-
 import Cookies from "js-cookie";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
-
 const styles = {
   background: {
     width: "100vw",
@@ -83,25 +81,21 @@ function Login(props) {
   const [Password, setPassword] = useState();
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
-
   const [SignUpFlag, setSignUpFlag] = useState(false);
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
-
-  const [PasswordMatch, setPasswordMatch] = useState(true)
-
+  const [PasswordMatch, setPasswordMatch] = useState(true);
   const handleIncorrectEntry = () => {
-    console.log("///////////////////");
     setIncorrectFlag(!IncorrectFlag);
   };
   const setCookies = async (response) => {
-    await Cookies.set("token", response.data.email);
+    await Cookies.set("role", response.data.userType);
+    await Cookies.set("token", response.data.key);
     if (response.status === 200) {
       setIncorrectFlag(false);
       props.history.push({
         pathname: "/summary-dashboard",
       });
     } else {
-      console.log("///////////////////////////");
       setIncorrectFlag(true);
     }
   };
@@ -109,14 +103,13 @@ function Login(props) {
     setSignUpFlag(!SignUpFlag);
   };
 
-  
   const handlePasswordMatch = () => {
     if (Password === Password2) {
-      setPasswordMatch(false)
+      setPasswordMatch(false);
     }
-  }
+  };
 
-  const Signin = async() => {
+  const Signin = async () => {
     let data = new FormData();
 
     var formdata = new FormData();
@@ -263,31 +256,36 @@ function Login(props) {
               {SignUpFlag ? (
                 <>
                   <label
-                htmlfor="password-input"
-                style={{ display: "block", width: "100%" }}
-              >
-                <div style={styles.inputWrapper}>
-                  <LockRoundedIcon style={styles.inputIcon} />
-                  <input
-                    type="password"
-                    onChange={(e) => setPassword2(e.target.value)}
-                    placeholder="Re-Enter Password"
-                    id="re-password-input"
-                    style={{
-                      width: "100%",
-                      height: "25px",
-                      border: "none",
-                      outline: "none",
-                      textAlign: "center",
-                    }}
-                  />
-                </div>
-                {Password === Password2 ? <div/> : (
-                    <Typography variant='subtitle2' style={{marginTop: 10, color: "#ff1744"}}>
-                    Password do not match!
-                  </Typography>
-                  )}
-              </label>
+                    htmlfor="password-input"
+                    style={{ display: "block", width: "100%" }}
+                  >
+                    <div style={styles.inputWrapper}>
+                      <LockRoundedIcon style={styles.inputIcon} />
+                      <input
+                        type="password"
+                        onChange={(e) => setPassword2(e.target.value)}
+                        placeholder="Re-Enter Password"
+                        id="re-password-input"
+                        style={{
+                          width: "100%",
+                          height: "25px",
+                          border: "none",
+                          outline: "none",
+                          textAlign: "center",
+                        }}
+                      />
+                    </div>
+                    {Password === Password2 ? (
+                      <div />
+                    ) : (
+                      <Typography
+                        variant="subtitle2"
+                        style={{ marginTop: 10, color: "#ff1744" }}
+                      >
+                        Password do not match!
+                      </Typography>
+                    )}
+                  </label>
 
                   <label
                     htmlfor="password-input"
@@ -322,20 +320,20 @@ function Login(props) {
 
               <div></div>
               {SignUpFlag ? (
-               <>
-               <Button
-                 onClick={SignUp}
-                 // onClick={()=> handleIncorrectEntry()}
-                //  disabled={PasswordMatch}
-                 className={classes.button}
-                 variant="contained"
-                 style={{ margin: "10px" }}
-                 component={Link}
-                 // to=""
-                 fullWidth
-               >
-                 ENTER
-               </Button>
+                <>
+                  <Button
+                    onClick={SignUp}
+                    // onClick={()=> handleIncorrectEntry()}
+                    //  disabled={PasswordMatch}
+                    className={classes.button}
+                    variant="contained"
+                    style={{ margin: "10px" }}
+                    component={Link}
+                    // to=""
+                    fullWidth
+                  >
+                    ENTER
+                  </Button>
 
                   <Button
                     onClick={() => setSignUpFlag(false)}
