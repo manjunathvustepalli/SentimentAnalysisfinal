@@ -21,6 +21,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import IconButton from "@material-ui/core/IconButton";
+
 const styles = {
   background: {
     width: "100vw",
@@ -47,6 +49,7 @@ const styles = {
     color: "#aaa",
   },
   visibleIcon: {
+    top:"2px",
     position: "absolute",
     right: "10px",
     color: "#aaa",
@@ -280,12 +283,13 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
-                  <Button
+                  <IconButton
+                   
                     onClick={() => setHidden(!hidden)}
                     style={styles.visibleIcon}
                   >
                     <VisibilityIcon />
-                  </Button>
+                  </IconButton>
                   {!IncorrectFlag ? (
                     <div />
                   ) : (
