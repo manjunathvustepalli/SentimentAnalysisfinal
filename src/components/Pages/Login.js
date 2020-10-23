@@ -20,6 +20,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 const styles = {
   background: {
     width: "100vw",
@@ -43,6 +44,11 @@ const styles = {
   inputIcon: {
     position: "absolute",
     left: "30px",
+    color: "#aaa",
+  },
+  visibleIcon: {
+    position: "absolute",
+    right: "10px",
     color: "#aaa",
   },
 };
@@ -85,6 +91,7 @@ function Login(props) {
   const [SignUpFlag, setSignUpFlag] = useState(false);
   const [IncorrectFlag, setIncorrectFlag] = useState(false);
   const [PasswordMatch, setPasswordMatch] = useState(true);
+  const [hidden,setHidden]=useState(false);
   const handleIncorrectEntry = () => {
     setIncorrectFlag(!IncorrectFlag);
   };
@@ -261,7 +268,7 @@ function Login(props) {
                 <div style={styles.inputWrapper}>
                   <LockRoundedIcon style={styles.inputIcon} />
                   <input
-                    type="password"
+                    type={hidden ? "password" : "text"}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter Password"
                     id="password-input"
@@ -273,6 +280,12 @@ function Login(props) {
                       textAlign: "center",
                     }}
                   />
+                  <Button
+                    onClick={() => setHidden(!hidden)}
+                    style={styles.visibleIcon}
+                  >
+                    <VisibilityIcon />
+                  </Button>
                   {!IncorrectFlag ? (
                     <div />
                   ) : (
