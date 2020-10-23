@@ -1,60 +1,60 @@
-import './sidebar.css';
-import React,{ useEffect, useState } from 'react';
-import { Link, withRouter } from 'react-router-dom'
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Grid from '@material-ui/core/Grid';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import BallotIcon from '@material-ui/icons/Ballot';
-import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
-import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-import PublicIcon from '@material-ui/icons/Public';
-import AppsIcon from '@material-ui/icons/Apps';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import DeviceHubIcon from '@material-ui/icons/DeviceHub';
-import WhatshotIcon from '@material-ui/icons/Whatshot';
-import HdrWeakIcon from '@material-ui/icons/HdrWeak';
-import CalendarViewDayIcon from '@material-ui/icons/CalendarViewDay';
-import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
-import { Button, Tooltip } from '@material-ui/core';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
-import ImageSearchIcon from '@material-ui/icons/ImageSearch';
-import PageviewIcon from '@material-ui/icons/Pageview';
-import StorageIcon from '@material-ui/icons/Storage';
-import SearchIcon from '@material-ui/icons/Search';
-
+import "./sidebar.css";
+import React, { useEffect, useState } from "react";
+import { Link, withRouter } from "react-router-dom";
+import AppBar from "@material-ui/core/AppBar";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuIcon from "@material-ui/icons/Menu";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import BallotIcon from "@material-ui/icons/Ballot";
+import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
+import ChildCareIcon from "@material-ui/icons/ChildCare";
+import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
+import PublicIcon from "@material-ui/icons/Public";
+import AppsIcon from "@material-ui/icons/Apps";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
+import DeviceHubIcon from "@material-ui/icons/DeviceHub";
+import WhatshotIcon from "@material-ui/icons/Whatshot";
+import HdrWeakIcon from "@material-ui/icons/HdrWeak";
+import CalendarViewDayIcon from "@material-ui/icons/CalendarViewDay";
+import MoveToInboxIcon from "@material-ui/icons/MoveToInbox";
+import { Button, Tooltip } from "@material-ui/core";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import PermDataSettingIcon from "@material-ui/icons/PermDataSetting";
+import ImageSearchIcon from "@material-ui/icons/ImageSearch";
+import PageviewIcon from "@material-ui/icons/Pageview";
+import StorageIcon from "@material-ui/icons/Storage";
+import SearchIcon from "@material-ui/icons/Search";
+import Cookies from "js-cookie";
 
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
   },
-  listItemText:{
-    fontSize:'12px',
+  listItemText: {
+    fontSize: "12px",
   },
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       width: drawerWidth,
       flexShrink: 0,
     },
   },
   appBar: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
@@ -64,163 +64,267 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
+    [theme.breakpoints.up("sm")]: {
+      display: "none",
     },
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor:"white"
+    backgroundColor: "white",
   },
-  AvatarBox:{
-      backgroundColor:'rgb(67,176,42)'
+  AvatarBox: {
+    backgroundColor: "rgb(67,176,42)",
   },
   content: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
 }));
 
-const SideNavBar = (props) => {
-  const { window,children,history } = props;
+const SideNavBar =  (props) => {
+  const { window, children, history } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const currentTab = (history,path)=>{
-    if(path.includes(history.location.pathname)){
-        return {color:'rgb(67,176,42)',minWidth:'30px'}
+  const [role] = useState(Cookies.get("role"));
+  const [isloading,setIsloading]=useState(true)
+  const currentTab = (history, path) => {
+    if (path.includes(history.location.pathname)) {
+      return { color: "rgb(67,176,42)", minWidth: "30px" };
+    } else {
+      return { color: "black", minWidth: "30px" };
     }
-    else{
-        return {color:"black",minWidth:'30px'}
-    }
-  }
+  };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const menus=[
+  
+  const menus = [
+    
     {
-      name:'Summary Dashboard',
-      icon:<BallotIcon/>,
-      path:['/summary-dashboard'],
-    }, 
-    {
-      name:'Sentiment Analysis',
-      icon:<SentimentVerySatisfiedIcon/>,
-      path:['/sentimental-analysis/area-chart','/sentimental-analysis/pie-chart','/sentimental-analysis/line-chart','/sentimental-analysis/semi-donut-chart','/sentimental-analysis/bar-chart','/sentimental-analysis/stack-chart'],
+      name: "Summary Dashboard",
+      icon: <BallotIcon />,
+      path: ["/summary-dashboard"],
     },
     {
-      name:'Mood Analysis',
-      icon:<ChildCareIcon/>,
-      path:['/mood-analysis/area-chart','/mood-analysis/pie-chart','/mood-analysis/line-chart'],
+      name: "Sentiment Analysis",
+      icon: <SentimentVerySatisfiedIcon />,
+      path: [
+        "/sentimental-analysis/area-chart",
+        "/sentimental-analysis/pie-chart",
+        "/sentimental-analysis/line-chart",
+        "/sentimental-analysis/semi-donut-chart",
+        "/sentimental-analysis/bar-chart",
+        "/sentimental-analysis/stack-chart",
+      ],
     },
     {
-      name:'Influencer Analysis',
-      icon:<EmojiPeopleIcon/>,
-      path:['/influencer-analysis'],
+      name: "Mood Analysis",
+      icon: <ChildCareIcon />,
+      path: [
+        "/mood-analysis/area-chart",
+        "/mood-analysis/pie-chart",
+        "/mood-analysis/line-chart",
+      ],
     },
     {
-      name:'Word Cloud',
-      icon:<AppsIcon/>,
-      path:['/word-cloud/sentiment'/*,'/word-cloud/mood'*/],
+      name: "Influencer Analysis",
+      icon: <EmojiPeopleIcon />,
+      path: ["/influencer-analysis"],
     },
     {
-      name:'Trending Subjects',
-      icon:<TrendingUpIcon/>,
-      path:['/trending-subject/sentiment','/trending-subject/mood'],
+      name: "Word Cloud",
+      icon: <AppsIcon />,
+      path: ["/word-cloud/sentiment" /*,'/word-cloud/mood'*/],
     },
     {
-      name:'Trend Analysis',
-      icon:<WhatshotIcon/>,
-      path:['/trend-analysis/line-chart','/trend-analysis/bar-chart','/trend-analysis/area-chart','/trend-analysis/pie-chart','/trend-analysis/stacked-bar-chart','/trend-analysis/semi-pie-chart'],
+      name: "Trending Subjects",
+      icon: <TrendingUpIcon />,
+      path: ["/trending-subject/sentiment", "/trending-subject/mood"],
     },
-    {
-      name:'Live Analysis',
-      icon:<CalendarViewDayIcon/>,
-      path:['/Live-analysis'],
-    },
-    {
-      name:'Export Data',
-      icon:<MoveToInboxIcon/>,
-      path:['/export-data'],
-    },
-    {
-      name:'Admin Page',
-      icon:<PermDataSettingIcon/>,
-      path:['/admin'],
-    },
-    {
-      name:'Fetch',
-      icon:<PageviewIcon/>,
-      path:['/global-search']
-    },
-    {
-      name:'Search',
-      icon:<SearchIcon/>,
-      path:['/search-from-db'],
-    },
-    {
-      name:'Search Image',
-      icon:<ImageSearchIcon/>,
-      path:['/image-gallery'],
-    },
-    {
-      name:'Geo HotSpot Analysis',
-      icon:<PublicIcon/>,
-      path:['/geo-hotspot'],
-    },
-    {
-      name:'Demography',
-      icon:<DeviceHubIcon/>,
-      path:['/demography'],
-    },    
-    {
-      name:'Behavior Analysis',
-      icon:<HdrWeakIcon/>,
-      path:['/behavior-analysis'],
-    }, 
-  ]
+  
 
-   const drawer = (
-    <div className={classes.drawerScroller} >
-          <div id="userMenuHeader" >
-            <Grid container >
-              <Grid item  xs={1} />
-              <Grid item align="left"  xs={10}>
-                <Avatar alt="karthik" id="userAvatar"  src={require('../../imgs/user.jpg')} />
-              </Grid>
-              <Grid item align="right" className='grid-user' xs={6} >
-                <Typography > Welcome User</Typography>
-              </Grid>
-              <Grid xs={2} />
-              <Grid item align="left" className='grid-user' xs={4}>
-                <Typography align="left"><ArrowDropDownIcon/></Typography>
-              </Grid>
-            </Grid>
-          </div>
-      <Divider style={{marginTop:'120px'}} />
-      <List >
-        {menus.map((menuItem, index) => (
-          <Link to={menuItem.path[0]} key={index} style={{textDecoration:'none',color:'black'}}>
-            <ListItem  button key={index}>
-              <ListItemIcon style={currentTab(history,menuItem.path)}> {menuItem.icon} </ListItemIcon>
-              <ListItemText style={currentTab(history,menuItem.path)} classes={{primary:classes.listItemText}} primary={menuItem.name} />
+    {
+      name: "Trend Analysis",
+      icon: <WhatshotIcon />,
+      path: [
+        "/trend-analysis/line-chart",
+        "/trend-analysis/bar-chart",
+        "/trend-analysis/area-chart",
+        "/trend-analysis/pie-chart",
+        "/trend-analysis/stacked-bar-chart",
+        "/trend-analysis/semi-pie-chart",
+      ],
+    },
+    {
+      name: "Live Analysis",
+      icon: <CalendarViewDayIcon />,
+      path: ["/Live-analysis"],
+    },
+    {
+      name: "Export Data",
+      icon: <MoveToInboxIcon />,
+      path: ["/export-data"],
+    },
+    {
+      name: "Admin Page",
+      icon: <PermDataSettingIcon />,
+      path: ["/admin"],
+    },
+    {
+      name: "Fetch",
+      icon: <PageviewIcon />,
+      path: ["/global-search"],
+    },
+    {
+      name: "Search",
+      icon: <SearchIcon />,
+      path: ["/search-from-db"],
+    },
+    {
+      name: "Search Image",
+      icon: <ImageSearchIcon />,
+      path: ["/image-gallery"],
+    },
+    {
+      name: "Geo HotSpot Analysis",
+      icon: <PublicIcon />,
+      path: ["/geo-hotspot"],
+    },
+    {
+      name: "Demography",
+      icon: <DeviceHubIcon />,
+      path: ["/demography"],
+    },
+    {
+      name: "Behavior Analysis",
+      icon: <HdrWeakIcon />,
+      path: ["/behavior-analysis"],
+    },
+  ];
+ 
+  const menus1 = [
+    
+    {
+      name: "Summary Dashboard",
+      icon: <BallotIcon />,
+      path: ["/summary-dashboard"],
+    },
+    {
+      name: "Sentiment Analysis",
+      icon: <SentimentVerySatisfiedIcon />,
+      path: [
+        "/sentimental-analysis/area-chart",
+        "/sentimental-analysis/pie-chart",
+        "/sentimental-analysis/line-chart",
+        "/sentimental-analysis/semi-donut-chart",
+        "/sentimental-analysis/bar-chart",
+        "/sentimental-analysis/stack-chart",
+      ],
+    },
+    {
+      name: "Mood Analysis",
+      icon: <ChildCareIcon />,
+      path: [
+        "/mood-analysis/area-chart",
+        "/mood-analysis/pie-chart",
+        "/mood-analysis/line-chart",
+      ],
+    },
+    {
+      name: "Influencer Analysis",
+      icon: <EmojiPeopleIcon />,
+      path: ["/influencer-analysis"],
+    },
+    {
+      name: "Word Cloud",
+      icon: <AppsIcon />,
+      path: ["/word-cloud/sentiment" /*,'/word-cloud/mood'*/],
+    },
+    {
+      name: "Trending Subjects",
+      icon: <TrendingUpIcon />,
+      path: ["/trending-subject/sentiment", "/trending-subject/mood"],
+    },]
+
+
+  const drawer = (
+    <div className={classes.drawerScroller}>
+      <div id="userMenuHeader">
+        <Grid container>
+          <Grid item xs={1} />
+          <Grid item align="left" xs={10}>
+            <Avatar
+              alt="karthik"
+              id="userAvatar"
+              src={require("../../imgs/user.jpg")}
+            />
+          </Grid>
+          <Grid item align="right" className="grid-user" xs={6}>
+            <Typography> Welcome User</Typography>
+          </Grid>
+          <Grid xs={2} />
+          <Grid item align="left" className="grid-user" xs={4}>
+            <Typography align="left">
+              <ArrowDropDownIcon />
+            </Typography>
+          </Grid>
+        </Grid>
+      </div>
+      <Divider style={{ marginTop: "120px" }} />
+      <List>
+        {role==="Admin"?menus.map((menuItem, index) => (
+          <Link
+            to={menuItem.path[0]}
+            key={index}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem button key={index}>
+              <ListItemIcon style={currentTab(history, menuItem.path)}>
+                {" "}
+                {menuItem.icon}{" "}
+              </ListItemIcon>
+              <ListItemText
+                style={currentTab(history, menuItem.path)}
+                classes={{ primary: classes.listItemText }}
+                primary={menuItem.name}
+              />
             </ListItem>
-            <Divider/>
-          </Link> 
+            <Divider />
+          </Link>
+        )):menus1.map((menuItem, index) => (
+          <Link
+            to={menuItem.path[0]}
+            key={index}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem button key={index}>
+              <ListItemIcon style={currentTab(history, menuItem.path)}>
+                {" "}
+                {menuItem.icon}{" "}
+              </ListItemIcon>
+              <ListItemText
+                style={currentTab(history, menuItem.path)}
+                classes={{ primary: classes.listItemText }}
+                primary={menuItem.name}
+              />
+            </ListItem>
+            <Divider />
+          </Link>
         ))}
       </List>
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
-
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <div className={classes.root}  >
+    <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar} >
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -231,29 +335,33 @@ const SideNavBar = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar alt="LOGO" src={require('../../imgs/logo.png')} style={{height:'100%'}} />
+          <Avatar
+            alt="LOGO"
+            src={require("../../imgs/logo.png")}
+            style={{ height: "100%" }}
+          />
           <Typography variant="h6" noWrap>
-          &nbsp; Sentiment and Mood Analysis
+            &nbsp; Sentiment and Mood Analysis
           </Typography>
-          <span style={{marginLeft:'auto'}}>
-          <Tooltip title={'Logout'}>
-          <Button 
-            color="inherit"  
-            component={Link}
-            to="/"
-          >
-            <ExitToAppIcon/>
-          </Button>
-          </Tooltip>
+          <span style={{ marginLeft: "auto" }}>
+            <Tooltip title={"Logout"}>
+              <Button color="inherit" component={Link} to="/">
+                <ExitToAppIcon />
+              </Button>
+            </Tooltip>
           </span>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} id='scroll-id'  aria-label="mailbox folders">
+      <nav
+        className={classes.drawer}
+        id="scroll-id"
+        aria-label="mailbox folders"
+      >
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
             variant="temporary"
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}
             classes={{
@@ -280,10 +388,10 @@ const SideNavBar = (props) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-            {children}
+        {children}
       </main>
     </div>
   );
-}
+};
 
 export default withRouter(SideNavBar);
