@@ -38,7 +38,7 @@ import PageviewIcon from "@material-ui/icons/Pageview";
 import StorageIcon from "@material-ui/icons/Storage";
 import SearchIcon from "@material-ui/icons/Search";
 import Cookies from "js-cookie";
-
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,7 +102,6 @@ const SideNavBar =  (props) => {
   };
   
   const menus = [
-    
     {
       name: "Summary Dashboard",
       icon: <BallotIcon />,
@@ -144,7 +143,6 @@ const SideNavBar =  (props) => {
       icon: <TrendingUpIcon />,
       path: ["/trending-subject/sentiment", "/trending-subject/mood"],
     },
-  
 
     {
       name: "Trend Analysis",
@@ -202,6 +200,11 @@ const SideNavBar =  (props) => {
       name: "Behavior Analysis",
       icon: <HdrWeakIcon />,
       path: ["/behavior-analysis"],
+    },
+    {
+      name: "Add User",
+      icon: <PersonAddIcon/>,
+      path: ["/add-user"],
     },
   ];
  
