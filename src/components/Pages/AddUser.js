@@ -19,24 +19,48 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import {
+  fade,
+  ThemeProvider,
+  withStyles,
+
+  createMuiTheme,
+} from "@material-ui/core/styles";
+import { green } from "@material-ui/core/colors";
 
 
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+  },
+});
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+   
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    // backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
-  
+  button: {
+    margin: theme.spacing(1),
+    padding: "15px 0",
+    color: "white",
+    display: "block",
+    textAlign: "center",
+    backgroundColor: `rgb(67,176,42)`,
+    "&:hover": {
+      backgroundColor: `rgb(67,176,42)`,
+    },
+  },
 }));
 
 
@@ -83,15 +107,17 @@ export default function AddUser() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+          {/* <Avatar className={classes.avatar}>
             <PersonAddIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Add User
-          </Typography>
+          </Avatar> */}
+          <Box p={3}>
+            <Typography component="h1" variant="h5">
+              Add User
+            </Typography>
+          </Box>
           <Grid container alignItems="center" justify="center" spacing={4}>
-            <Grid item xs={12}>
-              <form className={classes.form} noValidate submit={SignUp}>
+            <ThemeProvider theme={theme}>
+              <Grid item xs={12}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
@@ -103,14 +129,17 @@ export default function AddUser() {
                       fullWidth
                       id="firstName"
                       label="UserName"
-                      autoFocus
+                      style={{
+                        borderColor: "green",
+                        cssLabel: {
+                          color: "green",
+                        },
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FormControl variant="outlined" style={{ width: "100%" }}>
-                      <InputLabel id="demo-simple-select-outlined-label">
-                        UserType
-                      </InputLabel>
+                      <InputLabel>UserType</InputLabel>
                       <Select
                         labelId="demo-simple-select-outlined-label"
                         id="demo-simple-select-outlined"
@@ -158,7 +187,7 @@ export default function AddUser() {
                       required
                       fullWidth
                       name="password"
-                      label="Re-sPassword"
+                      label="Re-Enter Password"
                       type="password"
                       id="password"
                       autoComplete="current-password"
@@ -166,20 +195,21 @@ export default function AddUser() {
                     />
                   </Grid>
                 </Grid>
-              </form>
-            </Grid>
-            <Grid xs={10}>
-              <Button
-                onClick={SignUp}
-                //   type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                //   className={classes.submit}
-              >
-                Sign Up
-              </Button>
-            </Grid>
+              </Grid>
+              <Grid xs={10}>
+                <Button
+                  onClick={SignUp}
+                  //   type="submit"
+                  fullWidth
+                  className={classes.button}
+                  variant="contained"
+                  // color="primary"
+                  //   className={classes.submit}
+                >
+                  Sign Up
+                </Button>
+              </Grid>
+            </ThemeProvider>
           </Grid>
         </div>
       </Container>
