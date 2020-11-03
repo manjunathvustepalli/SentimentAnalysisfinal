@@ -39,6 +39,9 @@ import StorageIcon from "@material-ui/icons/Storage";
 import SearchIcon from "@material-ui/icons/Search";
 import Cookies from "js-cookie";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import DeleteIcon from '@material-ui/icons/Delete';
+import LockIcon from '@material-ui/icons/Lock';
+
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -205,6 +208,16 @@ const SideNavBar =  (props) => {
       name: "Add User",
       icon: <PersonAddIcon/>,
       path: ["/add-user"],
+    },
+    {
+      name: "Delete User",
+      icon: <DeleteIcon/>,
+      path: ["/delete-user"]
+    },
+    {
+      name: "Change Password",
+      icon: <LockIcon/>,
+      path: ["/change-password"]
     },
   ];
  

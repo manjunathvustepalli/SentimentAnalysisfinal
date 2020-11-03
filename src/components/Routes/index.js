@@ -38,6 +38,9 @@ import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
 import { TrendAnalysisContext } from "../../contexts/TrendAnalysisContext";
 import SearchFromDB from "../Pages/SearchFromDB.js";
 import Adduser from "../Pages/AddUser"
+import ChangePassword from '../Pages/ChangPassword'
+import DeleteUser from "../Pages/DeleteUser";
+
 function Routes() {
   return (
     <TrendAnalysisContext>
@@ -204,7 +207,24 @@ function Routes() {
                       exact
                       component={GeoHotSpotAnalysis}
                     />
-                    <Route path="/add-user" exact component={Adduser} />
+                    <Route 
+                    path="/add-user" 
+                    exact 
+                    component={Adduser} 
+                    />
+
+                    <Route 
+                    path="/delete-user" 
+                    exact 
+                    component={DeleteUser} 
+                    />
+
+                    <Route 
+                    path="/change-password" 
+                    exact 
+                    component={ChangePassword} 
+                    />
+
                   </SideNav>
                   <Route component={SideNav} />
                 </Switch>
