@@ -297,7 +297,7 @@ const SideNavBar =  (props) => {
             </ListItem>
             <Divider />
           </Link>
-        )):menus1.map((menuItem, index) => (
+        )):menus.map((menuItem, index) => (
           <Link
             to={menuItem.path[0]}
             key={index}

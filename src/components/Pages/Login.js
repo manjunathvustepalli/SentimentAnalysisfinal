@@ -99,9 +99,9 @@ function Login(props) {
     setIncorrectFlag(!IncorrectFlag);
   };
   const setCookies = async (response) => {
-    await Cookies.set("role", response.data.userType);
-    await Cookies.set("token", response.data.key);
-    if (response.status === 200) {
+    // await Cookies.set("role", response.data.userType);
+    await Cookies.set("token", response.data.token);
+    if (response.status === 201) {
       setIncorrectFlag(false);
       props.history.push({
         pathname: "/summary-dashboard",
@@ -121,22 +121,23 @@ function Login(props) {
   };
 
   const Signin = async () => {
-    let data = new FormData();
-
-    var formdata = new FormData();
-    formdata.append("username", Username);
-    formdata.append("password", Password);
+    let data = JSON.stringify({
+      userName: Username,
+      password: Password,
+    });
 
     let config = {
       method: "post",
-      url:
-        "https://cors-anywhere.herokuapp.com/http://3.7.187.244:9100/auth/login/",
-
-      data: formdata,
+      url: process.env.REACT_APP_URL + "admin/login",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
     };
 
     let response = await axios(config).catch((error) => setIncorrectFlag(true));
     if (response) {
+      console.log(response);
       await setCookies(response);
     }
   };
