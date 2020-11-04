@@ -25,7 +25,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import TableWithData from '../Tables/TableWithData'
-import {Auth} from './Auth'
+import {Auth,header} from './Auth'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -154,26 +154,36 @@ function WordCloudMood() {
     const [word, setWord] = useState('');
     const [tableData, setTableData] = useState([]);
     const searchWordData = () => {
-        Axios.post(
+    //     Axios.post(
           
-            process.env.REACT_APP_SEARCH_URL,
-          {
-            query: {
-              bool: {
-                must: [{ terms: { "HashtagEntities.Text.keyword": [word] } }],
-              },
-            },
-            size: 50,
-            sort: [
-              {
-                CreatedAt: {
-                  order: "desc",
-                },
-              },
-            ],
-          },
-          Auth
-        ).then((fetchedData) => {
+    //         process.env.REACT_APP_SEARCH_URL,
+    //       {
+    //         query: {
+    //           bool: {
+    //             must: [{ terms: { "HashtagEntities.Text.keyword": [word] } }],
+    //           },
+    //         },
+    //         size: 50,
+    //         sort: [
+    //           {
+    //             CreatedAt: {
+    //               order: "desc",
+    //             },
+    //           },
+    //         ],
+    //       },
+    //       Auth)
+    let body = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+
+let config = {
+  method: 'post',
+  url: process.env.REACT_APP_SEARCH_URL+'query/wordcloudanalysis',
+  headers: header,
+  data : body
+};
+
+Axios(config)
+          .then((fetchedData) => {
           setTableData(
             fetchedData.data.hits.hits.map((postObj) => {
               if (!postObj._source.User) {

@@ -124,6 +124,7 @@ function Login(props) {
     let data = JSON.stringify({
       userName: Username,
       password: Password,
+      forceLogin: true,
     });
 
     let config = {

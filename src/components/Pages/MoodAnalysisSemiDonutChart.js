@@ -17,7 +17,7 @@ import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { moodAnalysisPieChartFilter} from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
-import {Auth} from './Auth'
+import {Auth,header} from './Auth'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -74,72 +74,82 @@ export default function MoodAnalysisSemiDonutChart() {
     }
 
     useEffect(() => {
-        let query = {
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                   "field": "CreatedAt",
-                   "format": "dd-MM-yyyy",
-                   "ranges": [
-                     { "from": from, "to": to }
-                  ]
-                },
-                "aggs": {
-                  "lang": {
-                    "terms": {
-                      "field": "predictedLang.keyword"
-                    },
-                    "aggs": {
-                      "Source": {
-                        "terms": {
-                          "field": "Source.keyword"
-                        },
-                        "aggs": {
-                              "per-day": {
-                                "date_histogram": {
-                                    "field": "CreatedAt",
-                                    "format": "yyyy-MM-dd", 
-                                    "calendar_interval": "day"
-                                },
-                              "aggs": {
-                                "Daily-Sentiment-Distro": {
-                                  "terms": {
-                                    "field": "predictedMood.keyword"
-                                  }
-                                }
-                              }
-                              }
-                          }
-                          }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            if(keywordType === 'Screen Name'){
-                query["query"] = {
-                    "terms": {
-                      "User.ScreenName.keyword": keywords
-                    }
-                  }
-            } else if (keywordType === 'Hash Tags') {
-                query["query"] =  {
-                    "terms": {
-                      "HashtagEntities.Text.keyword": keywords
-                    }
-                }
-            }
-        Axios.post(
-          process.env.REACT_APP_URL,
-          query,
-          Auth,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        // let query = {
+        //     "aggs": {
+        //       "date-based-range": {
+        //         "date_range": {
+        //            "field": "CreatedAt",
+        //            "format": "dd-MM-yyyy",
+        //            "ranges": [
+        //              { "from": from, "to": to }
+        //           ]
+        //         },
+        //         "aggs": {
+        //           "lang": {
+        //             "terms": {
+        //               "field": "predictedLang.keyword"
+        //             },
+        //             "aggs": {
+        //               "Source": {
+        //                 "terms": {
+        //                   "field": "Source.keyword"
+        //                 },
+        //                 "aggs": {
+        //                       "per-day": {
+        //                         "date_histogram": {
+        //                             "field": "CreatedAt",
+        //                             "format": "yyyy-MM-dd", 
+        //                             "calendar_interval": "day"
+        //                         },
+        //                       "aggs": {
+        //                         "Daily-Sentiment-Distro": {
+        //                           "terms": {
+        //                             "field": "predictedMood.keyword"
+        //                           }
+        //                         }
+        //                       }
+        //                       }
+        //                   }
+        //                   }
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //     if(keywordType === 'Screen Name'){
+        //         query["query"] = {
+        //             "terms": {
+        //               "User.ScreenName.keyword": keywords
+        //             }
+        //           }
+        //     } else if (keywordType === 'Hash Tags') {
+        //         query["query"] =  {
+        //             "terms": {
+        //               "HashtagEntities.Text.keyword": keywords
+        //             }
+        //         }
+        //     }
+        // Axios.post(
+        //   process.env.REACT_APP_URL,
+        //   query,
+        //   Auth,
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // )
+        let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+
+        let config = {
+          method: "post",
+          url: process.env.REACT_APP_URL + "query/moodanalysis",
+          headers: header,
+          data: data,
+        };
+
+        Axios(config)
           .then((fetchedData) => {
             var sourceKeys, sourceBuckets, perDayBuckets;
             var uniqueSourceKeys = [];

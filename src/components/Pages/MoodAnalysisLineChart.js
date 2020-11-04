@@ -13,7 +13,7 @@ import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect'
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
 import Loader from '../LoaderWithBackDrop';
 import colors from '../../helpers/colors';
-import {Auth} from './Auth'
+import {Auth,header} from './Auth'
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -80,81 +80,91 @@ function MoodAnalysisLineChart() {
 
 	const fetchData = (changeInState) => {
 		
-		let query = {
-			"aggs": {
-			  "date-based-range": {
-				"date_range": {
-				  "field": "CreatedAt",
-				  "format": "dd-MM-yyyy",
-				  "ranges": [
-					{ "from": from,"to": to}
-				  ]
-				},
-				"aggs": {
-				  "lang": {
-					"terms": {
-					  "field": "predictedLang.keyword"
-					},
-					"aggs": {
-					  "Source": {
-						"terms": {
-						  "field": "Source.keyword"
-						},
-						"aggs":{
-							"SubSource":{
-								"terms":{
-									"field": "SubSource.keyword"
-								},
+		// let query = {
+		// 	"aggs": {
+		// 	  "date-based-range": {
+		// 		"date_range": {
+		// 		  "field": "CreatedAt",
+		// 		  "format": "dd-MM-yyyy",
+		// 		  "ranges": [
+		// 			{ "from": from,"to": to}
+		// 		  ]
+		// 		},
+		// 		"aggs": {
+		// 		  "lang": {
+		// 			"terms": {
+		// 			  "field": "predictedLang.keyword"
+		// 			},
+		// 			"aggs": {
+		// 			  "Source": {
+		// 				"terms": {
+		// 				  "field": "Source.keyword"
+		// 				},
+		// 				"aggs":{
+		// 					"SubSource":{
+		// 						"terms":{
+		// 							"field": "SubSource.keyword"
+		// 						},
 							
 	
-							"aggs": {
-								"per-day": {
-								  "date_histogram": {
-									  "field": "CreatedAt",
-									  "format": "yyyy-MM-dd", 
-									  "calendar_interval": "day"
-								  },
-								"aggs": {
-								  "Daily-Sentiment-Distro": {
-									"terms": {
-									  "field": "predictedMood.keyword"
-									}
-								  }
-								}
-								}
-							}
-						  }
-						}
-						}
-					  }
-					}
-				  }
-				}
-			  }
-			}
-			if(keywordType === 'Screen Name'){
-				query["query"] = {
-					"terms": {
-					  "User.ScreenName.keyword": keywords
-					}
-				  }
-			} else if (keywordType === 'Hash Tags') {
-				query["query"] =  {
-					"terms": {
-					  "HashtagEntities.Text.keyword": keywords
-					}
-				}
-			}
-		Axios.post(
-      process.env.REACT_APP_URL,
-      query,
-      Auth,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    )
+		// 					"aggs": {
+		// 						"per-day": {
+		// 						  "date_histogram": {
+		// 							  "field": "CreatedAt",
+		// 							  "format": "yyyy-MM-dd", 
+		// 							  "calendar_interval": "day"
+		// 						  },
+		// 						"aggs": {
+		// 						  "Daily-Sentiment-Distro": {
+		// 							"terms": {
+		// 							  "field": "predictedMood.keyword"
+		// 							}
+		// 						  }
+		// 						}
+		// 						}
+		// 					}
+		// 				  }
+		// 				}
+		// 				}
+		// 			  }
+		// 			}
+		// 		  }
+		// 		}
+		// 	  }
+		// 	}
+		// 	if(keywordType === 'Screen Name'){
+		// 		query["query"] = {
+		// 			"terms": {
+		// 			  "User.ScreenName.keyword": keywords
+		// 			}
+		// 		  }
+		// 	} else if (keywordType === 'Hash Tags') {
+		// 		query["query"] =  {
+		// 			"terms": {
+		// 			  "HashtagEntities.Text.keyword": keywords
+		// 			}
+		// 		}
+		// 	}
+		// Axios.post(
+    //   process.env.REACT_APP_URL,
+    //   query,
+    //   Auth,
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   },
+    // )
+    let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "query/moodanalysis",
+      headers: header,
+      data: data,
+    };
+
+    Axios(config)
       .then((fetchedData) => {
         var sourceKeys, subSourceKeys;
         var uniqueSourceKeys = [];
