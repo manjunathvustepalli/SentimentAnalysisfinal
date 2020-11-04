@@ -106,79 +106,88 @@ export const WordCloudContext = ({ children }) => {
         //     }
         // }
         // Axios.post(process.env.REACT_APP_URL,query, Auth)
-        let body = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+       let body = JSON.stringify({
+         queryStartDate: "01-01-2020",
+         queryEndDate: "31-10-2020",
+       });
 
-let config = {
-  method: 'post',
-  url: process.env.REACT_APP_SEARCH_URL+'query/wordcloudanalysis',
-  headers: header,
-  data : body
-};
-Axios(config)
-  .then((fetchedData) => {
-    var sourceKeys, subSourceKeys;
-    var uniqueSourceKeys = [];
-    var uniqueSubSourceKeys = [];
-    let languageBuckets =
-      fetchedData.data.aggregations["date-based-range"].buckets[0].lang.buckets;
-    var languageKeys = getKeyArray(languageBuckets);
-    languageKeys.forEach((key, i) => {
-      let sourceBuckets = languageBuckets[i].Source.buckets;
-      sourceKeys = getKeyArray(sourceBuckets);
-      sourceKeys.forEach((source, j) => {
-        if (!uniqueSourceKeys.includes(source)) {
-          uniqueSourceKeys.push(source);
-        }
-        let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
-        subSourceKeys = getKeyArray(subSourceBuckets);
-        subSourceKeys.forEach((subSource, k) => {
-          if (!uniqueSubSourceKeys.includes(subSource)) {
-            uniqueSubSourceKeys.push(subSource);
-          }
-          let moodBuckets =
-            subSourceBuckets[k]["Daily-Sentiment-Distro"].buckets;
-        });
-      });
-    });
-    let availableSourceKeys = {};
-    uniqueSourceKeys.forEach((source) => {
-      availableSourceKeys[source] = true;
-    });
-    setSources(availableSourceKeys);
+       let config = {
+         method: "post",
+         url:
+           "http://bounce-275465ca.localhost.run/bsma-webservice/query/wordcloudanalysis",
+         headers: {
+           "Content-Type": "application/json",
+           token: "CMbcACrCXMmHSVxSheaZ6jHpivKKSVed",
+         },
+         data: body,
+       };
 
-    let availableSubSourceKeys = {};
-    uniqueSubSourceKeys.forEach((subSource) => {
-      availableSubSourceKeys[subSource] = true;
-    });
-    setSubSources(availableSubSourceKeys);
+       Axios(config)
+         .then((fetchedData) => {
+           var sourceKeys, subSourceKeys;
+           var uniqueSourceKeys = [];
+           var uniqueSubSourceKeys = [];
+           let languageBuckets =
+             fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+               .buckets;
+           var languageKeys = getKeyArray(languageBuckets);
+           languageKeys.forEach((key, i) => {
+             let sourceBuckets = languageBuckets[i].Source.buckets;
+             sourceKeys = getKeyArray(sourceBuckets);
+             sourceKeys.forEach((source, j) => {
+               if (!uniqueSourceKeys.includes(source)) {
+                 uniqueSourceKeys.push(source);
+               }
+               let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+               subSourceKeys = getKeyArray(subSourceBuckets);
+               subSourceKeys.forEach((subSource, k) => {
+                 if (!uniqueSubSourceKeys.includes(subSource)) {
+                   uniqueSubSourceKeys.push(subSource);
+                 }
+                 let moodBuckets =
+                   subSourceBuckets[k]["Daily-Sentiment-Distro"].buckets;
+               });
+             });
+           });
+           let availableSourceKeys = {};
+           uniqueSourceKeys.forEach((source) => {
+             availableSourceKeys[source] = true;
+           });
+           setSources(availableSourceKeys);
 
-    setMoods((prev) => {
-      if (Object.keys(prev).length) {
-        return prev;
-      } else {
-        return {
-          joy: true,
-          anticipation: true,
-          fear: true,
-          disgust: true,
-          sad: true,
-          surprise: true,
-          trust: true,
-          anger: true,
-        };
-      }
-    });
-    setSentiments((prev) => {
-      if (Object.keys(prev).length) {
-        return prev;
-      } else {
-        return { negative: true, positive: true, neutral: true };
-      }
-    });
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+           let availableSubSourceKeys = {};
+           uniqueSubSourceKeys.forEach((subSource) => {
+             availableSubSourceKeys[subSource] = true;
+           });
+           setSubSources(availableSubSourceKeys);
+
+           setMoods((prev) => {
+             if (Object.keys(prev).length) {
+               return prev;
+             } else {
+               return {
+                 joy: true,
+                 anticipation: true,
+                 fear: true,
+                 disgust: true,
+                 sad: true,
+                 surprise: true,
+                 trust: true,
+                 anger: true,
+               };
+             }
+           });
+           setSentiments((prev) => {
+             if (Object.keys(prev).length) {
+               return prev;
+             } else {
+               return { negative: true, positive: true, neutral: true };
+             }
+           });
+         })
+         .catch((err) => {
+           console.log(err);
+         });
     },[])
 
     return (

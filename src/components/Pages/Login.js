@@ -137,7 +137,7 @@ function Login(props) {
     };
 
     let response = await axios(config).catch((error) => setIncorrectFlag(true));
-    if (response) {
+    if (response.data.token) {
       console.log(response);
       await setCookies(response);
     }
