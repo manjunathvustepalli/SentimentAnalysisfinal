@@ -18,7 +18,7 @@ import { sentimentAnalysisPieChartFilter } from '../../helpers/filter';
 import PieChart from '../charts/PieChart';
 import { addMonths } from '../../helpers/index';
 import Loader from '../LoaderWithBackDrop';
-import {Auth} from './Auth'
+import { Auth, header } from "./Auth";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -70,68 +70,78 @@ export default function SentimentalAnalysisPieChart() {
     useEffect(() => {
         setData([])
         setOpen(true)
-        let query = {
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                   "field": "CreatedAt",
-                   "format": "dd-MM-yyyy",
-                   "ranges": [
-                     { "from": from, "to": to }
-                  ]
-                },
-                "aggs": {
-                  "lang": {
-                    "terms": {
-                      "field": "predictedLang.keyword"
-                    },
-                    "aggs": {
-                      "Source": {
-                        "terms": {
-                          "field": "Source.keyword"
-                        },
-                        "aggs": {
-                              "per-day": {
-                                "date_histogram": {
-                                    "field": "CreatedAt",
-                                    "format": "yyyy-MM-dd", 
-                                    "calendar_interval": "day"
-                                },
-                              "aggs": {
-                                "Daily-Sentiment-Distro": {
-                                  "terms": {
-                                    "field": "predictedSentiment.keyword"
-                                  }
-                                }
-                              }
-                              }
-                          }
-                          }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            if(keywordType === 'Screen Name'){
-                query["query"] = {
-                    "terms": {
-                      "User.ScreenName.keyword": keywords
-                    }
-                  }
-            } else if (keywordType === 'Hash Tags') {
-                query["query"] =  {
-                    "terms": {
-                      "HashtagEntities.Text.keyword": keywords
-                    }
-                }
-            }
+        // let query = {
+        //     "aggs": {
+        //       "date-based-range": {
+        //         "date_range": {
+        //            "field": "CreatedAt",
+        //            "format": "dd-MM-yyyy",
+        //            "ranges": [
+        //              { "from": from, "to": to }
+        //           ]
+        //         },
+        //         "aggs": {
+        //           "lang": {
+        //             "terms": {
+        //               "field": "predictedLang.keyword"
+        //             },
+        //             "aggs": {
+        //               "Source": {
+        //                 "terms": {
+        //                   "field": "Source.keyword"
+        //                 },
+        //                 "aggs": {
+        //                       "per-day": {
+        //                         "date_histogram": {
+        //                             "field": "CreatedAt",
+        //                             "format": "yyyy-MM-dd", 
+        //                             "calendar_interval": "day"
+        //                         },
+        //                       "aggs": {
+        //                         "Daily-Sentiment-Distro": {
+        //                           "terms": {
+        //                             "field": "predictedSentiment.keyword"
+        //                           }
+        //                         }
+        //                       }
+        //                       }
+        //                   }
+        //                   }
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //     if(keywordType === 'Screen Name'){
+        //         query["query"] = {
+        //             "terms": {
+        //               "User.ScreenName.keyword": keywords
+        //             }
+        //           }
+        //     } else if (keywordType === 'Hash Tags') {
+        //         query["query"] =  {
+        //             "terms": {
+        //               "HashtagEntities.Text.keyword": keywords
+        //             }
+        //         }
+        //     }
 
-        Axios.post(
-          process.env.REACT_APP_URL,
-          query,
-          Auth
-        )
+        // Axios.post(
+        //   process.env.REACT_APP_URL,
+        //   query,
+        //   Auth
+        // )
+        let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+
+        let config = {
+          method: "post",
+          url: process.env.REACT_APP_URL + "query/sentimentanalysis",
+          headers: header,
+          data: data,
+        };
+
+        Axios(config)
           .then((fetchedData) => {
             var sourceKeys, sourceBuckets, perDayBuckets, perDayKeys;
             var uniqueSourceKeys = [];

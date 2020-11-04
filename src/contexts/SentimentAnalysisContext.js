@@ -1,7 +1,7 @@
 import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
- import {Auth} from '../components/Pages/Auth'
+ import {Auth,header} from '../components/Pages/Auth'
 export const SentimentAnalysisFiltersContext = createContext()
 
 export const SentimentAnalysisContext = ({ children }) => {
@@ -35,119 +35,130 @@ export const SentimentAnalysisContext = ({ children }) => {
     }
 
     useEffect(() => {
-        let query = {
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from": from,"to": to}
-                  ]
-                },
-                "aggs": {
-                  "lang": {
-                    "terms": {
-                      "field": "predictedLang.keyword"
-                    },
-                    "aggs": {
-                      "Source": {
-                        "terms": {
-                          "field": "Source.keyword"
-                        },
-                        "aggs":{
-                            "SubSource":{
-                                "terms":{
-                                    "field": "SubSource.keyword"
-                                },
+      //   let query = {
+      //       "aggs": {
+      //         "date-based-range": {
+      //           "date_range": {
+      //             "field": "CreatedAt",
+      //             "format": "dd-MM-yyyy",
+      //             "ranges": [
+      //               { "from": from,"to": to}
+      //             ]
+      //           },
+      //           "aggs": {
+      //             "lang": {
+      //               "terms": {
+      //                 "field": "predictedLang.keyword"
+      //               },
+      //               "aggs": {
+      //                 "Source": {
+      //                   "terms": {
+      //                     "field": "Source.keyword"
+      //                   },
+      //                   "aggs":{
+      //                       "SubSource":{
+      //                           "terms":{
+      //                               "field": "SubSource.keyword"
+      //                           },
                             
     
-                            "aggs": {
-                                "per-day": {
-                                  "date_histogram": {
-                                      "field": "CreatedAt",
-                                      "format": "yyyy-MM-dd", 
-                                      "calendar_interval": "day"
-                                  },
-                                "aggs": {
-                                  "Daily-Sentiment-Distro": {
-                                    "terms": {
-                                      "field": "predictedSentiment.keyword"
-                                    }
-                                  }
-                                }
-                                }
-                            }
-                          }
-                        }
-                        }
-                      }
-                    }
+      //                       "aggs": {
+      //                           "per-day": {
+      //                             "date_histogram": {
+      //                                 "field": "CreatedAt",
+      //                                 "format": "yyyy-MM-dd", 
+      //                                 "calendar_interval": "day"
+      //                             },
+      //                           "aggs": {
+      //                             "Daily-Sentiment-Distro": {
+      //                               "terms": {
+      //                                 "field": "predictedSentiment.keyword"
+      //                               }
+      //                             }
+      //                           }
+      //                           }
+      //                       }
+      //                     }
+      //                   }
+      //                   }
+      //                 }
+      //               }
+      //             }
+      //           }
+      //         }
+      //       }
+      //  Axios.post(process.env.REACT_APP_URL,
+      //   query,Auth)
+      let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+
+      let config = {
+        method: "post",
+        url: process.env.REACT_APP_URL + "query/sentimentanalysis",
+        headers: header,
+        data: data,
+      };
+
+      Axios(config)
+        .then((fetchedData) => {
+          var sourceKeys, subSourceKeys;
+          var uniqueSourceKeys = [];
+          var uniqueSubSourceKeys = [];
+          let languageBuckets =
+            fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+              .buckets;
+          var languageKeys = getKeyArray(languageBuckets);
+          if (languageKeys[0]) {
+            languageKeys.forEach((key, i) => {
+              let sourceBuckets = languageBuckets[i].Source.buckets;
+              sourceKeys = getKeyArray(sourceBuckets);
+              sourceKeys.forEach((source, j) => {
+                if (!uniqueSourceKeys.includes(source)) {
+                  uniqueSourceKeys.push(source);
+                }
+                let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+                subSourceKeys = getKeyArray(subSourceBuckets);
+                subSourceKeys.forEach((subSource, k) => {
+                  if (!uniqueSubSourceKeys.includes(subSource)) {
+                    uniqueSubSourceKeys.push(subSource);
                   }
-                }
-              }
-            }
-       Axios.post(process.env.REACT_APP_URL,
-        query,Auth)
-    .then(fetchedData => {
-        var sourceKeys,subSourceKeys
-        var uniqueSourceKeys = []
-        var uniqueSubSourceKeys = []
-        let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-        var languageKeys = getKeyArray(languageBuckets)
-        if(languageKeys[0]){
-            languageKeys.forEach((key,i) =>{
-                let sourceBuckets = languageBuckets[i].Source.buckets
-                sourceKeys = getKeyArray(sourceBuckets)
-                sourceKeys.forEach((source,j) => {
-                    if(!uniqueSourceKeys.includes(source)){
-                        uniqueSourceKeys.push(source)
-                    }
-                    let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-                    subSourceKeys = getKeyArray(subSourceBuckets)
-                    subSourceKeys.forEach((subSource,k) => {
-                        if(!uniqueSubSourceKeys.includes(subSource)){
-                            uniqueSubSourceKeys.push(subSource)
-                        }
-                    })
                 });
-            })
-            let availableSourceKeys = {}
-            uniqueSourceKeys.forEach(source =>{
-                availableSourceKeys[source] = true
-            })
-            setSources(availableSourceKeys)
+              });
+            });
+            let availableSourceKeys = {};
+            uniqueSourceKeys.forEach((source) => {
+              availableSourceKeys[source] = true;
+            });
+            setSources(availableSourceKeys);
 
-            let availableLanguageKeys = {}
-            languageKeys.forEach(lang =>{
-                availableLanguageKeys[lang] = true
-            })
-            setLanguages(availableLanguageKeys)
+            let availableLanguageKeys = {};
+            languageKeys.forEach((lang) => {
+              availableLanguageKeys[lang] = true;
+            });
+            setLanguages(availableLanguageKeys);
 
-            let availableSubSourceKeys = {}
-            uniqueSubSourceKeys.forEach(subSource =>{
-                availableSubSourceKeys[subSource]  = true
-            })
-            setSubSources(availableSubSourceKeys)
+            let availableSubSourceKeys = {};
+            uniqueSubSourceKeys.forEach((subSource) => {
+              availableSubSourceKeys[subSource] = true;
+            });
+            setSubSources(availableSubSourceKeys);
 
-            setSentiments(prev => {
-                if(Object.keys(prev).length){
-                    return prev
-                } else {
-                    return {negative:true,positive:true,neutral:true}
-                }
-            })
-        } else {
-            setSources({})
-            setSubSources({})
-            setLanguages({})
-            setSentiments({})
-        }
-        
-    })
-    .catch(err => {
-        console.log(err)
-    })
+            setSentiments((prev) => {
+              if (Object.keys(prev).length) {
+                return prev;
+              } else {
+                return { negative: true, positive: true, neutral: true };
+              }
+            });
+          } else {
+            setSources({});
+            setSubSources({});
+            setLanguages({});
+            setSentiments({});
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }, [])
 
 
