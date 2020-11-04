@@ -19,7 +19,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import {header} from './Auth'
+import { header } from "./Auth";
 import {
   fade,
   ThemeProvider,
@@ -91,7 +91,6 @@ export default function AddUser() {
     GetRoles();
   }, []);
   const SignUp = () => {
-    
     let data = JSON.stringify({
       user: {
         userName: Username,
@@ -115,8 +114,6 @@ export default function AddUser() {
       .catch((error) => {
         console.log(error);
       });
-
-    
   };
   return (
     <Container component="main" maxWidth="xs">

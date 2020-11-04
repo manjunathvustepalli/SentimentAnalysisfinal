@@ -7,7 +7,7 @@ import CustomLegend from '../CustomLegend'
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom'
 import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
-import {Auth} from '../Pages/Auth';
+import {Auth, header} from '../Pages/Auth';
 
 var sortedData = {}
 
@@ -22,67 +22,78 @@ function WordCloud({ from,to,keywords,keywordType,refresh }) {
 
     useEffect(()=>{
         setData([])
-        let query = {
-            "aggs": {
-                "date-based-range": {
-                    "date_range": {
-                        "field": "CreatedAt",
-                        "format": "dd-MM-yyyy",
-                        "ranges": [{
-                            "from": from,
-                            "to": to
-                        }]
-                    },
-                    "aggs": {
-                        "Source": {
-                            "terms": {
-                                "field": "Source.keyword"
-                            },
-                            "aggs": {
-                                "Daily-Sentiment-Distro": {
-                                    "terms": {
-                                        "field": "predictedSentiment.keyword"
-                                    },
-                                  "aggs":{
-                                  	   "Words": {
-                                         	"terms": {
-                                                "field": "HashtagEntities.Text.keyword"
-                                                }
-                                            }
-                                  }
-                                },
-                                "Daily-Mood-Distro":{
-                                    "terms": {
-                                        "field": "predictedMood.keyword"
-                                    },
-                                    "aggs": {
-                                        "Words": {
-                                            "terms": {
-                                                "field": "HashtagEntities.Text.keyword"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if(keywordType === 'Screen Name'){
-            query["query"] = {
-                "terms": {
-                  "User.ScreenName.keyword": keywords
-                }
-              }
-        } else if (keywordType === 'Hash Tags') {
-            query["query"] =  {
-                "terms": {
-                  "HashtagEntities.Text.keyword": keywords
-                }
-            }
-        }
-        Axios.post(process.env.REACT_APP_URL,query, Auth)
+        // let query = {
+        //     "aggs": {
+        //         "date-based-range": {
+        //             "date_range": {
+        //                 "field": "CreatedAt",
+        //                 "format": "dd-MM-yyyy",
+        //                 "ranges": [{
+        //                     "from": from,
+        //                     "to": to
+        //                 }]
+        //             },
+        //             "aggs": {
+        //                 "Source": {
+        //                     "terms": {
+        //                         "field": "Source.keyword"
+        //                     },
+        //                     "aggs": {
+        //                         "Daily-Sentiment-Distro": {
+        //                             "terms": {
+        //                                 "field": "predictedSentiment.keyword"
+        //                             },
+        //                           "aggs":{
+        //                           	   "Words": {
+        //                                  	"terms": {
+        //                                         "field": "HashtagEntities.Text.keyword"
+        //                                         }
+        //                                     }
+        //                           }
+        //                         },
+        //                         "Daily-Mood-Distro":{
+        //                             "terms": {
+        //                                 "field": "predictedMood.keyword"
+        //                             },
+        //                             "aggs": {
+        //                                 "Words": {
+        //                                     "terms": {
+        //                                         "field": "HashtagEntities.Text.keyword"
+        //                                     }
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // if(keywordType === 'Screen Name'){
+        //     query["query"] = {
+        //         "terms": {
+        //           "User.ScreenName.keyword": keywords
+        //         }
+        //       }
+        // } else if (keywordType === 'Hash Tags') {
+        //     query["query"] =  {
+        //         "terms": {
+        //           "HashtagEntities.Text.keyword": keywords
+        //         }
+        //     }
+        // }
+        // Axios.post(process.env.REACT_APP_URL,query, Auth)
+        
+let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+
+let config = {
+  method: 'post',
+  url: process.env.REACT_APP_URL+'query/wordcloudanalysisforsummarydashboard',
+  headers: header,
+  data : data
+};
+
+Axios(config)
         .then(fetchedData => {
             let sourceBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].Source.buckets
             let sourceKeys = getKeyArray(sourceBuckets)

@@ -6,7 +6,7 @@ import Axios from 'axios';
 import PieChart from '../charts/PieChart';
 import { getKeyArray } from '../../helpers';
 import colors from '../../helpers/colors';
-import {Auth} from '../Pages/Auth';
+import {Auth, header} from '../Pages/Auth';
 
 var sortedData =  {}
 
@@ -108,44 +108,55 @@ function OverallAnalysis({to, from,refresh}) {
       setMainSourceData({})
       setSentiments([])
       setMoods([])
-        Axios.post(process.env.REACT_APP_URL,{
-            "aggs": {
-              "date-based-range": {
-                "date_range": {
-                  "field": "CreatedAt",
-                  "time_zone": "+05:30",
-                  "format": "dd-MM-yyyy",
-                  "ranges": [
-                    { "from": from, "to": to}
-                  ]
-                },
-                "aggs": {
-                  "Source": {
-                    "terms": {
-                      "field": "Source.keyword"
-                    }
-                  },
-                  "sources-mood-sentiment":{
-                    "terms":{
-                      "field":"Source.keyword"
-                    },
-                    "aggs":{
-                      "Sentiment":{
-                        "terms":{
-                          "field":"predictedSentiment.keyword"
-                        }
-                      },
-                      "Mood": {
-                        "terms": {
-                          "field": "predictedMood.keyword"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }, Auth)
+        // Axios.post(process.env.REACT_APP_URL,{
+        //     "aggs": {
+        //       "date-based-range": {
+        //         "date_range": {
+        //           "field": "CreatedAt",
+        //           "time_zone": "+05:30",
+        //           "format": "dd-MM-yyyy",
+        //           "ranges": [
+        //             { "from": from, "to": to}
+        //           ]
+        //         },
+        //         "aggs": {
+        //           "Source": {
+        //             "terms": {
+        //               "field": "Source.keyword"
+        //             }
+        //           },
+        //           "sources-mood-sentiment":{
+        //             "terms":{
+        //               "field":"Source.keyword"
+        //             },
+        //             "aggs":{
+        //               "Sentiment":{
+        //                 "terms":{
+        //                   "field":"predictedSentiment.keyword"
+        //                 }
+        //               },
+        //               "Mood": {
+        //                 "terms": {
+        //                   "field": "predictedMood.keyword"
+        //                 }
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }, Auth)
+        
+let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+
+let config = {
+  method: "post",
+  url: process.env.REACT_APP_URL + "query/overallanalysisforsummarydashboard",
+  headers: header,
+  data: data,
+};
+
+Axios(config)
           .then(res => {
               setSources(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>doc.key))
               setSourceData(res.data.aggregations['date-based-range'].buckets[0].Source.buckets.map(doc =>{return {[doc['key']]:doc.doc_count}}))

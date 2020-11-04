@@ -7,7 +7,7 @@ import { capitalizeString } from '../../helpers';
 import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom';
-import {Auth} from '../Pages/Auth';
+import {Auth, header} from '../Pages/Auth';
 import Cookies from "js-cookie";
 
 
@@ -147,78 +147,89 @@ function InfluencerComparison({from,to,refresh}) {
     
         setData([])
         if(source === 'twitter'){
-            Axios.post(process.env.REACT_APP_URL,
-              {
-                "query": {
-                  "bool": {
-                    "must": [
-                      {"terms": {"Source.keyword": ["twitter"]}},
-                      {"terms": {"Place.Country.keyword": ["Bangladesh"]}}
-                    ]
-                  }
-                },
-                "aggs": {
-                  "date-based-range": {
-                    "date_range": {
-                      "field": "CreatedAt",
-                      "format": "dd-MM-yyyy",
-                      "ranges": [
-                        { "from": from, "to":to }
-                      ]
-                    },
-                    "aggs": {
-                      "Users": {
-                        "terms": {
-                          "field": "User.ScreenName.keyword",
-                          "size":100
-                        },
-                        "aggs": {
-                          "Followers": {
-                            "max": {
-                              "field": "User.FollowersCount",
-                            }
-                          },
-                          "Posts": {
-                            "value_count": {
-                              "field": "Id"
-                            }
-                          },
-                          "influenceWeight": {
-                            "bucket_script": {
-                              "buckets_path": {
-                                "postCount": "Posts",
-                                "followers": "Followers"
-                              },
-                              "script": "params.followers * params.postCount"
-                            }
-                          },
-                          "influence_sort" : {
-                            "bucket_sort": {
-                              "sort": [
-                                {
-                                  "influenceWeight": {"order": "desc"}
-                                }
-                              ],
-                              "size":size,
-                            }
-                          },
-                          "Sentiment": {
-                            "terms": {
-                              "field": "predictedSentiment.keyword"
-                            }
-                          },
-                          "Mood": {
-                            "terms": {
-                              "field": "predictedMood.keyword"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }, Auth)
-                .then(res => {
+            // Axios.post(process.env.REACT_APP_URL,
+            //   {
+            //     "query": {
+            //       "bool": {
+            //         "must": [
+            //           {"terms": {"Source.keyword": ["twitter"]}},
+            //           {"terms": {"Place.Country.keyword": ["Bangladesh"]}}
+            //         ]
+            //       }
+            //     },
+            //     "aggs": {
+            //       "date-based-range": {
+            //         "date_range": {
+            //           "field": "CreatedAt",
+            //           "format": "dd-MM-yyyy",
+            //           "ranges": [
+            //             { "from": from, "to":to }
+            //           ]
+            //         },
+            //         "aggs": {
+            //           "Users": {
+            //             "terms": {
+            //               "field": "User.ScreenName.keyword",
+            //               "size":100
+            //             },
+            //             "aggs": {
+            //               "Followers": {
+            //                 "max": {
+            //                   "field": "User.FollowersCount",
+            //                 }
+            //               },
+            //               "Posts": {
+            //                 "value_count": {
+            //                   "field": "Id"
+            //                 }
+            //               },
+            //               "influenceWeight": {
+            //                 "bucket_script": {
+            //                   "buckets_path": {
+            //                     "postCount": "Posts",
+            //                     "followers": "Followers"
+            //                   },
+            //                   "script": "params.followers * params.postCount"
+            //                 }
+            //               },
+            //               "influence_sort" : {
+            //                 "bucket_sort": {
+            //                   "sort": [
+            //                     {
+            //                       "influenceWeight": {"order": "desc"}
+            //                     }
+            //                   ],
+            //                   "size":size,
+            //                 }
+            //               },
+            //               "Sentiment": {
+            //                 "terms": {
+            //                   "field": "predictedSentiment.keyword"
+            //                 }
+            //               },
+            //               "Mood": {
+            //                 "terms": {
+            //                   "field": "predictedMood.keyword"
+            //                 }
+            //               }
+            //             }
+            //           }
+            //         }
+            //       }
+            //     }
+            //   }, Auth)
+            
+let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+
+let config = {
+  method: 'post',
+  url: process.env.REACT_APP_URL+'query/influencercomparisonforsummarydashboard',
+  headers:header,
+  data : data
+};
+
+Axios(config)
+ .then(res => {
                     setData(parent.concat(res.data.aggregations['date-based-range'].buckets[0].Users.buckets.map(doc => {
                           return {
                               name: doc.key,

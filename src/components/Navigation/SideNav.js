@@ -41,6 +41,8 @@ import Cookies from "js-cookie";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteIcon from '@material-ui/icons/Delete';
 import LockIcon from '@material-ui/icons/Lock';
+import {header} from "../Pages/Auth";
+import axios from "axios";
 
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
@@ -333,7 +335,27 @@ const SideNavBar =  (props) => {
       </List>
     </div>
   );
+const logout=()=>{
+ 
+  
 
+  let config = {
+    method: "post",
+    url: process.env.REACT_APP_URL + "admin/logout",
+    headers: header,
+    data: "",
+  };
+
+  axios(config)
+    .then((response) => {
+      Cookies.remove("token");
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+}
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -361,7 +383,7 @@ const SideNavBar =  (props) => {
           </Typography>
           <span style={{ marginLeft: "auto" }}>
             <Tooltip title={"Logout"}>
-              <Button color="inherit" component={Link} to="/">
+              <Button color="inherit" onClick={()=>logout()} component={Link} to="/">
                 <ExitToAppIcon />
               </Button>
             </Tooltip>
