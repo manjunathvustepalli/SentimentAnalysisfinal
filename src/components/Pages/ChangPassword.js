@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,7 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { green } from "@material-ui/core/colors";
-
+import { header } from './Auth';
+import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,7 +47,30 @@ const theme = createMuiTheme({
 
 export default function SignIn() {
   const classes = useStyles();
+  const [password1,setpassword1]=useState();
+  const[password2,setpassword2]=useState();
+const changepassword=()=>{
+ 
+  let data = JSON.stringify({
+    user: { password: password1, oldPassword: password2 },
+  });
 
+  let config = {
+    method: "post",
+    url: process.env.REACT_APP_URL + "admin/changepassword",
+    headers: header,
+    data: data,
+  };
+
+  axios(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+}
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -66,6 +90,7 @@ export default function SignIn() {
             fullWidth
             id="oldpassword"
             label="Old Password"
+            onChange={(e)=>setpassword1(e.target.value)}
             type="password"
             name="oldpassword"
             autoComplete="oldpassword"
@@ -76,6 +101,7 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
+            onChange={(e)=>setpassword2(e.target.value)}
             name="newPassword"
             label="New Password"
             type="password"
@@ -84,10 +110,11 @@ export default function SignIn() {
           />
 
           <Button
-            type="submit"
+            // type="submit"
             fullWidth
             variant="contained"
             // color="primary"
+            onClick={()=>changepassword()}
             className={classes.button}
           >
             Submit
