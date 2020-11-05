@@ -2,6 +2,7 @@ import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
 import {Auth} from '../components/Pages/Auth'
+import Cookies from 'js-cookie';
 export const TrendAnalysisFiltersContext = createContext()
 export const TrendAnalysisContext = ({ children }) => {
   const [sources, setSources] = useState({});
@@ -21,43 +22,60 @@ export const TrendAnalysisContext = ({ children }) => {
   }
 
   useEffect(() => {
-    Axios.post(
-      process.env.REACT_APP_URL,
-      {
-        aggs: {
-          "date-based-range": {
-            date_range: {
-              field: "CreatedAt",
-              format: "dd-MM-yyyy",
-              ranges: [{ from: from, to: to }],
-            },
-            aggs: {
-              "per-day": {
-                date_histogram: {
-                  field: "CreatedAt",
-                  calendar_interval: "day",
-                },
-                aggs: {
-                  Source: {
-                    terms: {
-                      field: "Source.keyword",
-                    },
-                    aggs: {
-                      Lang: {
-                        terms: {
-                          field: "predictedLang.keyword",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+    // Axios.post(
+    //   process.env.REACT_APP_URL,
+    //   {
+    //     aggs: {
+    //       "date-based-range": {
+    //         date_range: {
+    //           field: "CreatedAt",
+    //           format: "dd-MM-yyyy",
+    //           ranges: [{ from: from, to: to }],
+    //         },
+    //         aggs: {
+    //           "per-day": {
+    //             date_histogram: {
+    //               field: "CreatedAt",
+    //               calendar_interval: "day",
+    //             },
+    //             aggs: {
+    //               Source: {
+    //                 terms: {
+    //                   field: "Source.keyword",
+    //                 },
+    //                 aggs: {
+    //                   Lang: {
+    //                     terms: {
+    //                       field: "predictedLang.keyword",
+    //                     },
+    //                   },
+    //                 },
+    //               },
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    //   Auth
+    // )
+    let data = JSON.stringify({
+      queryStartDate: from,
+      queryEndDate: to,
+    });
+let token=Cookies.get("token")
+    let config = {
+      method: "post",
+      url:
+        process.env.REACT_APP_URL+"query/trendinganalysis",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
       },
-      Auth
-    )
+      data: data,
+    };
+
+    Axios(config)
       .then((fetchedData) => {
         var sourceKeys, languageKeys;
         var uniqueSourceKeys = [];
