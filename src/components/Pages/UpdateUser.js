@@ -47,10 +47,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function InteractiveList() {
+  const [Username, setUsername] = useState();
+  const [Displayname, setDisplayname] = useState();
+  const [Roles, setRoles] = useState();
+
   const [data,setdata]=useState([]);
+
   const updateuser=(id)=>{
-   
-    let data = JSON.stringify({ user: { userId: id } });
+    let data = JSON.stringify({
+        user: {
+            userId: id,
+            userName: Username,
+            displayName: Displayname,
+            roles: Roles,
+        },
+      });
 
     let config = {
       method: "post",
@@ -69,6 +80,7 @@ export default function InteractiveList() {
 
     console.log(id)
   }
+
  const getUsers=()=>{
    let config = {
      method: "post",
@@ -105,7 +117,9 @@ export default function InteractiveList() {
     {
       title: "Update",
       render: (rowData) => (
-        <Button onClick={()=>updateuser(rowData.userId)}>
+        <Button 
+        // onClick={()=>updateuser(rowData.userId)}
+        >
           <EditIcon />
         </Button>
       ),
