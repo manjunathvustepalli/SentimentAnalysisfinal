@@ -21,7 +21,8 @@ import CustomLegend from '../CustomLegend';
 import colors from '../../helpers/colors'
 import CloseIcon from '@material-ui/icons/Close';
 import TableWithData from '../Tables/TableWithData'
-import {Auth} from './Auth'
+import { Auth, header } from "./Auth";
+ import Cookies from "js-cookie";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -148,26 +149,40 @@ function WordCloudSentiment() {
     const [word, setWord] = useState('');
     const [tableData, setTableData] = useState([]);
     const searchWordData = () => {
-        Axios.post(
+        // Axios.post(
           
-            process.env.REACT_APP_SEARCH_URL,
-          {
-            query: {
-              bool: {
-                must: [{ terms: { "HashtagEntities.Text.keyword": [word] } }],
-              },
-            },
-            size: 50,
-            sort: [
-              {
-                CreatedAt: {
-                  order: "desc",
-                },
-              },
-            ],
-          },
-          Auth
-        ).then((fetchedData) => {
+        //     process.env.REACT_APP_SEARCH_URL,
+        //   {
+        //     query: {
+        //       bool: {
+        //         must: [{ terms: { "HashtagEntities.Text.keyword": [word] } }],
+        //       },
+        //     },
+        //     size: 50,
+        //     sort: [
+        //       {
+        //         CreatedAt: {
+        //           order: "desc",
+        //         },
+        //       },
+        //     ],
+        //   },
+        //   Auth
+        // )
+      let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+      let token = Cookies.get("token");
+      let config = {
+        method: "post",
+        url:
+          process.env.REACT_APP_URL +
+          "query/wordcloudanalysis",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: data,
+      };
+        Axios(config).then((fetchedData) => {
           setTableData(
             fetchedData.data.hits.hits.map((postObj) => {
               if (!postObj._source.User) {
@@ -206,162 +221,176 @@ function WordCloudSentiment() {
     };
 
     const fetchData = (changeInState) => {
-        let query = {
-            "aggs": {
-                "date-based-range": {
-                    "date_range": {
-                        "field": "CreatedAt",
-                        "format": "dd-MM-yyyy",
-                        "ranges": [{
-                            "from": from,
-                            "to": to
-                        }]
-                    },
-                    "aggs": {
-                        "lang": {
-                            "terms": {
-                                "field": "predictedLang.keyword"
-                            },
-                            "aggs": {
-                                "Source": {
-                                    "terms": {
-                                        "field": "Source.keyword"
-                                    },
-                                    "aggs":{
-                                        "SubSource":{
-                                            "terms":{
-                                                "field":"SubSource.keyword"
-                                            },
-                                            "aggs":{
-                                                "Daily-Sentiment-Distro": {
-                                                    "terms": {
-                                                      "field": "predictedSentiment.keyword"
-                                                    },
-                                                    "aggs":{
-                                                        "Words":{
-                                                            "terms":{
-                                                                "field":"HashtagEntities.Text.keyword"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if(keywordType === 'Screen Name'){
-            query["query"] = {
-                "terms": {
-                  "User.ScreenName.keyword": keywords
-                }
-              }
-        } else if (keywordType === 'Hash Tags') {
-            query["query"] =  {
-                "terms": {
-                  "HashtagEntities.Text.keyword": keywords
-                }
-            }
-        }
-        Axios.post(
-          process.env.REACT_APP_URL,
-          query, Auth
-        )
-          .then((fetchedData) => {
-            var sourceKeys, subSourceKeys, sentimentKeys;
-            var uniqueSourceKeys = [];
-            var uniqueSubSourceKeys = [];
-            let languageBuckets =
-              fetchedData.data.aggregations["date-based-range"].buckets[0].lang
-                .buckets;
-            var languageKeys = getKeyArray(languageBuckets);
-            languageKeys.forEach((key, i) => {
-              let sourceBuckets = languageBuckets[i].Source.buckets;
-              sourceKeys = getKeyArray(sourceBuckets);
-              sortedData[key] = {};
-              sourceKeys.forEach((source, j) => {
-                if (!uniqueSourceKeys.includes(source)) {
-                  uniqueSourceKeys.push(source);
-                }
-                sortedData[key][source] = {};
-                let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
-                subSourceKeys = getKeyArray(subSourceBuckets);
-                subSourceKeys.forEach((subSource, k) => {
-                  if (!uniqueSubSourceKeys.includes(subSource)) {
-                    uniqueSubSourceKeys.push(subSource);
-                  }
-                  sortedData[key][source][subSource] = {};
-                  let sentimentBuckets =
-                    subSourceBuckets[k]["Daily-Sentiment-Distro"].buckets;
-                  sentimentKeys = getKeyArray(sentimentBuckets);
-                  sentimentKeys.forEach((sentiment, l) => {
-                    sortedData[key][source][subSource][
-                      sentiment
-                    ] = sentimentBuckets[l].Words.buckets.map((wordObj) => {
-                      return {
-                        name: wordObj.key,
-                        weight: wordObj.doc_count,
-                        color: colors[sentiment],
-                      };
-                    });
-                  });
-                });
-              });
-            });
-            if (changeInState) {
-              setSources((prev) => {
-                let availableSourceKeys = {};
-                uniqueSourceKeys.forEach((source) => {
-                  availableSourceKeys[source] = !!prev[source];
-                });
-                return availableSourceKeys;
-              });
+        // let query = {
+        //     "aggs": {
+        //         "date-based-range": {
+        //             "date_range": {
+        //                 "field": "CreatedAt",
+        //                 "format": "dd-MM-yyyy",
+        //                 "ranges": [{
+        //                     "from": from,
+        //                     "to": to
+        //                 }]
+        //             },
+        //             "aggs": {
+        //                 "lang": {
+        //                     "terms": {
+        //                         "field": "predictedLang.keyword"
+        //                     },
+        //                     "aggs": {
+        //                         "Source": {
+        //                             "terms": {
+        //                                 "field": "Source.keyword"
+        //                             },
+        //                             "aggs":{
+        //                                 "SubSource":{
+        //                                     "terms":{
+        //                                         "field":"SubSource.keyword"
+        //                                     },
+        //                                     "aggs":{
+        //                                         "Daily-Sentiment-Distro": {
+        //                                             "terms": {
+        //                                               "field": "predictedSentiment.keyword"
+        //                                             },
+        //                                             "aggs":{
+        //                                                 "Words":{
+        //                                                     "terms":{
+        //                                                         "field":"HashtagEntities.Text.keyword"
+        //                                                     }
+        //                                                 }
+        //                                             }
+        //                                         }
+        //                                     }
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // if(keywordType === 'Screen Name'){
+        //     query["query"] = {
+        //         "terms": {
+        //           "User.ScreenName.keyword": keywords
+        //         }
+        //       }
+        // } else if (keywordType === 'Hash Tags') {
+        //     query["query"] =  {
+        //         "terms": {
+        //           "HashtagEntities.Text.keyword": keywords
+        //         }
+        //     }
+        // }
+        // Axios.post(
+        //   process.env.REACT_APP_URL,
+        //   query, Auth
+        // )
+    let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url:
+        process.env.REACT_APP_URL +
+        "query/wordcloudanalysis",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+     Axios(config)
+       .then((fetchedData) => {
+         var sourceKeys, subSourceKeys, sentimentKeys;
+         var uniqueSourceKeys = [];
+         var uniqueSubSourceKeys = [];
+         let languageBuckets =
+           fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+             .buckets;
+         var languageKeys = getKeyArray(languageBuckets);
+         languageKeys.forEach((key, i) => {
+           let sourceBuckets = languageBuckets[i].Source.buckets;
+           sourceKeys = getKeyArray(sourceBuckets);
+           sortedData[key] = {};
+           sourceKeys.forEach((source, j) => {
+             if (!uniqueSourceKeys.includes(source)) {
+               uniqueSourceKeys.push(source);
+             }
+             sortedData[key][source] = {};
+             let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+             subSourceKeys = getKeyArray(subSourceBuckets);
+             subSourceKeys.forEach((subSource, k) => {
+               if (!uniqueSubSourceKeys.includes(subSource)) {
+                 uniqueSubSourceKeys.push(subSource);
+               }
+               sortedData[key][source][subSource] = {};
+               let sentimentBuckets =
+                 subSourceBuckets[k]["Daily-Sentiment-Distro"].buckets;
+               sentimentKeys = getKeyArray(sentimentBuckets);
+               sentimentKeys.forEach((sentiment, l) => {
+                 sortedData[key][source][subSource][
+                   sentiment
+                 ] = sentimentBuckets[l].Words.buckets.map((wordObj) => {
+                   return {
+                     name: wordObj.key,
+                     weight: wordObj.doc_count,
+                     color: colors[sentiment],
+                   };
+                 });
+               });
+             });
+           });
+         });
+         if (changeInState) {
+           setSources((prev) => {
+             let availableSourceKeys = {};
+             uniqueSourceKeys.forEach((source) => {
+               availableSourceKeys[source] = !!prev[source];
+             });
+             return availableSourceKeys;
+           });
 
-              setSubSources((prev) => {
-                let availableSubSourceKeys = {};
-                uniqueSubSourceKeys.forEach((subSource) => {
-                  availableSubSourceKeys[subSource] = !!prev[subSource];
-                });
-                return availableSubSourceKeys;
-              });
+           setSubSources((prev) => {
+             let availableSubSourceKeys = {};
+             uniqueSubSourceKeys.forEach((subSource) => {
+               availableSubSourceKeys[subSource] = !!prev[subSource];
+             });
+             return availableSubSourceKeys;
+           });
 
-              setSentiments((prev) => {
-                if (Object.keys(prev).length) {
-                  return prev;
-                } else {
-                  return { negative: true, positive: true, neutral: true };
-                }
-              });
-            } else {
-              let availableSourceKeys = {};
-              uniqueSourceKeys.forEach((source) => {
-                availableSourceKeys[source] = true;
-              });
-              setSources(availableSourceKeys);
+           setSentiments((prev) => {
+             if (Object.keys(prev).length) {
+               return prev;
+             } else {
+               return { negative: true, positive: true, neutral: true };
+             }
+           });
+         } else {
+           let availableSourceKeys = {};
+           uniqueSourceKeys.forEach((source) => {
+             availableSourceKeys[source] = true;
+           });
+           setSources(availableSourceKeys);
 
-              let availableSubSourceKeys = {};
-              uniqueSubSourceKeys.forEach((subSource) => {
-                availableSubSourceKeys[subSource] = true;
-              });
-              setSubSources(availableSubSourceKeys);
+           let availableSubSourceKeys = {};
+           uniqueSubSourceKeys.forEach((subSource) => {
+             availableSubSourceKeys[subSource] = true;
+           });
+           setSubSources(availableSubSourceKeys);
 
-              setSentiments((prev) => {
-                if (Object.keys(prev).length) {
-                  return prev;
-                } else {
-                  return { negative: true, positive: true, neutral: true };
-                }
-              });
-            }
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+           setSentiments((prev) => {
+             if (Object.keys(prev).length) {
+               return prev;
+             } else {
+               return { negative: true, positive: true, neutral: true };
+             }
+           });
+         }
+       })
+       .catch((err) => {
+         console.log(err.response);
+       });
     }
 
 	useMountAndUpdateEffect(()=>{

@@ -2,6 +2,7 @@ import React,{ useState,createContext, useEffect } from 'react'
 import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
  import {Auth,header} from '../components/Pages/Auth'
+ import Cookies from 'js-cookie';
 export const SentimentAnalysisFiltersContext = createContext()
 
 export const SentimentAnalysisContext = ({ children }) => {
@@ -90,11 +91,14 @@ export const SentimentAnalysisContext = ({ children }) => {
       //  Axios.post(process.env.REACT_APP_URL,
       //   query,Auth)
       let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-
+let token=Cookies.get("token")
       let config = {
         method: "post",
         url: process.env.REACT_APP_URL + "query/sentimentanalysis",
-        headers: header,
+        headers: { 
+    'Content-Type': 'application/json', 
+    'token': token
+  },
         data: data,
       };
 

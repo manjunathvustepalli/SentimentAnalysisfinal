@@ -7,6 +7,7 @@ import PieChart from '../charts/PieChart';
 import { getKeyArray } from '../../helpers';
 import colors from '../../helpers/colors';
 import {Auth, header} from '../Pages/Auth';
+ import Cookies from "js-cookie";
 
 var sortedData =  {}
 
@@ -148,11 +149,15 @@ function OverallAnalysis({to, from,refresh}) {
         //   }, Auth)
         
 let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+let token = Cookies.get("token");
 
 let config = {
   method: "post",
   url: process.env.REACT_APP_URL + "query/overallanalysisforsummarydashboard",
-  headers: header,
+  headers: {
+    "Content-Type": "application/json",
+    token: token,
+  },
   data: data,
 };
 

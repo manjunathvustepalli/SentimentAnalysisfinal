@@ -94,6 +94,7 @@ const SideNavBar =  (props) => {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [role] = useState(Cookies.get("role"));
+  const [token]=useState(Cookies.get("token"))
   const [isloading,setIsloading]=useState(true)
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
@@ -105,7 +106,27 @@ const SideNavBar =  (props) => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  
+  const logout = () => {
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/logout",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
+
+    axios(config)
+      .then((response) => {
+        Cookies.remove("token");
+        props.history.push("/")
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const menus = [
     {
       name: "Summary Dashboard",
@@ -335,27 +356,8 @@ const SideNavBar =  (props) => {
       </List>
     </div>
   );
-const logout=()=>{
- 
-  
 
-  let config = {
-    method: "post",
-    url: process.env.REACT_APP_URL + "admin/logout",
-    headers: header,
-    data: "",
-  };
 
-  axios(config)
-    .then((response) => {
-      Cookies.remove("token");
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-}
   const container =
     window !== undefined ? () => window().document.body : undefined;
 

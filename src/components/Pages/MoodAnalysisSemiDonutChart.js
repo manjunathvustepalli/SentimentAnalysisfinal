@@ -18,6 +18,7 @@ import { moodAnalysisPieChartFilter} from '../../helpers/filter';
 import SemiDonutChart from '../charts/SemiDonutChart';
 import { addMonths } from '../../helpers/index'
 import {Auth,header} from './Auth'
+ import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -140,14 +141,17 @@ export default function MoodAnalysisSemiDonutChart() {
         //     },
         //   }
         // )
-        let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-
-        let config = {
-          method: "post",
-          url: process.env.REACT_APP_URL + "query/moodanalysis",
-          headers: header,
-          data: data,
-        };
+       let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+       let token = Cookies.get("token");
+       let config = {
+         method: "post",
+         url: process.env.REACT_APP_URL + "query/moodanalysis",
+         headers: {
+           "Content-Type": "application/json",
+           token: token,
+         },
+         data: data,
+       };
 
         Axios(config)
           .then((fetchedData) => {

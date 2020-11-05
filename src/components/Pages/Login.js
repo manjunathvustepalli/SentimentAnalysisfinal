@@ -22,7 +22,6 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import IconButton from "@material-ui/core/IconButton";
-
 const styles = {
   background: {
     width: "100vw",
@@ -102,6 +101,9 @@ function Login(props) {
     // await Cookies.set("role", response.data.userType);
     await Cookies.set("token", response.data.token);
     if (response.status === 201) {
+     
+        
+      
       setIncorrectFlag(false);
       props.history.push({
         pathname: "/summary-dashboard",
@@ -137,7 +139,7 @@ function Login(props) {
     };
 
     let response = await axios(config).catch((error) => setIncorrectFlag(true));
-    if (response.data.token) {
+    if (response) {
       console.log(response);
       await setCookies(response);
     }

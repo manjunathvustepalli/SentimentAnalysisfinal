@@ -4,6 +4,7 @@ import AreaChart from '../charts/AreaChart'
 import colors from '../../helpers/colors'
 import { Link } from 'react-router-dom'
 import {Auth, header} from '../Pages/Auth';
+ import Cookies from "js-cookie";
 
 function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
 
@@ -68,12 +69,17 @@ function SentimentAnalysis({toFromDateHandlers,keywords,keywordType,refresh}) {
           queryStartDate: from,
           queryEndDate: to,
         });
+let token = Cookies.get("token");
 
         let config = {
           method: "post",
           url:
-            process.env.REACT_APP_URL+"query/sentimentanalysisforsummarydashboard",
-          headers: header,
+            process.env.REACT_APP_URL +
+            "query/sentimentanalysisforsummarydashboard",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
           data: data,
         };
 

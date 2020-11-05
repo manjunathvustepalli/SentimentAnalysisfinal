@@ -14,6 +14,7 @@ import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect';
 import Loader from '../LoaderWithBackDrop';
 import colors from '../../helpers/colors';
 import {Auth,header} from './Auth'
+ import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
 	main: {
@@ -148,13 +149,16 @@ export default function MoodAnalysisAreaChart() {
       
 	// )
 	
-let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
-
+let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+let token = Cookies.get("token");
 let config = {
-  method: 'post',
-  url: process.env.REACT_APP_URL+'query/moodanalysis',
-  headers: header,
-  data : data
+  method: "post",
+  url: process.env.REACT_APP_URL + "query/moodanalysis",
+  headers: {
+    "Content-Type": "application/json",
+    token: token,
+  },
+  data: data,
 };
 
 Axios(config)

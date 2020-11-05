@@ -19,6 +19,7 @@ import PieChart from '../charts/PieChart';
 import { addMonths } from '../../helpers/index';
 import Loader from '../LoaderWithBackDrop';
 import {Auth,header} from './Auth'
+ import Cookies from "js-cookie";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -146,14 +147,17 @@ export default function MoodAnalysisPieChart() {
         //     },
         //   }
         // )
-        let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-
-        let config = {
-          method: "post",
-          url: process.env.REACT_APP_URL + "query/moodanalysis",
-          headers: header,
-          data: data,
-        };
+       let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+       let token = Cookies.get("token");
+       let config = {
+         method: "post",
+         url: process.env.REACT_APP_URL + "query/moodanalysis",
+         headers: {
+           "Content-Type": "application/json",
+           token: token,
+         },
+         data: data,
+       };
 
         Axios(config)
           .then((fetchedData) => {

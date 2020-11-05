@@ -21,6 +21,7 @@ import useDidUpdateEffect  from '../custom Hooks/useDidUpdateEffect';
 import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
 import { Auth, header } from "./Auth";
+ import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -155,11 +156,15 @@ export default function SentimentalAnalysisLineChart() {
       //    Auth
       //  )
       let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+let token = Cookies.get("token");
 
       let config = {
         method: "post",
         url: process.env.REACT_APP_URL + "query/sentimentanalysis",
-        headers: header,
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
         data: data,
       };
 
