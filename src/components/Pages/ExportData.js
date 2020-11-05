@@ -12,7 +12,7 @@ import FilterHeader from '../Filters/FilterHeader'
 import FilterWrapper from '../Filters/FilterWrapper'
 import AccordianFilters from '../Filters/AccordianFilters'
 import {Auth} from './Auth'
-
+import Cookies from 'js-cookie'
 
 const dateFormatter = (unix) => {
     var date = new Date(unix);
@@ -74,36 +74,47 @@ function ExportData() {
             languages[language] && (selectedlanguages.push(language))
         })
 
-        Axios.post(process.env.REACT_APP_SEARCH_URL,{
-            "query": {
-              "match_all": {}
-            },
-            "size": 10,
-            "sort": [
-              {
-                "CreatedAt": {
-                  "order": "desc"
-                }
-              }
-            ]
-          }, Auth)
-        .then(fetchedData => {
-            let final =  fetchedData.data.hits.hits.map(user => {
-                let obj = {}
-                if(user._source.User){
-                    obj.name =  user._source.User.Name
-                    obj.screenName =  user._source.User.ScreenName
-                    obj.followersCount =  user._source.User.FollowersCount
-                }
-                obj.date = dateFormatter(user._source.CreatedAt)
-                obj.tweet =  user._source.Text
-                obj.retweetCount =  user._source.RetweetCount
-                obj.mood = user._source.predictedMood
-                obj.sentiment = user._source.predictedSentiment
-                return obj
-            })
-            setData(final)
-        })
+        // Axios.post(process.env.REACT_APP_SEARCH_URL,{
+        //     "query": {
+        //       "match_all": {}
+        //     },
+        //     "size": 10,
+        //     "sort": [
+        //       {
+        //         "CreatedAt": {
+        //           "order": "desc"
+        //         }
+        //       }
+        //     ]
+        //   }, Auth)
+        let token=Cookies.get("token")
+        let config = {
+          method: "post",
+          url: process.env.REACT_APP_URL + "query/exportdata",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          data: "",
+        };
+
+        Axios(config).then((fetchedData) => {
+          let final = fetchedData.data.hits.hits.map((user) => {
+            let obj = {};
+            if (user._source.User) {
+              obj.name = user._source.User.Name;
+              obj.screenName = user._source.User.ScreenName;
+              obj.followersCount = user._source.User.FollowersCount;
+            }
+            obj.date = dateFormatter(user._source.CreatedAt);
+            obj.tweet = user._source.Text;
+            obj.retweetCount = user._source.RetweetCount;
+            obj.mood = user._source.predictedMood;
+            obj.sentiment = user._source.predictedSentiment;
+            return obj;
+          });
+          setData(final);
+        });
 
     }
 

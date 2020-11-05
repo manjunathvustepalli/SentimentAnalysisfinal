@@ -1,101 +1,109 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
-import Axios from 'axios';
-import Image from 'material-ui-image'
+import React, { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
+import GridListTileBar from "@material-ui/core/GridListTileBar";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import IconButton from "@material-ui/core/IconButton";
+import InfoIcon from "@material-ui/icons/Info";
+import Axios from "axios";
+import Image from "material-ui-image";
 import Chip from "@material-ui/core/Chip";
-
+import Cookies from "js-cookie";
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
     backgroundColor: theme.palette.background.paper,
   },
   icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
+    color: "rgba(255, 255, 255, 0.54)",
   },
 }));
- 
+
 export default function TitlebarGridList() {
+  const [tilesData, setTilesData] = useState([]);
 
-  const [tilesData, setTilesData] = useState([])
+  useEffect(() => {
+    // Axios.post(process.env.REACT_APP_SEARCH_URL,{
+    //   "query": {
+    //     "bool": {
+    //       "must": [
+    //         {
+    //           "terms": {
+    //             "Source.keyword": [
+    //               'twitter'
+    //             ]
+    //           }
+    //         }
+    //       ]
+    //     }
+    //   },
+    //   "size": 1000,
+    //   "sort": [
+    //     {
+    //       "CreatedAt": {
+    //         "order": "desc"
+    //       }
+    //     }
+    //   ]
+    // },{
 
-  
-useEffect(() =>{
-  Axios.post(process.env.REACT_APP_SEARCH_URL,{
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "terms": {
-              "Source.keyword": [
-                'twitter'
-              ]
-            }
+    // })
+    let data = JSON.stringify({ queryFetchImages: true });
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "query/search",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    Axios(config)
+      .then((fetchedData) => {
+        console.log(fetchedData);
+        var tileData = [];
+        fetchedData.data.hits.hits.forEach((post) => {
+          if (post._source.User) {
+            var desc = "";
+            var name = post._source.User.Name;
+            var screenName = post._source.User.ScreenName;
+            desc = post._source.Text;
           }
-        ]
-      }
-    },
-    "size": 1000,
-    "sort": [
-      {
-        "CreatedAt": {
-          "order": "desc"
-        }
-      }
-    ]
-  },{
-    
-  })
-  .then(fetchedData=>{
-    console.log(fetchedData)
-    var tileData = []
-    fetchedData.data.hits.hits.forEach((post) => {
-      if(post._source.User){
-        var desc=""
-        var name = post._source.User.Name
-        var screenName = post._source.User.ScreenName
-        desc = post._source.Text
-      }
-      if (
-        post._source.PredictedImageSentiment &&
-        post._source.PredictedImageSentiment.length
-      ) {
-        post._source.PredictedImageSentiment.forEach((image) => {
-          if (image.externalURL) {
-            tileData.push({
-              img: image.externalURL,
-              title: desc,
-              author: name + " ( " + screenName + " )",
-              sentiment: image.sentiment,
-              confidence: image.confidence,
-            });
-          } else if (image.MediaURL) {
-            tileData.push({
-              img: image.MediaURL,
-              title: desc,
-              author: name + " ( " + screenName + " )",
+          if (
+            post._source.PredictedImageSentiment &&
+            post._source.PredictedImageSentiment.length
+          ) {
+            post._source.PredictedImageSentiment.forEach((image) => {
+              if (image.externalURL) {
+                tileData.push({
+                  img: image.externalURL,
+                  title: desc,
+                  author: name + " ( " + screenName + " )",
+                  sentiment: image.sentiment,
+                  confidence: image.confidence,
+                });
+              } else if (image.MediaURL) {
+                tileData.push({
+                  img: image.MediaURL,
+                  title: desc,
+                  author: name + " ( " + screenName + " )",
+                });
+              }
             });
           }
         });
-      }
-
-    });
-    setTilesData(tileData)
-  })
-  .catch(err => {
-    console.log(err,err.response)
-  })
-
-},[])
-
+        setTilesData(tileData);
+      })
+      .catch((err) => {
+        console.log(err, err.response);
+      });
+  }, []);
 
   const classes = useStyles();
 
@@ -125,7 +133,14 @@ useEffect(() =>{
               <Image src={tile.img} alt={tile.title} />
               <GridListTileBar
                 title={tile.title}
-                subtitle={<><span>by: {tile.author}<br></br>CONFIDENCE: {tile.confidence}</span></>}
+                subtitle={
+                  <>
+                    <span>
+                      by: {tile.author}
+                      <br></br>CONFIDENCE: {tile.confidence}
+                    </span>
+                  </>
+                }
                 actionIcon={
                   <IconButton
                     aria-label={`info about ${tile.title}`}
@@ -135,17 +150,14 @@ useEffect(() =>{
                     {tile.sentiment === "positive" ? (
                       <Chip
                         size="small"
-                       
                         label="Positive"
-                        
-                        style={ {backgroundColor:"#008000"}}
-                        />
-                        ) : tile.sentiment === "negative" ? (
-                          <Chip
-                          size="small"
-                        
-                          label="Negative"
-                          style={{ backgroundColor:"#FF0000"}}
+                        style={{ backgroundColor: "#008000" }}
+                      />
+                    ) : tile.sentiment === "negative" ? (
+                      <Chip
+                        size="small"
+                        label="Negative"
+                        style={{ backgroundColor: "#FF0000" }}
                       />
                     ) : (
                       <Chip
