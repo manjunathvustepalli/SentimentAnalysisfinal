@@ -41,6 +41,7 @@ import Cookies from "js-cookie";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteIcon from '@material-ui/icons/Delete';
 import LockIcon from '@material-ui/icons/Lock';
+import UpdateIcon from '@material-ui/icons/Update';
 import {header} from "../Pages/Auth";
 import axios from "axios";
 
@@ -231,6 +232,11 @@ const SideNavBar =  (props) => {
       name: "Add User",
       icon: <PersonAddIcon/>,
       path: ["/add-user"],
+    },
+    {
+      name: "Update User",
+      icon: <UpdateIcon/>,
+      path: ["/update-user"],
     },
     {
       name: "Delete User",
