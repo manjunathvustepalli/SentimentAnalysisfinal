@@ -1,0 +1,23 @@
+.MuiAppBar-colorPrimary  {
+    color: rgba(0, 0, 0, 0.87) !important;
+    background-color: #d7d7d7 !important;
+}
+#userMenuHeader{
+    width:200px;
+    height:120px;
+    background-color: rgb(67,176,42);
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+#userAvatar{
+    height: 60px;
+    width: 60px;
+    margin-bottom: 5%;
+}
+.grid-user{
+    color: #ffffff;
+}
