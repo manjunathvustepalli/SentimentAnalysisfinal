@@ -106,12 +106,27 @@ export const TrendingSubjectContext = ({ children }) => {
         // }
         //   Axios.post(process.env.REACT_APP_URL,query)
         let token=Cookies.get("token")
-        let data = JSON.stringify({
+      let data = "";
+      if (keywordType === "Hash Tags") {
+        data = JSON.stringify({
           queryStartDate: from,
           queryEndDate: to,
           queryHashtagEntities: keywords,
-          // queryScreenEntities: keywords,
         });
+      }
+      if (keywordType === "Screen Name") {
+        data = JSON.stringify({
+          queryStartDate: from,
+          queryEndDate: to,
+          queryUserScreenNames: keywords,
+        });
+      }
+      if (keywordType === "Entire Data") {
+        data = JSON.stringify({
+          queryStartDate: from,
+          queryEndDate: to,
+        });
+      }
 
         let config = {
           method: "post",
