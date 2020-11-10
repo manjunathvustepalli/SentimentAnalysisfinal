@@ -357,7 +357,7 @@ function InfluencerAnalysis() {
           aggs: {
             "date-based-range": {
               date_range: {
-                field: "CreatedAt",
+                field: "CreatedAt", 
                 format: "dd-MM-yyyy",
                 ranges: [{ from: from, to: to }],
               },

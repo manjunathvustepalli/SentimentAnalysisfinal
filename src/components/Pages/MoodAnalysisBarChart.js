@@ -154,8 +154,27 @@ function MoodAnalysisBarChart(props) {
     //   }
      
     // )
-  let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-  let token = Cookies.get("token");
+ let data = "";
+ if (keywordType === "Hash Tags") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryHashtagEntities: keywords,
+   });
+ }
+ if (keywordType === "Screen Name") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryUserScreenNames: keywords,
+   });
+ }
+ if (keywordType === "Entire Data") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+   });
+ }  let token = Cookies.get("token");
   let config = {
     method: "post",
     url: process.env.REACT_APP_URL + "query/moodanalysis",

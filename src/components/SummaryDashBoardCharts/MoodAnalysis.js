@@ -61,7 +61,27 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh}) {
         //     query, Auth)
 
         
-let data = JSON.stringify({"queryStartDate":from,"queryEndDate":to});
+ let data = "";
+ if (keywordType === "Hash Tags") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryHashtagEntities: keywords,
+   });
+ }
+ if (keywordType === "Screen Name") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryUserScreenNames: keywords,
+   });
+ }
+ if (keywordType === "Entire Data") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+   });
+ }
 let token = Cookies.get("token");
 
 let config = {
