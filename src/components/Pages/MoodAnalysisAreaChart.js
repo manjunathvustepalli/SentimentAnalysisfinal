@@ -169,7 +169,8 @@ export default function MoodAnalysisAreaChart() {
      queryStartDate: from,
      queryEndDate: to,
    });
- }let token = Cookies.get("token");
+ }
+ let token = Cookies.get("token");
 let config = {
   method: "post",
   url: process.env.REACT_APP_URL + "query/moodanalysis",
