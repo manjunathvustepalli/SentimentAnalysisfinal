@@ -90,6 +90,7 @@ export default function AddUser() {
   useEffect(() => {
     GetRoles();
   }, []);
+
   const SignUp = () => {
     let data = JSON.stringify({
       user: {
@@ -115,6 +116,7 @@ export default function AddUser() {
         console.log(error);
       });
   };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
