@@ -322,8 +322,8 @@ const SideNavBar =  (props) => {
       <Divider style={{ marginTop: "120px" }} />
       <List>
           {
+            menus.map((menuItem, index) => (
           pages.map((page,index1)=>
-        menus.map((menuItem, index) => (
           // console.log(menuItem.name,page)
           menuItem.name===page?
           (<Link
