@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4, 0, 2),
   },
 }));
-
+let roles={};
 export default function InteractiveList() {
   const [data,setdata]=useState([]);
   const [allRoles,setAllRoles]=useState([])
@@ -114,9 +114,13 @@ export default function InteractiveList() {
 
    axios(config)
      .then((response) => {
+response.data.roles.map((index)=>{
+roles[index.roleId] = index.roleName;
+ setAllRoles(roles)
+})
        
-        setAllRoles(response.data.roles);
-       console.log("ALLROLES:", allRoles)
+        // setAllRoles(response.data.roles);
+       console.log("ALLROLES:", roles)
        console.log("ALLROLES:", response.data.roles)
      })
      .catch((error) => {
@@ -133,25 +137,10 @@ export default function InteractiveList() {
     { title: 'Username', field: 'userName' },
     { title: 'Display name', field: 'displayName' },
     { title: 'Roles', field: 'roleDetails.roleName',
-    editComponent: tableData => (
-        <TextField
-        style={{marginBottom: 15}}
-        fullWidth
-          id="outlined-select-currency-native"
-          select
-          label="Select New Role"
-        //   defaultValue={data.roleDetails.roleName}
-        //   value={currency}
-          onChange={(event)=> {setRoles(event.target.value)}}
-        >
-          {allRoles.map((role) => (
-            <option key={role.roleId} value={role.roleId}>
-              {role.roleName}
-            </option>
-          ))}
-        </TextField>
-      ), 
+    lookup:roles,
+     
     },
+    
     // {
     //   title: 'Login Status',
     //   field: 'loginStatus'

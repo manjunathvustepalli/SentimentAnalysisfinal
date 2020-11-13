@@ -104,7 +104,7 @@ const SideNavBar =  (props) => {
       return { color: "black", minWidth: "30px" };
     }
   };
-  console.log(pages);
+  // console.log(pages);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -123,7 +123,7 @@ const SideNavBar =  (props) => {
       .then((response) => {
         Cookies.remove("token");
         props.history.push("/")
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
         console.log(error);

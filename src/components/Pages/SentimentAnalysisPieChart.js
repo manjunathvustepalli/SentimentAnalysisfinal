@@ -183,6 +183,7 @@ if (keywordType === "Entire Data") {
                     uniqueSourceKeys.push(source);
                   }
                   sortedData[key][source] = {};
+                  console.log(sourceBuckets[j]);
                   perDayBuckets = sourceBuckets[j]["per-day"].buckets;
                   perDayKeys = sourceBuckets[j]["per-day"].buckets.map(
                     (item) => item.key_as_string
