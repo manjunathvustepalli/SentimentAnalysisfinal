@@ -51,15 +51,15 @@ export default function InteractiveList() {
     console.log(id)
   }
 
-  const updateuser=(id)=>{
+  const updateuser=(id,usernmae,displayName,role)=>{
     let data = JSON.stringify({
-        user: {
-            userId: id,
-            userName: Username,
-            displayName: Displayname,
-            roles: Roles,
-        },
-      });
+      user: {
+        userId: id,
+        userName: usernmae,
+        displayName: displayName,
+        roles: role,
+      },
+    });
 
     let config = {
       method: "post",
@@ -207,7 +207,12 @@ roles[index.roleId] = index.roleName;
                 setUsername(newData.userName)
                 setDisplayname(newData.displayName)
                 setRoles(newData.roles)
-                updateuser(newData.userId)
+                updateuser(
+                  newData.userId,
+                  newData.userName,
+                  newData.displayName,
+                  newData.roles
+                );
                 // dataUpdate[index] = newData;
                 // setData([...dataUpdate]);
                 resolve();
