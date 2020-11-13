@@ -31,11 +31,11 @@ const dateFormatter = (unix) => {
 };
 
 function SearchFromDB() {
-  const [keywords, setKeywords] = useState([]);
+  const [keywords, setKeywords] = useState();
   const [data, setData] = useState([]);
   const [sources, setSources] = useState([]);
   const [selectedSources, setSelectedSources] = useState([]);
-  const [handles, setHandles] = useState([]);
+  const [handles, setHandles] = useState();
   const [columns, setColumns] = useState([
     {
       title: "Date",
@@ -118,7 +118,23 @@ function SearchFromDB() {
     //         process.env.REACT_APP_SEARCH_URL,
     //       query,Auth
     //     )
-    let data = JSON.stringify({ querySources: selectedSources });
+    // let data = JSON.stringify({ querySources: selectedSources });
+    let data="";
+    if(selectedSources[0] === 'twitter' || selectedSources[0] === 'new-twitter'){
+     data = JSON.stringify({
+      querySources: selectedSources,
+      queryLanguages: ["english"],
+      queryHashtagEntities: keywords,
+    });
+  }
+  else{
+    data = JSON.stringify({
+      querySources: selectedSources,
+      queryLanguages: ["english"],
+      queryUserScreenNames: handles,
+      // queryHashtagEntities: keywords,
+    });
+  }
     let token = Cookies.get("token");
     let config = {
       method: "post",

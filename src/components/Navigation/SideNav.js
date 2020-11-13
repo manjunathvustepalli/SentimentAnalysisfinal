@@ -94,7 +94,7 @@ const SideNavBar =  (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [role] = useState(Cookies.get("role"));
+  const [pages] = useState(JSON.parse(Cookies.get("pages")));
   const [token]=useState(Cookies.get("token"))
   const [isloading,setIsloading]=useState(true)
   const currentTab = (history, path) => {
@@ -104,6 +104,7 @@ const SideNavBar =  (props) => {
       return { color: "black", minWidth: "30px" };
     }
   };
+  console.log(pages);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -166,7 +167,7 @@ const SideNavBar =  (props) => {
       path: ["/word-cloud/sentiment" /*,'/word-cloud/mood'*/],
     },
     {
-      name: "Trending Subjects",
+      name: "Trending Subject",
       icon: <TrendingUpIcon />,
       path: ["/trending-subject/sentiment", "/trending-subject/mood"],
     },
@@ -320,8 +321,12 @@ const SideNavBar =  (props) => {
       </div>
       <Divider style={{ marginTop: "120px" }} />
       <List>
-        {role==="Admin"?menus.map((menuItem, index) => (
-          <Link
+          {
+          pages.map((page,index1)=>
+        menus.map((menuItem, index) => (
+          // console.log(menuItem.name,page)
+          menuItem.name===page?
+          (<Link
             to={menuItem.path[0]}
             key={index}
             style={{ textDecoration: "none", color: "black" }}
@@ -338,27 +343,9 @@ const SideNavBar =  (props) => {
               />
             </ListItem>
             <Divider />
-          </Link>
-        )):menus.map((menuItem, index) => (
-          <Link
-            to={menuItem.path[0]}
-            key={index}
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <ListItem button key={index}>
-              <ListItemIcon style={currentTab(history, menuItem.path)}>
-                {" "}
-                {menuItem.icon}{" "}
-              </ListItemIcon>
-              <ListItemText
-                style={currentTab(history, menuItem.path)}
-                classes={{ primary: classes.listItemText }}
-                primary={menuItem.name}
-              />
-            </ListItem>
-            <Divider />
-          </Link>
-        ))}
+          </Link>)
+          :"")))}
+        
       </List>
     </div>
   );

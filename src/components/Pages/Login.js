@@ -98,12 +98,13 @@ function Login(props) {
     setIncorrectFlag(!IncorrectFlag);
   };
   const setCookies = async (response) => {
-    // await Cookies.set("role", response.data.userType);
     await Cookies.set("token", response.data.token);
+    let pages=[];
+    response.data.pages.map((page)=>{
+      pages.push(page.pageUrl);
+    })
+    await Cookies.set("pages", pages);
     if (response.status === 201) {
-     
-        
-      
       setIncorrectFlag(false);
       props.history.push({
         pathname: "/summary-dashboard",
@@ -140,7 +141,7 @@ function Login(props) {
 
     let response = await axios(config).catch((error) => setIncorrectFlag(true));
     if (response) {
-      console.log(response);
+      // console.log(response);
       await setCookies(response);
     }
   };
@@ -165,7 +166,7 @@ function Login(props) {
 
     axios(config)
       .then((response) => {
-        console.log(JSON.stringify(response));
+        // console.log(JSON.stringify(response));
 
         if (response.status === 201) {
           //setIncorrectFlag(false);
@@ -176,7 +177,7 @@ function Login(props) {
         }
       })
       .catch((error) => {
-        console.log("//////////", error);
+        console.log("error", error);
       });
   };
 
