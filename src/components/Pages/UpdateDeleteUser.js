@@ -1,14 +1,14 @@
 import React,{useEffect,useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from "@material-ui/core/List";
-import { Paper, Button } from '@material-ui/core';
+import { Paper, TextField } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { header } from './Auth';
 import axios from 'axios'
 import MaterialTable from "material-table";
 import DeleteIcon from '@material-ui/icons/Delete';
-
+import { getRoles } from '@testing-library/react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function InteractiveList() {
   const [data,setdata]=useState([]);
+  const [allRoles,setAllRoles]=useState([])
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
@@ -95,19 +96,57 @@ export default function InteractiveList() {
      });
  }
 
+ const getRoles=()=>{
+   let config = {
+     method: "post",
+     url: process.env.REACT_APP_URL + "admin/getroles",
+     headers: header,
+     data: "",
+   };
+
+   axios(config)
+     .then((response) => {
+       setAllRoles(response.data.roles);
+       console.log("ALLROLES:", allRoles)
+       console.log("ALLROLES:", response.data.roles)
+     })
+     .catch((error) => {
+       console.log(error);
+     });
+ }
+
  useEffect(() => {
-    
   getUsers();
+  getRoles();
    }, [])
 
   const [columns, setColumns] = useState([
     { title: 'Username', field: 'userName' },
     { title: 'Display name', field: 'displayName' },
-    { title: 'Roles', field: 'roles' },
-    {
-      title: 'Login Status',
-      field: 'loginStatus'
+    { title: 'Roles', field: 'roleDetails.roleName',
+    editComponent: tableData => (
+        <TextField
+        style={{marginBottom: 15}}
+        fullWidth
+          id="outlined-select-currency-native"
+          select
+          label="Select New Role"
+        //   defaultValue={data.roleDetails.roleName}
+        //   value={currency}
+          onChange={(event)=> {setRoles(event.target.value)}}
+        >
+          {allRoles.map((role) => (
+            <option key={role.roleId} value={role.roleId}>
+              {role.roleName}
+            </option>
+          ))}
+        </TextField>
+      ), 
     },
+    // {
+    //   title: 'Login Status',
+    //   field: 'loginStatus'
+    // },
     // {
     //   title: "Delete",
     //   render: (rowData) => (
@@ -221,4 +260,3 @@ export default function InteractiveList() {
     </div>
   );
 }
-
