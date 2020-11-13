@@ -104,11 +104,15 @@ export default function InteractiveList() {
      data: "",
    };
 
+  //  var tempMap = JSON.parse(response.data);
+  //  console.log('SUBBUUUUUUUU',tempMap);
+
+
    axios(config)
      .then((response) => {
        setAllRoles(response.data.roles);
-       console.log("ALLROLES:", allRoles)
-       console.log("ALLROLES:", response.data.roles)
+       console.log("ALLROLES_state:", allRoles)
+       console.log("ALLROLES_response:", response.data.roles)
      })
      .catch((error) => {
        console.log(error);
@@ -131,7 +135,7 @@ export default function InteractiveList() {
           id="outlined-select-currency-native"
           select
           label="Select New Role"
-        //   defaultValue={data.roleDetails.roleName}
+        //   defaultValue={"New"}
         //   value={currency}
           onChange={(event)=> {setRoles(event.target.value)}}
         >
