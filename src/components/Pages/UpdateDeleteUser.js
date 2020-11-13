@@ -9,7 +9,7 @@ import axios from 'axios'
 import MaterialTable from "material-table";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { getRoles } from '@testing-library/react';
-
+import Cookies from 'js-cookie'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1
@@ -80,10 +80,14 @@ export default function InteractiveList() {
   }
 
  const getUsers=()=>{
+   let token = Cookies.get("token");
    let config = {
      method: "post",
      url: process.env.REACT_APP_URL + "admin/getusers",
-     headers: header,
+     headers: {
+    'Content-Type': 'application/json', 
+    'token': token
+  },
      data: "",
    };
 
@@ -96,17 +100,22 @@ export default function InteractiveList() {
      });
  }
 
- const getRoles=()=>{
+ const getRoles= ()=>{
+   let token = Cookies.get("token");
    let config = {
      method: "post",
      url: process.env.REACT_APP_URL + "admin/getroles",
-     headers: header,
+     headers: {
+    'Content-Type': 'application/json', 
+    'token': token
+  },
      data: "",
    };
 
    axios(config)
      .then((response) => {
-       setAllRoles(response.data.roles);
+       
+        setAllRoles(response.data.roles);
        console.log("ALLROLES:", allRoles)
        console.log("ALLROLES:", response.data.roles)
      })
@@ -115,9 +124,9 @@ export default function InteractiveList() {
      });
  }
 
- useEffect(() => {
-  getUsers();
-  getRoles();
+ useEffect(async () => {
+  await getUsers();
+  await getRoles();
    }, [])
 
   const [columns, setColumns] = useState([
