@@ -134,13 +134,14 @@ roles[index.roleId] = index.roleName;
    }, [])
 
   const [columns, setColumns] = useState([
-    { title: 'Username', field: 'userName' },
-    { title: 'Display name', field: 'displayName' },
-    { title: 'Roles', field: 'roleDetails.roleName',
-    lookup:roles,
-     
+    { title: "Username", field: "userName" },
+    { title: "Display name", field: "displayName" },
+    {
+      title: "Roles",
+      field: "roles",
+      lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
     },
-    
+
     // {
     //   title: 'Login Status',
     //   field: 'loginStatus'
