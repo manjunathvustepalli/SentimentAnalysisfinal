@@ -10,6 +10,8 @@ import MaterialTable from "material-table";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { getRoles } from '@testing-library/react';
 import Cookies from 'js-cookie'
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1
@@ -22,15 +24,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let roles={};
-export default function InteractiveList() {
-  const [data,setdata]=useState([]);
-  const [allRoles,setAllRoles]=useState([])
+export default function UpdateDeleteUser() {
+  const [data, setdata] = useState([]);
+  const [allRoles, setAllRoles] = useState([]);
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
-
-  const deleteuser=(id)=>{
-   
+  const [loading, setloading] = useState(true);
+  const deleteuser = (id) => {
     let data = JSON.stringify({ user: { userId: id } });
 
     let config = {
@@ -42,16 +43,17 @@ export default function InteractiveList() {
 
     axios(config)
       .then((response) => {
-        getUsers()
+        getUsers();
       })
       .catch((error) => {
         console.log(error);
       });
 
-    console.log(id)
-  }
+    console.log(id);
+  };
 
-  const updateuser=(id,usernmae,displayName,role)=>{
+  const updateuser = (id, usernmae, displayName, role) => {
+    let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
         userId: id,
@@ -64,74 +66,78 @@ export default function InteractiveList() {
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/modifyuser",
-      headers: header,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
       data: data,
     };
 
     axios(config)
       .then((response) => {
-        getUsers()
+        getUsers();
       })
       .catch((error) => {
         console.log(error);
       });
 
-    console.log(id)
-  }
+    console.log(id);
+  };
 
- const getUsers=()=>{
-   let token = Cookies.get("token");
-   let config = {
-     method: "post",
-     url: process.env.REACT_APP_URL + "admin/getusers",
-     headers: {
-    'Content-Type': 'application/json', 
-    'token': token
-  },
-     data: "",
-   };
+  const getUsers = () => {
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/getusers",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
 
-   axios(config)
-     .then((response) => {
-       setdata(response.data.users);
-     })
-     .catch((error) => {
-       console.log(error);
-     });
- }
+    axios(config)
+      .then((response) => {
+        setdata(response.data.users);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
- const getRoles= ()=>{
-   let token = Cookies.get("token");
-   let config = {
-     method: "post",
-     url: process.env.REACT_APP_URL + "admin/getroles",
-     headers: {
-    'Content-Type': 'application/json', 
-    'token': token
-  },
-     data: "",
-   };
+  const getRoles = () => {
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/getroles",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
 
-   axios(config)
-     .then((response) => {
-response.data.roles.map((index)=>{
-roles[index.roleId] = index.roleName;
- setAllRoles(roles)
-})
-       
+    axios(config)
+      .then((response) => {
+        response.data.roles.map((index) => {
+          roles[index.roleId] = index.roleName;
+          setAllRoles(roles);
+          setloading(false);
+        });
+
         // setAllRoles(response.data.roles);
-       console.log("ALLROLES:", roles)
-       console.log("ALLROLES:", response.data.roles)
-     })
-     .catch((error) => {
-       console.log(error);
-     });
- }
+        console.log("ALLROLES:", roles);
+        console.log("ALLROLES:", response.data.roles);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
- useEffect(async () => {
-  await getUsers();
-  await getRoles();
-   }, [])
+  useEffect( () => {
+     getUsers();
+     getRoles();
+  }, []);
 
   const [columns, setColumns] = useState([
     { title: "Username", field: "userName" },
@@ -142,10 +148,10 @@ roles[index.roleId] = index.roleName;
       lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
     },
 
-    // {
-    //   title: 'Login Status',
-    //   field: 'loginStatus'
-    // },
+    {
+      title: "Login Status",
+      field: "loginStatus",
+    },
     // {
     //   title: "Delete",
     //   render: (rowData) => (
@@ -165,102 +171,106 @@ roles[index.roleId] = index.roleName;
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={2} style={{ padding: 20 }} direction="column">
-        <Grid item xs={12}>
-          <Typography
-            variant="h"
-            className={classes.title}
-            style={{ color: "#43B02A", fontSize: "30px" }}
-          >
-            Update/Delete Users
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper variant="outlined"></Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <div className={classes.demo}>
-            <List>
-            <MaterialTable
-        title="Users"
-        columns={columns}
-        data={data}
-        editable={{
-          // onRowAdd: newData =>
-          //   new Promise((resolve, reject) => {
-          //     setTimeout(() => {
-          //       setData([...data, newData]);
-                  
-          //       resolve();
-          //     }, 1000)
-          //   }),
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Grid container spacing={2} style={{ padding: 20 }} direction="column">
+          <Grid item xs={12}>
+            <Typography
+              variant="h"
+              className={classes.title}
+              style={{ color: "#43B02A", fontSize: "30px" }}
+            >
+              Update/Delete Users
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper variant="outlined"></Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.demo}>
+              <List>
+                <MaterialTable
+                  title="Users"
+                  columns={columns}
+                  data={data}
+                  editable={{
+                    // onRowAdd: newData =>
+                    //   new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //       setData([...data, newData]);
 
-          onRowUpdate : (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                // const dataUpdate = [...data];
-                // console.log("NEWDATAusername:", newData)
-                // console.log("OLDDATAusername:", oldData)
-                // console.log("Username:", newData.userName)
-                // console.log("Dislayname:", newData.displayName)
-                // console.log("Roles:", newData.roles)
-                // console.log("Id:", newData.userId)
-                setUsername(newData.userName)
-                setDisplayname(newData.displayName)
-                setRoles(newData.roles)
-                updateuser(
-                  newData.userId,
-                  newData.userName,
-                  newData.displayName,
-                  newData.roles
-                );
-                // dataUpdate[index] = newData;
-                // setData([...dataUpdate]);
-                resolve();
-              }, 1000)
-            }),
+                    //       resolve();
+                    //     }, 1000)
+                    //   }),
 
-          onRowDelete: (oldData, newData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                // const dataDelete = [...data];
-                deleteuser(oldData.userId)
-                // dataDelete.splice(index, 1);
-                // setData([...dataDelete]);
-                
-                resolve()
-              }, 1000)
-            }),
-        }}
-        style={{
-          padding: "20px",
-        }}
-        title="Users"
-        columns={columns}
-        data={data}
-        // actions={[
-        //   {
-        //     icon: "delete",
-        //     tooltip: "Delete User",
-        //     onClick: (event, rowData) => delete(rowData.userId),
-        //   }
-        // ]}
-        options={{
-          paging: false,
-          // tableLayout: "fixed",
-          maxBodyHeight: 500,
-          headerStyle: {
-            backgroundColor: "rgb(67, 176, 42)",
-            color: "white",
-            paddingTop: "10px",
-            paddingBottom: "10px",
-          },
-        }}
-      />
-            </List>
-          </div>
+                    onRowUpdate: (newData, oldData) =>
+                      new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                          // const dataUpdate = [...data];
+                          // console.log("NEWDATAusername:", newData)
+                          // console.log("OLDDATAusername:", oldData)
+                          // console.log("Username:", newData.userName)
+                          // console.log("Dislayname:", newData.displayName)
+                          // console.log("Roles:", newData.roles)
+                          // console.log("Id:", newData.userId)
+                          setUsername(newData.userName);
+                          setDisplayname(newData.displayName);
+                          setRoles(newData.roles);
+                          updateuser(
+                            newData.userId,
+                            newData.userName,
+                            newData.displayName,
+                            newData.roles
+                          );
+                          // dataUpdate[index] = newData;
+                          // setData([...dataUpdate]);
+                          resolve();
+                        }, 1000);
+                      }),
+
+                    onRowDelete: (oldData, newData) =>
+                      new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                          // const dataDelete = [...data];
+                          deleteuser(oldData.userId);
+                          // dataDelete.splice(index, 1);
+                          // setData([...dataDelete]);
+
+                          resolve();
+                        }, 1000);
+                      }),
+                  }}
+                  style={{
+                    padding: "20px",
+                  }}
+                  title="Users"
+                  columns={columns}
+                  data={data}
+                  // actions={[
+                  //   {
+                  //     icon: "delete",
+                  //     tooltip: "Delete User",
+                  //     onClick: (event, rowData) => delete(rowData.userId),
+                  //   }
+                  // ]}
+                  options={{
+                    paging: false,
+                    // tableLayout: "fixed",
+                    maxBodyHeight: 500,
+                    headerStyle: {
+                      backgroundColor: "rgb(67, 176, 42)",
+                      color: "white",
+                      paddingTop: "10px",
+                      paddingBottom: "10px",
+                    },
+                  }}
+                />
+              </List>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </div>
   );
 }
