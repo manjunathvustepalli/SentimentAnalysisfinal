@@ -183,6 +183,7 @@ if (keywordType === "Entire Data") {
                     uniqueSourceKeys.push(source);
                   }
                   sortedData[key][source] = {};
+                  console.log(sourceBuckets[j]);
                   perDayBuckets = sourceBuckets[j]["per-day"].buckets;
                   perDayKeys = sourceBuckets[j]["per-day"].buckets.map(
                     (item) => item.key_as_string
@@ -287,8 +288,8 @@ if (keywordType === "Entire Data") {
                             <MenuItem value='line'>Line chart</MenuItem>
                             <MenuItem value='bar'>Bar chart</MenuItem>
                             <MenuItem value='stack'>Stacked Bar chart</MenuItem>
-                            <MenuItem value='pie'>Pie chart</MenuItem>
-                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
+                            {/* <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem> */}
                             </Select>
                             </FormControl>
                             </Grid>
