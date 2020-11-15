@@ -1,15 +1,16 @@
-import React,{useEffect,useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from "@material-ui/core/List";
-import {  Paper, 
-          Button,
-          TextField,
-          Dialog,
-          DialogActions,
-          DialogContent,
-          DialogContentText,
-          DialogTitle
-         } from '@material-ui/core';
+import {
+  Paper,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { header } from './Auth';
@@ -31,26 +32,41 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4, 0, 2),
   },
 }));
-let roles={};
+let roles = {};
 export default function UpdateDeleteUser() {
   const [data, setdata] = useState([]);
   const [allRoles, setAllRoles] = useState([]);
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
- 
+
   const [NewPassword, setNewPassword] = useState();
   const [loading, setloading] = useState(true);
   const [open, setOpen] = React.useState(false);
   const [UserId, setUserId] = useState();
 
-  const handleClickOpen = (id) => {
-    setUserId(id)
-    setOpen(true);
-  };
+  const [ResetPassword, setResetPassword] = useState(
+    {
+      open: false,
+      id: 0
+    }
+  )
+
+  const onClickResetPassword = (userId) => {
+    setResetPassword({
+      open: true,
+      id: userId
+    })
+    console.log("ResetPassword:", ResetPassword)
+  }
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleClickOpen = () => {
+    // setUserId(id)
+    setOpen(true);
   };
 
   const deleteuser = (id) => {
@@ -76,15 +92,17 @@ export default function UpdateDeleteUser() {
 
   const changePassword = (id, newPassword) => {
     let data = JSON.stringify(
-      { user: 
-        { userId: id,
-          password: newPassword 
+      {
+        user:
+        {
+          userId: id,
+          password: newPassword
         }
       });
 
     // let config = {
     //   method: "post",
-    //   url: process.env.REACT_APP_URL + "resetpasswordr",
+    //   url: process.env.REACT_APP_URL + "admin/resetpassword",
     //   headers: header,
     //   data: data,
     // };
@@ -154,7 +172,7 @@ export default function UpdateDeleteUser() {
       });
   };
 
-  const getRoles = () => {
+  const getRoles = async () => {
     let token = Cookies.get("token");
     let config = {
       method: "post",
@@ -166,26 +184,26 @@ export default function UpdateDeleteUser() {
       data: "",
     };
 
-    axios(config)
-      .then((response) => {
-        response.data.roles.map((index) => {
-          roles[index.roleId] = index.roleName;
-          setAllRoles(roles);
-          // setloading(false);
-        });
+    let response = await axios(config).catch((error) => {
+      console.log(error);
+    });
+    if (response.status === 201) {
 
-        // setAllRoles(response.data.roles);
-        console.log("ALLROLES:", roles);
-        console.log("ALLROLES:", response.data.roles);
-      })
-      .catch((error) => {
-        console.log(error);
+      await response.data.roles.map((index) => {
+        roles[index.roleId] = index.roleName;
+        setAllRoles(roles);
       });
+    }
+    setloading(false);
+
+    // setAllRoles(response.data.roles);
+    console.log("ALLROLES:", roles);
+    console.log("ALLROLES:", response.data.roles);
   };
 
-  useEffect( () => {
-     getUsers();
-     getRoles();
+  useEffect(() => {
+    getUsers();
+    getRoles();
   }, []);
 
   const [columns, setColumns] = useState([
@@ -194,21 +212,22 @@ export default function UpdateDeleteUser() {
     {
       title: "Roles",
       field: "roles",
-      lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
+      // lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
+      lookup: roles,
     },
 
     {
       title: "Login Status",
       field: "loginStatus",
+      editable: "never"
     },
     {
       title: "Reset Passowrd",
       render: (rowData) => (
-        <Button 
-        // onClick={()=>deleteuser(rowData.userId)}
-        onClick={handleClickOpen(rowData.userId)}
+        <Button
+          onClick = {handleClickOpen}
         >
-           <RotateLeftIcon />
+          <RotateLeftIcon />
         </Button>
       ),
     },
@@ -223,133 +242,150 @@ export default function UpdateDeleteUser() {
 
   return (
     <div className={classes.root}>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Grid container spacing={2} style={{ padding: 20 }} direction="column">
-          <Grid item xs={12}>
-            <Typography
-              variant="h"
-              className={classes.title}
-              style={{ color: "#43B02A", fontSize: "30px" }}
-            >
-              Update/Delete Users
-            </Typography>
+      <Grid container spacing={2} style={{ padding: 20 }} direction="column">
+        {loading ? (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            display="flex"
+            style={{ minHeight: "50vh" }}
+          >
+            <CircularProgress />
           </Grid>
-          <Grid item xs={12}>
-            <Paper variant="outlined"></Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.demo}>
-              <List>
-                <MaterialTable
-                  title="Users"
-                  columns={columns}
-                  data={data}
-                  editable={{
-                    // onRowAdd: newData =>
-                    //   new Promise((resolve, reject) => {
-                    //     setTimeout(() => {
-                    //       setData([...data, newData]);
+        ) : (
+            <>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h"
+                  className={classes.title}
+                  style={{ color: "#43B02A", fontSize: "30px" }}
+                >
+                  Update/Delete Users
+              </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper variant="outlined"></Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={classes.demo}>
+                  <List>
+                    <MaterialTable
+                      title="Users"
+                      columns={columns}
+                      data={data}
+                      editable={{
+                        // onRowAdd: newData =>
+                        //   new Promise((resolve, reject) => {
+                        //     setTimeout(() => {
+                        //       setData([...data, newData]);
 
-                    //       resolve();
-                    //     }, 1000)
-                    //   }),
+                        //       resolve();
+                        //     }, 1000)
+                        //   }),
 
-                    onRowUpdate: (newData, oldData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          // const dataUpdate = [...data];
-                          // console.log("NEWDATAusername:", newData)
-                          // console.log("OLDDATAusername:", oldData)
-                          // console.log("Username:", newData.userName)
-                          // console.log("Dislayname:", newData.displayName)
-                          // console.log("Roles:", newData.roles)
-                          // console.log("Id:", newData.userId)
-                          setUsername(newData.userName);
-                          setDisplayname(newData.displayName);
-                          setRoles(newData.roles);
-                          updateuser(
-                            newData.userId,
-                            newData.userName,
-                            newData.displayName,
-                            newData.roles
-                          );
-                          // dataUpdate[index] = newData;
-                          // setData([...dataUpdate]);
-                          resolve();
-                        }, 1000);
-                      }),
+                        onRowUpdate: (newData, oldData) =>
+                          new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                              // const dataUpdate = [...data];
+                              // console.log("NEWDATAusername:", newData)
+                              // console.log("OLDDATAusername:", oldData)
+                              // console.log("Username:", newData.userName)
+                              // console.log("Dislayname:", newData.displayName)
+                              // console.log("Roles:", newData.roles)
+                              // console.log("Id:", newData.userId)
+                              setUsername(newData.userName);
+                              setDisplayname(newData.displayName);
+                              setRoles(newData.roles);
+                              updateuser(
+                                newData.userId,
+                                newData.userName,
+                                newData.displayName,
+                                newData.roles
+                              );
+                              // dataUpdate[index] = newData;
+                              // setData([...dataUpdate]);
+                              resolve();
+                            }, 1000);
+                          }),
 
-                    onRowDelete: (oldData, newData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          // const dataDelete = [...data];
-                          deleteuser(oldData.userId);
-                          // dataDelete.splice(index, 1);
-                          // setData([...dataDelete]);
+                        onRowDelete: (oldData, newData) =>
+                          new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                              // const dataDelete = [...data];
+                              deleteuser(oldData.userId);
+                              // dataDelete.splice(index, 1);
+                              // setData([...dataDelete]);
 
-                          resolve();
-                        }, 1000);
-                      }),
-                  }}
-                  style={{
-                    padding: "20px",
-                  }}
-                  title="Users"
-                  columns={columns}
-                  data={data}
-                  // actions={[
-                  //   {
-                  //     icon: "delete",
-                  //     tooltip: "Delete User",
-                  //     onClick: (event, rowData) => delete(rowData.userId),
-                  //   }
-                  // ]}
-                  options={{
-                    paging: false,
-                    // tableLayout: "fixed",
-                    maxBodyHeight: 500,
-                    headerStyle: {
-                      backgroundColor: "rgb(67, 176, 42)",
-                      color: "white",
-                      paddingTop: "10px",
-                      paddingBottom: "10px",
-                    },
-                  }}
-                />
-              </List>
-            </div>
-          </Grid>
+                              resolve();
+                            }, 1000);
+                          }),
+                      }}
+                      style={{
+                        padding: "20px",
+                      }}
+                      title="Users"
+                      columns={columns}
+                      data={data}
+                      // actions={[
+                      //   {
+                      //     icon: "delete",
+                      //     tooltip: "Delete User",
+                      //     onClick: (event, rowData) => delete(rowData.userId),
+                      //   }
+                      // ]}
+                      options={{
+                        paging: false,
+                        // tableLayout: "fixed",
+                        maxBodyHeight: 500,
+                        headerStyle: {
+                          backgroundColor: "rgb(67, 176, 42)",
+                          color: "white",
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                        },
+                      }}
+                    />
+                  </List>
+                </div>
+              </Grid>
 
-          <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please enter the new password below.
+              <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Please enter the new password below.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            label="New Password"
-            type="password"
-            onChange={(event)=> setNewPassword(event.target.value)}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={()=> handleClose} color="primary">
-            Cancel
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="password"
+                    label="New Password"
+                    type="password"
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    fullWidth
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button 
+                  onClick={handleClose} 
+                  color="primary">
+                    Cancel
           </Button>
-          <Button onClick={()=> {changePassword(UserId, NewPassword)}} color="primary">
-            Change Password
+                  <Button 
+                  // onClick={changePassword(UserId, NewPassword)}
+                  onClick={handleClose} 
+                   color="primary">
+                    Change Password
           </Button>
-        </DialogActions>
-      </Dialog>
-
-        </Grid>
-      )}
+                </DialogActions>
+              </Dialog>
+              
+            </>
+          )}
+          </Grid>
     </div>
   );
 }

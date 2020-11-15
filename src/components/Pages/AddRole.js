@@ -29,6 +29,7 @@ import {
 import { green } from "@material-ui/core/colors";
 import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Chip from "@material-ui/core/Chip";
 
 const theme = createMuiTheme({
   palette: {
@@ -62,99 +63,77 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+export default function AddRole() {
 
-export default function AddUser() {
-  const classes = useStyles();
-  const [Username, setUsername] = useState();
-  const [email, setEmail] = useState();
-  const [Password, setPassword] = useState();
-  const [Password2, setPassword2] = useState();
-  const [UserType, setUserType] = useState();
-  const [Roles, setRoles] = useState([]);
-  const [loading,setloading]=useState(true);
-  const GetRoles = async () => {
-    let data = "";
+    useEffect(() => {
+      
+      getUipages();
+    }, []);
+    const [uipages,setUipages]=useState();
+    const [roleName,setrolename]=useState();
+    const[roleDescription,setroledescription]=useState();
+    const[adduipages,setaddroledescription]=useState();
 
-    let config = {
-      method: "post",
-      url: process.env.REACT_APP_URL + "/admin/getroles",
-      headers: header,
-      data: data,
+    const getUipages = async () => {
+      let token = Cookies.get("token");
+      let config = {
+        method: "post",
+        url: process.env.REACT_APP_URL + "admin/getroles",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: "",
+      };
+
+       axios(config)
+         .then((response) => {
+        
+             setUipages(response.data);
+         })
+         .catch((error) => {
+           console.log(error);
+         });
     };
-
-    let response=await axios(config)
-     
-    
-    .catch((error) => {
-      console.log(error);
-    });
-      if(response.status===201){
-    await  setRoles(response.data.roles);
-      }
-      if(response.data.roles){
-
-        setloading(false);
-      }
-
-  };
-  useEffect(() => {
-    GetRoles();
-  }, []);
-
-  const SignUp = () => {
-    let token=Cookies.get("token")
-    let data = JSON.stringify({
-      user: {
-        userName: Username,
-        password: Password,
-        displayName: email,
-        roles: UserType,
-      },
-    });
-
-    let config = {
-      method: "post",
-      url: process.env.REACT_APP_URL + "admin/adduser",
-      headers: {
-        "Content-Type": "application/json",
-        token: token,
-      },
-      data: data,
-    };
-
-    axios(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
+    const addrole = async () => {
+      let token = Cookies.get("token");
+      let data = JSON.stringify({
+        role: {
+          roleName: "allanalysis",
+          roleDescription: "All analysis",
+          pageIds: "3,4,5,6,7,8",
+        },
       });
-  };
 
-  return (
-    <Container component="main" maxWidth="xs">
-      {loading ? (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          display="flex"
-          style={{ minHeight: "50vh" }}
-        >
-          <CircularProgress style={{ position: "absolute" }} />
-        </Grid>
-      ) : (
-        <>
+      let config = {
+        method: "post",
+        url:process.env.REACT_APP_URL+ "admin/addrole",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: data,
+      };
+
+      axios(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+    };
+
+    const classes = useStyles();
+    return (
+      <div>
+        <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className={classes.paper}>
-            {/* <Avatar className={classes.avatar}>
-            <PersonAddIcon />
-          </Avatar> */}
             <Box p={3}>
               <Typography component="h1" variant="h5">
-                Add User
+                Add Role
               </Typography>
             </Box>
             <Grid container alignItems="center" justify="center" spacing={4}>
@@ -165,12 +144,12 @@ export default function AddUser() {
                       <TextField
                         autoComplete="fname"
                         name="firstName"
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setrolename(e.target.value)}
                         variant="outlined"
                         required
                         fullWidth
                         id="firstName"
-                        label="UserName"
+                        label="RoleName"
                         style={{
                           borderColor: "green",
                           cssLabel: {
@@ -181,19 +160,39 @@ export default function AddUser() {
                     </Grid>
                     <Grid item xs={12}>
                       <FormControl variant="outlined" style={{ width: "100%" }}>
-                        <InputLabel>UserType</InputLabel>
+                        <InputLabel id="demo-mutiple-chip-label">
+                          PageIds
+                        </InputLabel>
                         <Select
-                          labelId="demo-simple-select-outlined-label"
-                          id="demo-simple-select-outlined"
-                          // value={age}
-                          onChange={(e) => setUserType(e.target.value)}
-                          label="Age"
+                          labelId="demo-mutiple-chip-label"
+                          id="demo-mutiple-chip"
+                          multiple
+                          fullWidth
+                          //   value={}
+                          //   onChange={handleChange}
+
+                          renderValue={(selected) => (
+                            <div className={classes.chips}>
+                              {/* {selected.map((value) => (
+                                <Chip
+                                  key={value}
+                                  label={value}
+                                  className={classes.chip}
+                                />
+                              ))} */}
+                            </div>
+                          )}
+                          //   MenuProps={MenuProps}
                         >
-                          {Roles.map((role) => (
-                            <MenuItem key={role.roleId} value={role.roleId}>
-                              {role.roleName}
+                          {/* {uipages.map((name) => (
+                            <MenuItem
+                              key={name}
+                              value={name}
+                              style={getStyles(name, personName, theme)}
+                            >
+                              {name}
                             </MenuItem>
-                          ))}
+                          ))} */}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -202,50 +201,23 @@ export default function AddUser() {
                         variant="outlined"
                         required
                         fullWidth
-                        id="display name"
-                        label="Display Name"
-                        name="Display Name"
-                        autoComplete="email"
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
+                        name="roleDescription"
+                        label="RoleDescription"
+                        type="text"
                         id="password"
                         autoComplete="current-password"
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        variant="outlined"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Re-Enter Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        onChange={(e) => setPassword2(e.target.value)}
+                        onChange={(e) => setroledescription(e.target.value)}
                       />
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid xs={10}>
                   <Button
-                    onClick={SignUp}
+                    // onClick={SignUp}
                     //   type="submit"
                     fullWidth
                     className={classes.button}
                     variant="contained"
-                    // color="primary"
-                    //   className={classes.submit}
                   >
                     Sign Up
                   </Button>
@@ -253,8 +225,7 @@ export default function AddUser() {
               </ThemeProvider>
             </Grid>
           </div>
-        </>
-      )}
-    </Container>
-  );
+        </Container>
+      </div>
+    );
 }
