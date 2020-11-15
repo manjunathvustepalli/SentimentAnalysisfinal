@@ -41,8 +41,14 @@ import Cookies from "js-cookie";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteIcon from '@material-ui/icons/Delete';
 import LockIcon from '@material-ui/icons/Lock';
+import UpdateIcon from '@material-ui/icons/Update';
 import {header} from "../Pages/Auth";
 import axios from "axios";
+import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
+import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
+import { TrendAnalysisContext } from "../../contexts/TrendAnalysisContext";
+import MoodAnalysisContext from "../../contexts/MoodAnalysisContext";
+import { WordCloudContext } from "../../contexts/WordCloudContext";
 
 const drawerWidth = 200;
 const useStyles = makeStyles((theme) => ({
@@ -93,7 +99,8 @@ const SideNavBar =  (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [role] = useState(Cookies.get("role"));
+  const [pages] = useState(JSON.parse(Cookies.get("pages")));
+  const [token]=useState(Cookies.get("token"))
   const [isloading,setIsloading]=useState(true)
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
@@ -102,10 +109,31 @@ const SideNavBar =  (props) => {
       return { color: "black", minWidth: "30px" };
     }
   };
+  // console.log(pages);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  
+  const logout = () => {
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/logout",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
+
+    axios(config)
+      .then((response) => {
+        Cookies.remove("token");
+        props.history.push("/")
+        // console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const menus = [
     {
       name: "Summary Dashboard",
@@ -144,7 +172,7 @@ const SideNavBar =  (props) => {
       path: ["/word-cloud/sentiment" /*,'/word-cloud/mood'*/],
     },
     {
-      name: "Trending Subjects",
+      name: "Trending Subject",
       icon: <TrendingUpIcon />,
       path: ["/trending-subject/sentiment", "/trending-subject/mood"],
     },
@@ -212,10 +240,15 @@ const SideNavBar =  (props) => {
       path: ["/add-user"],
     },
     {
-      name: "Delete User",
-      icon: <DeleteIcon/>,
-      path: ["/delete-user"]
+      name: "Update/Delete User",
+      icon: <UpdateIcon/>,
+      path: ["/updateDelete-user"],
     },
+    // {
+    //   name: "Delete User",
+    //   icon: <DeleteIcon/>,
+    //   path: ["/delete-user"]
+    // },
     {
       name: "Change Password",
       icon: <LockIcon/>,
@@ -269,6 +302,7 @@ const SideNavBar =  (props) => {
 
 
   const drawer = (
+    
     <div className={classes.drawerScroller}>
       <div id="userMenuHeader">
         <Grid container>
@@ -293,8 +327,12 @@ const SideNavBar =  (props) => {
       </div>
       <Divider style={{ marginTop: "120px" }} />
       <List>
-        {role==="Admin"?menus.map((menuItem, index) => (
-          <Link
+          {
+            menus.map((menuItem, index) => (
+          pages.map((page,index1)=>
+          // console.log(menuItem.name,page)
+          menuItem.name===page?
+          (<Link
             to={menuItem.path[0]}
             key={index}
             style={{ textDecoration: "none", color: "black" }}
@@ -311,124 +349,102 @@ const SideNavBar =  (props) => {
               />
             </ListItem>
             <Divider />
-          </Link>
-        )):menus.map((menuItem, index) => (
-          <Link
-            to={menuItem.path[0]}
-            key={index}
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <ListItem button key={index}>
-              <ListItemIcon style={currentTab(history, menuItem.path)}>
-                {" "}
-                {menuItem.icon}{" "}
-              </ListItemIcon>
-              <ListItemText
-                style={currentTab(history, menuItem.path)}
-                classes={{ primary: classes.listItemText }}
-                primary={menuItem.name}
-              />
-            </ListItem>
-            <Divider />
-          </Link>
-        ))}
+          </Link>)
+          :"")))}
+        
       </List>
     </div>
   );
-const logout=()=>{
- 
-  
 
-  let config = {
-    method: "post",
-    url: process.env.REACT_APP_URL + "admin/logout",
-    headers: header,
-    data: "",
-  };
 
-  axios(config)
-    .then((response) => {
-      Cookies.remove("token");
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-}
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Avatar
-            alt="LOGO"
-            src={require("../../imgs/logo.png")}
-            style={{ height: "100%" }}
-          />
-          <Typography variant="h6" noWrap>
-            &nbsp; Sentiment and Mood Analysis
-          </Typography>
-          <span style={{ marginLeft: "auto" }}>
-            <Tooltip title={"Logout"}>
-              <Button color="inherit" onClick={()=>logout()} component={Link} to="/">
-                <ExitToAppIcon />
-              </Button>
-            </Tooltip>
-          </span>
-        </Toolbar>
-      </AppBar>
-      <nav
-        className={classes.drawer}
-        id="scroll-id"
-        aria-label="mailbox folders"
-      >
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor={theme.direction === "rtl" ? "right" : "left"}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true,
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {children}
-      </main>
-    </div>
+    <TrendAnalysisContext>
+      <TrendingSubjectContext>
+        <WordCloudContext>
+          <MoodAnalysisContext>
+            <SentimentAnalysisContext>
+              <div className={classes.root}>
+                <CssBaseline />
+                <AppBar position="fixed" className={classes.appBar}>
+                  <Toolbar>
+                    <IconButton
+                      color="inherit"
+                      aria-label="open drawer"
+                      edge="start"
+                      onClick={handleDrawerToggle}
+                      className={classes.menuButton}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                    <Avatar
+                      alt="LOGO"
+                      src={require("../../imgs/logo.png")}
+                      style={{ height: "100%" }}
+                    />
+                    <Typography variant="h6" noWrap>
+                      &nbsp; Sentiment and Mood Analysis
+                    </Typography>
+                    <span style={{ marginLeft: "auto" }}>
+                      <Tooltip title={"Logout"}>
+                        <Button
+                          color="inherit"
+                          onClick={() => logout()}
+                          component={Link}
+                          to="/"
+                        >
+                          <ExitToAppIcon />
+                        </Button>
+                      </Tooltip>
+                    </span>
+                  </Toolbar>
+                </AppBar>
+                <nav
+                  className={classes.drawer}
+                  id="scroll-id"
+                  aria-label="mailbox folders"
+                >
+                  <Hidden smUp implementation="css">
+                    <Drawer
+                      container={container}
+                      variant="temporary"
+                      anchor={theme.direction === "rtl" ? "right" : "left"}
+                      open={mobileOpen}
+                      onClose={handleDrawerToggle}
+                      classes={{
+                        paper: classes.drawerPaper,
+                      }}
+                      ModalProps={{
+                        keepMounted: true,
+                      }}
+                    >
+                      {drawer}
+                    </Drawer>
+                  </Hidden>
+                  <Hidden xsDown implementation="css">
+                    <Drawer
+                      classes={{
+                        paper: classes.drawerPaper,
+                      }}
+                      variant="permanent"
+                      open
+                    >
+                      {drawer}
+                    </Drawer>
+                  </Hidden>
+                </nav>
+                <main className={classes.content}>
+                  <div className={classes.toolbar} />
+                  {children}
+                </main>
+              </div>
+            </SentimentAnalysisContext>
+          </MoodAnalysisContext>
+        </WordCloudContext>
+      </TrendingSubjectContext>
+    </TrendAnalysisContext>
   );
 };
 

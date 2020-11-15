@@ -14,6 +14,7 @@ import useDidUpdateEffect from '../custom Hooks/useDidUpdateEffect'
 import Loader from '../LoaderWithBackDrop';
 import colors from '../../helpers/colors';
 import {Auth,header} from './Auth'
+ import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -155,12 +156,34 @@ function MoodAnalysisLineChart() {
     //     },
     //   },
     // )
-    let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-
+ let data = "";
+ if (keywordType === "Hash Tags") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryHashtagEntities: keywords,
+   });
+ }
+ if (keywordType === "Screen Name") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+     queryUserScreenNames: keywords,
+   });
+ }
+ if (keywordType === "Entire Data") {
+   data = JSON.stringify({
+     queryStartDate: from,
+     queryEndDate: to,
+   });
+ }    let token = Cookies.get("token");
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "query/moodanalysis",
-      headers: header,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
       data: data,
     };
 
@@ -429,8 +452,8 @@ function MoodAnalysisLineChart() {
                         <MenuItem value='line'>Line chart</MenuItem>
                         <MenuItem value='bar'>Bar chart</MenuItem>
                         <MenuItem value='stack'>Stacked Bar chart</MenuItem>
-                        <MenuItem value='pie'>Pie chart</MenuItem>
-                        <MenuItem value='semi pie'>Semi Pie chart</MenuItem>      
+                        {/* <MenuItem value='pie'>Pie chart</MenuItem>
+                        <MenuItem value='semi pie'>Semi Pie chart</MenuItem>       */}
                         </Select>
                         </FormControl>
                         </Grid>

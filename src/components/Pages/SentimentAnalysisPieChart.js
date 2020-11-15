@@ -19,6 +19,7 @@ import PieChart from '../charts/PieChart';
 import { addMonths } from '../../helpers/index';
 import Loader from '../LoaderWithBackDrop';
 import { Auth, header } from "./Auth";
+ import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
     main: {
@@ -132,12 +133,35 @@ export default function SentimentalAnalysisPieChart() {
         //   query,
         //   Auth
         // )
-        let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
+let data = "";
+if (keywordType === "Hash Tags") {
+  data = JSON.stringify({
+    queryStartDate: from,
+    queryEndDate: to,
+    queryHashtagEntities: keywords,
+  });
+}
+if (keywordType === "Screen Name") {
+  data = JSON.stringify({
+    queryStartDate: from,
+    queryEndDate: to,
+    queryUserScreenNames: keywords,
+  });
+}
+if (keywordType === "Entire Data") {
+  data = JSON.stringify({
+    queryStartDate: from,
+    queryEndDate: to,
+  });
+}let token = Cookies.get("token");
 
         let config = {
           method: "post",
           url: process.env.REACT_APP_URL + "query/sentimentanalysis",
-          headers: header,
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
           data: data,
         };
 
@@ -159,6 +183,7 @@ export default function SentimentalAnalysisPieChart() {
                     uniqueSourceKeys.push(source);
                   }
                   sortedData[key][source] = {};
+                  console.log(sourceBuckets[j]);
                   perDayBuckets = sourceBuckets[j]["per-day"].buckets;
                   perDayKeys = sourceBuckets[j]["per-day"].buckets.map(
                     (item) => item.key_as_string
@@ -263,8 +288,8 @@ export default function SentimentalAnalysisPieChart() {
                             <MenuItem value='line'>Line chart</MenuItem>
                             <MenuItem value='bar'>Bar chart</MenuItem>
                             <MenuItem value='stack'>Stacked Bar chart</MenuItem>
-                            <MenuItem value='pie'>Pie chart</MenuItem>
-                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem>
+                            {/* <MenuItem value='pie'>Pie chart</MenuItem>
+                            <MenuItem value='semi-pie'>Semi Pie chart</MenuItem> */}
                             </Select>
                             </FormControl>
                             </Grid>

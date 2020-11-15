@@ -3,7 +3,7 @@ import { addMonths, getKeyArray } from '../helpers'
 import Axios from 'axios'
 import useDidUpdateEffect from '../components/custom Hooks/useDidUpdateEffect'
 import {Auth} from '../components/Pages/Auth'
-
+import Cookies from "js-cookie";
 var sortedData = {}
 
 export const TrendingSubjectFiltersContext = createContext()
@@ -14,8 +14,8 @@ export const TrendingSubjectContext = ({ children }) => {
     const [subSource, setSubSource] = useState('');
     const [languages, setLanguages] = useState([]);
     const [language, setLanguage] = useState('');
-    const [from, setFrom] = useState(addMonths(new Date(), 0));
-    const [to, setTo] = useState(addMonths(new Date(), +1));
+    const [from, setFrom] = useState(addMonths(new Date(), -1));
+    const [to, setTo] = useState(addMonths(new Date(), 0));
     const [moods, setMoods] = useState([])
     const [mood, setmood] = useState('joy');
     const [sentiment, setSentiment] = useState('positive');
@@ -29,154 +29,238 @@ export const TrendingSubjectContext = ({ children }) => {
     useEffect(()=>{
         setMoodData([])
         setSentimentData([])
-        let query = {
-            "aggs": {
-                "date-based-range": {
-                    "date_range": {
-                        "field": "CreatedAt",
-                        "format": "dd-MM-yyyy",
-                        "ranges": [{
-                            "from": from,
-                            "to": to
-                        }]
-                    },
-                    "aggs": {
-                        "lang": {
-                            "terms": {
-                                "field": "predictedLang.keyword"
-                            },
-                            "aggs": {
-                                "Source": {
-                                    "terms": {
-                                        "field": "Source.keyword"
-                                    },
-                                    "aggs":{
-                                        "SubSource":{
-                                            "terms":{
-                                                "field":"SubSource.keyword"
-                                            },
-                                            "aggs":{
-                                                "Daily-mood-Distro": {
-                                                    "terms": {
-                                                      "field": "predictedMood.keyword"
-                                                    },
-                                                        "aggs":{
-                                                          "Words":{
-                                                            "terms":{
-                                                              "field":"HashtagEntities.Text.keyword"
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "Daily-Sentiment-Distro": {
-                                                  "terms": {
-                                                    "field": "predictedSentiment.keyword"
-                                                  },
-                                                      "aggs":{
-                                                        "Words":{
-                                                          "terms":{
-                                                            "field":"HashtagEntities.Text.keyword"
-                                                          }
-                                                      }
-                                                  }
-                                              }
-                                            },
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // let query = {
+        //     "aggs": {
+        //         "date-based-range": {
+        //             "date_range": {
+        //                 "field": "CreatedAt",
+        //                 "format": "dd-MM-yyyy",
+        //                 "ranges": [{
+        //                     "from": from,
+        //                     "to": to
+        //                 }]
+        //             },
+        //             "aggs": {
+        //                 "lang": {
+        //                     "terms": {
+        //                         "field": "predictedLang.keyword"
+        //                     },
+        //                     "aggs": {
+        //                         "Source": {
+        //                             "terms": {
+        //                                 "field": "Source.keyword"
+        //                             },
+        //                             "aggs":{
+        //                                 "SubSource":{
+        //                                     "terms":{
+        //                                         "field":"SubSource.keyword"
+        //                                     },
+        //                                     "aggs":{
+        //                                         "Daily-mood-Distro": {
+        //                                             "terms": {
+        //                                               "field": "predictedMood.keyword"
+        //                                             },
+        //                                                 "aggs":{
+        //                                                   "Words":{
+        //                                                     "terms":{
+        //                                                       "field":"HashtagEntities.Text.keyword"
+        //                                                     }
+        //                                                 }
+        //                                             }
+        //                                         },
+        //                                         "Daily-Sentiment-Distro": {
+        //                                           "terms": {
+        //                                             "field": "predictedSentiment.keyword"
+        //                                           },
+        //                                               "aggs":{
+        //                                                 "Words":{
+        //                                                   "terms":{
+        //                                                     "field":"HashtagEntities.Text.keyword"
+        //                                                   }
+        //                                               }
+        //                                           }
+        //                                       }
+        //                                     },
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         
-        if(keywordType === 'Screen Name'){
-          query["query"] = {
-              "terms": {
-                "User.ScreenName.keyword": keywords
-              }
-            }
-        } else if (keywordType === 'Hash Tags') {
-          query["query"] =  {
-              "terms": {
-                "HashtagEntities.Text.keyword": keywords
-              }
-          }
-        }
-          Axios.post(process.env.REACT_APP_URL,query)
-        .then(fetchedData => {
-          let selectedLanguage, selectedSource, selectedSubSource, selectedMood, selectedSentiment
-          let gotAllData = false
-          let allMoods = ['joy','sad','anger','anticipation','disgust','surprise','fear','trust']
-          let allSentiments = ['positive','negative','neutral']
-          let languageBuckets = fetchedData.data.aggregations['date-based-range'].buckets[0].lang.buckets
-          let languageKeys = getKeyArray(languageBuckets)
-          languageKeys.forEach((language,i) => {
-            sortedData[language] = {}
-            let sourceBuckets = languageBuckets[i].Source.buckets
-            let sourceKeys = getKeyArray(sourceBuckets)
-            sourceKeys.forEach((source,j) =>{
-              sortedData[language][source] = {}
-              let subSourceBuckets = sourceBuckets[j].SubSource.buckets
-              let subSourceKeys = getKeyArray(subSourceBuckets)
-              subSourceKeys.forEach((subSource,k) => {
-                sortedData[language][source][subSource] = {}
-                sortedData[language][source][subSource].mood = {}
-                sortedData[language][source][subSource].sentiment = {}
-                let sentimentBuckets = subSourceBuckets[k]['Daily-Sentiment-Distro'].buckets
-                let sentimentKeys = getKeyArray(sentimentBuckets)
-                sentimentKeys.forEach((sentiment,l)=>{
-                    sortedData[language][source][subSource].sentiment[sentiment] = sentimentBuckets[l].Words.buckets.map(wordObj => {
-                        return {
-                          name:wordObj.key,
-                          y:wordObj.doc_count
-                        }
-                      })
+        // if(keywordType === 'Screen Name'){
+        //   query["query"] = {
+        //       "terms": {
+        //         "User.ScreenName.keyword": keywords
+        //       }
+        //     }
+        // } else if (keywordType === 'Hash Tags') {
+        //   query["query"] =  {
+        //       "terms": {
+        //         "HashtagEntities.Text.keyword": keywords
+        //       }
+        //   }
+        // }
+        //   Axios.post(process.env.REACT_APP_URL,query)
+        let token=Cookies.get("token")
+      let data = "";
+      if (keywordType === "Hash Tags") {
+        data = JSON.stringify({
+          queryStartDate: from,
+          queryEndDate: to,
+          queryHashtagEntities: keywords,
+        });
+      }
+      if (keywordType === "Screen Name") {
+        data = JSON.stringify({
+          queryStartDate: from,
+          queryEndDate: to,
+          queryUserScreenNames: keywords,
+        });
+      }
+      if (keywordType === "Entire Data") {
+        data = JSON.stringify({
+          queryStartDate: from,
+          queryEndDate: to,
+        });
+      }
 
-                })
-                let moodBuckets = subSourceBuckets[k]['Daily-mood-Distro'].buckets
-                let moodKeys = getKeyArray(moodBuckets)
-                moodKeys.forEach((mood,l)=>{
-                    sortedData[language][source][subSource].mood[mood] = moodBuckets[l].Words.buckets.map(wordObj => {
-                        return {
-                          name:wordObj.key,
-                          y:wordObj.doc_count
+        let config = {
+          method: "post",
+          url: process.env.REACT_APP_URL + "query/trendingsubject",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          data: data,
+        };
+
+        Axios(config)
+          .then((fetchedData) => {
+            let selectedLanguage,
+              selectedSource,
+              selectedSubSource,
+              selectedMood,
+              selectedSentiment;
+            let gotAllData = false;
+            let allMoods = [
+              "joy",
+              "sad",
+              "anger",
+              "anticipation",
+              "disgust",
+              "surprise",
+              "fear",
+              "trust",
+            ];
+            let allSentiments = ["positive", "negative", "neutral"];
+            let languageBuckets =
+              fetchedData.data.aggregations["date-based-range"].buckets[0].lang
+                .buckets;
+            let languageKeys = getKeyArray(languageBuckets);
+            languageKeys.forEach((language, i) => {
+              sortedData[language] = {};
+              let sourceBuckets = languageBuckets[i].Source.buckets;
+              let sourceKeys = getKeyArray(sourceBuckets);
+              sourceKeys.forEach((source, j) => {
+                sortedData[language][source] = {};
+                let subSourceBuckets = sourceBuckets[j].SubSource.buckets;
+                let subSourceKeys = getKeyArray(subSourceBuckets);
+                subSourceKeys.forEach((subSource, k) => {
+                  sortedData[language][source][subSource] = {};
+                  sortedData[language][source][subSource].mood = {};
+                  sortedData[language][source][subSource].sentiment = {};
+                  let sentimentBuckets =
+                    subSourceBuckets[k]["Daily-Sentiment-Distro"].buckets;
+                  let sentimentKeys = getKeyArray(sentimentBuckets);
+                  sentimentKeys.forEach((sentiment, l) => {
+                    sortedData[language][source][subSource].sentiment[
+                      sentiment
+                    ] = sentimentBuckets[l].Words.buckets.map((wordObj) => {
+                      return {
+                        name: wordObj.key,
+                        y: wordObj.doc_count,
+                      };
+                    });
+                  });
+                  let moodBuckets =
+                    subSourceBuckets[k]["Daily-mood-Distro"].buckets;
+                  let moodKeys = getKeyArray(moodBuckets);
+                  moodKeys.forEach((mood, l) => {
+                    sortedData[language][source][subSource].mood[
+                      mood
+                    ] = moodBuckets[l].Words.buckets.map((wordObj) => {
+                      return {
+                        name: wordObj.key,
+                        y: wordObj.doc_count,
+                      };
+                    });
+                  });
+                  if (!gotAllData) {
+                    allMoods.forEach((mood) => {
+                      allSentiments.forEach((sentiment) => {
+                        if (
+                          sortedData[language][source][subSource].mood[mood] &&
+                          sortedData[language][source][subSource].sentiment[
+                            sentiment
+                          ] &&
+                          !!sortedData[language][source][subSource].mood[mood]
+                            .length &&
+                          !!sortedData[language][source][subSource].sentiment[
+                            sentiment
+                          ].length &&
+                          !gotAllData
+                        ) {
+                          gotAllData = true;
+                          selectedLanguage = language;
+                          selectedSource = source;
+                          selectedSubSource = subSource;
+                          selectedMood = mood;
+                          selectedSentiment = sentiment;
                         }
-                      }) 
-                    })
-                    if(!gotAllData){
-                    allMoods.forEach(mood => {
-                      allSentiments.forEach(sentiment =>{
-                        if(sortedData[language][source][subSource].mood[mood] && sortedData[language][source][subSource].sentiment[sentiment] && !!sortedData[language][source][subSource].mood[mood].length && !!sortedData[language][source][subSource].sentiment[sentiment].length && !gotAllData){
-                          gotAllData = true
-                          selectedLanguage = language
-                          selectedSource =  source
-                          selectedSubSource = subSource
-                          selectedMood = mood
-                          selectedSentiment = sentiment
-                        }
-                      })
-                    })}
-                  })
-                })
-              })
-          setLanguages(languageKeys)
-          setLanguage(selectedLanguage)
-          setSources(Object.keys(sortedData[selectedLanguage]))
-          setSource(selectedSource)
-          setSubSources(Object.keys(sortedData[selectedLanguage][selectedSource]))
-          setSubSource(selectedSubSource)
-          setMoods(Object.keys(sortedData[selectedLanguage][selectedSource][selectedSubSource].mood))    
-          setSentiments(Object.keys(sortedData[selectedLanguage][selectedSource][selectedSubSource].sentiment))
-          setmood(selectedMood)
-          setSentiment(selectedSentiment)
-          setMoodData(sortedData[selectedLanguage][selectedSource][selectedSubSource].mood[selectedMood])
-          setSentimentData(sortedData[selectedLanguage][selectedSource][selectedSubSource].sentiment[selectedSentiment])
-        })
-        .catch(err=>{
-          console.log(err,err.response)
-        })        
+                      });
+                    });
+                  }
+                });
+              });
+            });
+            setLanguages(languageKeys);
+            setLanguage(selectedLanguage);
+            setSources(Object.keys(sortedData[selectedLanguage]));
+            setSource(selectedSource);
+            setSubSources(
+              Object.keys(sortedData[selectedLanguage][selectedSource])
+            );
+            setSubSource(selectedSubSource);
+            setMoods(
+              Object.keys(
+                sortedData[selectedLanguage][selectedSource][selectedSubSource]
+                  .mood
+              )
+            );
+            setSentiments(
+              Object.keys(
+                sortedData[selectedLanguage][selectedSource][selectedSubSource]
+                  .sentiment
+              )
+            );
+            setmood(selectedMood);
+            setSentiment(selectedSentiment);
+            setMoodData(
+              sortedData[selectedLanguage][selectedSource][selectedSubSource]
+                .mood[selectedMood]
+            );
+            setSentimentData(
+              sortedData[selectedLanguage][selectedSource][selectedSubSource]
+                .sentiment[selectedSentiment]
+            );
+          })
+          .catch((err) => {
+            console.log(err, err.response);
+          });        
     },[keywords,keywordType,from,to,refresh])
 
     const changeData = (type,value) => {

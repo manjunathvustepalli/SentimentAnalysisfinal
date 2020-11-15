@@ -58,6 +58,7 @@ function SummaryDashBoard() {
     const [to, setTo] = useState(addMonths(new Date(),0))
     const [open, setOpen] = useState(true)
 
+    
     useEffect(() => {
         setOpen(true)
         const timer = setTimeout(() => {

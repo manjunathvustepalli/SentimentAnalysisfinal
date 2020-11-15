@@ -14,7 +14,7 @@ import Slide from '@material-ui/core/Slide';
 import Image from 'material-ui-image'
 import { Tweet } from 'react-twitter-widgets'
 import { Auth } from './Auth'
-
+import Cookies from 'js-cookie';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -95,39 +95,56 @@ function LiveAnalysis() {
       setOpen(false);
     };
     function fetchData(){
-        Axios.post(
+        // Axios.post(
           
-            process.env.REACT_APP_SEARCH_URL,
-          {
-            query: {
-              bool: {
-                must: [
-                  {
-                    terms: {
-                      "Source.keyword": [source],
-                    },
-                  },
-                  {
-                    terms: {
-                      "predictedLang.keyword": languages,
-                    },
-                  },
-                ],
-              },
-            },
-            size: 50,
-            sort: [
-              {
-                CreatedAt: {
-                  order: "desc",
-                },
-              },
-            ],
+        //     process.env.REACT_APP_SEARCH_URL,
+        //   {
+        //     query: {
+        //       bool: {
+        //         must: [
+        //           {
+        //             terms: {
+        //               "Source.keyword": [source],
+        //             },
+        //           },
+        //           {
+        //             terms: {
+        //               "predictedLang.keyword": languages,
+        //             },
+        //           },
+        //         ],
+        //       },
+        //     },
+        //     size: 50,
+        //     sort: [
+        //       {
+        //         CreatedAt: {
+        //           order: "desc",
+        //         },
+        //       },
+        //     ],
+        //   },
+        //   Auth
+        // )
+        let token = Cookies.get("token");
+        let data = JSON.stringify({
+          querySources: [source],
+          queryLanguages: languages,
+        });
+
+        let config = {
+          method: "post",
+          url: process.env.REACT_APP_URL + "query/search",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
           },
-          Auth
-        )
+          data: data,
+        };
+
+        Axios(config)
           .then((fetchedData) => {
-            console.log('fetch',fetchedData);
+            console.log("fetch", fetchedData);
             let final = fetchedData.data.hits.hits.map((user) => {
               let obj = {};
               if (user._source.User) {
@@ -214,7 +231,10 @@ function LiveAnalysis() {
                   );
                 });
                 if (user._source.MediaEntities[0].ExpandedURL) {
-                   console.log("post",user._source.MediaEntities[0].ExpandedURL);
+                  console.log(
+                    "post",
+                    user._source.MediaEntities[0].ExpandedURL
+                  );
                   obj.postUrl = (
                     <IconButton
                       onClick={() => {
@@ -363,37 +383,49 @@ function LiveAnalysis() {
     }, [reloadInterval,liveReloading,from,to,source,languages])
 
     useEffect(() => {
-      Axios.post(
-        process.env.REACT_APP_URL,
-        {
-          aggs: {
-            Source: {
-              terms: {
-                field: "Source.keyword",
-              },
-              aggs: {
-                Lang: {
-                  terms: {
-                    field: "predictedLang.keyword",
-                  },
-                },
-              },
-            },
-          },
-        },Auth
-      )
-        .then((data) => {
-          let sourceBuckets = data.data.aggregations.Source.buckets;
-          let sourceKeys = getKeyArray(sourceBuckets);
-          sourceKeys.forEach((source, i) => {
-            sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets);
-          });
-          setDataObject(sortedData);
-          console.log('MyData:',sourceBuckets);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // Axios.post(
+      //   process.env.REACT_APP_URL,
+      //   {
+      //     aggs: {
+      //       Source: {
+      //         terms: {
+      //           field: "Source.keyword",
+      //         },
+      //         aggs: {
+      //           Lang: {
+      //             terms: {
+      //               field: "predictedLang.keyword",
+      //             },
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },Auth
+      // )
+       let token = Cookies.get("token");
+       let config = {
+         method: "post",
+         url: process.env.REACT_APP_URL + "query/listsources",
+         headers: {
+           "Content-Type": "application/json",
+           token: token,
+         },
+         data: "",
+       };
+
+       Axios(config)
+         .then((data) => {
+           let sourceBuckets = data.data.aggregations.Source.buckets;
+           let sourceKeys = getKeyArray(sourceBuckets);
+           sourceKeys.forEach((source, i) => {
+             sortedData[source] = getKeyArray(sourceBuckets[i].Lang.buckets);
+           });
+           setDataObject(sortedData);
+           console.log("MyData:", sourceBuckets);
+         })
+         .catch((err) => {
+           console.log(err);
+         });
     }, [])
 
     return (

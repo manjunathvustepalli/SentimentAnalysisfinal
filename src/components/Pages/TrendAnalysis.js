@@ -25,6 +25,7 @@ import useMountAndUpdateEffect from "../custom Hooks/useMountAndUpdateEffect";
 import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
 import Loader from '../LoaderWithBackDrop'
 import {Auth} from './Auth'
+import Cookies from "js-cookie";
 
 var sortedData = {}
 
@@ -83,43 +84,23 @@ function TrendAnalysis(props) {
     setOpen(true)
     setLineData([])
     setBarData([[],[]])
-    Axios.post(
-      process.env.REACT_APP_URL,
-      {
-        aggs: {
-          "date-based-range": {
-            date_range: {
-              field: "CreatedAt",
-              format: "dd-MM-yyyy",
-              ranges: [{ from: from, to: to }],
-            },
-            aggs: {
-              "per-day": {
-                date_histogram: {
-                  field: "CreatedAt",
-                  calendar_interval: "day",
-                },
-                aggs: {
-                  Source: {
-                    terms: {
-                      field: "Source.keyword",
-                    },
-                    aggs: {
-                      Lang: {
-                        terms: {
-                          field: "predictedLang.keyword",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+   let data = JSON.stringify({
+      queryStartDate: from,
+      queryEndDate: to,
+    });
+let token=Cookies.get("token")
+    let config = {
+      method: "post",
+      url:
+        process.env.REACT_APP_URL+"query/trendinganalysis",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
       },
-      Auth
-    )
+      data: data,
+    };
+
+    Axios(config)
       .then((fetchedData) => {
         sortedData = {};
         var sourceKeys, languageKeys;

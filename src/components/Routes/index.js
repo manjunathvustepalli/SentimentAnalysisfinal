@@ -40,6 +40,7 @@ import SearchFromDB from "../Pages/SearchFromDB.js";
 import Adduser from "../Pages/AddUser"
 import ChangePassword from '../Pages/ChangPassword'
 import DeleteUser from "../Pages/DeleteUser";
+import UpdateDeleteUser from "../Pages/UpdateDeleteUser";
 
 function Routes() {
   return (
@@ -211,6 +212,12 @@ function Routes() {
                     path="/add-user" 
                     exact 
                     component={Adduser} 
+                    />
+
+                    <Route 
+                    path="/updateDelete-user" 
+                    exact 
+                    component={UpdateDeleteUser} 
                     />
 
                     <Route 

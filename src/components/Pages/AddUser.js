@@ -27,6 +27,8 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
+import Cookies from "js-cookie";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const theme = createMuiTheme({
   palette: {
@@ -69,6 +71,7 @@ export default function AddUser() {
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
   const [Roles, setRoles] = useState([]);
+  const [loading,setloading]=useState(true);
   const GetRoles = () => {
     let data = "";
 
@@ -82,6 +85,7 @@ export default function AddUser() {
     axios(config)
       .then((response) => {
         setRoles(response.data.roles);
+        setloading(false)
       })
       .catch((error) => {
         console.log(error);
@@ -90,7 +94,9 @@ export default function AddUser() {
   useEffect(() => {
     GetRoles();
   }, []);
+
   const SignUp = () => {
+    let token=Cookies.get("token")
     let data = JSON.stringify({
       user: {
         userName: Username,
@@ -103,7 +109,10 @@ export default function AddUser() {
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/adduser",
-      headers: header,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
       data: data,
     };
 
@@ -115,114 +124,121 @@ export default function AddUser() {
         console.log(error);
       });
   };
+
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        {/* <Avatar className={classes.avatar}>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <CssBaseline />
+          <div className={classes.paper}>
+            {/* <Avatar className={classes.avatar}>
             <PersonAddIcon />
           </Avatar> */}
-        <Box p={3}>
-          <Typography component="h1" variant="h5">
-            Add User
-          </Typography>
-        </Box>
-        <Grid container alignItems="center" justify="center" spacing={4}>
-          <ThemeProvider theme={theme}>
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
+            <Box p={3}>
+              <Typography component="h1" variant="h5">
+                Add User
+              </Typography>
+            </Box>
+            <Grid container alignItems="center" justify="center" spacing={4}>
+              <ThemeProvider theme={theme}>
                 <Grid item xs={12}>
-                  <TextField
-                    autoComplete="fname"
-                    name="firstName"
-                    onChange={(e) => setUsername(e.target.value)}
-                    variant="outlined"
-                    required
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoComplete="fname"
+                        name="firstName"
+                        onChange={(e) => setUsername(e.target.value)}
+                        variant="outlined"
+                        required
+                        fullWidth
+                        id="firstName"
+                        label="UserName"
+                        style={{
+                          borderColor: "green",
+                          cssLabel: {
+                            color: "green",
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl variant="outlined" style={{ width: "100%" }}>
+                        <InputLabel>UserType</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          // value={age}
+                          onChange={(e) => setUserType(e.target.value)}
+                          label="Age"
+                        >
+                          {Roles.map((role) => (
+                            <MenuItem key={role.roleId} value={role.roleId}>
+                              {role.roleName}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        id="display name"
+                        label="Display Name"
+                        name="Display Name"
+                        autoComplete="email"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Re-Enter Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        onChange={(e) => setPassword2(e.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid xs={10}>
+                  <Button
+                    onClick={SignUp}
+                    //   type="submit"
                     fullWidth
-                    id="firstName"
-                    label="UserName"
-                    style={{
-                      borderColor: "green",
-                      cssLabel: {
-                        color: "green",
-                      },
-                    }}
-                  />
+                    className={classes.button}
+                    variant="contained"
+                    // color="primary"
+                    //   className={classes.submit}
+                  >
+                    Sign Up
+                  </Button>
                 </Grid>
-                <Grid item xs={12}>
-                  <FormControl variant="outlined" style={{ width: "100%" }}>
-                    <InputLabel>UserType</InputLabel>
-                    <Select
-                      labelId="demo-simple-select-outlined-label"
-                      id="demo-simple-select-outlined"
-                      // value={age}
-                      onChange={(e) => setUserType(e.target.value)}
-                      label="Age"
-                    >
-                      {Roles.map((role) => (
-                        <MenuItem key={role.roleId} value={role.roleId}>
-                          {role.roleName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="display name"
-                    label="Display Name"
-                    name="Display Name"
-                    autoComplete="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Re-Enter Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    onChange={(e) => setPassword2(e.target.value)}
-                  />
-                </Grid>
-              </Grid>
+              </ThemeProvider>
             </Grid>
-            <Grid xs={10}>
-              <Button
-                onClick={SignUp}
-                //   type="submit"
-                fullWidth
-                className={classes.button}
-                variant="contained"
-                // color="primary"
-                //   className={classes.submit}
-              >
-                Sign Up
-              </Button>
-            </Grid>
-          </ThemeProvider>
-        </Grid>
-      </div>
+          </div>
+        </>
+      )}
     </Container>
   );
 }
