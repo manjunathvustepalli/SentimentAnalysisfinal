@@ -88,8 +88,13 @@ export default function AddUser() {
     .catch((error) => {
       console.log(error);
     });
+      if(response.status===201){
     await  setRoles(response.data.roles);
-              setloading(false);
+      }
+      if(response.data.roles){
+
+        setloading(false);
+      }
 
   };
   useEffect(() => {
@@ -174,7 +179,7 @@ export default function AddUser() {
                         }}
                       />
                     </Grid>
-                    {/* <Grid item xs={12}>
+                    <Grid item xs={12}>
                       <FormControl variant="outlined" style={{ width: "100%" }}>
                         <InputLabel>UserType</InputLabel>
                         <Select
@@ -191,7 +196,7 @@ export default function AddUser() {
                           ))}
                         </Select>
                       </FormControl>
-                    </Grid> */}
+                    </Grid>
                     <Grid item xs={12}>
                       <TextField
                         variant="outlined"

@@ -120,11 +120,13 @@ export default function UpdateDeleteUser() {
     let response=await axios(config) .catch((error) => {
         console.log(error);
       });
-     
-        await response.data.roles.map((index) => {
-          roles[index.roleId] = index.roleName;
-           setAllRoles(roles);
+     if(response.status===201){
+
+       await response.data.roles.map((index) => {
+         roles[index.roleId] = index.roleName;
+         setAllRoles(roles);
         });
+      }
         setloading(false);
 
         // setAllRoles(response.data.roles);
