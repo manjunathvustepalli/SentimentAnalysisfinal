@@ -40,7 +40,7 @@ export default function UpdateDeleteUser() {
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
-
+const[helpertext,setHelpertext]=useState(false);
   const [NewPassword, setNewPassword] = useState();
   const [loading, setloading] = useState(true);
   const [open, setOpen] = React.useState(false);
@@ -105,6 +105,9 @@ export default function UpdateDeleteUser() {
 
     axios(config)
       .then((response) => {
+        if (response.data.status === "Failure") {
+          setHelpertext(true)
+        }
         // getUsers();
         handleClose();
       })
