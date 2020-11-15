@@ -1,15 +1,25 @@
 import React,{useEffect,useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from "@material-ui/core/List";
-import { Paper, TextField } from '@material-ui/core';
+import {  Paper, 
+          Button,
+          TextField,
+          Dialog,
+          DialogActions,
+          DialogContent,
+          DialogContentText,
+          DialogTitle
+         } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { header } from './Auth';
 import axios from 'axios'
 import MaterialTable from "material-table";
-import DeleteIcon from '@material-ui/icons/Delete';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 import { getRoles } from '@testing-library/react';
 import Cookies from 'js-cookie'
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1
@@ -22,15 +32,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let roles={};
-export default function InteractiveList() {
-  const [data,setdata]=useState([]);
-  const [allRoles,setAllRoles]=useState([])
+export default function UpdateDeleteUser() {
+  const [data, setdata] = useState([]);
+  const [allRoles, setAllRoles] = useState([]);
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
+ 
+  const [NewPassword, setNewPassword] = useState();
+  const [loading, setloading] = useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [UserId, setUserId] = useState();
 
-  const deleteuser=(id)=>{
-   
+  const handleClickOpen = (id) => {
+    setUserId(id)
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const deleteuser = (id) => {
     let data = JSON.stringify({ user: { userId: id } });
 
     let config = {
@@ -42,16 +65,43 @@ export default function InteractiveList() {
 
     axios(config)
       .then((response) => {
-        getUsers()
+        getUsers();
       })
       .catch((error) => {
         console.log(error);
       });
 
-    console.log(id)
-  }
+    console.log(id);
+  };
 
-  const updateuser=(id,usernmae,displayName,role)=>{
+  const changePassword = (id, newPassword) => {
+    let data = JSON.stringify(
+      { user: 
+        { userId: id,
+          password: newPassword 
+        }
+      });
+
+    // let config = {
+    //   method: "post",
+    //   url: process.env.REACT_APP_URL + "resetpasswordr",
+    //   headers: header,
+    //   data: data,
+    // };
+
+    // axios(config)
+    //   .then((response) => {
+    //     getUsers();
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+
+    console.log(data);
+  };
+
+  const updateuser = (id, usernmae, displayName, role) => {
+    let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
         userId: id,
@@ -64,78 +114,79 @@ export default function InteractiveList() {
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/modifyuser",
-      headers: header,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
       data: data,
     };
 
     axios(config)
       .then((response) => {
-        getUsers()
+        getUsers();
       })
       .catch((error) => {
         console.log(error);
       });
 
-    console.log(id)
-  }
+    console.log(id);
+  };
 
- const getUsers=()=>{
-   let token = Cookies.get("token");
-   let config = {
-     method: "post",
-     url: process.env.REACT_APP_URL + "admin/getusers",
-     headers: {
-    'Content-Type': 'application/json', 
-    'token': token
-  },
-     data: "",
-   };
+  const getUsers = () => {
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/getusers",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
 
-   axios(config)
-     .then((response) => {
-       setdata(response.data.users);
-     })
-     .catch((error) => {
-       console.log(error);
-     });
- }
+    axios(config)
+      .then((response) => {
+        setdata(response.data.users);
+        setloading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
- const getRoles= ()=>{
-   let token = Cookies.get("token");
-   let config = {
-     method: "post",
-     url: process.env.REACT_APP_URL + "admin/getroles",
-     headers: {
-    'Content-Type': 'application/json', 
-    'token': token
-  },
-     data: "",
-   };
+  const getRoles = () => {
+    let token = Cookies.get("token");
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/getroles",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
 
-  //  var tempMap = JSON.parse(response.data);
-  //  console.log('SUBBUUUUUUUU',tempMap);
+    axios(config)
+      .then((response) => {
+        response.data.roles.map((index) => {
+          roles[index.roleId] = index.roleName;
+          setAllRoles(roles);
+          // setloading(false);
+        });
 
-
-   axios(config)
-     .then((response) => {
-response.data.roles.map((index)=>{
-roles[index.roleId] = index.roleName;
- setAllRoles(roles)
-})
-       
         // setAllRoles(response.data.roles);
-       console.log("ALLROLES:", roles)
-       console.log("ALLROLES:", response.data.roles)
-     })
-     .catch((error) => {
-       console.log(error);
-     });
- }
+        console.log("ALLROLES:", roles);
+        console.log("ALLROLES:", response.data.roles);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
- useEffect(async () => {
-  await getUsers();
-  await getRoles();
-   }, [])
+  useEffect( () => {
+     getUsers();
+     getRoles();
+  }, []);
 
   const [columns, setColumns] = useState([
     { title: "Username", field: "userName" },
@@ -146,18 +197,21 @@ roles[index.roleId] = index.roleName;
       lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
     },
 
-    // {
-    //   title: 'Login Status',
-    //   field: 'loginStatus'
-    // },
-    // {
-    //   title: "Delete",
-    //   render: (rowData) => (
-    //     <Button onClick={()=>deleteuser(rowData.userId)}>
-    //       <DeleteIcon />
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Login Status",
+      field: "loginStatus",
+    },
+    {
+      title: "Reset Passowrd",
+      render: (rowData) => (
+        <Button 
+        // onClick={()=>deleteuser(rowData.userId)}
+        onClick={handleClickOpen(rowData.userId)}
+        >
+           <RotateLeftIcon />
+        </Button>
+      ),
+    },
   ]);
 
   // const [data, setData] = useState([
@@ -169,102 +223,133 @@ roles[index.roleId] = index.roleName;
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={2} style={{ padding: 20 }} direction="column">
-        <Grid item xs={12}>
-          <Typography
-            variant="h"
-            className={classes.title}
-            style={{ color: "#43B02A", fontSize: "30px" }}
-          >
-            Update/Delete Users
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper variant="outlined"></Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <div className={classes.demo}>
-            <List>
-            <MaterialTable
-        title="Users"
-        columns={columns}
-        data={data}
-        editable={{
-          // onRowAdd: newData =>
-          //   new Promise((resolve, reject) => {
-          //     setTimeout(() => {
-          //       setData([...data, newData]);
-                  
-          //       resolve();
-          //     }, 1000)
-          //   }),
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Grid container spacing={2} style={{ padding: 20 }} direction="column">
+          <Grid item xs={12}>
+            <Typography
+              variant="h"
+              className={classes.title}
+              style={{ color: "#43B02A", fontSize: "30px" }}
+            >
+              Update/Delete Users
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper variant="outlined"></Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.demo}>
+              <List>
+                <MaterialTable
+                  title="Users"
+                  columns={columns}
+                  data={data}
+                  editable={{
+                    // onRowAdd: newData =>
+                    //   new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //       setData([...data, newData]);
 
-          onRowUpdate : (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                // const dataUpdate = [...data];
-                // console.log("NEWDATAusername:", newData)
-                // console.log("OLDDATAusername:", oldData)
-                // console.log("Username:", newData.userName)
-                // console.log("Dislayname:", newData.displayName)
-                // console.log("Roles:", newData.roles)
-                // console.log("Id:", newData.userId)
-                setUsername(newData.userName)
-                setDisplayname(newData.displayName)
-                setRoles(newData.roles)
-                updateuser(
-                  newData.userId,
-                  newData.userName,
-                  newData.displayName,
-                  newData.roles
-                );
-                // dataUpdate[index] = newData;
-                // setData([...dataUpdate]);
-                resolve();
-              }, 1000)
-            }),
+                    //       resolve();
+                    //     }, 1000)
+                    //   }),
 
-          onRowDelete: (oldData, newData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                // const dataDelete = [...data];
-                deleteuser(oldData.userId)
-                // dataDelete.splice(index, 1);
-                // setData([...dataDelete]);
-                
-                resolve()
-              }, 1000)
-            }),
-        }}
-        style={{
-          padding: "20px",
-        }}
-        title="Users"
-        columns={columns}
-        data={data}
-        // actions={[
-        //   {
-        //     icon: "delete",
-        //     tooltip: "Delete User",
-        //     onClick: (event, rowData) => delete(rowData.userId),
-        //   }
-        // ]}
-        options={{
-          paging: false,
-          // tableLayout: "fixed",
-          maxBodyHeight: 500,
-          headerStyle: {
-            backgroundColor: "rgb(67, 176, 42)",
-            color: "white",
-            paddingTop: "10px",
-            paddingBottom: "10px",
-          },
-        }}
-      />
-            </List>
-          </div>
+                    onRowUpdate: (newData, oldData) =>
+                      new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                          // const dataUpdate = [...data];
+                          // console.log("NEWDATAusername:", newData)
+                          // console.log("OLDDATAusername:", oldData)
+                          // console.log("Username:", newData.userName)
+                          // console.log("Dislayname:", newData.displayName)
+                          // console.log("Roles:", newData.roles)
+                          // console.log("Id:", newData.userId)
+                          setUsername(newData.userName);
+                          setDisplayname(newData.displayName);
+                          setRoles(newData.roles);
+                          updateuser(
+                            newData.userId,
+                            newData.userName,
+                            newData.displayName,
+                            newData.roles
+                          );
+                          // dataUpdate[index] = newData;
+                          // setData([...dataUpdate]);
+                          resolve();
+                        }, 1000);
+                      }),
+
+                    onRowDelete: (oldData, newData) =>
+                      new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                          // const dataDelete = [...data];
+                          deleteuser(oldData.userId);
+                          // dataDelete.splice(index, 1);
+                          // setData([...dataDelete]);
+
+                          resolve();
+                        }, 1000);
+                      }),
+                  }}
+                  style={{
+                    padding: "20px",
+                  }}
+                  title="Users"
+                  columns={columns}
+                  data={data}
+                  // actions={[
+                  //   {
+                  //     icon: "delete",
+                  //     tooltip: "Delete User",
+                  //     onClick: (event, rowData) => delete(rowData.userId),
+                  //   }
+                  // ]}
+                  options={{
+                    paging: false,
+                    // tableLayout: "fixed",
+                    maxBodyHeight: 500,
+                    headerStyle: {
+                      backgroundColor: "rgb(67, 176, 42)",
+                      color: "white",
+                      paddingTop: "10px",
+                      paddingBottom: "10px",
+                    },
+                  }}
+                />
+              </List>
+            </div>
+          </Grid>
+
+          <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter the new password below.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="New Password"
+            type="password"
+            onChange={(event)=> setNewPassword(event.target.value)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=> handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={()=> {changePassword(UserId, NewPassword)}} color="primary">
+            Change Password
+          </Button>
+        </DialogActions>
+      </Dialog>
+
         </Grid>
-      </Grid>
+      )}
     </div>
   );
 }
