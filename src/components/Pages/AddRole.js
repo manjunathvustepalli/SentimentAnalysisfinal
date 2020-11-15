@@ -30,6 +30,7 @@ import { green } from "@material-ui/core/colors";
 import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
+import Input from "@material-ui/core/Input";
 
 const theme = createMuiTheme({
   palette: {
@@ -37,6 +38,12 @@ const theme = createMuiTheme({
   },
 });
 const useStyles = makeStyles((theme) => ({
+  formControl: {
+    variant:"outlined",
+    margin: theme.spacing(1),
+    minWidth: "100%",
+    maxWidth: 300,
+  },
   paper: {
     marginTop: theme.spacing(4),
     display: "flex",
@@ -50,6 +57,16 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  chip: {
+    margin: 2
+  },
+  noLabel: {
+    marginTop: theme.spacing(3)
   },
   button: {
     margin: theme.spacing(1),
@@ -67,18 +84,113 @@ export default function AddRole() {
 
     useEffect(() => {
       
-      getUipages();
+      // getUipages();
     }, []);
-    const [uipages,setUipages]=useState();
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+      PaperProps: {
+        style: {
+          maxHeight: ITEM_HEIGHT * 7.5 + ITEM_PADDING_TOP,
+          width: 550,
+        },
+      },
+    };
+    const [uipages, setUipages] = useState([
+      {
+        pageId: 1,
+        pageUrl: "Admin Page",
+      },
+      {
+        pageId: 2,
+        pageUrl: "Add User",
+      },
+      {
+        pageId: 9,
+        pageUrl: "Summary Dashboard",
+      },
+      {
+        pageId: 10,
+        pageUrl: "Sentiment Analysis",
+      },
+      {
+        pageId: 11,
+        pageUrl: "Mood Analysis",
+      },
+      {
+        pageId: 12,
+        pageUrl: "Word Cloud",
+      },
+      {
+        pageId: 13,
+        pageUrl: "Trend Analysis",
+      },
+      {
+        pageId: 14,
+        pageUrl: "Live Analysis",
+      },
+      {
+        pageId: 15,
+        pageUrl: "Export Data",
+      },
+      {
+        pageId: 16,
+        pageUrl: "Fetch",
+      },
+      {
+        pageId: 17,
+        pageUrl: "Search",
+      },
+      {
+        pageId: 18,
+        pageUrl: "Search Image",
+      },
+      {
+        pageId: 19,
+        pageUrl: "Trending Subject",
+      },
+      {
+        pageId: 20,
+        pageUrl: "Get Sources",
+      },
+      {
+        pageId: 21,
+        pageUrl: "Influencer Analysis",
+      },
+      {
+        pageId: 22,
+        pageUrl: "Update/Delete User",
+      },
+      {
+        pageId: 23,
+        pageUrl: "Change Password",
+      },
+      {
+        pageId: 24,
+        pageUrl: "Geo HotSpot Analysis",
+      },
+      {
+        pageId: 25,
+        pageUrl: "Demography",
+      },
+      {
+        pageId: 26,
+        pageUrl: "Behavior Analysis",
+      },
+    ]);
     const [roleName,setrolename]=useState();
     const[roleDescription,setroledescription]=useState();
     const[adduipages,setaddroledescription]=useState();
-
+  const [personName, setPersonName] = React.useState([]);
+ const handleChange = (event) => {
+   setPersonName(event.target.value);
+   console.log(personName);
+ };
     const getUipages = async () => {
       let token = Cookies.get("token");
       let config = {
         method: "post",
-        url: process.env.REACT_APP_URL + "admin/getroles",
+        url: process.env.REACT_APP_URL + "admin/getpages",
         headers: {
           "Content-Type": "application/json",
           token: token,
@@ -89,7 +201,7 @@ export default function AddRole() {
        axios(config)
          .then((response) => {
         
-             setUipages(response.data);
+             setUipages(response.data.pages);
          })
          .catch((error) => {
            console.log(error);
@@ -159,40 +271,39 @@ export default function AddRole() {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <FormControl variant="outlined" style={{ width: "100%" }}>
+                      <FormControl
+                        // className={classes.formControl}
+                        variant="outlined"
+                        style={{ width: "100%" }}
+                      >
                         <InputLabel id="demo-mutiple-chip-label">
-                          PageIds
+                          Page Name
                         </InputLabel>
                         <Select
                           labelId="demo-mutiple-chip-label"
                           id="demo-mutiple-chip"
                           multiple
-                          fullWidth
-                          //   value={}
-                          //   onChange={handleChange}
-
+                          value={personName}
+                          onChange={handleChange}
+                          input={<Input id="select-multiple-chip" />}
                           renderValue={(selected) => (
                             <div className={classes.chips}>
-                              {/* {selected.map((value) => (
+                              {selected.map((value) => (
                                 <Chip
-                                  key={value}
-                                  label={value}
+                                  key={value.pageId}
+                                  label={value.pageUrl}
                                   className={classes.chip}
                                 />
-                              ))} */}
+                              ))}
                             </div>
                           )}
-                          //   MenuProps={MenuProps}
+                          MenuProps={MenuProps}
                         >
-                          {/* {uipages.map((name) => (
-                            <MenuItem
-                              key={name}
-                              value={name}
-                              style={getStyles(name, personName, theme)}
-                            >
-                              {name}
+                          {uipages.map((page) => (
+                            <MenuItem key={page.pageId} value={page}>
+                              {page.pageUrl}
                             </MenuItem>
-                          ))} */}
+                          ))}
                         </Select>
                       </FormControl>
                     </Grid>
