@@ -105,7 +105,7 @@ export default function UpdateDeleteUser() {
       });
   };
 
-  const getRoles = () => {
+  const getRoles =async () => {
     let token = Cookies.get("token");
     let config = {
       method: "post",
@@ -117,21 +117,21 @@ export default function UpdateDeleteUser() {
       data: "",
     };
 
-    axios(config)
-      .then((response) => {
-        response.data.roles.map((index) => {
+    let response=await axios(config) .catch((error) => {
+        console.log(error);
+      });
+     
+        await response.data.roles.map((index) => {
           roles[index.roleId] = index.roleName;
-          setAllRoles(roles);
-          setloading(false);
+           setAllRoles(roles);
         });
+        setloading(false);
 
         // setAllRoles(response.data.roles);
         console.log("ALLROLES:", roles);
         console.log("ALLROLES:", response.data.roles);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    
+     
   };
 
   useEffect( () => {
@@ -145,12 +145,14 @@ export default function UpdateDeleteUser() {
     {
       title: "Roles",
       field: "roles",
-      lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
+      // lookup: { 1: "SuperAdmin", 2: "Admin", 4: "allanalysis" },
+      lookup:roles,
     },
 
     {
       title: "Login Status",
       field: "loginStatus",
+      editable:"never"
     },
     // {
     //   title: "Delete",
@@ -171,106 +173,118 @@ export default function UpdateDeleteUser() {
 
   return (
     <div className={classes.root}>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Grid container spacing={2} style={{ padding: 20 }} direction="column">
-          <Grid item xs={12}>
-            <Typography
-              variant="h"
-              className={classes.title}
-              style={{ color: "#43B02A", fontSize: "30px" }}
-            >
-              Update/Delete Users
-            </Typography>
+      <Grid container spacing={2} style={{ padding: 20 }} direction="column">
+        {loading ? (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            display="flex"
+            style={{ minHeight: "50vh" }}
+          >
+            <CircularProgress />
           </Grid>
-          <Grid item xs={12}>
-            <Paper variant="outlined"></Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.demo}>
-              <List>
-                <MaterialTable
-                  title="Users"
-                  columns={columns}
-                  data={data}
-                  editable={{
-                    // onRowAdd: newData =>
-                    //   new Promise((resolve, reject) => {
-                    //     setTimeout(() => {
-                    //       setData([...data, newData]);
+        ) : (
+          <>
+            <Grid item xs={12}>
+              <Typography
+                variant="h"
+                className={classes.title}
+                style={{ color: "#43B02A", fontSize: "30px" }}
+              >
+                Update/Delete Users
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper variant="outlined"></Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <div className={classes.demo}>
+                <List>
+                  <MaterialTable
+                    title="Users"
+                    columns={columns}
+                    data={data}
+                    editable={{
+                      // onRowAdd: newData =>
+                      //   new Promise((resolve, reject) => {
+                      //     setTimeout(() => {
+                      //       setData([...data, newData]);
 
-                    //       resolve();
-                    //     }, 1000)
-                    //   }),
+                      //       resolve();
+                      //     }, 1000)
+                      //   }),
 
-                    onRowUpdate: (newData, oldData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          // const dataUpdate = [...data];
-                          // console.log("NEWDATAusername:", newData)
-                          // console.log("OLDDATAusername:", oldData)
-                          // console.log("Username:", newData.userName)
-                          // console.log("Dislayname:", newData.displayName)
-                          // console.log("Roles:", newData.roles)
-                          // console.log("Id:", newData.userId)
-                          setUsername(newData.userName);
-                          setDisplayname(newData.displayName);
-                          setRoles(newData.roles);
-                          updateuser(
-                            newData.userId,
-                            newData.userName,
-                            newData.displayName,
-                            newData.roles
-                          );
-                          // dataUpdate[index] = newData;
-                          // setData([...dataUpdate]);
-                          resolve();
-                        }, 1000);
-                      }),
+                      onRowUpdate: (newData, oldData) =>
+                        new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                            // const dataUpdate = [...data];
+                            // console.log("NEWDATAusername:", newData)
+                            // console.log("OLDDATAusername:", oldData)
+                            // console.log("Username:", newData.userName)
+                            // console.log("Dislayname:", newData.displayName)
+                            // console.log("Roles:", newData.roles)
+                            // console.log("Id:", newData.userId)
+                            setUsername(newData.userName);
+                            setDisplayname(newData.displayName);
+                            setRoles(newData.roles);
+                            updateuser(
+                              newData.userId,
+                              newData.userName,
+                              newData.displayName,
+                              newData.roles
+                            );
+                            // dataUpdate[index] = newData;
+                            // setData([...dataUpdate]);
+                            resolve();
+                          }, 1000);
+                        }),
 
-                    onRowDelete: (oldData, newData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          // const dataDelete = [...data];
-                          deleteuser(oldData.userId);
-                          // dataDelete.splice(index, 1);
-                          // setData([...dataDelete]);
+                      onRowDelete: (oldData, newData) =>
+                        new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                            // const dataDelete = [...data];
+                            deleteuser(oldData.userId);
+                            // dataDelete.splice(index, 1);
+                            // setData([...dataDelete]);
 
-                          resolve();
-                        }, 1000);
-                      }),
-                  }}
-                  style={{
-                    padding: "20px",
-                  }}
-                  title="Users"
-                  columns={columns}
-                  data={data}
-                  // actions={[
-                  //   {
-                  //     icon: "delete",
-                  //     tooltip: "Delete User",
-                  //     onClick: (event, rowData) => delete(rowData.userId),
-                  //   }
-                  // ]}
-                  options={{
-                    paging: false,
-                    // tableLayout: "fixed",
-                    maxBodyHeight: 500,
-                    headerStyle: {
-                      backgroundColor: "rgb(67, 176, 42)",
-                      color: "white",
-                      paddingTop: "10px",
-                      paddingBottom: "10px",
-                    },
-                  }}
-                />
-              </List>
-            </div>
-          </Grid>
-        </Grid>
-      )}
+                            resolve();
+                          }, 1000);
+                        }),
+                    }}
+                    style={{
+                      padding: "20px",
+                    }}
+                    title="Users"
+                    columns={columns}
+                    data={data}
+                    // actions={[
+                    //   {
+                    //     icon: "delete",
+                    //     tooltip: "Delete User",
+                    //     onClick: (event, rowData) => delete(rowData.userId),
+                    //   }
+                    // ]}
+                    options={{
+                      paging: false,
+                      // tableLayout: "fixed",
+                      maxBodyHeight: 500,
+                      headerStyle: {
+                        backgroundColor: "rgb(67, 176, 42)",
+                        color: "white",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                      },
+                    }}
+                  />
+                </List>
+              </div>
+            </Grid>
+          </>
+        )}
+      </Grid>
     </div>
   );
 }

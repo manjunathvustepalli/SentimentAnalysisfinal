@@ -72,7 +72,7 @@ export default function AddUser() {
   const [UserType, setUserType] = useState();
   const [Roles, setRoles] = useState([]);
   const [loading,setloading]=useState(true);
-  const GetRoles = () => {
+  const GetRoles = async () => {
     let data = "";
 
     let config = {
@@ -82,14 +82,15 @@ export default function AddUser() {
       data: data,
     };
 
-    axios(config)
-      .then((response) => {
-        setRoles(response.data.roles);
-        setloading(false)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    let response=await axios(config)
+     
+    
+    .catch((error) => {
+      console.log(error);
+    });
+    await  setRoles(response.data.roles);
+              setloading(false);
+
   };
   useEffect(() => {
     GetRoles();
@@ -128,7 +129,17 @@ export default function AddUser() {
   return (
     <Container component="main" maxWidth="xs">
       {loading ? (
-        <CircularProgress />
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          display="flex"
+          style={{ minHeight: "50vh" }}
+        >
+          <CircularProgress style={{ position: "absolute" }} />
+        </Grid>
       ) : (
         <>
           <CssBaseline />
@@ -163,7 +174,7 @@ export default function AddUser() {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                       <FormControl variant="outlined" style={{ width: "100%" }}>
                         <InputLabel>UserType</InputLabel>
                         <Select
@@ -180,7 +191,7 @@ export default function AddUser() {
                           ))}
                         </Select>
                       </FormControl>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                       <TextField
                         variant="outlined"

@@ -109,7 +109,7 @@ const SideNavBar =  (props) => {
       return { color: "black", minWidth: "30px" };
     }
   };
-  // console.log(pages);
+  console.log(pages);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
