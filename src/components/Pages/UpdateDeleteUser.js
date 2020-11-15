@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let roles = {};
+ let token = Cookies.get("token");
 export default function UpdateDeleteUser() {
   const [data, setdata] = useState([]);
   const [allRoles, setAllRoles] = useState([]);
@@ -45,29 +46,20 @@ export default function UpdateDeleteUser() {
   const [open, setOpen] = React.useState(false);
   const [UserId, setUserId] = useState();
 
-  const [ResetPassword, setResetPassword] = useState(
-    {
-      open: false,
-      id: 0
-    }
-  )
+  const [id, setid] = useState()
 
   const onClickResetPassword = (userId) => {
-    setResetPassword({
-      open: true,
-      id: userId
-    })
-    console.log("ResetPassword:", ResetPassword)
+     setOpen(true);
+    setid(userId)
+    console.log(userId)
+    
   }
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleClickOpen = () => {
-    // setUserId(id)
-    setOpen(true);
-  };
+  
 
   const deleteuser = (id) => {
     let data = JSON.stringify({ user: { userId: id } });
@@ -75,7 +67,10 @@ export default function UpdateDeleteUser() {
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/deleteuser",
-      headers: header,
+      headers:  {
+        "Content-Type": "application/json",
+        token: token,
+      },
       data: data,
     };
 
@@ -91,35 +86,37 @@ export default function UpdateDeleteUser() {
   };
 
   const changePassword = (id, newPassword) => {
-    let data = JSON.stringify(
-      {
-        user:
-        {
-          userId: id,
-          password: newPassword
-        }
+    let data = JSON.stringify({
+      user: {
+        userId: id,
+        password: newPassword,
+      },
+    });
+
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/resetpassword",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then((response) => {
+        // getUsers();
+        handleClose();
+      })
+      .catch((error) => {
+        console.log(error);
       });
-
-    // let config = {
-    //   method: "post",
-    //   url: process.env.REACT_APP_URL + "admin/resetpassword",
-    //   headers: header,
-    //   data: data,
-    // };
-
-    // axios(config)
-    //   .then((response) => {
-    //     getUsers();
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
 
     console.log(data);
   };
 
   const updateuser = (id, usernmae, displayName, role) => {
-    let token = Cookies.get("token");
+   
     let data = JSON.stringify({
       user: {
         userId: id,
@@ -225,7 +222,7 @@ export default function UpdateDeleteUser() {
       title: "Reset Passowrd",
       render: (rowData) => (
         <Button
-          onClick = {handleClickOpen}
+          onClick = {()=>{onClickResetPassword(rowData.userId);}}
         >
           <RotateLeftIcon />
         </Button>
@@ -375,8 +372,7 @@ export default function UpdateDeleteUser() {
                     Cancel
           </Button>
                   <Button 
-                  // onClick={changePassword(UserId, NewPassword)}
-                  onClick={handleClose} 
+                  onClick={()=>{changePassword(id, NewPassword)}}
                    color="primary">
                     Change Password
           </Button>
