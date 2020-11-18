@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function AddRole() {
   useEffect(() => {
-    // getUipages();
+    getUipages();
   }, []);
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -94,98 +94,16 @@ export default function AddRole() {
       },
     },
   };
-  const [uipages, setUipages] = useState([
-    {
-      pageId: 1,
-      pageUrl: "Admin Page",
-    },
-    {
-      pageId: 2,
-      pageUrl: "Add User",
-    },
-    {
-      pageId: 9,
-      pageUrl: "Summary Dashboard",
-    },
-    {
-      pageId: 10,
-      pageUrl: "Sentiment Analysis",
-    },
-    {
-      pageId: 11,
-      pageUrl: "Mood Analysis",
-    },
-    {
-      pageId: 12,
-      pageUrl: "Word Cloud",
-    },
-    {
-      pageId: 13,
-      pageUrl: "Trend Analysis",
-    },
-    {
-      pageId: 14,
-      pageUrl: "Live Analysis",
-    },
-    {
-      pageId: 15,
-      pageUrl: "Export Data",
-    },
-    {
-      pageId: 16,
-      pageUrl: "Fetch",
-    },
-    {
-      pageId: 17,
-      pageUrl: "Search",
-    },
-    {
-      pageId: 18,
-      pageUrl: "Search Image",
-    },
-    {
-      pageId: 19,
-      pageUrl: "Trending Subject",
-    },
-    {
-      pageId: 20,
-      pageUrl: "Get Sources",
-    },
-    {
-      pageId: 21,
-      pageUrl: "Influencer Analysis",
-    },
-    {
-      pageId: 22,
-      pageUrl: "Update/Delete User",
-    },
-    {
-      pageId: 23,
-      pageUrl: "Change Password",
-    },
-    {
-      pageId: 24,
-      pageUrl: "Geo HotSpot Analysis",
-    },
-    {
-      pageId: 25,
-      pageUrl: "Demography",
-    },
-    {
-      pageId: 26,
-      pageUrl: "Behavior Analysis",
-    },
-  ]);
+  const [uipages, setUipages] = useState([]);
   const [roleName, setrolename] = useState();
   const [roleDescription, setroledescription] = useState();
   const [adduipages, setaddroledescription] = useState();
   const [personName, setPersonName] = useState([]);
-  const [role,setrole]=useState()
+  const [role, setrole] = useState();
+  const [loading, setloading] = useState(true);
   let roles = "";
   const handleChange = async (event) => {
     setPersonName(event.target.value);
-   
-    
   };
   const getUipages = async () => {
     let token = Cookies.get("token");
@@ -206,14 +124,16 @@ export default function AddRole() {
       .catch((error) => {
         console.log(error);
       });
+
+    setloading(false);
   };
   const addroleapi = async () => {
-     await personName.map((role) => {
-       roles=roles.concat(role.pageId+",");
+    await personName.map((role) => {
+      roles = roles.concat(role.pageId + ",");
       console.log(role);
-         });
-         roles=roles.slice(0,-1)
-    
+    });
+    roles = roles.slice(0, -1);
+
     let token = Cookies.get("token");
     let data = JSON.stringify({
       role: {
@@ -244,104 +164,120 @@ export default function AddRole() {
 
   const classes = useStyles();
   return (
-    <div>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Box p={3}>
-            <Typography component="h1" variant="h5">
-              Add Role
-            </Typography>
-          </Box>
-          <Grid container alignItems="center" justify="center" spacing={4}>
-            <ThemeProvider theme={theme}>
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
+    <>
+      {loading ? (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          display="flex"
+          style={{ minHeight: "50vh" }}
+        >
+          <CircularProgress style={{ position: "absolute" }} />
+        </Grid>
+      ) : (
+        <div>
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Box p={3}>
+                <Typography component="h1" variant="h5">
+                  Add Role
+                </Typography>
+              </Box>
+              <Grid container alignItems="center" justify="center" spacing={4}>
+                <ThemeProvider theme={theme}>
                   <Grid item xs={12}>
-                    <TextField
-                      autoComplete="fname"
-                      name="firstName"
-                      onChange={(e) => setrolename(e.target.value)}
-                      variant="outlined"
-                      required
-                      fullWidth
-                      id="firstName"
-                      label="RoleName"
-                      style={{
-                        borderColor: "green",
-                        cssLabel: {
-                          color: "green",
-                        },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl
-                      // className={classes.formControl}
-                      variant="outlined"
-                      style={{ width: "100%" }}
-                    >
-                      <InputLabel id="demo-mutiple-chip-label">
-                        Page Name
-                      </InputLabel>
-                      <Select
-                        labelId="demo-mutiple-chip-label"
-                        id="demo-mutiple-chip"
-                        multiple
-                        value={personName}
-                        onChange={handleChange}
-                        input={<Input id="select-multiple-chip" />}
-                        renderValue={(selected) => (
-                          <div className={classes.chips}>
-                            {selected.map((value) => (
-                              <Chip
-                                key={value.pageId}
-                                label={value.pageUrl}
-                                className={classes.chip}
-                              />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        <TextField
+                          autoComplete="fname"
+                          name="firstName"
+                          onChange={(e) => setrolename(e.target.value)}
+                          variant="outlined"
+                          required
+                          fullWidth
+                          id="firstName"
+                          label="RoleName"
+                          style={{
+                            borderColor: "green",
+                            cssLabel: {
+                              color: "green",
+                            },
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <FormControl
+                          // className={classes.formControl}
+                          variant="outlined"
+                          style={{ width: "100%" }}
+                        >
+                          <InputLabel id="demo-mutiple-chip-label">
+                            Page Name
+                          </InputLabel>
+                          <Select
+                            labelId="demo-mutiple-chip-label"
+                            id="demo-mutiple-chip"
+                            multiple
+                            value={personName}
+                            onChange={handleChange}
+                            input={<Input id="select-multiple-chip" />}
+                            renderValue={(selected) => (
+                              <div className={classes.chips}>
+                                {selected.map((value) => (
+                                  <Chip
+                                    key={value.pageId}
+                                    label={value.pageUrl}
+                                    className={classes.chip}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                            MenuProps={MenuProps}
+                          >
+                            {uipages.map((page) => (
+                              <MenuItem key={page.pageId} value={page}>
+                                {page.pageUrl}
+                              </MenuItem>
                             ))}
-                          </div>
-                        )}
-                        MenuProps={MenuProps}
-                      >
-                        {uipages.map((page) => (
-                          <MenuItem key={page.pageId} value={page}>
-                            {page.pageUrl}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          variant="outlined"
+                          required
+                          fullWidth
+                          name="roleDescription"
+                          label="RoleDescription"
+                          type="text"
+                          id="password"
+                          autoComplete="current-password"
+                          onChange={(e) => setroledescription(e.target.value)}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      variant="outlined"
-                      required
+                  <Grid xs={10}>
+                    <Button
+                      onClick={addroleapi}
+                      //   type="submit"
                       fullWidth
-                      name="roleDescription"
-                      label="RoleDescription"
-                      type="text"
-                      id="password"
-                      autoComplete="current-password"
-                      onChange={(e) => setroledescription(e.target.value)}
-                    />
+                      className={classes.button}
+                      variant="contained"
+                    >
+                      Sign Up
+                    </Button>
                   </Grid>
-                </Grid>
+                </ThemeProvider>
               </Grid>
-              <Grid xs={10}>
-                <Button
-                  onClick={addroleapi}
-                  //   type="submit"
-                  fullWidth
-                  className={classes.button}
-                  variant="contained"
-                >
-                  Sign Up
-                </Button>
-              </Grid>
-            </ThemeProvider>
-          </Grid>
+            </div>
+          </Container>
         </div>
-      </Container>
-    </div>
+      )}
+    </>
   );
 }

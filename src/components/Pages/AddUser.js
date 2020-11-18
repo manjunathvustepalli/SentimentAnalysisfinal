@@ -78,7 +78,7 @@ export default function AddUser() {
 
     let config = {
       method: "post",
-      url: process.env.REACT_APP_URL + "/admin/getroles",
+      url: process.env.REACT_APP_URL + "admin/getroles",
       headers: header,
       data: data,
     };
