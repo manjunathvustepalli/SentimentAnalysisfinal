@@ -237,8 +237,12 @@ function InfluencerComparison({ from, to, refresh }) {
       //     }
       //   }, Auth)
 
-      let data = JSON.stringify({ queryStartDate: from, queryEndDate: to });
-let token = Cookies.get("token");
+      let data = JSON.stringify({
+        queryStartDate: from,
+        queryEndDate: to,
+        querySources: [source],
+      });
+      let token = Cookies.get("token");
       let config = {
         method: "post",
         url:
@@ -279,61 +283,80 @@ let token = Cookies.get("token");
           console.log(err, err.response);
         });
     } else {
-      Axios.post(
-        process.env.REACT_APP_URL,
-        {
-          query: {
-            terms: {
-              "Source.keyword": [source],
-            },
-          },
-          aggs: {
-            "date-based-range": {
-              date_range: {
-                field: "CreatedAt",
-                format: "dd-MM-yyyy",
-                ranges: [{ from: from, to: to }],
-              },
-              aggs: {
-                newspaperInfluencers: {
-                  terms: {
-                    field: "SubSource.keyword",
-                  },
-                  aggs: {
-                    ArticleCount: {
-                      value_count: {
-                        field: "Id",
-                      },
-                    },
-                    influence_sort: {
-                      bucket_sort: {
-                        sort: [
-                          {
-                            ArticleCount: { order: "desc" },
-                          },
-                        ],
-                        size: size,
-                        from: 0,
-                      },
-                    },
-                    Sentiment: {
-                      terms: {
-                        field: "predictedSentiment.keyword",
-                      },
-                    },
-                    Mood: {
-                      terms: {
-                        field: "predictedMood.keyword",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+      // Axios.post(
+      //   process.env.REACT_APP_URL,
+      //   {
+      //     query: {
+      //       terms: {
+      //         "Source.keyword": [source],
+      //       },
+      //     },
+      //     aggs: {
+      //       "date-based-range": {
+      //         date_range: {
+      //           field: "CreatedAt",
+      //           format: "dd-MM-yyyy",
+      //           ranges: [{ from: from, to: to }],
+      //         },
+      //         aggs: {
+      //           newspaperInfluencers: {
+      //             terms: {
+      //               field: "SubSource.keyword",
+      //             },
+      //             aggs: {
+      //               ArticleCount: {
+      //                 value_count: {
+      //                   field: "Id",
+      //                 },
+      //               },
+      //               influence_sort: {
+      //                 bucket_sort: {
+      //                   sort: [
+      //                     {
+      //                       ArticleCount: { order: "desc" },
+      //                     },
+      //                   ],
+      //                   size: size,
+      //                   from: 0,
+      //                 },
+      //               },
+      //               Sentiment: {
+      //                 terms: {
+      //                   field: "predictedSentiment.keyword",
+      //                 },
+      //               },
+      //               Mood: {
+      //                 terms: {
+      //                   field: "predictedMood.keyword",
+      //                 },
+      //               },
+      //             },
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      //   Auth
+      // )
+      let data = JSON.stringify({
+        queryStartDate: from,
+        queryEndDate: to,
+        querySources: [source],
+      });
+      let token = Cookies.get("token");
+      let config = {
+        method: "post",
+        url:
+          process.env.REACT_APP_URL +
+          "query/influencercomparisonforsummarydashboard",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
         },
-        Auth
-      )
+        data: data,
+      };
+
+      Axios(config)
         .then((res) => {
           setData(
             parent.concat(
