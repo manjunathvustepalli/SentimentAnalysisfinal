@@ -44,11 +44,7 @@ import UpdateDeleteUser from "../Pages/UpdateDeleteUser";
 import AddRole from "../Pages/AddRole"
 function Routes() {
   return (
-    // <TrendAnalysisContext>
-    //   <TrendingSubjectContext>
-    //     <WordCloudContext>
-    //       <MoodAnalysisContext>
-    //         <SentimentAnalysisContext>
+   
               <BrowserRouter>
                 <Switch>
                   <Route path="/" exact component={Login} />
@@ -241,11 +237,7 @@ function Routes() {
                   <Route component={SideNav} />
                 </Switch>
               </BrowserRouter>
-    //         </SentimentAnalysisContext>
-    //       </MoodAnalysisContext>
-    //     </WordCloudContext>
-    //   </TrendingSubjectContext>
-    // </TrendAnalysisContext>
+   
   );
 }
 
