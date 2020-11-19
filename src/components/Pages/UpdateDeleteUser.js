@@ -33,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let roles = {};
-
 export default function UpdateDeleteUser() {
   const [data, setdata] = useState([]);
   const [allRoles, setAllRoles] = useState([]);
