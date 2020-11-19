@@ -75,11 +75,14 @@ export default function AddUser() {
   const [loading,setloading]=useState(true);
   const GetRoles = async () => {
     let data = "";
-
+let token=Cookies.get("token")
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/getroles",
-      headers: header,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      }, 
       data: data,
     };
 
