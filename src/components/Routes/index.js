@@ -41,14 +41,14 @@ import Adduser from "../Pages/AddUser"
 import ChangePassword from '../Pages/ChangPassword'
 import DeleteUser from "../Pages/DeleteUser";
 import UpdateDeleteUser from "../Pages/UpdateDeleteUser";
-
+import AddRole from "../Pages/AddRole"
 function Routes() {
   return (
-    <TrendAnalysisContext>
-      <TrendingSubjectContext>
-        <WordCloudContext>
-          <MoodAnalysisContext>
-            <SentimentAnalysisContext>
+    // <TrendAnalysisContext>
+    //   <TrendingSubjectContext>
+    //     <WordCloudContext>
+    //       <MoodAnalysisContext>
+    //         <SentimentAnalysisContext>
               <BrowserRouter>
                 <Switch>
                   <Route path="/" exact component={Login} />
@@ -213,6 +213,11 @@ function Routes() {
                     exact 
                     component={Adduser} 
                     />
+                    <Route 
+                    path="/add-role" 
+                    exact 
+                    component={AddRole} 
+                    />
 
                     <Route 
                     path="/updateDelete-user" 
@@ -236,11 +241,11 @@ function Routes() {
                   <Route component={SideNav} />
                 </Switch>
               </BrowserRouter>
-            </SentimentAnalysisContext>
-          </MoodAnalysisContext>
-        </WordCloudContext>
-      </TrendingSubjectContext>
-    </TrendAnalysisContext>
+    //         </SentimentAnalysisContext>
+    //       </MoodAnalysisContext>
+    //     </WordCloudContext>
+    //   </TrendingSubjectContext>
+    // </TrendAnalysisContext>
   );
 }
 

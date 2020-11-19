@@ -106,9 +106,22 @@ function Login(props) {
     await Cookies.set("pages", pages);
     if (response.status === 201) {
       setIncorrectFlag(false);
-      props.history.push({
-        pathname: "/summary-dashboard",
-      });
+      for(var i=0;i<response.data.pages.length;i++){
+        
+      
+        if (response.data.pages[i].pageUrl === "Summary Dashboard") {
+           props.history.push({
+            pathname: "/summary-dashboard",
+          });
+          break;
+        }
+        if(i===pages.length-1){
+           props.history.push({
+             pathname: "/add-user",
+           });
+        }
+      }
+      
     } else {
       setIncorrectFlag(true);
     }
@@ -140,7 +153,7 @@ function Login(props) {
     };
 
     let response = await axios(config).catch((error) => setIncorrectFlag(true));
-    if (response) {
+    if (response.data.token) {
       // console.log(response);
       await setCookies(response);
     }

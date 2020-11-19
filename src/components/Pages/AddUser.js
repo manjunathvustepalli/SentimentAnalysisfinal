@@ -35,6 +35,7 @@ const theme = createMuiTheme({
     primary: green,
   },
 });
+  let token = Cookies.get("token");
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(4),
@@ -72,31 +73,37 @@ export default function AddUser() {
   const [UserType, setUserType] = useState();
   const [Roles, setRoles] = useState([]);
   const [loading,setloading]=useState(true);
-  const GetRoles = () => {
+  const GetRoles = async () => {
     let data = "";
 
     let config = {
       method: "post",
-      url: process.env.REACT_APP_URL + "/admin/getroles",
+      url: process.env.REACT_APP_URL + "admin/getroles",
       headers: header,
       data: data,
     };
 
-    axios(config)
-      .then((response) => {
-        setRoles(response.data.roles);
-        setloading(false)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    let response=await axios(config)
+     
+    
+    .catch((error) => {
+      console.log(error);
+    });
+      if(response.status===201){
+    await  setRoles(response.data.roles);
+      }
+      if(response.data.roles){
+
+        setloading(false);
+      }
+
   };
   useEffect(() => {
     GetRoles();
   }, []);
 
   const SignUp = () => {
-    let token=Cookies.get("token")
+  
     let data = JSON.stringify({
       user: {
         userName: Username,
@@ -128,7 +135,17 @@ export default function AddUser() {
   return (
     <Container component="main" maxWidth="xs">
       {loading ? (
-        <CircularProgress />
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          display="flex"
+          style={{ minHeight: "50vh" }}
+        >
+          <CircularProgress style={{ position: "absolute" }} />
+        </Grid>
       ) : (
         <>
           <CssBaseline />
