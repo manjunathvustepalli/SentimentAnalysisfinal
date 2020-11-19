@@ -6,7 +6,7 @@ import MaterialTable from 'material-table';
 import Loader from '../LoaderWithBackDrop'
 import LaunchIcon from '@material-ui/icons/Launch';
 import Image from 'material-ui-image'
-
+import Cookies from "js-cookie";
 const dateFormatter = (unix) => {
     var date = new Date(unix);
     var hours = date.getHours();
@@ -33,559 +33,667 @@ function GlobalSearch() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const submitData = () => {
+        let token=Cookies.get("token")
         setopen(true)
         let keywordsString = keywords.join(',')
         let handlesString = handles.join(',')
         let temp = []
         if(source === 'twitter'){
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`)
-                .then(res =>{
-                    console.log(res)
-                    if(res.data.status === 'ACCEPTED'){
-                        let query = {
-                            "query": {
-                              "bool": {
-                                "must": [
-                                    {"terms": {"Source.keyword": [source]}},
-                                ]
-                              }
-                            },
-                            "size": 50,
-                            "sort": [
-                              {
-                                "CreatedAt": {
-                                  "order": "desc"
-                                }
-                              }
-                            ]
+            // Axios.post(
+            //   `${process.env.REACT_APP_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handlesString}`
+            // )
+            let data = JSON.stringify({
+              keywords: [keywordsString],
+              handles: [handlesString],
+            });
+
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"fetchdatafromtwitter",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config)
+              .then((res) => {
+                console.log(res);
+                if (res.data.status === "Success") {
+                  let query = {
+                    query: {
+                      bool: {
+                        must: [{ terms: { "Source.keyword": [source] } }],
+                      },
+                    },
+                    size: 50,
+                    sort: [
+                      {
+                        CreatedAt: {
+                          order: "desc",
+                        },
+                      },
+                    ],
+                  };
+                  if (handles.length) {
+                    query.query.bool.must.push({
+                      terms: {
+                        "User.ScreenName.keyword": handles,
+                      },
+                    });
+                  }
+                  if (keywords.length) {
+                    query.query.bool.must.push({
+                      terms: {
+                        "HashtagEntities.Text.keyword": keywords,
+                      },
+                    });
+                  }
+                  Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                    .then((data) => {
+                      console.log(data);
+                      setData(
+                        data.data.hits.hits.map((postObj) => {
+                          if (!postObj._source.User) {
+                            return {
+                              date: dateFormatter(postObj._source.CreatedAt),
+                              post: postObj._source.Text,
+                              favouriteCount: postObj._source.FavoriteCount,
+                              sentiment: postObj._source.predictedSentiment,
+                              mood: postObj._source.predictedMood,
+                              language: postObj._source.predictedLang,
+                            };
+                          } else {
+                            return {
+                              date: dateFormatter(postObj._source.CreatedAt),
+                              post: postObj._source.Text,
+                              favouriteCount: postObj._source.FavoriteCount,
+                              sentiment: postObj._source.predictedSentiment,
+                              mood: postObj._source.predictedMood,
+                              language: postObj._source.predictedLang,
+                              followersCount:
+                                postObj._source.User.FollowersCount,
+                              location: postObj._source.User.Location,
+                              name: postObj._source.User.Name,
+                              screenName: postObj._source.User.ScreenName,
+                            };
                           }
-                          if(handles.length){
-                              query.query.bool.must.push({
-                                  "terms":{
-                                      "User.ScreenName.keyword":handles
-                                  }
-                              })
-                          }
-                          if(keywords.length){
-                            query.query.bool.must.push({
-                                "terms":{
-                                    "HashtagEntities.Text.keyword":keywords
-                                }
-                            })
-                          }
-                        Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                          .then(data =>{
-                              console.log(data)
-                            setData(data.data.hits.hits.map((postObj)=>{
-                                if(!postObj._source.User){
-                                    return {
-                                        date:dateFormatter(postObj._source.CreatedAt),
-                                        post:postObj._source.Text,
-                                        favouriteCount:postObj._source.FavoriteCount,
-                                        sentiment:postObj._source.predictedSentiment,
-                                        mood:postObj._source.predictedMood,
-                                        language:postObj._source.predictedLang
-                                    }
-                                } else {
-                                    return {
-                                        date:dateFormatter(postObj._source.CreatedAt),
-                                        post:postObj._source.Text,
-                                        favouriteCount:postObj._source.FavoriteCount,
-                                        sentiment:postObj._source.predictedSentiment,
-                                        mood:postObj._source.predictedMood,
-                                        language:postObj._source.predictedLang,
-                                        followersCount:postObj._source.User.FollowersCount,
-                                        location:postObj._source.User.Location,
-                                        name:postObj._source.User.Name,
-                                        screenName:postObj._source.User.ScreenName
-                                    }
-                                }
-                            }))
-                            setColumns([
-                                {
-                                    title:'Date',
-                                    field:'date',   
-                                },
-                                {
-                                    title:'Name',
-                                    field:'name',   
-                                },
-                                {
-                                    title:'Screen Name',
-                                    field:'screenName',   
-                                },
-                                {
-                                    title:'Post',
-                                    field:'post',
-                                },
-                                {
-                                    title:'Followers Count',
-                                    field:'followersCount',   
-                                },
-                                {
-                                    title:'Location',
-                                    field:'location',   
-                                },
-                                {
-                                    title:'Sentiment',
-                                    field:'sentiment',   
-                                },
-                                // {
-                                //     title:'Mood',
-                                //     field:'mood',   
-                                // },
-                                {
-                                    title:'Language',
-                                    field:'language',   
-                                }
-                            ])
-                            setopen(false)
                         })
-                          .catch(err =>{
-                                console.log(err);
-                                setopen(false)
-                          })            
-                    }
-            })
-            .catch(err =>{
-                console.log(err,err.response);
-                setopen(false)
-            })
+                      );
+                      setColumns([
+                        {
+                          title: "Date",
+                          field: "date",
+                        },
+                        {
+                          title: "Name",
+                          field: "name",
+                        },
+                        {
+                          title: "Screen Name",
+                          field: "screenName",
+                        },
+                        {
+                          title: "Post",
+                          field: "post",
+                        },
+                        {
+                          title: "Followers Count",
+                          field: "followersCount",
+                        },
+                        {
+                          title: "Location",
+                          field: "location",
+                        },
+                        {
+                          title: "Sentiment",
+                          field: "sentiment",
+                        },
+                        // {
+                        //     title:'Mood',
+                        //     field:'mood',
+                        // },
+                        {
+                          title: "Language",
+                          field: "language",
+                        },
+                      ]);
+                      setopen(false);
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      setopen(false);
+                    });
+                }
+              })
+              .catch((err) => {
+                console.log(err, err.response);
+                setopen(false);
+              });
         } else if(source === 'facebook') {
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromfb?fbpage=${handlesString}`)
-                .then(res =>{
-                    let query = {
-                        "query": {
-                          "bool": {
-                            "must": [
-                              {"terms": {"Source.keyword": [source]}}
-                            ]
-                          }
-                        },
-                        "size": 50,
-                        "sort": [
-                          {
-                            "CreatedAt": {
-                              "order": "desc"
-                            }
-                          }
-                        ]
-                      }
-                      if(handles.length){
-                        query.query.bool.must.push({
-                            "terms":{
-                                "SubSource.keyword":handles
-                            }
+            // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromfb?fbpage=${handlesString}`)
+            let data = JSON.stringify({ fbpage: [handlesString] });
+
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"startcrawlingfbpage",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config)
+              .then((res) => {
+                let query = {
+                  query: {
+                    bool: {
+                      must: [{ terms: { "Source.keyword": [source] } }],
+                    },
+                  },
+                  size: 50,
+                  sort: [
+                    {
+                      CreatedAt: {
+                        order: "desc",
+                      },
+                    },
+                  ],
+                };
+                if (handles.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "SubSource.keyword": handles,
+                    },
+                  });
+                }
+                if (keywords.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "HashtagEntities.Text.keyword": keywords,
+                    },
+                  });
+                }
+                setTimeout(() => {
+                  Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                    .then((data) => {
+                      setData(
+                        data.data.hits.hits.map((postObj, i) => {
+                          return {
+                            date: dateFormatter(postObj._source.CreatedAt),
+                            post: postObj._source.Text,
+                            favouriteCount: postObj._source.FavoriteCount,
+                            sentiment: postObj._source.predictedSentiment,
+                            mood: postObj._source.predictedMood,
+                            language: postObj._source.predictedLang,
+                            screenName: postObj._source.SubSource,
+                          };
                         })
-                    }
-                    if(keywords.length){
-                      query.query.bool.must.push({
-                          "terms":{
-                              "HashtagEntities.Text.keyword":keywords
-                          }
-                      })
-                    }
-                    setTimeout(() => {
-                        Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                          .then(data=>{
-                            setData(data.data.hits.hits.map((postObj,i)=>{
-                                return {
-                                    date:dateFormatter(postObj._source.CreatedAt),
-                                    post:postObj._source.Text,
-                                    favouriteCount:postObj._source.FavoriteCount,
-                                    sentiment:postObj._source.predictedSentiment,
-                                    mood:postObj._source.predictedMood,
-                                    language:postObj._source.predictedLang,
-                                    screenName:postObj._source.SubSource
-                                }
-                            }))
-                            setColumns([
-                                            {
-                                                title:'Date',
-                                                field:'date',   
-                                            },
-                                            {
-                                                title:'Screen Name',
-                                                field:'screenName',
-                                            },
-                                            {
-                                                title:'Post',
-                                                field:'post',
-                                            },
-                                            {
-                                                title:'Sentiment',
-                                                field:'sentiment',   
-                                            },
-                                            // {
-                                            //     title:'Mood',
-                                            //     field:'mood',   
-                                            // },
-                                            {
-                                                title:'Language',
-                                                field:'language',   
-                                            }
-                                        ])
-                            setopen(false)            
-                            })
-                          .catch(err =>{
-                            console.log(err)
-                            setopen(false)
-                          })
-                    }, 10000);                   
-                })
-                .catch(err =>{
-                    console.log(err);
-                    setopen(false)
-                })
+                      );
+                      setColumns([
+                        {
+                          title: "Date",
+                          field: "date",
+                        },
+                        {
+                          title: "Screen Name",
+                          field: "screenName",
+                        },
+                        {
+                          title: "Post",
+                          field: "post",
+                        },
+                        {
+                          title: "Sentiment",
+                          field: "sentiment",
+                        },
+                        // {
+                        //     title:'Mood',
+                        //     field:'mood',
+                        // },
+                        {
+                          title: "Language",
+                          field: "language",
+                        },
+                      ]);
+                      setopen(false);
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      setopen(false);
+                    });
+                }, 10000);
+              })
+              .catch((err) => {
+                console.log(err);
+                setopen(false);
+              });
         } else if(source === 'instagram'){
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
-                .then(res => {
-                    console.log(res)
-                    if(res.data.status === 'ACCEPTED'){
-                        let query = {
-                            "query": {
-                              "bool": {
-                                "must": [
-                                    {"terms": {"Source.keyword": [source]}},
-                                ]
-                              }
-                            },
-                            "size": 50,
-                            "sort": [
-                              {
-                                "CreatedAt": {
-                                  "order": "desc"
-                                }
-                              }
-                            ]
-                          }
-                          if(handles.length){
-                              query.query.bool.must.push({
-                                  "terms":{
-                                      "SubSource.keyword":handles
-                                  }
-                              })
-                          }
-                          if(keywords.length){
-                            query.query.bool.must.push({
-                                "terms":{
-                                    "HashtagEntities.Text.keyword":keywords
-                                }
-                            })
-                          }
+            // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
+            let data = JSON.stringify({ instapage: [handlesString] });
 
-                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                          .then(data =>{
-                              console.log(data.data.hits.hits)
-                            setData(data.data.hits.hits.map((postObj,i)=>{
-                                if(postObj._source.MediaEntities && postObj._source.MediaEntities.length){
-                                    return {
-                                        date:dateFormatter(postObj._source.CreatedAt),
-                                        post:postObj._source.Text,
-                                        favouriteCount:postObj._source.FavoriteCount,
-                                        sentiment:postObj._source.predictedSentiment,
-                                        mood:postObj._source.predictedMood,
-                                        language:postObj._source.predictedLang,
-                                        screenName:postObj._source.SubSource,
-                                        image:postObj._source.MediaEntities.map(image => {
-                                            if(!image.MediaURL){
-                                                return <span/> 
-                                            }
-                                            return (
-                                                <IconButton  onClick={() => {
-                                                    setImageUrl(image.MediaURL)
-                                                    setDialogOpen(true)
-                                                }} style={{backgroundColor:'rgb(67, 176, 42)',color:'white'}} >
-                                                    <LaunchIcon />
-                                                </IconButton>
-                                            )
-                                        })                                  
-                                    }
-                                }else {
-                                    return {
-                                        date:dateFormatter(postObj._source.CreatedAt),
-                                        post:postObj._source.Text,
-                                        favouriteCount:postObj._source.FavoriteCount,
-                                        sentiment:postObj._source.predictedSentiment,
-                                        mood:postObj._source.predictedMood,
-                                        language:postObj._source.predictedLang,
-                                        screenName:postObj._source.SubSource,
-                                    }
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"startcrawlinginstagrampage",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config).then((res) => {
+              console.log(res);
+              if (res.data.status === "ACCEPTED") {
+                let query = {
+                  query: {
+                    bool: {
+                      must: [{ terms: { "Source.keyword": [source] } }],
+                    },
+                  },
+                  size: 50,
+                  sort: [
+                    {
+                      CreatedAt: {
+                        order: "desc",
+                      },
+                    },
+                  ],
+                };
+                if (handles.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "SubSource.keyword": handles,
+                    },
+                  });
+                }
+                if (keywords.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "HashtagEntities.Text.keyword": keywords,
+                    },
+                  });
+                }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                  (data) => {
+                    console.log(data.data.hits.hits);
+                    setData(
+                      data.data.hits.hits.map((postObj, i) => {
+                        if (
+                          postObj._source.MediaEntities &&
+                          postObj._source.MediaEntities.length
+                        ) {
+                          return {
+                            date: dateFormatter(postObj._source.CreatedAt),
+                            post: postObj._source.Text,
+                            favouriteCount: postObj._source.FavoriteCount,
+                            sentiment: postObj._source.predictedSentiment,
+                            mood: postObj._source.predictedMood,
+                            language: postObj._source.predictedLang,
+                            screenName: postObj._source.SubSource,
+                            image: postObj._source.MediaEntities.map(
+                              (image) => {
+                                if (!image.MediaURL) {
+                                  return <span />;
                                 }
-                            }))
-                            setColumns([
-                                {
-                                    title:'Date',
-                                    field:'date',   
-                                },
-                                {
-                                    title:'Screen Name',
-                                    field:'screenName',
-                                },
-                                {
-                                    title:'Post',
-                                    field:'post',
-                                },
-                                {
-                                    title:'Sentiment',
-                                    field:'sentiment',   
-                                },
-                                // {
-                                //     title:'Mood',
-                                //     field:'mood',   
-                                // },
-                                {
-                                    title:'Language',
-                                    field:'language',   
-                                },
-                                {
-                                    title:'Media Urls',
-                                    field:'image'
-                                }
-                            ])
-                              setopen(false)
-                          })
-                }})
+                                return (
+                                  <IconButton
+                                    onClick={() => {
+                                      setImageUrl(image.MediaURL);
+                                      setDialogOpen(true);
+                                    }}
+                                    style={{
+                                      backgroundColor: "rgb(67, 176, 42)",
+                                      color: "white",
+                                    }}
+                                  >
+                                    <LaunchIcon />
+                                  </IconButton>
+                                );
+                              }
+                            ),
+                          };
+                        } else {
+                          return {
+                            date: dateFormatter(postObj._source.CreatedAt),
+                            post: postObj._source.Text,
+                            favouriteCount: postObj._source.FavoriteCount,
+                            sentiment: postObj._source.predictedSentiment,
+                            mood: postObj._source.predictedMood,
+                            language: postObj._source.predictedLang,
+                            screenName: postObj._source.SubSource,
+                          };
+                        }
+                      })
+                    );
+                    setColumns([
+                      {
+                        title: "Date",
+                        field: "date",
+                      },
+                      {
+                        title: "Screen Name",
+                        field: "screenName",
+                      },
+                      {
+                        title: "Post",
+                        field: "post",
+                      },
+                      {
+                        title: "Sentiment",
+                        field: "sentiment",
+                      },
+                      // {
+                      //     title:'Mood',
+                      //     field:'mood',
+                      // },
+                      {
+                        title: "Language",
+                        field: "language",
+                      },
+                      {
+                        title: "Media Urls",
+                        field: "image",
+                      },
+                    ]);
+                    setopen(false);
+                  }
+                );
+              }
+            });
         } else if(source === 'telegram') {
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
-                .then(res => {
-                    console.log(res)
-                    if(res.data.status === 'ACCEPTED'){
-                        let query = {
-                            "query": {
-                              "bool": {
-                                "must": [
-                                    {"terms": {"Source.keyword": [source]}},
-                                ]
-                              }
-                            },
-                            "size": 50,
-                            "sort": [
-                              {
-                                "CreatedAt": {
-                                  "order": "desc"
-                                }
-                              }
-                            ]
-                          }
-                          if(handles.length){
-                              query.query.bool.must.push({
-                                  "terms":{
-                                      "SubSource.keyword":handles
-                                  }
-                              })
-                          }
-                          if(keywords.length){
-                            query.query.bool.must.push({
-                                "terms":{
-                                    "HashtagEntities.Text.keyword":keywords
-                                }
-                            })
-                          }
+            // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
+            let data = JSON.stringify({ telegramchannel: [handlesString] });
 
-                    Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                          .then(data =>{
-                              console.log(data)
-                            setData(data.data.hits.hits.map((postObj,i)=>{
-                                return {
-                                    date:dateFormatter(postObj._source.CreatedAt),
-                                    post:postObj._source.Text,
-                                    favouriteCount:postObj._source.FavoriteCount,
-                                    sentiment:postObj._source.predictedSentiment,
-                                    mood:postObj._source.predictedMood,
-                                    language:postObj._source.predictedLang,
-                                    screenName:postObj._source.SubSource
-                                }
-                            }))
-                            setColumns([
-                                            {
-                                                title:'Date',
-                                                field:'date',   
-                                            },
-                                            {
-                                                title:'Screen Name',
-                                                field:'screenName',
-                                            },
-                                            {
-                                                title:'Post',
-                                                field:'post',
-                                            },
-                                            {
-                                                title:'Sentiment',
-                                                field:'sentiment',   
-                                            },
-                                            // {
-                                            //     title:'Mood',
-                                            //     field:'mood',   
-                                            // },
-                                            {
-                                                title:'Language',
-                                                field:'language',   
-                                            }
-                                        ])
-                            setopen(false)
-                          })
-                }})
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"startcrawlingtelegramchannel",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config).then((res) => {
+              console.log(res);
+              if (res.data.status === "ACCEPTED") {
+                let query = {
+                  query: {
+                    bool: {
+                      must: [{ terms: { "Source.keyword": [source] } }],
+                    },
+                  },
+                  size: 50,
+                  sort: [
+                    {
+                      CreatedAt: {
+                        order: "desc",
+                      },
+                    },
+                  ],
+                };
+                if (handles.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "SubSource.keyword": handles,
+                    },
+                  });
+                }
+                if (keywords.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "HashtagEntities.Text.keyword": keywords,
+                    },
+                  });
+                }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                  (data) => {
+                    console.log(data);
+                    setData(
+                      data.data.hits.hits.map((postObj, i) => {
+                        return {
+                          date: dateFormatter(postObj._source.CreatedAt),
+                          post: postObj._source.Text,
+                          favouriteCount: postObj._source.FavoriteCount,
+                          sentiment: postObj._source.predictedSentiment,
+                          mood: postObj._source.predictedMood,
+                          language: postObj._source.predictedLang,
+                          screenName: postObj._source.SubSource,
+                        };
+                      })
+                    );
+                    setColumns([
+                      {
+                        title: "Date",
+                        field: "date",
+                      },
+                      {
+                        title: "Screen Name",
+                        field: "screenName",
+                      },
+                      {
+                        title: "Post",
+                        field: "post",
+                      },
+                      {
+                        title: "Sentiment",
+                        field: "sentiment",
+                      },
+                      // {
+                      //     title:'Mood',
+                      //     field:'mood',
+                      // },
+                      {
+                        title: "Language",
+                        field: "language",
+                      },
+                    ]);
+                    setopen(false);
+                  }
+                );
+              }
+            });
         } else if(source === 'blogger'){
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
-            .then(res => {
-                console.log(res)
-                if(res.data.status === 'ACCEPTED'){
-                    let query = {
-                        "query": {
-                          "bool": {
-                            "must": [
-                                {"terms": {"Source.keyword": [source]}},
-                            ]
-                          }
-                        },
-                        "size": 50,
-                        "sort": [
-                          {
-                            "CreatedAt": {
-                              "order": "desc"
-                            }
-                          }
-                        ]
-                      }
-                      if(handles.length){
-                          query.query.bool.must.push({
-                              "terms":{
-                                  "SubSource.keyword":handles
-                              }
-                          })
-                      }
-                      if(keywords.length){
-                        query.query.bool.must.push({
-                            "terms":{
-                                "HashtagEntities.Text.keyword":keywords
-                            }
-                        })
-                      }
+            // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
+            let data = JSON.stringify({
+              bloggerpage: handlesString,
+            });
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                      .then(data =>{
-                          console.log(data)
-                        setData(data.data.hits.hits.map((postObj,i)=>{
-                            return {
-                                date:dateFormatter(postObj._source.CreatedAt),
-                                post:postObj._source.Text,
-                                favouriteCount:postObj._source.FavoriteCount,
-                                sentiment:postObj._source.predictedSentiment,
-                                mood:postObj._source.predictedMood,
-                                language:postObj._source.predictedLang,
-                                screenName:postObj._source.SubSource
-                            }
-                        }))
-                        setColumns([
-                                        {
-                                            title:'Date',
-                                            field:'date',   
-                                        },
-                                        {
-                                            title:'Screen Name',
-                                            field:'screenName',
-                                        },
-                                        {
-                                            title:'Post',
-                                            field:'post',
-                                        },
-                                        {
-                                            title:'Sentiment',
-                                            field:'sentiment',   
-                                        },
-                                        // {
-                                        //     title:'Mood',
-                                        //     field:'mood',   
-                                        // },
-                                        {
-                                            title:'Language',
-                                            field:'language',   
-                                        }
-                                    ])
-                        setopen(false)
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"startcrawlingbloggerpage",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config).then((res) => {
+              console.log(res);
+              if (res.data.status === "ACCEPTED") {
+                let query = {
+                  query: {
+                    bool: {
+                      must: [{ terms: { "Source.keyword": [source] } }],
+                    },
+                  },
+                  size: 50,
+                  sort: [
+                    {
+                      CreatedAt: {
+                        order: "desc",
+                      },
+                    },
+                  ],
+                };
+                if (handles.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "SubSource.keyword": handles,
+                    },
+                  });
+                }
+                if (keywords.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "HashtagEntities.Text.keyword": keywords,
+                    },
+                  });
+                }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                  (data) => {
+                    console.log(data);
+                    setData(
+                      data.data.hits.hits.map((postObj, i) => {
+                        return {
+                          date: dateFormatter(postObj._source.CreatedAt),
+                          post: postObj._source.Text,
+                          favouriteCount: postObj._source.FavoriteCount,
+                          sentiment: postObj._source.predictedSentiment,
+                          mood: postObj._source.predictedMood,
+                          language: postObj._source.predictedLang,
+                          screenName: postObj._source.SubSource,
+                        };
                       })
-            }})
+                    );
+                    setColumns([
+                      {
+                        title: "Date",
+                        field: "date",
+                      },
+                      {
+                        title: "Screen Name",
+                        field: "screenName",
+                      },
+                      {
+                        title: "Post",
+                        field: "post",
+                      },
+                      {
+                        title: "Sentiment",
+                        field: "sentiment",
+                      },
+                      // {
+                      //     title:'Mood',
+                      //     field:'mood',
+                      // },
+                      {
+                        title: "Language",
+                        field: "language",
+                      },
+                    ]);
+                    setopen(false);
+                  }
+                );
+              }
+            });
         } else if(source === 'google news'){
-            Axios.get(`${process.env.REACT_APP_TUNNEL_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
-            .then(res => {
-                console.log(res)
-                if(res.data.status === 'ACCEPTED'){
-                    let query = {
-                        "query": {
-                          "bool": {
-                            "must": [
-                                {"terms": {"Source.keyword": ['googlenews']}},
-                            ]
-                          }
-                        },
-                        "size": 50,
-                        "sort": [
-                          {
-                            "CreatedAt": {
-                              "order": "desc"
-                            }
-                          }
-                        ]
-                      }
-                      if(handles.length){
-                          query.query.bool.must.push({
-                              "terms":{
-                                  "SubSource.keyword":handles
-                              }
-                          })
-                      }
-                      if(keywords.length){
-                        query.query.bool.must.push({
-                            "terms":{
-                                "HashtagEntities.Text.keyword":keywords
-                            }
-                        })
-                      }
+            // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
+            let data = JSON.stringify({ googlenewspage: handlesString });
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL,query)
-                      .then(data =>{
-                          console.log(data)
-                        setData(data.data.hits.hits.map((postObj,i)=>{
-                            return {
-                                date:dateFormatter(postObj._source.CreatedAt),
-                                post:postObj._source.Text,
-                                favouriteCount:postObj._source.FavoriteCount,
-                                sentiment:postObj._source.predictedSentiment,
-                                mood:postObj._source.predictedMood,
-                                language:postObj._source.predictedLang,
-                                screenName:postObj._source.SubSource
-                            }
-                        }))
-                        setColumns([
-                                        {
-                                            title:'Date',
-                                            field:'date',   
-                                        },
-                                        {
-                                            title:'Screen Name',
-                                            field:'screenName',
-                                        },
-                                        {
-                                            title:'Post',
-                                            field:'post',
-                                        },
-                                        {
-                                            title:'Sentiment',
-                                            field:'sentiment',   
-                                        },
-                                        // {
-                                        //     title:'Mood',
-                                        //     field:'mood',   
-                                        // },
-                                        {
-                                            title:'Language',
-                                            field:'language',   
-                                        }
-                                    ])
-                        setopen(false)
+            let config = {
+              method: "post",
+              url:
+                process.env.REACT_APP_URL+"startcrawlinggooglenewspage",
+              headers: {
+                "Content-Type": "application/json",
+                token: token,
+              },
+              data: data,
+            };
+
+            Axios(config).then((res) => {
+              console.log(res);
+              if (res.data.status === "ACCEPTED") {
+                let query = {
+                  query: {
+                    bool: {
+                      must: [{ terms: { "Source.keyword": ["googlenews"] } }],
+                    },
+                  },
+                  size: 50,
+                  sort: [
+                    {
+                      CreatedAt: {
+                        order: "desc",
+                      },
+                    },
+                  ],
+                };
+                if (handles.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "SubSource.keyword": handles,
+                    },
+                  });
+                }
+                if (keywords.length) {
+                  query.query.bool.must.push({
+                    terms: {
+                      "HashtagEntities.Text.keyword": keywords,
+                    },
+                  });
+                }
+
+                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                  (data) => {
+                    console.log(data);
+                    setData(
+                      data.data.hits.hits.map((postObj, i) => {
+                        return {
+                          date: dateFormatter(postObj._source.CreatedAt),
+                          post: postObj._source.Text,
+                          favouriteCount: postObj._source.FavoriteCount,
+                          sentiment: postObj._source.predictedSentiment,
+                          mood: postObj._source.predictedMood,
+                          language: postObj._source.predictedLang,
+                          screenName: postObj._source.SubSource,
+                        };
                       })
-            }})
+                    );
+                    setColumns([
+                      {
+                        title: "Date",
+                        field: "date",
+                      },
+                      {
+                        title: "Screen Name",
+                        field: "screenName",
+                      },
+                      {
+                        title: "Post",
+                        field: "post",
+                      },
+                      {
+                        title: "Sentiment",
+                        field: "sentiment",
+                      },
+                      // {
+                      //     title:'Mood',
+                      //     field:'mood',
+                      // },
+                      {
+                        title: "Language",
+                        field: "language",
+                      },
+                    ]);
+                    setopen(false);
+                  }
+                );
+              }
+            });
         }
     }
 
