@@ -10,7 +10,7 @@ import Container from '@material-ui/core/Container';
 import { green } from "@material-ui/core/colors";
 import { header } from './Auth';
 import axios from 'axios'
-
+import Cookies from "js-cookie";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -50,6 +50,7 @@ export default function SignIn() {
   const [password1,setpassword1]=useState();
   const[password2,setpassword2]=useState();
 const changepassword=()=>{
+  let token = Cookies.get("token");
  
   let data = JSON.stringify({
     user: { password: password1, oldPassword: password2 },
@@ -58,7 +59,10 @@ const changepassword=()=>{
   let config = {
     method: "post",
     url: process.env.REACT_APP_URL + "admin/changepassword",
-    headers: header,
+    headers: {
+      "Content-Type": "application/json",
+      token: token,
+    },
     data: data,
   };
 

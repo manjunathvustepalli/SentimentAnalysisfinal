@@ -35,7 +35,7 @@ const theme = createMuiTheme({
     primary: green,
   },
 });
-  let token = Cookies.get("token");
+ 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(4),
@@ -106,6 +106,7 @@ let token=Cookies.get("token")
   }, []);
 
   const SignUp = () => {
+    let token = Cookies.get("token");
   
     let data = JSON.stringify({
       user: {

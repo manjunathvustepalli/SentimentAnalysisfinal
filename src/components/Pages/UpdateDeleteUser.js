@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let roles = {};
- let token = Cookies.get("token");
+
 export default function UpdateDeleteUser() {
   const [data, setdata] = useState([]);
   const [allRoles, setAllRoles] = useState([]);
@@ -62,6 +62,7 @@ const[helpertext,setHelpertext]=useState(false);
   
 
   const deleteuser = (id) => {
+    let token = Cookies.get("token");
     let data = JSON.stringify({ user: { userId: id } });
 
     let config = {
@@ -86,6 +87,7 @@ const[helpertext,setHelpertext]=useState(false);
   };
 
   const changePassword = (id, newPassword) => {
+    let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
         userId: id,
@@ -119,7 +121,7 @@ const[helpertext,setHelpertext]=useState(false);
   };
 
   const updateuser = (id, usernmae, displayName, role) => {
-   
+   let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
         userId: id,

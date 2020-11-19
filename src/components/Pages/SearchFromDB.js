@@ -123,14 +123,14 @@ function SearchFromDB() {
     if(selectedSources[0] === 'twitter' || selectedSources[0] === 'new-twitter'){
      data = JSON.stringify({
       querySources: selectedSources,
-      queryLanguages: ["english"],
+      // queryLanguages: ["english"],
       queryHashtagEntities: keywords,
     });
   }
   else{
     data = JSON.stringify({
       querySources: selectedSources,
-      queryLanguages: ["english"],
+      // queryLanguages: ["english"],
       queryUserScreenNames: handles,
       // queryHashtagEntities: keywords,
     });
