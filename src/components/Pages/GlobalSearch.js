@@ -174,7 +174,7 @@ function GlobalSearch() {
               });
         } else if(source === 'facebook') {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromfb?fbpage=${handlesString}`)
-            let data = JSON.stringify({ fbpage: handlesString });
+            let data = JSON.stringify({ fbpage: [handlesString] });
 
             let config = {
               method: "post",
@@ -274,7 +274,7 @@ function GlobalSearch() {
               });
         } else if(source === 'instagram'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
-            let data = JSON.stringify({ instapage: handlesString });
+            let data = JSON.stringify({ instapage: [handlesString] });
 
             let config = {
               method: "post",
@@ -409,7 +409,7 @@ function GlobalSearch() {
             });
         } else if(source === 'telegram') {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
-            let data = JSON.stringify({ telegramchannel: handlesString });
+            let data = JSON.stringify({ telegramchannel: [handlesString] });
 
             let config = {
               method: "post",
