@@ -14,11 +14,11 @@ import { Auth } from "./Auth";
 import Cookies from "js-cookie";
 function Admin() {
   const sourcesQueryKeys = {
-    facebook: "/getaddedfbpages",
-    instagram: "/getaddedinstagrampages",
-    blogger: "/getaddedbloggerpages",
-    telegram: "/getaddedtelegramchannels",
-    googlenews: "/getaddedgooglenewspages",
+    facebook: "getaddedfbpages",
+    instagram: "getaddedinstagrampages",
+    blogger: "getaddedbloggerpages",
+    telegram: "getaddedtelegramchannels",
+    googlenews: "getaddedgooglenewspages",
   };
   const [source, setSource] = useState("facebook");
   const [columns, setColumns] = useState([
@@ -70,25 +70,45 @@ function Admin() {
     setLoaderOpen(true);
     if (newlyAddedWord) {
       const sourceAddQueryStrings = {
-        facebook: "/fetchdatafromfb?fbpage=",
-        instagram: "/fetchdatafrominstagram?instapage=",
-        blogger: "/fetchdatafromblogger?bloggerpage=",
-        telegram: "/fetchdatafromtelegramchannel?telegramchannel=",
-        googlenews: "/fetchdatafromgooglenews?googlenewspage=",
+        facebook: "startcrawlingfbpage",
+        instagram: "startcrawlinginstagrampage",
+        blogger: "startcrawlingbloggerpage",
+        telegram: "startcrawlingtelegramchannel",
+        googlenews: "startcrawlinggooglenewspage",
+      };
+      const sourcechannel = {
+        facebook: "fbpage",
+        instagram: "instapage",
+        blogger: "bloggerpage",
+        telegram: "telegramchannel",
+        googlenews: "googlenewspage",
       };
 
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`,
       //     Auth
       //   )
+      let data="";
+      if (source === "facebook") {
+         data = JSON.stringify({ fbpage: newlyAddedWord });
+      } else if (source === "instagram") {
+         data = JSON.stringify({ instapage: newlyAddedWord });
+      } else if (source === "blogger") {
+         data = JSON.stringify({ bloggerpage: newlyAddedWord });
+      } else if (source === "telegram") {
+         data = JSON.stringify({ telegramchannel: newlyAddedWord });
+      } else {
+         data = JSON.stringify({ googlenewspage: newlyAddedWord });
+      }
+
       let config = {
         method: "post",
-        url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
+        url: process.env.REACT_APP_URL + `${sourceAddQueryStrings[source]}`,
         headers: {
           "Content-Type": "application/json",
           token: token,
         },
-        data: "",
+        data: data,
       };
 
       Axios(config)
@@ -109,24 +129,37 @@ function Admin() {
     setLoaderOpen(true);
     if (deletedWord) {
       const sourceDeleteQueryStrings = {
-        facebook: "/stopcrawlingfbpage?fbpage=",
-        instagram: "/stopcrawlinginstagrampage?instapage=",
-        blogger: "/stopcrawlingbloggerpage?bloggerpage=",
-        telegram: "/stopcrawlingtelegramchannel?telegramchannel=",
-        googlenews: "/stopcrawlinggooglenewspage?googlenewspage=",
+        facebook: "stopcrawlingfbpage",
+        instagram: "stopcrawlinginstagrampage",
+        blogger: "stopcrawlingbloggerpage",
+        telegram: "stopcrawlingtelegramchannel",
+        googlenews: "stopcrawlinggooglenewspage",
       };
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceDeleteQueryStrings[source]}${deletedWord}`,
       //     Auth
       //   )
+      let data = "";
+      if (source === "facebook") {
+        data = JSON.stringify({ fbpage: deletedWord });
+      } else if (source === "instagram") {
+        data = JSON.stringify({ instapage: deletedWord });
+      } else if (source === "blogger") {
+        data = JSON.stringify({ bloggerpage: deletedWord });
+      } else if (source === "telegram") {
+        data = JSON.stringify({ telegramchannel: deletedWord });
+      } else {
+        data = JSON.stringify({ googlenewspage: deletedWord });
+      }
+
       let config = {
         method: "post",
-        url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
+        url: process.env.REACT_APP_URL + `${sourceDeleteQueryStrings[source]}`,
         headers: {
           "Content-Type": "application/json",
           token: token,
         },
-        data: "",
+        data: data,
       };
 
       Axios(config)
