@@ -122,17 +122,18 @@ function SearchFromDB() {
     let data="";
     if(selectedSources[0] === 'twitter' || selectedSources[0] === 'new-twitter'){
      data = JSON.stringify({
-      querySources: selectedSources,
-      // queryLanguages: ["english"],
-      queryHashtagEntities: keywords,
-    });
+       querySources: selectedSources,
+       // queryLanguages: ["english"],
+       queryUserScreenNames: handles,
+       queryHashtagEntities: keywords,
+     });
   }
   else{
     data = JSON.stringify({
       querySources: selectedSources,
       // queryLanguages: ["english"],
       queryUserScreenNames: handles,
-      // queryHashtagEntities: keywords,
+      queryHashtagEntities: keywords,
     });
   }
     let token = Cookies.get("token");

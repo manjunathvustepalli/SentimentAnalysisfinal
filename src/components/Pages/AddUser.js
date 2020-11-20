@@ -131,6 +131,8 @@ export default function AddUser() {
         console.log(JSON.stringify(response.data));
         if (response.data.status === "Success") {
           setSucess(true);
+          setWarning(false);
+          setError(false)
           setUsername("");
           setEmail("");
           setPassword("");
@@ -139,8 +141,12 @@ export default function AddUser() {
         } else {
           if (response.data.errMsg === "Duplicate user name") {
             setWarning(true);
+            setSucess(false);
+            setError(false)
           } else {
             setError(true);
+            setWarning(false);
+            setSucess(false);
           }
         }
       })
