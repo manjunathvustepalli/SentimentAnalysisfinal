@@ -102,6 +102,7 @@ const SideNavBar =  (props) => {
   const [pages] = useState(JSON.parse(Cookies.get("pages")));
   const [token]=useState(Cookies.get("token"))
   const [isloading,setIsloading]=useState(true)
+  const [name] = useState(Cookies.get("name"));
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
       return { color: "rgb(67,176,42)", minWidth: "30px" };
@@ -215,7 +216,7 @@ const SideNavBar =  (props) => {
       path: ["/search-from-db"],
     },
     {
-      name: "Search Image",
+      name: "Image Sentiment Analysis",
       icon: <ImageSearchIcon />,
       path: ["/image-gallery"],
     },
@@ -320,7 +321,7 @@ const SideNavBar =  (props) => {
             />
           </Grid>
           <Grid item align="right" className="grid-user" xs={6}>
-            <Typography> Welcome User</Typography>
+  <Typography> Welcome {name}</Typography>
           </Grid>
           <Grid xs={2} />
           <Grid item align="left" className="grid-user" xs={4}>

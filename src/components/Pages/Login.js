@@ -104,6 +104,7 @@ function Login(props) {
       pages.push(page.pageUrl);
     })
     await Cookies.set("pages", pages);
+    await Cookies.set("name",response.data.displayName);
     if (response.status === 201) {
       setIncorrectFlag(false);
       for(var i=0;i<response.data.pages.length;i++){
