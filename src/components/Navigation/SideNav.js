@@ -236,12 +236,12 @@ const SideNavBar =  (props) => {
     },
     {
       name: "Add User",
-      icon: <PersonAddIcon/>,
+      icon: <PersonAddIcon />,
       path: ["/add-user"],
     },
     {
       name: "Update/Delete User",
-      icon: <UpdateIcon/>,
+      icon: <UpdateIcon />,
       path: ["/updateDelete-user"],
     },
     // {
@@ -251,8 +251,13 @@ const SideNavBar =  (props) => {
     // },
     {
       name: "Change Password",
-      icon: <LockIcon/>,
-      path: ["/change-password"]
+      icon: <LockIcon />,
+      path: ["/change-password"],
+    },
+    {
+      name: "Add Role",
+      icon: <PersonAddIcon />,
+      path: ["/add-role"],
     },
   ];
  

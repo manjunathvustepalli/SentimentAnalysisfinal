@@ -77,6 +77,7 @@ export default function AddUser() {
   const [success, setSucess] = useState(false);
   const [failure, setError] = useState(false);
   const [warning, setWarning] = useState(false);
+  const [passwordmatch,setpasswordmatch]=useState(false);
   const GetRoles = async () => {
     let data = "";
     let token = Cookies.get("token");
@@ -103,7 +104,20 @@ export default function AddUser() {
   useEffect(() => {
     GetRoles();
   }, []);
+const handlepassword=(e)=>{
 
+  setPassword2(e.target.value);
+   
+  setTimeout(passwordmatchcheck(e),1000);
+
+}
+const passwordmatchcheck=(e)=>{
+ if (Password !== e.target.value) {
+   setpasswordmatch(true);
+ } else {
+   setpasswordmatch(false);
+ }
+}
   const SignUp = () => {
     let token = Cookies.get("token");
 
@@ -182,7 +196,7 @@ export default function AddUser() {
             ) : warning ? (
               <Alert severity="warning">Duplicate user not allowed</Alert>
             ) : null}
-            
+
             <Box p={3}>
               <Typography component="h1" variant="h5">
                 Add User
@@ -251,6 +265,8 @@ export default function AddUser() {
                         name="password"
                         label="Password"
                         type="password"
+                        error={passwordmatch}
+                        helperText={passwordmatch ? "Passwords don't match" : ""}
                         id="password"
                         autoComplete="current-password"
                         onChange={(e) => setPassword(e.target.value)}
@@ -262,12 +278,14 @@ export default function AddUser() {
                         required
                         fullWidth
                         value={Password2}
+                        error={passwordmatch}
+                        helperText={passwordmatch ? "Passwords don't match" : ""}
                         name="password"
                         label="Re-Enter Password"
                         type="password"
                         id="password"
                         autoComplete="current-password"
-                        onChange={(e) => setPassword2(e.target.value)}
+                        onChange={(e) => handlepassword(e)}
                       />
                     </Grid>
                   </Grid>
