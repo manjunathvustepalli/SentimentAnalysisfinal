@@ -169,15 +169,14 @@ export default function AddUser() {
           <div className={classes.paper}>
             {success ? (
               <Alert severity="success">Succesfully Added</Alert>
-            ) : null}
-            {failure ? (
+            ) : failure ? (
               <Alert severity="error">
                 Something went wrong please try again
               </Alert>
-            ) : null}
-            {warning ? (
+            ) : warning ? (
               <Alert severity="warning">Duplicate user not allowed</Alert>
             ) : null}
+            
             <Box p={3}>
               <Typography component="h1" variant="h5">
                 Add User

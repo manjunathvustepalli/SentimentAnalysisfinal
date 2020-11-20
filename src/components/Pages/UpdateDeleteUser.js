@@ -40,6 +40,7 @@ export default function UpdateDeleteUser() {
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
 const[helpertext,setHelpertext]=useState(false);
+const[helpertext1,setHelpertext1]=useState(false);
   const [NewPassword, setNewPassword] = useState();
   const [loading, setloading] = useState(true);
   const [open, setOpen] = React.useState(false);
@@ -58,7 +59,11 @@ const[helpertext,setHelpertext]=useState(false);
     setOpen(false);
   };
 
-  
+  const handlepassword=(event)=>{
+    setNewPassword(event.target.value);
+    setHelpertext1("");
+    setHelpertext(false);
+  }
 
   const deleteuser = (id) => {
     let token = Cookies.get("token");
@@ -108,9 +113,12 @@ const[helpertext,setHelpertext]=useState(false);
       .then((response) => {
         if (response.data.status === "Failure") {
           setHelpertext(true)
+          setHelpertext1(response.data.errMsg)
+        }else{
+          handleClose();
+
         }
         // getUsers();
-        handleClose();
       })
       .catch((error) => {
         console.log(error);
@@ -208,7 +216,7 @@ const[helpertext,setHelpertext]=useState(false);
   }, []);
 
   const [columns, setColumns] = useState([
-    { title: "Username", field: "userName" },
+    { title: "Username", field: "userName", editable: "never" },
     { title: "Display name", field: "displayName" },
     {
       title: "Roles",
@@ -220,13 +228,16 @@ const[helpertext,setHelpertext]=useState(false);
     {
       title: "Login Status",
       field: "loginStatus",
-      editable: "never"
+      editable: "never",
     },
     {
       title: "Reset Passowrd",
+       editable: "never",
       render: (rowData) => (
         <Button
-          onClick = {()=>{onClickResetPassword(rowData.userId);}}
+          onClick={() => {
+            onClickResetPassword(rowData.userId);
+          }}
         >
           <RotateLeftIcon />
         </Button>
@@ -257,135 +268,149 @@ const[helpertext,setHelpertext]=useState(false);
             <CircularProgress />
           </Grid>
         ) : (
-            <>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h"
-                  className={classes.title}
-                  style={{ color: "#43B02A", fontSize: "30px" }}
-                >
-                  Update/Delete Users
+          <>
+            <Grid item xs={12}>
+              <Typography
+                variant="h"
+                className={classes.title}
+                style={{ color: "#43B02A", fontSize: "30px" }}
+              >
+                Update/Delete Users
               </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper variant="outlined"></Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <div className={classes.demo}>
-                  <List>
-                    <MaterialTable
-                      title="Users"
-                      columns={columns}
-                      data={data}
-                      editable={{
-                        // onRowAdd: newData =>
-                        //   new Promise((resolve, reject) => {
-                        //     setTimeout(() => {
-                        //       setData([...data, newData]);
+            </Grid>
+            <Grid item xs={12}>
+              <Paper variant="outlined"></Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <div className={classes.demo}>
+                <List>
+                  <MaterialTable
+                    title="Users"
+                    columns={columns}
+                    data={data}
+                    editable={{
+                      // onRowAdd: newData =>
+                      //   new Promise((resolve, reject) => {
+                      //     setTimeout(() => {
+                      //       setData([...data, newData]);
 
-                        //       resolve();
-                        //     }, 1000)
-                        //   }),
+                      //       resolve();
+                      //     }, 1000)
+                      //   }),
 
-                        onRowUpdate: (newData, oldData) =>
-                          new Promise((resolve, reject) => {
-                            setTimeout(() => {
-                              // const dataUpdate = [...data];
-                              // console.log("NEWDATAusername:", newData)
-                              // console.log("OLDDATAusername:", oldData)
-                              // console.log("Username:", newData.userName)
-                              // console.log("Dislayname:", newData.displayName)
-                              // console.log("Roles:", newData.roles)
-                              // console.log("Id:", newData.userId)
-                              setUsername(newData.userName);
-                              setDisplayname(newData.displayName);
-                              setRoles(newData.roles);
-                              updateuser(
-                                newData.userId,
-                                newData.userName,
-                                newData.displayName,
-                                newData.roles
-                              );
-                              // dataUpdate[index] = newData;
-                              // setData([...dataUpdate]);
-                              resolve();
-                            }, 1000);
-                          }),
+                      onRowUpdate: (newData, oldData) =>
+                        new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                            // const dataUpdate = [...data];
+                            // console.log("NEWDATAusername:", newData)
+                            // console.log("OLDDATAusername:", oldData)
+                            // console.log("Username:", newData.userName)
+                            // console.log("Dislayname:", newData.displayName)
+                            // console.log("Roles:", newData.roles)
+                            // console.log("Id:", newData.userId)
+                            setUsername(newData.userName);
+                            setDisplayname(newData.displayName);
+                            setRoles(newData.roles);
+                            updateuser(
+                              newData.userId,
+                              newData.userName,
+                              newData.displayName,
+                              newData.roles
+                            );
+                            // dataUpdate[index] = newData;
+                            // setData([...dataUpdate]);
+                            resolve();
+                          }, 1000);
+                        }),
 
-                        onRowDelete: (oldData, newData) =>
-                          new Promise((resolve, reject) => {
-                            setTimeout(() => {
-                              // const dataDelete = [...data];
-                              deleteuser(oldData.userId);
-                              // dataDelete.splice(index, 1);
-                              // setData([...dataDelete]);
+                      onRowDelete: (oldData, newData) =>
+                        new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                            // const dataDelete = [...data];
+                            deleteuser(oldData.userId);
+                            // dataDelete.splice(index, 1);
+                            // setData([...dataDelete]);
 
-                              resolve();
-                            }, 1000);
-                          }),
-                      }}
-                      style={{
-                        padding: "20px",
-                      }}
-                      title="Users"
-                      columns={columns}
-                      data={data}
-                      // actions={[
-                      //   {
-                      //     icon: "delete",
-                      //     tooltip: "Delete User",
-                      //     onClick: (event, rowData) => delete(rowData.userId),
-                      //   }
-                      // ]}
-                      options={{
-                        paging: false,
-                        // tableLayout: "fixed",
-                        maxBodyHeight: 500,
-                        headerStyle: {
-                          backgroundColor: "rgb(67, 176, 42)",
-                          color: "white",
-                          paddingTop: "10px",
-                          paddingBottom: "10px",
+                            resolve();
+                          }, 1000);
+                        }),
+                    }}
+                    style={{
+                      padding: "20px",
+                    }}
+                    title="Users"
+                    columns={columns}
+                    data={data}
+                    // actions={[
+                    //   {
+                    //     icon: "delete",
+                    //     tooltip: "Delete User",
+                    //     onClick: (event, rowData) => delete(rowData.userId),
+                    //   }
+                    // ]}
+                    localization={{
+                      body: {
+                        editRow: {
+                          deleteText:
+                            "Are you sure you want to delete the user?",
                         },
-                      }}
-                    />
-                  </List>
-                </div>
-              </Grid>
-
-              <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Please enter the new password below.
-          </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="password"
-                    label="New Password"
-                    type="password"
-                    onChange={(event) => setNewPassword(event.target.value)}
-                    fullWidth
+                      },
+                    }}
+                    options={{
+                      paging: false,
+                      // tableLayout: "fixed",
+                      maxBodyHeight: 500,
+                      headerStyle: {
+                        backgroundColor: "rgb(67, 176, 42)",
+                        color: "white",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                      },
+                    }}
                   />
-                </DialogContent>
-                <DialogActions>
-                  <Button 
-                  onClick={handleClose} 
-                  color="primary">
-                    Cancel
-          </Button>
-                  <Button 
-                  onClick={()=>{changePassword(id, NewPassword)}}
-                   color="primary">
-                    Change Password
-          </Button>
-                </DialogActions>
-              </Dialog>
-              
-            </>
-          )}
-          </Grid>
+                </List>
+              </div>
+            </Grid>
+
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Change Password</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Please enter the new password below.
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="password"
+                  label="New Password"
+                  type="password"
+                  error={helpertext}
+                  helperText={helpertext?helpertext1:null}
+                  onChange={(event) => handlepassword(event)}
+                  fullWidth
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    changePassword(id, NewPassword);
+                  }}
+                  color="primary"
+                >
+                  Change Password
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
+      </Grid>
     </div>
   );
 }
