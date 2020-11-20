@@ -45,6 +45,7 @@ function GlobalSearch() {
             let data = JSON.stringify({
               keywords: [keywordsString],
               handles: [handlesString],
+              doNotSchedule: true,
             });
 
             let config = {
@@ -174,7 +175,10 @@ function GlobalSearch() {
               });
         } else if(source === 'facebook') {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromfb?fbpage=${handlesString}`)
-            let data = JSON.stringify({ fbpage: [handlesString] });
+            let data = JSON.stringify({
+              fbpage: [handlesString],
+              doNotSchedule: true,
+            });
 
             let config = {
               method: "post",
@@ -274,7 +278,10 @@ function GlobalSearch() {
               });
         } else if(source === 'instagram'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafrominstagram?instapage=${handlesString}&keywords=${keywordsString}`)
-            let data = JSON.stringify({ instapage: [handlesString] });
+            let data = JSON.stringify({
+              instapage: [handlesString],
+              doNotSchedule: true,
+            });
 
             let config = {
               method: "post",
@@ -409,7 +416,10 @@ function GlobalSearch() {
             });
         } else if(source === 'telegram') {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromtelegramchannel?telegramchannel=${handlesString}&keywords=${keywordsString}`)
-            let data = JSON.stringify({ telegramchannel: [handlesString] });
+            let data = JSON.stringify({
+              telegramchannel: [handlesString],
+              doNotSchedule: true,
+            });
 
             let config = {
               method: "post",
@@ -506,6 +516,7 @@ function GlobalSearch() {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromblogger?bloggerpage=${handlesString}&keywords=${keywordsString}`)
             let data = JSON.stringify({
               bloggerpage: handlesString,
+              doNotSchedule: true,
             });
 
             let config = {
@@ -601,7 +612,10 @@ function GlobalSearch() {
             });
         } else if(source === 'google news'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromgooglenews?googlenewspage=${handlesString}&keywords=${keywordsString}`)
-            let data = JSON.stringify({ googlenewspage: handlesString });
+            let data = JSON.stringify({
+              googlenewspage: handlesString,
+              doNotSchedule: true,
+            });
 
             let config = {
               method: "post",

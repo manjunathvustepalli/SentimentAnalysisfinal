@@ -269,7 +269,7 @@ export default function AddRole() {
                       className={classes.button}
                       variant="contained"
                     >
-                      Sign Up
+                      Add Role
                     </Button>
                   </Grid>
                 </ThemeProvider>
