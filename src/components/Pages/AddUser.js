@@ -29,13 +29,14 @@ import {
 import { green } from "@material-ui/core/colors";
 import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Alert from "@material-ui/lab/Alert";
 
 const theme = createMuiTheme({
   palette: {
     primary: green,
   },
 });
- 
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(4),
@@ -72,34 +73,32 @@ export default function AddUser() {
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
   const [Roles, setRoles] = useState([]);
-  const [loading,setloading]=useState(true);
+  const [loading, setloading] = useState(true);
+  const [success, setSucess] = useState(false);
+  const [failure, setError] = useState(false);
+  const [warning, setWarning] = useState(false);
   const GetRoles = async () => {
     let data = "";
-let token=Cookies.get("token")
+    let token = Cookies.get("token");
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/getroles",
       headers: {
         "Content-Type": "application/json",
         token: token,
-      }, 
+      },
       data: data,
     };
 
-    let response=await axios(config)
-     
-    
-    .catch((error) => {
+    let response = await axios(config).catch((error) => {
       console.log(error);
     });
-      if(response.status===201){
-    await  setRoles(response.data.roles);
-      }
-      if(response.data.roles){
-
-        setloading(false);
-      }
-
+    if (response.status === 201) {
+      await setRoles(response.data.roles);
+    }
+    if (response.data.roles) {
+      setloading(false);
+    }
   };
   useEffect(() => {
     GetRoles();
@@ -107,7 +106,7 @@ let token=Cookies.get("token")
 
   const SignUp = () => {
     let token = Cookies.get("token");
-  
+
     let data = JSON.stringify({
       user: {
         userName: Username,
@@ -130,6 +129,20 @@ let token=Cookies.get("token")
     axios(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        if (response.data.status === "Success") {
+          setSucess(true);
+          setUsername("");
+          setEmail("");
+          setPassword("");
+          setPassword2("");
+          setUserType();
+        } else {
+          if (response.data.errMsg === "Duplicate user name") {
+            setWarning(true);
+          } else {
+            setError(true);
+          }
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -154,9 +167,17 @@ let token=Cookies.get("token")
         <>
           <CssBaseline />
           <div className={classes.paper}>
-            {/* <Avatar className={classes.avatar}>
-            <PersonAddIcon />
-          </Avatar> */}
+            {success ? (
+              <Alert severity="success">Succesfully Added</Alert>
+            ) : null}
+            {failure ? (
+              <Alert severity="error">
+                Something went wrong please try again
+              </Alert>
+            ) : null}
+            {warning ? (
+              <Alert severity="warning">Duplicate user not allowed</Alert>
+            ) : null}
             <Box p={3}>
               <Typography component="h1" variant="h5">
                 Add User
@@ -169,6 +190,7 @@ let token=Cookies.get("token")
                     <Grid item xs={12}>
                       <TextField
                         autoComplete="fname"
+                        value={Username}
                         name="firstName"
                         onChange={(e) => setUsername(e.target.value)}
                         variant="outlined"
@@ -190,7 +212,7 @@ let token=Cookies.get("token")
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
-                          // value={age}
+                          value={UserType}
                           onChange={(e) => setUserType(e.target.value)}
                           label="Age"
                         >
@@ -207,6 +229,7 @@ let token=Cookies.get("token")
                         variant="outlined"
                         required
                         fullWidth
+                        value={email}
                         id="display name"
                         label="Display Name"
                         name="Display Name"
@@ -219,6 +242,7 @@ let token=Cookies.get("token")
                         variant="outlined"
                         required
                         fullWidth
+                        value={Password}
                         name="password"
                         label="Password"
                         type="password"
@@ -232,6 +256,7 @@ let token=Cookies.get("token")
                         variant="outlined"
                         required
                         fullWidth
+                        value={Password2}
                         name="password"
                         label="Re-Enter Password"
                         type="password"
