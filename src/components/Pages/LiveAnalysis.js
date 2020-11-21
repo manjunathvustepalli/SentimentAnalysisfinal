@@ -348,7 +348,7 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
           ]);
-        } else if (source === "facebook") {
+        } else if (source === "instagram") {
           setColumns([
             { title: "Date", field: "date" },
             { title: "Post", field: "tweet" },
@@ -500,20 +500,20 @@ function LiveAnalysis() {
                 sm={3}
                 md={2}
                 lg={2}
-                onClick={() => setSource("facebook")}
+                onClick={() => setSource("instagram")}
                 style={{
                   backgroundColor:
-                    source === "facebook" ? "rgb(67,176,42)" : "",
+                    source === "instagram" ? "rgb(67,176,42)" : "",
                   cursor: "pointer",
                   border: "2px solid rgb(67,176,42)",
-                  color: source === "facebook" ? "white" : "black",
+                  color: source === "instagram" ? "white" : "black",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: "16px",
                 }}
               >
-                FACEBOOK
+                instagram
               </Grid>
               <Grid
                 item
