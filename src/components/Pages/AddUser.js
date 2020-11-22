@@ -29,7 +29,7 @@ import {
 import { green } from "@material-ui/core/colors";
 import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Alert from "@material-ui/lab/Alert";
+  import Alert from "@material-ui/lab/Alert";
 
 const theme = createMuiTheme({
   palette: {

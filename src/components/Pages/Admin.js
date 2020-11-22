@@ -28,7 +28,7 @@ function Admin() {
     },
   ]);
   const [data, setData] = useState([]);
-  const [newlyAddedWord, setNewlyAddedWord] = useState("");
+  const [newlyAddedWord, setNewlyAddedWord] = useState([]);
   const [deletedWord, setDeletedWord] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [loaderOpen, setLoaderOpen] = useState(true);
@@ -90,15 +90,15 @@ function Admin() {
       //   )
       let data="";
       if (source === "facebook") {
-         data = JSON.stringify({ fbpage: newlyAddedWord });
+         data = JSON.stringify({ fbpages: [newlyAddedWord] });
       } else if (source === "instagram") {
-         data = JSON.stringify({ instapage: newlyAddedWord });
+         data = JSON.stringify({ instapages: [newlyAddedWord] });
       } else if (source === "blogger") {
-         data = JSON.stringify({ bloggerpage: newlyAddedWord });
+         data = JSON.stringify({ bloggerpages: [newlyAddedWord] });
       } else if (source === "telegram") {
-         data = JSON.stringify({ telegramchannel: newlyAddedWord });
+         data = JSON.stringify({ telegramchannels: [newlyAddedWord] });
       } else {
-         data = JSON.stringify({ googlenewspage: newlyAddedWord });
+         data = JSON.stringify({ googlenewspages: [newlyAddedWord] });
       }
 
       let config = {
@@ -141,15 +141,15 @@ function Admin() {
       //   )
       let data = "";
       if (source === "facebook") {
-        data = JSON.stringify({ fbpage: deletedWord });
+        data = JSON.stringify({ fbpages: [deletedWord] });
       } else if (source === "instagram") {
-        data = JSON.stringify({ instapage: deletedWord });
+        data = JSON.stringify({ instapages: [deletedWord] });
       } else if (source === "blogger") {
-        data = JSON.stringify({ bloggerpage: deletedWord });
+        data = JSON.stringify({ bloggerpages: [deletedWord] });
       } else if (source === "telegram") {
-        data = JSON.stringify({ telegramchannel: deletedWord });
+        data = JSON.stringify({ telegramchannels: [deletedWord] });
       } else {
-        data = JSON.stringify({ googlenewspage: deletedWord });
+        data = JSON.stringify({ googlenewspages: [deletedWord] });
       }
 
       let config = {

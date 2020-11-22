@@ -31,6 +31,7 @@ import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 import Input from "@material-ui/core/Input";
+import Alert from "@material-ui/lab/Alert";
 
 const theme = createMuiTheme({
   palette: {
@@ -101,6 +102,10 @@ export default function AddRole() {
   const [personName, setPersonName] = useState([]);
   const [role, setrole] = useState();
   const [loading, setloading] = useState(true);
+  const [success, setSucess] = useState(false);
+  const [failure, setError] = useState(false);
+  const [warning, setWarning] = useState(false);
+  const [warningmsg,setWarningmsg]=useState("");
   let roles = "";
   const handleChange = async (event) => {
     setPersonName(event.target.value);
@@ -156,6 +161,22 @@ export default function AddRole() {
     axios(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+          if (response.data.status === "Success") {
+            setSucess(true);
+            setWarning(false);
+            setError(false);
+            setrolename("");
+            setroledescription("");
+            setPersonName([]);
+            roles="";
+            
+          } else {
+           
+              setWarning(true);
+              setSucess(false);
+              setError(false);
+           setWarningmsg(response.data.errMsg)
+          }
       })
       .catch((error) => {
         console.log(error);
@@ -182,6 +203,15 @@ export default function AddRole() {
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
+              {success ? (
+                <Alert severity="success">Succesfully Added new role</Alert>
+              ) : failure ? (
+                <Alert severity="error">
+                  Something went wrong please try again
+                </Alert>
+              ) : warning ? (
+                <Alert severity="warning">{warningmsg}</Alert>
+              ) : null}
               <Box p={3}>
                 <Typography component="h1" variant="h5">
                   Add Role
@@ -194,6 +224,7 @@ export default function AddRole() {
                       <Grid item xs={12}>
                         <TextField
                           autoComplete="fname"
+                          value={roleName}
                           name="firstName"
                           onChange={(e) => setrolename(e.target.value)}
                           variant="outlined"
@@ -223,6 +254,7 @@ export default function AddRole() {
                             id="demo-mutiple-chip"
                             multiple
                             value={personName}
+                            
                             onChange={handleChange}
                             input={<Input id="select-multiple-chip" />}
                             renderValue={(selected) => (
@@ -251,6 +283,7 @@ export default function AddRole() {
                           variant="outlined"
                           required
                           fullWidth
+                          value={roleDescription}
                           name="roleDescription"
                           label="RoleDescription"
                           type="text"

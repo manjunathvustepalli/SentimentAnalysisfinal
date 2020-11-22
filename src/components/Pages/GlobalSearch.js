@@ -7,6 +7,9 @@ import Loader from '../LoaderWithBackDrop'
 import LaunchIcon from '@material-ui/icons/Launch';
 import Image from 'material-ui-image'
 import Cookies from "js-cookie";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
 const dateFormatter = (unix) => {
     var date = new Date(unix);
     var hours = date.getHours();
@@ -21,8 +24,24 @@ const dateFormatter = (unix) => {
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
   });
-
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 function GlobalSearch() {
+    const [open1, setOpen1] = React.useState(false);
+
+     const handleClick = () => {
+       setOpen1(true);
+     };
+
+     const handleClose = (event, reason) => {
+       if (reason === "clickaway") {
+         return;
+       }
+
+       setOpen1(false);
+     };
+
     const [source, setSource] = useState('twitter');
     const [data, setData] = useState([]);
     const [columns, setColumns] = useState([]);
@@ -63,110 +82,131 @@ function GlobalSearch() {
               .then((res) => {
                 console.log(res);
                 if (res.data.status === "Success") {
-                  let query = {
-                    query: {
-                      bool: {
-                        must: [{ terms: { "Source.keyword": [source] } }],
-                      },
-                    },
-                    size: 50,
-                    sort: [
-                      {
-                        CreatedAt: {
-                          order: "desc",
-                        },
-                      },
-                    ],
-                  };
-                  if (handles.length) {
-                    query.query.bool.must.push({
-                      terms: {
-                        "User.ScreenName.keyword": handles,
-                      },
-                    });
-                  }
-                  if (keywords.length) {
-                    query.query.bool.must.push({
-                      terms: {
-                        "HashtagEntities.Text.keyword": keywords,
-                      },
-                    });
-                  }
-                  Axios.post(process.env.REACT_APP_SEARCH_URL, query)
-                    .then((data) => {
-                      console.log(data);
-                      setData(
-                        data.data.hits.hits.map((postObj) => {
-                          if (!postObj._source.User) {
-                            return {
-                              date: dateFormatter(postObj._source.CreatedAt),
-                              post: postObj._source.Text,
-                              favouriteCount: postObj._source.FavoriteCount,
-                              sentiment: postObj._source.predictedSentiment,
-                              mood: postObj._source.predictedMood,
-                              language: postObj._source.predictedLang,
-                            };
-                          } else {
-                            return {
-                              date: dateFormatter(postObj._source.CreatedAt),
-                              post: postObj._source.Text,
-                              favouriteCount: postObj._source.FavoriteCount,
-                              sentiment: postObj._source.predictedSentiment,
-                              mood: postObj._source.predictedMood,
-                              language: postObj._source.predictedLang,
-                              followersCount:
-                                postObj._source.User.FollowersCount,
-                              location: postObj._source.User.Location,
-                              name: postObj._source.User.Name,
-                              screenName: postObj._source.User.ScreenName,
-                            };
-                          }
-                        })
-                      );
-                      setColumns([
-                        {
-                          title: "Date",
-                          field: "date",
-                        },
-                        {
-                          title: "Name",
-                          field: "name",
-                        },
-                        {
-                          title: "Screen Name",
-                          field: "screenName",
-                        },
-                        {
-                          title: "Post",
-                          field: "post",
-                        },
-                        {
-                          title: "Followers Count",
-                          field: "followersCount",
-                        },
-                        {
-                          title: "Location",
-                          field: "location",
-                        },
-                        {
-                          title: "Sentiment",
-                          field: "sentiment",
-                        },
-                        // {
-                        //     title:'Mood',
-                        //     field:'mood',
-                        // },
-                        {
-                          title: "Language",
-                          field: "language",
-                        },
-                      ]);
-                      setopen(false);
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                      setopen(false);
-                    });
+                  // let query = {
+                  //   query: {
+                  //     bool: {
+                  //       must: [{ terms: { "Source.keyword": [source] } }],
+                  //     },
+                  //   },
+                  //   size: 50,
+                  //   sort: [
+                  //     {
+                  //       CreatedAt: {
+                  //         order: "desc",
+                  //       },
+                  //     },
+                  //   ],
+                  // };
+                  // if (handles.length) {
+                  //   query.query.bool.must.push({
+                  //     terms: {
+                  //       "User.ScreenName.keyword": handles,
+                  //     },
+                  //   });
+                  // }
+                  // if (keywords.length) {
+                  //   query.query.bool.must.push({
+                  //     terms: {
+                  //       "HashtagEntities.Text.keyword": keywords,
+                  //     },
+                  //   });
+                  // }
+                  // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                   data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                     queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
+                     .then((data) => {
+                       console.log(data);
+                       setData(
+                         data.data.hits.hits.map((postObj) => {
+                           if (!postObj._source.User) {
+                             return {
+                               date: dateFormatter(postObj._source.CreatedAt),
+                               post: postObj._source.Text,
+                               favouriteCount: postObj._source.FavoriteCount,
+                               sentiment: postObj._source.predictedSentiment,
+                               mood: postObj._source.predictedMood,
+                               language: postObj._source.predictedLang,
+                             };
+                           } else {
+                             return {
+                               date: dateFormatter(postObj._source.CreatedAt),
+                               post: postObj._source.Text,
+                               favouriteCount: postObj._source.FavoriteCount,
+                               sentiment: postObj._source.predictedSentiment,
+                               mood: postObj._source.predictedMood,
+                               language: postObj._source.predictedLang,
+                               followersCount:
+                                 postObj._source.User.FollowersCount,
+                               location: postObj._source.User.Location,
+                               name: postObj._source.User.Name,
+                               screenName: postObj._source.User.ScreenName,
+                             };
+                           }
+                         })
+                       );
+                       setColumns([
+                         {
+                           title: "Date",
+                           field: "date",
+                         },
+                         {
+                           title: "Name",
+                           field: "name",
+                         },
+                         {
+                           title: "Screen Name",
+                           field: "screenName",
+                         },
+                         {
+                           title: "Post",
+                           field: "post",
+                         },
+                         {
+                           title: "Followers Count",
+                           field: "followersCount",
+                         },
+                         {
+                           title: "Location",
+                           field: "location",
+                         },
+                         {
+                           title: "Sentiment",
+                           field: "sentiment",
+                         },
+                         // {
+                         //     title:'Mood',
+                         //     field:'mood',
+                         // },
+                         {
+                           title: "Language",
+                           field: "language",
+                         },
+                       ]);
+                       setopen(false);
+                     })
+                     .catch((err) => {
+                       console.log(err);
+                       setopen(false);
+                     });
+                }
+                else{
+                  handleClick();
+                 setopen(false);
                 }
               })
               .catch((err) => {
@@ -193,37 +233,57 @@ function GlobalSearch() {
 
             Axios(config)
               .then((res) => {
-                let query = {
-                  query: {
-                    bool: {
-                      must: [{ terms: { "Source.keyword": [source] } }],
-                    },
-                  },
-                  size: 50,
-                  sort: [
-                    {
-                      CreatedAt: {
-                        order: "desc",
-                      },
-                    },
-                  ],
-                };
-                if (handles.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "SubSource.keyword": handles,
-                    },
-                  });
-                }
-                if (keywords.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "HashtagEntities.Text.keyword": keywords,
-                    },
-                  });
-                }
+                if(res.data.status==="Success"){
+
+                
+                // let query = {
+                //   query: {
+                //     bool: {
+                //       must: [{ terms: { "Source.keyword": [source] } }],
+                //     },
+                //   },
+                //   size: 50,
+                //   sort: [
+                //     {
+                //       CreatedAt: {
+                //         order: "desc",
+                //       },
+                //     },
+                //   ],
+                // };
+                // if (handles.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "SubSource.keyword": handles,
+                //     },
+                //   });
+                // }
+                // if (keywords.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "HashtagEntities.Text.keyword": keywords,
+                //     },
+                //   });
+                // }
                 setTimeout(() => {
-                  Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                //   Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                    //  queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
                     .then((data) => {
                       setData(
                         data.data.hits.hits.map((postObj, i) => {
@@ -271,6 +331,13 @@ function GlobalSearch() {
                       setopen(false);
                     });
                 }, 10000);
+                }
+                else{
+                  
+                  handleClick();
+                 setopen(false);
+                
+                }
               })
               .catch((err) => {
                 console.log(err);
@@ -279,7 +346,7 @@ function GlobalSearch() {
         } else if(source === 'instagram'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafrominstagram?instapage=${handles}&keywords=${keywordsString}`)
             let data = JSON.stringify({
-              instapage: handles,
+              instapages: handles,
               doNotSchedule: true,
             });
 
@@ -296,38 +363,56 @@ function GlobalSearch() {
 
             Axios(config).then((res) => {
               console.log(res);
-              if (res.data.status === "ACCEPTED") {
-                let query = {
-                  query: {
-                    bool: {
-                      must: [{ terms: { "Source.keyword": [source] } }],
-                    },
-                  },
-                  size: 50,
-                  sort: [
-                    {
-                      CreatedAt: {
-                        order: "desc",
-                      },
-                    },
-                  ],
-                };
-                if (handles.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "SubSource.keyword": handles,
-                    },
-                  });
-                }
-                if (keywords.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "HashtagEntities.Text.keyword": keywords,
-                    },
-                  });
-                }
+              if (res.data.status === "Success") {
+                // let query = {
+                //   query: {
+                //     bool: {
+                //       must: [{ terms: { "Source.keyword": [source] } }],
+                //     },
+                //   },
+                //   size: 50,
+                //   sort: [
+                //     {
+                //       CreatedAt: {
+                //         order: "desc",
+                //       },
+                //     },
+                //   ],
+                // };
+                // if (handles.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "SubSource.keyword": handles,
+                //     },
+                //   });
+                // }
+                // if (keywords.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "HashtagEntities.Text.keyword": keywords,
+                //     },
+                //   });
+                // }
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                    //  queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
+                .then(
                   (data) => {
                     console.log(data.data.hits.hits);
                     setData(
@@ -412,12 +497,15 @@ function GlobalSearch() {
                     setopen(false);
                   }
                 );
+              } else {
+                handleClick();
+                setopen(false);
               }
             });
         } else if(source === 'telegram') {
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromtelegramchannel?telegramchannel=${handles}&keywords=${keywordsString}`)
             let data = JSON.stringify({
-              telegramchannel: handles,
+              telegramchannels: handles,
               doNotSchedule: true,
             });
 
@@ -434,38 +522,56 @@ function GlobalSearch() {
 
             Axios(config).then((res) => {
               console.log(res);
-              if (res.data.status === "ACCEPTED") {
-                let query = {
-                  query: {
-                    bool: {
-                      must: [{ terms: { "Source.keyword": [source] } }],
-                    },
-                  },
-                  size: 50,
-                  sort: [
-                    {
-                      CreatedAt: {
-                        order: "desc",
-                      },
-                    },
-                  ],
-                };
-                if (handles.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "SubSource.keyword": handles,
-                    },
-                  });
-                }
-                if (keywords.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "HashtagEntities.Text.keyword": keywords,
-                    },
-                  });
-                }
+              if (res.data.status === "Success") {
+                // let query = {
+                //   query: {
+                //     bool: {
+                //       must: [{ terms: { "Source.keyword": [source] } }],
+                //     },
+                //   },
+                //   size: 50,
+                //   sort: [
+                //     {
+                //       CreatedAt: {
+                //         order: "desc",
+                //       },
+                //     },
+                //   ],
+                // };
+                // if (handles.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "SubSource.keyword": handles,
+                //     },
+                //   });
+                // }
+                // if (keywords.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "HashtagEntities.Text.keyword": keywords,
+                //     },
+                //   });
+                // }
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                    //  queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
+                .then(
                   (data) => {
                     console.log(data);
                     setData(
@@ -510,12 +616,15 @@ function GlobalSearch() {
                     setopen(false);
                   }
                 );
+              } else {
+                handleClick();
+                setopen(false);
               }
             });
         } else if(source === 'blogger'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromblogger?bloggerpage=${handles}&keywords=${keywordsString}`)
             let data = JSON.stringify({
-              bloggerpage: handles,
+              bloggerpages: handles,
               doNotSchedule: true,
             });
 
@@ -532,38 +641,56 @@ function GlobalSearch() {
 
             Axios(config).then((res) => {
               console.log(res);
-              if (res.data.status === "ACCEPTED") {
-                let query = {
-                  query: {
-                    bool: {
-                      must: [{ terms: { "Source.keyword": [source] } }],
-                    },
-                  },
-                  size: 50,
-                  sort: [
-                    {
-                      CreatedAt: {
-                        order: "desc",
-                      },
-                    },
-                  ],
-                };
-                if (handles.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "SubSource.keyword": handles,
-                    },
-                  });
-                }
-                if (keywords.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "HashtagEntities.Text.keyword": keywords,
-                    },
-                  });
-                }
+              if (res.data.status === "Success") {
+                // let query = {
+                //   query: {
+                //     bool: {
+                //       must: [{ terms: { "Source.keyword": [source] } }],
+                //     },
+                //   },
+                //   size: 50,
+                //   sort: [
+                //     {
+                //       CreatedAt: {
+                //         order: "desc",
+                //       },
+                //     },
+                //   ],
+                // };
+                // if (handles.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "SubSource.keyword": handles,
+                //     },
+                //   });
+                // }
+                // if (keywords.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "HashtagEntities.Text.keyword": keywords,
+                //     },
+                //   });
+                // }
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                    //  queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
+                .then(
                   (data) => {
                     console.log(data);
                     setData(
@@ -608,12 +735,15 @@ function GlobalSearch() {
                     setopen(false);
                   }
                 );
+              } else {
+                handleClick();
+                setopen(false);
               }
             });
         } else if(source === 'google news'){
             // Axios.post(`${process.env.REACT_APP_URL}/fetchdatafromgooglenews?googlenewspage=${handles}&keywords=${keywordsString}`)
             let data = JSON.stringify({
-              googlenewspage: handles,
+              googlenewspages: handles,
               doNotSchedule: true,
             });
 
@@ -629,39 +759,57 @@ function GlobalSearch() {
             };
 
             Axios(config).then((res) => {
-              console.log(res);
-              if (res.data.status === "ACCEPTED") {
-                let query = {
-                  query: {
-                    bool: {
-                      must: [{ terms: { "Source.keyword": ["googlenews"] } }],
-                    },
-                  },
-                  size: 50,
-                  sort: [
-                    {
-                      CreatedAt: {
-                        order: "desc",
-                      },
-                    },
-                  ],
-                };
-                if (handles.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "SubSource.keyword": handles,
-                    },
-                  });
-                }
-                if (keywords.length) {
-                  query.query.bool.must.push({
-                    terms: {
-                      "HashtagEntities.Text.keyword": keywords,
-                    },
-                  });
-                }
+             
+              if (res.data.status === "Success") {
+                // let query = {
+                //   query: {
+                //     bool: {
+                //       must: [{ terms: { "Source.keyword": ["googlenews"] } }],
+                //     },
+                //   },
+                //   size: 50,
+                //   sort: [
+                //     {
+                //       CreatedAt: {
+                //         order: "desc",
+                //       },
+                //     },
+                //   ],
+                // };
+                // if (handles.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "SubSource.keyword": handles,
+                //     },
+                //   });
+                // }
+                // if (keywords.length) {
+                //   query.query.bool.must.push({
+                //     terms: {
+                //       "HashtagEntities.Text.keyword": keywords,
+                //     },
+                //   });
+                // }
 
-                Axios.post(process.env.REACT_APP_SEARCH_URL, query).then(
+                // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
+                data = JSON.stringify({
+                     querySources: [source],
+                     queryUserScreenNames: handles,
+                    //  queryHashtagEntities: keywords,
+                   });
+                   let token = Cookies.get("token");
+                   let config = {
+                     method: "post",
+                     url: process.env.REACT_APP_URL + "query/search",
+                     headers: {
+                       "Content-Type": "application/json",
+                       token: token,
+                     },
+                     data: data,
+                   };
+
+                   Axios(config)
+                .then(
                   (data) => {
                     console.log(data);
                     setData(
@@ -706,6 +854,9 @@ function GlobalSearch() {
                     setopen(false);
                   }
                 );
+              } else {
+                handleClick();
+                setopen(false);
               }
             });
         }
@@ -790,7 +941,7 @@ function GlobalSearch() {
               }}
             />
           </Grid>
-          {source === "twitter"? (
+          {source === "twitter" ? (
             <Grid item sm={12} md={3}>
               <ChipInput
                 fullWidth
@@ -856,6 +1007,11 @@ function GlobalSearch() {
             </div>
           </Grid>
         </Grid>
+        <Snackbar open={open1} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+           Something went wrong please try again. 
+          </Alert>
+        </Snackbar>
         <Dialog
           fullWidth
           style={{ height: "700px" }}
