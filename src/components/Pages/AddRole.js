@@ -137,7 +137,7 @@ export default function AddRole() {
       roles.push(role.pageId);
       console.log(role);
     });
-    roles = roles.slice(0, -1);
+   
 
     let token = Cookies.get("token");
     let data = JSON.stringify({

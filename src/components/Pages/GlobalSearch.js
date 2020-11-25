@@ -57,6 +57,7 @@ function GlobalSearch() {
         let keywordsString = keywords.join(',')
         // let handles = handles.join(',')
         let temp = []
+        console.log("///////////",source)
         if(source === 'twitter'){
             // Axios.post(
             //   `${process.env.REACT_APP_URL}/fetchdatafromtwitter?keywords=${keywordsString}&handles=${handles}`
