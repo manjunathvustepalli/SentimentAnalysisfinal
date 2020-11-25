@@ -120,22 +120,27 @@ function SearchFromDB() {
     //     )
     // let data = JSON.stringify({ querySources: selectedSources });
     let data="";
-    if(selectedSources[0] === 'twitter' || selectedSources[0] === 'new-twitter'){
-     data = JSON.stringify({
-       querySources: selectedSources,
-       // queryLanguages: ["english"],
-       queryUserScreenNames: handles,
-       queryHashtagEntities: keywords,
-     });
-  }
-  else{
-    data = JSON.stringify({
-      querySources: selectedSources,
-      // queryLanguages: ["english"],
-      queryUserScreenNames: handles,
-      queryHashtagEntities: keywords,
-    });
-  }
+    if (selectedSources.length>0){
+
+    
+      if (
+        selectedSources[0] === "twitter" ||
+        selectedSources[0] === "new-twitter"
+      ) {
+        data = JSON.stringify({
+          querySources: selectedSources,
+          // queryLanguages: ["english"],
+          queryUserScreenNames: handles,
+          queryHashtagEntities: keywords,
+        });
+      } else {
+        data = JSON.stringify({
+          querySources: selectedSources,
+          // queryLanguages: ["english"],
+          queryUserScreenNames: handles,
+          queryHashtagEntities: keywords,
+        });
+      }
     let token = Cookies.get("token");
     let config = {
       method: "post",
@@ -255,6 +260,7 @@ function SearchFromDB() {
       .catch((err) => {
         console.log(err);
       });
+    }
   };
 
   useEffect(() => {
