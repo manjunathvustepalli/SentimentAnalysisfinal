@@ -201,7 +201,7 @@ const SideNavBar =  (props) => {
       path: ["/export-data"],
     },
     {
-      name: "Admin Page",
+      name: "Administration",
       icon: <PermDataSettingIcon />,
       path: ["/admin"],
     },
@@ -259,6 +259,11 @@ const SideNavBar =  (props) => {
       name: "Add Role",
       icon: <PersonAddIcon />,
       path: ["/add-role"],
+    },
+    {
+      name: "Update/delete Role",
+      icon: <UpdateIcon />,
+      path: ["/updateDelete-role"],
     },
   ];
  

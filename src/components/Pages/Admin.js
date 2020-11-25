@@ -68,7 +68,8 @@ function Admin() {
   useEffect(() => {
     let token = Cookies.get("token");
     setLoaderOpen(true);
-    if (newlyAddedWord) {
+    console.log("//////////////", newlyAddedWord);
+    if (newlyAddedWord.length!==0) {
       const sourceAddQueryStrings = {
         facebook: "startcrawlingfbpage",
         instagram: "startcrawlinginstagrampage",
