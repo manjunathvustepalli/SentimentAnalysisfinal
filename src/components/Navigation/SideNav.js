@@ -323,7 +323,7 @@ const SideNavBar =  (props) => {
           <Grid item align="right" className="grid-user" xs={6}>
   <Typography> Welcome {name}</Typography>
           </Grid>
-          <Grid xs={2} />
+        
           <Grid item align="left" className="grid-user" xs={4}>
             <Typography align="left">
               <ArrowDropDownIcon />

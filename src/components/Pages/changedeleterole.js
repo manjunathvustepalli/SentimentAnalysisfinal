@@ -26,6 +26,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { DeleteForeverOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -83,6 +84,7 @@ export default function Changedeleterole() {
   const [allRoles, setAllRoles] = useState([]);
   const [edit, setedit] = useState(false);
   const [editrowdata, seteditrowdata] = useState();
+  const [editid, seteditid] = useState();
   const classes = useStyles();
   let mroles = {};
   const handleChange = (event, arr) => {
@@ -129,8 +131,62 @@ export default function Changedeleterole() {
       setAllRoles(roles);
     });
   };
+  const updaterole = async () => {
+    setedit(false);
+    let uipages = [];
+    personName.map((id) => uipages.push(id.pageId));
+    let token = Cookies.get("token");
+    let data = JSON.stringify({
+      role: {
+        roleId: editid,
+        roleName: rolename,
+        roleDescription: roleDescription,
+        pageIds: uipages,
+      },
+    });
+
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/modifyrole",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    await axios(config)
+      .then((response) => {
+        getRoles();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const Deleterole = (olddata) => {
+    let token = Cookies.get("token");
+    let data = JSON.stringify({ role: { roleId: olddata.roleId } });
+
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "admin/deleterole",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then((response) => {
+         return getRoles();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const handleedit = async (rowData) => {
-    console.log(rowData);
+    setedit(true);
     let prole = [];
     seteditrowdata(rowData);
 
@@ -142,8 +198,7 @@ export default function Changedeleterole() {
     await setPersonName(prole);
     await setrolename(rowData.roleName);
     await setroledescription(rowData.roleDescription);
-    console.log(prole);
-    setedit(true);
+    await seteditid(rowData.roleId);
   };
   const getRoles = async () => {
     let token = Cookies.get("token");
@@ -204,7 +259,6 @@ export default function Changedeleterole() {
       {loading ? (
         <Grid
           container
-          spacing={0}
           direction="column"
           alignItems="center"
           justify="center"
@@ -220,16 +274,10 @@ export default function Changedeleterole() {
             columns={columns}
             data={data}
             editable={{
-              // onRowUpdate: (newData, oldData) =>
-              //   new Promise((resolve, reject) => {
-              //     setTimeout(() => {
-              //       resolve();
-              //     }, 1000);
-              //   }),
-
               onRowDelete: (oldData, newData) =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
+                    Deleterole(oldData);
                     resolve();
                   }, 1000);
                 }),
@@ -250,6 +298,7 @@ export default function Changedeleterole() {
             options={{
               paging: false,
               // tableLayout: "fixed",
+              actionsColumnIndex: -1,
               maxBodyHeight: 500,
               headerStyle: {
                 backgroundColor: "rgb(67, 176, 42)",
@@ -264,8 +313,6 @@ export default function Changedeleterole() {
             fullWidth
             style={{ height: "700px" }}
             open={edit}
-            // TransitionComponent={Transition}
-            // keepMounted
             onClose={() => setedit(false)}
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
@@ -289,40 +336,6 @@ export default function Changedeleterole() {
             ) : (
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description">
-                  {/* <Image src={imageUrl} style={{ width: "100%" }} /> */}
-                  {/* <FormControl
-              // className={classes.formControl}
-              variant="outlined"
-              style={{ width: "100%" }}
-            >
-              <InputLabel id="demo-mutiple-chip-label">Page Name</InputLabel>
-              <Select
-                labelId="demo-mutiple-chip-label"
-                id="demo-mutiple-chip"
-                multiple
-                value={personName}
-                onChange={handleChange}
-                input={<Input id="select-multiple-chip" />}
-                renderValue={(selected) => (
-                  <div className={classes.chips}>
-                    {selected.map((value) => (
-                      <Chip
-                        key={value.pageId}
-                        label={value.pageUrl}
-                        className={classes.chip}
-                      />
-                    ))}
-                  </div>
-                )}
-                MenuProps={MenuProps}
-              >
-                {uipages.map((page) => (
-                  <MenuItem key={page.pageId} value={page}>
-                    {page.pageUrl}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
                   <Grid container spacing={4}>
                     <Grid item xs={12}>
                       <TextField
@@ -385,13 +398,16 @@ export default function Changedeleterole() {
                         id="password"
                         autoComplete="current-password"
                         onChange={(e) => setroledescription(e.target.value)}
-                      />{" "}
+                      />
                     </Grid>
                   </Grid>
                 </DialogContentText>
               </DialogContent>
             )}
             <DialogActions>
+              <Button className={classes.root} onClick={() => updaterole()}>
+                Update Role
+              </Button>
               <Button className={classes.root} onClick={() => setedit(false)}>
                 Close
               </Button>

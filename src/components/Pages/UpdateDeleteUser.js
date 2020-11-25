@@ -298,13 +298,6 @@ export default function UpdateDeleteUser() {
                       onRowUpdate: (newData, oldData) =>
                         new Promise((resolve, reject) => {
                           setTimeout(() => {
-                            // const dataUpdate = [...data];
-                            // console.log("NEWDATAusername:", newData)
-                            // console.log("OLDDATAusername:", oldData)
-                            // console.log("Username:", newData.userName)
-                            // console.log("Dislayname:", newData.displayName)
-                            // console.log("Roles:", newData.roles)
-                            // console.log("Id:", newData.userId)
                             setUsername(newData.userName);
                             setDisplayname(newData.displayName);
                             setRoles(newData.roles);
