@@ -41,7 +41,8 @@ import Adduser from "../Pages/AddUser"
 import ChangePassword from '../Pages/ChangPassword'
 import DeleteUser from "../Pages/DeleteUser";
 import UpdateDeleteUser from "../Pages/UpdateDeleteUser";
-import AddRole from "../Pages/AddRole"
+import AddRole from "../Pages/AddRole";
+import changedeleterole from "../Pages/changedeleterole"
 function Routes() {
   return (
    
@@ -86,6 +87,7 @@ function Routes() {
                         <SentimentAnalysisBarChart stack={true} />
                       )}
                     />
+
                     <Route
                       path="/mood-analysis/area-chart"
                       exact
@@ -219,6 +221,11 @@ function Routes() {
                     path="/updateDelete-user" 
                     exact 
                     component={UpdateDeleteUser} 
+                    />
+                    <Route 
+                    path="/updateDelete-role" 
+                    exact 
+                    component={changedeleterole} 
                     />
 
                     <Route 

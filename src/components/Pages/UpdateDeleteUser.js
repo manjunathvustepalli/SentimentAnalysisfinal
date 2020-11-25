@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import {
   Paper,
@@ -9,21 +9,21 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
-} from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { header } from './Auth';
-import axios from 'axios'
+  DialogTitle,
+} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { header } from "./Auth";
+import axios from "axios";
 import MaterialTable from "material-table";
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import { getRoles } from '@testing-library/react';
-import Cookies from 'js-cookie'
+import RotateLeftIcon from "@material-ui/icons/RotateLeft";
+import { getRoles } from "@testing-library/react";
+import Cookies from "js-cookie";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   demo: {
     backgroundColor: theme.palette.background.paper,
@@ -39,31 +39,30 @@ export default function UpdateDeleteUser() {
   const [Username, setUsername] = useState();
   const [Displayname, setDisplayname] = useState();
   const [Roles, setRoles] = useState();
-const[helpertext,setHelpertext]=useState(false);
-const[helpertext1,setHelpertext1]=useState(false);
+  const [helpertext, setHelpertext] = useState(false);
+  const [helpertext1, setHelpertext1] = useState(false);
   const [NewPassword, setNewPassword] = useState();
   const [loading, setloading] = useState(true);
   const [open, setOpen] = React.useState(false);
   const [UserId, setUserId] = useState();
 
-  const [id, setid] = useState()
+  const [id, setid] = useState();
 
   const onClickResetPassword = (userId) => {
-     setOpen(true);
-    setid(userId)
-    console.log(userId)
-    
-  }
+    setOpen(true);
+    setid(userId);
+    console.log(userId);
+  };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handlepassword=(event)=>{
+  const handlepassword = (event) => {
     setNewPassword(event.target.value);
     setHelpertext1("");
     setHelpertext(false);
-  }
+  };
 
   const deleteuser = (id) => {
     let token = Cookies.get("token");
@@ -72,7 +71,7 @@ const[helpertext1,setHelpertext1]=useState(false);
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/deleteuser",
-      headers:  {
+      headers: {
         "Content-Type": "application/json",
         token: token,
       },
@@ -112,11 +111,10 @@ const[helpertext1,setHelpertext1]=useState(false);
     axios(config)
       .then((response) => {
         if (response.data.status === "Failure") {
-          setHelpertext(true)
-          setHelpertext1(response.data.errMsg)
-        }else{
+          setHelpertext(true);
+          setHelpertext1(response.data.errMsg);
+        } else {
           handleClose();
-
         }
         // getUsers();
       })
@@ -128,7 +126,7 @@ const[helpertext1,setHelpertext1]=useState(false);
   };
 
   const updateuser = (id, usernmae, displayName, role) => {
-   let token = Cookies.get("token");
+    let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
         userId: id,
@@ -197,7 +195,6 @@ const[helpertext1,setHelpertext1]=useState(false);
       console.log(error);
     });
     if (response.status === 201) {
-
       await response.data.roles.map((index) => {
         roles[index.roleId] = index.roleName;
         setAllRoles(roles);
@@ -232,7 +229,7 @@ const[helpertext1,setHelpertext1]=useState(false);
     },
     {
       title: "Reset Passowrd",
-       editable: "never",
+      editable: "never",
       render: (rowData) => (
         <Button
           onClick={() => {
@@ -389,7 +386,7 @@ const[helpertext1,setHelpertext1]=useState(false);
                   label="New Password"
                   type="password"
                   error={helpertext}
-                  helperText={helpertext?helpertext1:null}
+                  helperText={helpertext ? helpertext1 : null}
                   onChange={(event) => handlepassword(event)}
                   fullWidth
                 />

@@ -105,8 +105,8 @@ export default function AddRole() {
   const [success, setSucess] = useState(false);
   const [failure, setError] = useState(false);
   const [warning, setWarning] = useState(false);
-  const [warningmsg,setWarningmsg]=useState("");
-  let roles = "";
+  const [warningmsg, setWarningmsg] = useState("");
+  let roles = [];
   const handleChange = async (event) => {
     setPersonName(event.target.value);
   };
@@ -134,7 +134,7 @@ export default function AddRole() {
   };
   const addroleapi = async () => {
     await personName.map((role) => {
-      roles = roles.concat(role.pageId + ",");
+      roles.push(role.pageId);
       console.log(role);
     });
     roles = roles.slice(0, -1);
@@ -161,22 +161,20 @@ export default function AddRole() {
     axios(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-          if (response.data.status === "Success") {
-            setSucess(true);
-            setWarning(false);
-            setError(false);
-            setrolename("");
-            setroledescription("");
-            setPersonName([]);
-            roles="";
-            
-          } else {
-           
-              setWarning(true);
-              setSucess(false);
-              setError(false);
-           setWarningmsg(response.data.errMsg)
-          }
+        if (response.data.status === "Success") {
+          setSucess(true);
+          setWarning(false);
+          setError(false);
+          setrolename("");
+          setroledescription("");
+          setPersonName([]);
+          roles = "";
+        } else {
+          setWarning(true);
+          setSucess(false);
+          setError(false);
+          setWarningmsg(response.data.errMsg);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -254,7 +252,6 @@ export default function AddRole() {
                             id="demo-mutiple-chip"
                             multiple
                             value={personName}
-                            
                             onChange={handleChange}
                             input={<Input id="select-multiple-chip" />}
                             renderValue={(selected) => (
