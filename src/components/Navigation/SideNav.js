@@ -325,15 +325,15 @@ const SideNavBar =  (props) => {
               src={require("../../imgs/user.jpg")}
             />
           </Grid>
-          <Grid item align="right" className="grid-user" xs={6}>
+          <Grid item align="right" className="grid-user" xs={8}>
   <Typography> Welcome {name}</Typography>
           </Grid>
         
-          <Grid item align="left" className="grid-user" xs={4}>
+          {/* <Grid item align="left" className="grid-user" xs={4}>
             <Typography align="left">
               <ArrowDropDownIcon />
             </Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
       </div>
       <Divider style={{ marginTop: "120px" }} />

@@ -1,4 +1,19 @@
-import { Button, Chip, Grid, TextField, Typography } from "@material-ui/core";
+import {
+  Button,
+  Chip,
+  Grid,
+  TextField,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Slide,
+  Dialog,
+  AppBar,
+  Toolbar,
+  IconButton,
+} from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import ChipInput from "material-ui-chip-input";
@@ -7,6 +22,14 @@ import { getKeyArray } from "../../helpers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Auth } from "./Auth";
 import Cookies from "js-cookie";
+import { addMonths } from "../../helpers/index";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import { makeStyles } from "@material-ui/core/styles";
+
 const dateFormatter = (unix) => {
   var date = new Date(unix);
   var hours = date.getHours();
@@ -29,13 +52,32 @@ const dateFormatter = (unix) => {
     seconds.substr(-2)
   );
 };
-
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: "20px",
+    fullWidth: true,
+    display: "flex",
+    wrap: "nowrap",
+  },
+}));
 function SearchFromDB() {
+  const classes = useStyles();
+  var makeDate = new Date();
+  makeDate.setMonth(makeDate.getMonth() - 1);
   const [keywords, setKeywords] = useState();
   const [data, setData] = useState([]);
   const [sources, setSources] = useState([]);
   const [selectedSources, setSelectedSources] = useState([]);
   const [handles, setHandles] = useState();
+  const [startDate, setStartDate] = useState(makeDate);
+  const [endDate, setEndDate] = useState(new Date());
+  const [numberOfRecordsToFetch, setnumberofrecords] = useState(10);
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
   const [columns, setColumns] = useState([
     {
       title: "Date",
@@ -119,10 +161,8 @@ function SearchFromDB() {
     //       query,Auth
     //     )
     // let data = JSON.stringify({ querySources: selectedSources });
-    let data="";
-    if (selectedSources.length>0){
-
-    
+    let data = "";
+    if (selectedSources.length > 0) {
       if (
         selectedSources[0] === "twitter" ||
         selectedSources[0] === "new-twitter"
@@ -132,6 +172,9 @@ function SearchFromDB() {
           // queryLanguages: ["english"],
           queryUserScreenNames: handles,
           queryHashtagEntities: keywords,
+          queryStartDate: startDate,
+          queryEndDate: endDate,
+          numberOfRecordsToFetch: numberOfRecordsToFetch,
         });
       } else {
         data = JSON.stringify({
@@ -139,127 +182,130 @@ function SearchFromDB() {
           // queryLanguages: ["english"],
           queryUserScreenNames: handles,
           queryHashtagEntities: keywords,
+          queryStartDate: startDate,
+          queryEndDate: endDate,
+          numberOfRecordsToFetch: numberOfRecordsToFetch,
         });
       }
-    let token = Cookies.get("token");
-    let config = {
-      method: "post",
-      url: process.env.REACT_APP_URL + "query/search",
-      headers: {
-        "Content-Type": "application/json",
-        token: token,
-      },
-      data: data,
-    };
+      let token = Cookies.get("token");
+      let config = {
+        method: "post",
+        url: process.env.REACT_APP_URL + "query/search",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: data,
+      };
 
-    Axios(config)
-      .then((fetchedData) => {
-        setData(
-          fetchedData.data.hits.hits.map((postObj) => {
-            if (!postObj._source.User) {
-              return {
-                date: dateFormatter(postObj._source.CreatedAt),
-                post: postObj._source.Text,
-                source: postObj._source.Source,
-                subSource: postObj._source.SubSource,
-                favouriteCount: postObj._source.FavoriteCount,
-                sentiment: postObj._source.predictedSentiment,
-                mood: postObj._source.predictedMood,
-                language: postObj._source.predictedLang,
-              };
-            } else {
-              return {
-                date: dateFormatter(postObj._source.CreatedAt),
-                post: postObj._source.Text,
-                source: postObj._source.Source,
-                subSource: postObj._source.SubSource,
-                favouriteCount: postObj._source.FavoriteCount,
-                sentiment: postObj._source.predictedSentiment,
-                mood: postObj._source.predictedMood,
-                language: postObj._source.predictedLang,
-                followersCount: postObj._source.User.FollowersCount,
-                location: postObj._source.User.Location,
-                name: postObj._source.User.Name,
-                screenName: postObj._source.User.ScreenName,
-              };
-            }
-          })
-        );
-        if (sources.includes("twitter")) {
-          setColumns([
-            {
-              title: "Date",
-              field: "date",
-            },
-            {
-              title: "Source",
-              field: "source",
-            },
-            {
-              title: "Sub Source",
-              field: "subSource",
-            },
-            {
-              title: "Name",
-              field: "name",
-            },
-            {
-              title: "Screen Name",
-              field: "screenName",
-            },
-            {
-              title: "Post",
-              field: "post",
-            },
-            {
-              title: "Sentiment",
-              field: "sentiment",
-            },
-            {
-              title: "Mood",
-              field: "mood",
-            },
-            {
-              title: "Language",
-              field: "language",
-            },
-          ]);
-        } else {
-          setColumns([
-            {
-              title: "Date",
-              field: "date",
-            },
-            {
-              title: "Source",
-              field: "source",
-            },
-            {
-              title: "Sub Source",
-              field: "subSource",
-            },
-            {
-              title: "Post",
-              field: "post",
-            },
-            {
-              title: "Sentiment",
-              field: "sentiment",
-            },
-            // {
-            //     title:'Mood',
-            //     field:'mood',
-            // },
-            {
-              title: "Language",
-              field: "language",
-            },
-          ]);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      Axios(config)
+        .then((fetchedData) => {
+          setData(
+            fetchedData.data.hits.hits.map((postObj) => {
+              if (!postObj._source.User) {
+                return {
+                  date: dateFormatter(postObj._source.CreatedAt),
+                  post: postObj._source.Text,
+                  source: postObj._source.Source,
+                  subSource: postObj._source.SubSource,
+                  favouriteCount: postObj._source.FavoriteCount,
+                  sentiment: postObj._source.predictedSentiment,
+                  mood: postObj._source.predictedMood,
+                  language: postObj._source.predictedLang,
+                };
+              } else {
+                return {
+                  date: dateFormatter(postObj._source.CreatedAt),
+                  post: postObj._source.Text,
+                  source: postObj._source.Source,
+                  subSource: postObj._source.SubSource,
+                  favouriteCount: postObj._source.FavoriteCount,
+                  sentiment: postObj._source.predictedSentiment,
+                  mood: postObj._source.predictedMood,
+                  language: postObj._source.predictedLang,
+                  followersCount: postObj._source.User.FollowersCount,
+                  location: postObj._source.User.Location,
+                  name: postObj._source.User.Name,
+                  screenName: postObj._source.User.ScreenName,
+                };
+              }
+            })
+          );
+          if (sources.includes("twitter")) {
+            setColumns([
+              {
+                title: "Date",
+                field: "date",
+              },
+              {
+                title: "Source",
+                field: "source",
+              },
+              {
+                title: "Sub Source",
+                field: "subSource",
+              },
+              {
+                title: "Name",
+                field: "name",
+              },
+              {
+                title: "Screen Name",
+                field: "screenName",
+              },
+              {
+                title: "Post",
+                field: "post",
+              },
+              {
+                title: "Sentiment",
+                field: "sentiment",
+              },
+              {
+                title: "Mood",
+                field: "mood",
+              },
+              {
+                title: "Language",
+                field: "language",
+              },
+            ]);
+          } else {
+            setColumns([
+              {
+                title: "Date",
+                field: "date",
+              },
+              {
+                title: "Source",
+                field: "source",
+              },
+              {
+                title: "Sub Source",
+                field: "subSource",
+              },
+              {
+                title: "Post",
+                field: "post",
+              },
+              {
+                title: "Sentiment",
+                field: "sentiment",
+              },
+              // {
+              //     title:'Mood',
+              //     field:'mood',
+              // },
+              {
+                title: "Language",
+                field: "language",
+              },
+            ]);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -296,7 +342,9 @@ function SearchFromDB() {
         console.log(err);
       });
   }, []);
-
+  const handleDateChange = (date) => {
+    setStartDate(date);
+  };
   return (
     <Grid container>
       <Grid item xs={2} />
@@ -386,7 +434,69 @@ function SearchFromDB() {
           Search
         </Button>
       </Grid>
+
       <Grid item xs={2} />
+      <Grid item xs={1} />
+
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Grid item xs={3}>
+        <div style={{ width: "100%", padding: "0 0 0 90px" }}>
+            <KeyboardDatePicker
+              margin="normal"
+              inputVariant="outlined"
+              id="date-picker-dialog"
+              label="Start Date"
+              format="dd-MM-yyyy"
+              value={startDate}
+              onChange={handleDateChange}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </div>
+        </Grid>
+
+        <Grid item xs={1} />
+        <Grid item xs={2}>
+          <KeyboardDatePicker
+            // className={classes.formControl}
+            margin="normal"
+            id="date-picker-dialog"
+            inputVariant="outlined"
+            label="End Date"
+            value={endDate}
+            onChange={handleEndDateChange}
+            format="dd-MM-yyyy"
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+          />
+        </Grid>
+        <Grid item xs={1} />
+        <Grid item xs={2}>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="demo-simple-select-outlined-label">
+              Word Count
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
+              value={numberOfRecordsToFetch}
+              onChange={(e) => setnumberofrecords(e.target.value)}
+              label="Number of records to fetch "
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={30}>30</MenuItem>
+              <MenuItem value={40}>40</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={75}>75</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </MuiPickersUtilsProvider>
+
       <Grid item xs={12} style={{ marginTop: "20px", padding: "30px" }}>
         <MaterialTable
           title="Search Results"
