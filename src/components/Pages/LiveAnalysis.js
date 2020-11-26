@@ -28,6 +28,9 @@ import Image from "material-ui-image";
 import { Tweet } from "react-twitter-widgets";
 import { Auth } from "./Auth";
 import Cookies from "js-cookie";
+import GridListTileBar from "@material-ui/core/GridListTileBar";
+import GridListTile from "@material-ui/core/GridListTile";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -101,6 +104,7 @@ function LiveAnalysis() {
   const [languages, setLanguages] = useState(["english"]);
   const [source, setSource] = useState("twitter");
   const [dataObject, setDataObject] = useState({});
+  const[sentiment,setsentiment]=useState([]);
   const [columns, setColumns] = useState([
     { title: "Name", field: "name" },
     { title: "Screen Name", field: "screenName" },
@@ -244,9 +248,17 @@ function LiveAnalysis() {
                     if (post.MediaURLHttps) {
                       setactualUrl(post.MediaURLHttps);
                       setImageUrl(post.MediaURLHttps);
+                      
+                      setsentiment(
+                        user._source.PredictedImageSentiment[i]
+                      );
                     } else {
                       setactualUrl(post.MediaURL);
                       setImageUrl(post.MediaURL);
+                     
+                      setsentiment(
+                        user._source.PredictedImageSentiment[i]
+                      );
                     }
                   }}
                 >
@@ -692,7 +704,49 @@ function LiveAnalysis() {
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
               {type === "image" ? (
-                <Image src={imageUrl} style={{ width: "100%" }} />
+                <>
+                  {" "}
+                  <GridListTile>
+                    <Image src={imageUrl} style={{ width: "100%" }} />
+                    <GridListTileBar
+                      subtitle={
+                        <>
+                          <span>
+                           
+                            <br></br>CONFIDENCE: {sentiment.confidence}
+                          </span>
+                        </>
+                      }
+                      actionIcon={
+                        <IconButton
+                          aria-label={`info about `}
+                          className={classes.icon}
+                        >
+                        
+                          {sentiment.sentiment === "positive" ? (
+                            <Chip
+                              size="small"
+                              label="Positive"
+                              style={{ backgroundColor: "#008000" }}
+                            />
+                          ) : sentiment.sentiment === "negative" ? (
+                            <Chip
+                              size="small"
+                              label="Negative"
+                              style={{ backgroundColor: "#FF0000" }}
+                            />
+                          ) : (
+                            <Chip
+                              size="small"
+                              label={sentiment.sentiment}
+                              color="#FF0000"
+                            />
+                          )}
+                        </IconButton>
+                      }
+                    />
+                  </GridListTile>
+                </>
               ) : source === "twitter" ? (
                 <Tweet
                   style={{ width: "100%", height: "70vh" }}
