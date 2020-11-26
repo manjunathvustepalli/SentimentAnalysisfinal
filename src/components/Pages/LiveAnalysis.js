@@ -513,7 +513,28 @@ function LiveAnalysis() {
                   fontSize: "16px",
                 }}
               >
-                instagram
+                INSTAGRAM
+              </Grid>
+              <Grid
+                item
+                xs={4}
+                sm={3}
+                md={2}
+                lg={2}
+                onClick={() => setSource("facebook")}
+                style={{
+                  backgroundColor:
+                    source === "facebook" ? "rgb(67,176,42)" : "",
+                  cursor: "pointer",
+                  border: "2px solid rgb(67,176,42)",
+                  color: source === "facebook" ? "white" : "black",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "16px",
+                }}
+              >
+                FACEBOOK
               </Grid>
               <Grid
                 item
