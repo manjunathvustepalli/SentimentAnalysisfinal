@@ -196,20 +196,21 @@ if (keywordType === "Hash Tags") {
   data = JSON.stringify({
     queryStartDate: from,
     queryEndDate: to,
-    queryHashtagEntities: keywords,
+    queryHashtagEntities: [word],
   });
 }
 if (keywordType === "Screen Name") {
   data = JSON.stringify({
     queryStartDate: from,
     queryEndDate: to,
-    queryUserScreenNames: keywords,
+    queryUserScreenNames: [word],
   });
 }
 if (keywordType === "Entire Data") {
   data = JSON.stringify({
     queryStartDate: from,
     queryEndDate: to,
+    queryUserScreenNames: [word],
   });
 }    let token = Cookies.get("token");
     let config = {
