@@ -172,7 +172,7 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((fetchedData) => {
-        console.log("fetch", fetchedData);
+        console.log("live analysis", fetchedData);
         let final = fetchedData.data.hits.hits.map((user) => {
           let obj = {};
           if (user._source.User) {
@@ -360,7 +360,7 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
           ]);
-        } else if (source === "instagram") {
+        } else if (source === "instagram"||"facebook") {
           setColumns([
             { title: "Date", field: "date" },
             { title: "Post", field: "tweet" },
@@ -373,6 +373,7 @@ function LiveAnalysis() {
               cellStyle: { whiteSpace: "nowrap" },
               headerStyle: { whiteSpace: "nowrap" },
             },
+            { title: "Media Sentiment", field: "predictedSentiment" },
             {
               title: "Media",
               field: "mediaUrl",
@@ -398,6 +399,7 @@ function LiveAnalysis() {
             { title: "Post", field: "tweet" },
             { title: "Mood", field: "mood" },
             { title: "Sentiment", field: "sentiment" },
+            { title: "Media Sentiment", field: "predictedSentiment" },
             {
               title: "Media",
               field: "mediaUrl",

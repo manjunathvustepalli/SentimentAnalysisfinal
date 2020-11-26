@@ -191,73 +191,52 @@ function WordCloudMood() {
     //         ],
     //       },
     //       Auth)
-let data = "";
-if (keywordType === "Hash Tags") {
-  data = JSON.stringify({
-    queryStartDate: from,
-    queryEndDate: to,
+  let data = JSON.stringify({
     queryHashtagEntities: [word],
   });
-}
-if (keywordType === "Screen Name") {
-  data = JSON.stringify({
-    queryStartDate: from,
-    queryEndDate: to,
-    queryUserScreenNames: [word],
+  let token = Cookies.get("token");
+  let config = {
+    method: "post",
+    url: process.env.REACT_APP_URL + "query/search",
+    headers: {
+      "Content-Type": "application/json",
+      token: token,
+    },
+    data: data,
+  };
+  Axios(config).then((fetchedData) => {
+    setTableData(
+      fetchedData.data.hits.hits.map((postObj) => {
+        if (!postObj._source.User) {
+          return {
+            date: dateFormatter(postObj._source.CreatedAt),
+            post: postObj._source.Text,
+            source: postObj._source.Source,
+            subSource: postObj._source.SubSource,
+            favouriteCount: postObj._source.FavoriteCount,
+            sentiment: postObj._source.predictedSentiment,
+            mood: postObj._source.predictedMood,
+            language: postObj._source.predictedLang,
+          };
+        } else {
+          return {
+            date: dateFormatter(postObj._source.CreatedAt),
+            post: postObj._source.Text,
+            source: postObj._source.Source,
+            subSource: postObj._source.SubSource,
+            favouriteCount: postObj._source.FavoriteCount,
+            sentiment: postObj._source.predictedSentiment,
+            mood: postObj._source.predictedMood,
+            language: postObj._source.predictedLang,
+            followersCount: postObj._source.User.FollowersCount,
+            location: postObj._source.User.Location,
+            name: postObj._source.User.Name,
+            screenName: postObj._source.User.ScreenName,
+          };
+        }
+      })
+    );
   });
-}
-if (keywordType === "Entire Data") {
-  data = JSON.stringify({
-    queryStartDate: from,
-    queryEndDate: to,
-    queryUserScreenNames: [word],
-  });
-}    let token = Cookies.get("token");
-    let config = {
-      method: "post",
-      url:
-        process.env.REACT_APP_URL +
-        "query/wordcloudanalysis",
-      headers: {
-        "Content-Type": "application/json",
-        token: token,
-      },
-      data: data,
-    };
-
-    Axios(config).then((fetchedData) => {
-      setTableData(
-        fetchedData.data.hits.hits.map((postObj) => {
-          if (!postObj._source.User) {
-            return {
-              date: dateFormatter(postObj._source.CreatedAt),
-              post: postObj._source.Text,
-              source: postObj._source.Source,
-              subSource: postObj._source.SubSource,
-              favouriteCount: postObj._source.FavoriteCount,
-              sentiment: postObj._source.predictedSentiment,
-              mood: postObj._source.predictedMood,
-              language: postObj._source.predictedLang,
-            };
-          } else {
-            return {
-              date: dateFormatter(postObj._source.CreatedAt),
-              post: postObj._source.Text,
-              source: postObj._source.Source,
-              subSource: postObj._source.SubSource,
-              favouriteCount: postObj._source.FavoriteCount,
-              sentiment: postObj._source.predictedSentiment,
-              mood: postObj._source.predictedMood,
-              language: postObj._source.predictedLang,
-              followersCount: postObj._source.User.FollowersCount,
-              location: postObj._source.User.Location,
-              name: postObj._source.User.Name,
-              screenName: postObj._source.User.ScreenName,
-            };
-          }
-        })
-      );
-    });
   };
 
   const handleClose = () => {
