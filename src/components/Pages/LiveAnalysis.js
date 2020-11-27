@@ -96,7 +96,7 @@ var sortedData = {};
 function LiveAnalysis() {
   const classes = useStyles();
   const [data, setData] = useState([]);
-  const [liveReloading, setLiveReloading] = useState(true);
+  const [liveReloading, setLiveReloading] = useState(false);
   const [reloadInterval, setReloadInterval] = useState(10000);
   const [to] = useState(new Date());
   const [from] = useState(new Date());
@@ -311,7 +311,7 @@ function LiveAnalysis() {
           obj.retweetCount = user._source.RetweetCount;
           obj.mood = user._source.predictedMood;
           obj.sentiment = user._source.predictedSentiment;
-          obj.mediaSentiment = user._source.predictedSentiment;
+          // obj.mediaSentiment = user._source.predictedSentiment;
           obj.language = user._source.predictedLang;
           return obj;
         });

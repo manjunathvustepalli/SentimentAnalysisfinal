@@ -29,7 +29,7 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { makeStyles } from "@material-ui/core/styles";
-
+import moment from "moment"
 const dateFormatter = (unix) => {
   var date = new Date(unix);
   var hours = date.getHours();
@@ -117,7 +117,7 @@ function SearchFromDB() {
     },
   ]);
 
-  const fetchData = () => {
+  const fetchData = async() => {
     // let query = {
     //     "query": {
     //       "bool": {
@@ -161,6 +161,9 @@ function SearchFromDB() {
     //       query,Auth
     //     )
     // let data = JSON.stringify({ querySources: selectedSources });
+    let startdate = await addMonths(startDate, 0);
+    let enddate = await addMonths(endDate, 0);
+    console.log(startdate,enddate)
     let data = "";
     if (selectedSources.length > 0) {
       if (
@@ -172,8 +175,8 @@ function SearchFromDB() {
           // queryLanguages: ["english"],
           queryUserScreenNames: handles,
           queryHashtagEntities: keywords,
-          queryStartDate: startDate,
-          queryEndDate: endDate,
+          queryStartDate: startdate,
+          queryEndDate: enddate,
           numberOfRecordsToFetch: numberOfRecordsToFetch,
         });
       } else {
@@ -182,8 +185,8 @@ function SearchFromDB() {
           // queryLanguages: ["english"],
           queryUserScreenNames: handles,
           queryHashtagEntities: keywords,
-          queryStartDate: startDate,
-          queryEndDate: endDate,
+          queryStartDate: startdate,
+          queryEndDate: startdate,
           numberOfRecordsToFetch: numberOfRecordsToFetch,
         });
       }
@@ -346,7 +349,7 @@ function SearchFromDB() {
     setStartDate(date);
   };
   return (
-    <Grid container>
+    <Grid container direction="row">
       <Grid item xs={2} />
       <Grid item xs={8} align={"center"} style={{ marginTop: "30px" }}>
         <Typography variant={"h5"} style={{ padding: "0 30px" }}>
@@ -436,66 +439,65 @@ function SearchFromDB() {
       </Grid>
 
       <Grid item xs={2} />
-      <Grid item xs={1} />
 
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <Grid container direction="row">
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid item xs={3}>
-        <div style={{ width: "100%", padding: "0 0 0 90px" }}>
+            <div style={{ width: "100%", padding: "0 0 0 100px" }}>
+              <KeyboardDatePicker
+                margin="normal"
+                inputVariant="outlined"
+                id="date-picker-dialog"
+                label="Start Date"
+                format="dd-MM-yyyy"
+                value={startDate}
+                onChange={handleDateChange}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+              />
+            </div>
+          </Grid>
+
+          <Grid item xs={1} />
+          <Grid item xs={2}>
             <KeyboardDatePicker
+              // className={classes.formControl}
               margin="normal"
-              inputVariant="outlined"
               id="date-picker-dialog"
-              label="Start Date"
+              inputVariant="outlined"
+              label="End Date"
+              value={endDate}
+              onChange={handleEndDateChange}
               format="dd-MM-yyyy"
-              value={startDate}
-              onChange={handleDateChange}
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
             />
-          </div>
-        </Grid>
-
-        <Grid item xs={1} />
-        <Grid item xs={2}>
-          <KeyboardDatePicker
-            // className={classes.formControl}
-            margin="normal"
-            id="date-picker-dialog"
-            inputVariant="outlined"
-            label="End Date"
-            value={endDate}
-            onChange={handleEndDateChange}
-            format="dd-MM-yyyy"
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-          />
-        </Grid>
-        <Grid item xs={1} />
-        <Grid item xs={2}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel id="demo-simple-select-outlined-label">
-              Word Count
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={numberOfRecordsToFetch}
-              onChange={(e) => setnumberofrecords(e.target.value)}
-              label="Number of records to fetch "
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={40}>40</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={75}>75</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </MuiPickersUtilsProvider>
+          </Grid>
+          <Grid item xs={1} />
+          <Grid item xs={2}>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Record Count
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={numberOfRecordsToFetch}
+                onChange={(e) => setnumberofrecords(e.target.value)}
+                label="Number of records to fetch "
+              >
+                <MenuItem value={10}>100</MenuItem>
+                <MenuItem value={20}>200</MenuItem>
+                <MenuItem value={30}>500</MenuItem>
+                <MenuItem value={40}>1000</MenuItem>
+                <MenuItem value={50}>2000</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </MuiPickersUtilsProvider>
+      </Grid>
 
       <Grid item xs={12} style={{ marginTop: "20px", padding: "30px" }}>
         <MaterialTable
