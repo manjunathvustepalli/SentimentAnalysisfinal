@@ -1017,8 +1017,8 @@ function GlobalSearch() {
           fullWidth
           style={{ height: "700px" }}
           open={dialogOpen}
-          TransitionComponent={Transition}
-          keepMounted
+          // TransitionComponent={Transition}
+          // keepMounted
           onClose={() => setDialogOpen(false)}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description"

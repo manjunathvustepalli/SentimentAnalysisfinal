@@ -121,7 +121,7 @@ function LiveAnalysis() {
 
   const handleClose = () => {
     setOpen(false);
-    setsentiment("")
+    setsentiment("");
   };
   function fetchData() {
     // Axios.post(
