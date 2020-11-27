@@ -40,6 +40,7 @@ import GridListTileBar from "@material-ui/core/GridListTileBar";
 import GridListTile from "@material-ui/core/GridListTile";
 import Image from "material-ui-image";
 import { Tweet } from "react-twitter-widgets";
+import EditIcon from "@material-ui/icons/Edit";
 
 const dateFormatter = (unix) => {
   var date = new Date(unix);
@@ -82,12 +83,79 @@ function SearchFromDB() {
   const [handles, setHandles] = useState();
   const [startDate, setStartDate] = useState(makeDate);
   const [endDate, setEndDate] = useState(new Date());
-  const [numberOfRecordsToFetch, setnumberofrecords] = useState(10);
+  const [numberOfRecordsToFetch, setnumberofrecords] = useState(100);
   const [open, setOpen] = React.useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [type, setType] = useState("image");
   const [actualUrl, setactualUrl] = useState("");
   const [content, setContent] = useState("");
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState([]);
+  const [editsentiment, setEditSentiment] = useState("");
+  const [editMood, setEditMood] = useState("");
+  const [editlanguage, setEditLanguage] = useState("");
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
+  const handleEditData = async (rowData) => {
+    setEditData(rowData);
+    setEditSentiment(rowData.sentiment);
+    setEditMood(rowData.mood);
+    setEditLanguage(rowData.language);
+
+    setEditOpen(true);
+  };
+  const updatedata = () => {
+    handleEditClose(false);
+    let token = Cookies.get("token");
+    let data = "";
+    if (selectedSources !== "newspaper") {
+      data = JSON.stringify({
+        predictedRecordForUpdate: {
+          id: editData.id,
+          text: editData.post,
+          oldPredictedLanguage: editData.language,
+          newPredictedLanguage: editlanguage,
+          oldPredictedSentiment: editData.sentiment,
+          newPredictedSentiment: editsentiment,
+          oldPredictedMood: editData.mood,
+          newPredictedMood: editMood,
+        },
+      });
+    } else {
+      data = JSON.stringify({
+        predictedRecordForUpdate: {
+          id: editData.id,
+          textBody: editData.post,
+          oldPredictedLanguage: editData.language,
+          newPredictedLanguage: editlanguage,
+          oldPredictedSentiment: editData.sentiment,
+          newPredictedSentiment: editsentiment,
+          oldPredictedMood: editData.mood,
+          newPredictedMood: editMood,
+        },
+      });
+    }
+
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "query/updatedata",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    Axios(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -297,7 +365,7 @@ function SearchFromDB() {
                   );
                 });
               }
-              if (postObj._source.MediaEntities[0].ExpandedURL) {
+              if (postObj._source.MediaEntities[0]) {
                 console.log(
                   "post",
                   postObj._source.MediaEntities[0].ExpandedURL
@@ -335,6 +403,7 @@ function SearchFromDB() {
                   language: postObj._source.predictedLang,
                   mediaUrl: obj.mediaUrl,
                   predictedSentiment: obj.predictedSentiment,
+                  id: postObj._id,
                 };
               } else {
                 return {
@@ -352,6 +421,7 @@ function SearchFromDB() {
                   screenName: postObj._source.User.ScreenName,
                   mediaUrl: obj.mediaUrl,
                   predictedSentiment: obj.predictedSentiment,
+                  id: postObj._id,
                 };
               }
             })
@@ -398,8 +468,19 @@ function SearchFromDB() {
               {
                 title: "Media",
                 field: "mediaUrl",
-                // width: "1%",
-                // headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Reset Password",
+                editable: "never",
+                render: (rowData) => (
+                  <Button
+                    onClick={() => {
+                      handleEditData(rowData);
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                ),
               },
             ]);
           } else {
@@ -425,8 +506,8 @@ function SearchFromDB() {
                 field: "sentiment",
               },
               {
-                  title:'Mood',
-                  field:'mood',
+                title: "Mood",
+                field: "mood",
               },
               {
                 title: "Language",
@@ -438,6 +519,19 @@ function SearchFromDB() {
                 field: "mediaUrl",
                 // width: "1%",
                 // headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Reset Password",
+                editable: "never",
+                render: (rowData) => (
+                  <Button
+                    onClick={() => {
+                      handleEditData(rowData);
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                ),
               },
             ]);
           }
@@ -741,6 +835,66 @@ function SearchFromDB() {
             <Button className={classes.root}>Visit</Button>
           </a>
           <Button className={classes.root} onClick={handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        fullWidth
+        style={{ height: "700px" }}
+        open={editOpen}
+        // TransitionComponent={Transition}
+        keepMounted
+        onClose={handleEditClose}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle
+          style={{ background: "rgb(67,176,42)", color: "white" }}
+          id="alert-dialog-slide-title"
+        >
+          Edit
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Language"
+            type="text"
+            value={editlanguage}
+            onChange={(event) => setEditLanguage(event)}
+            fullWidth
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Sentiment"
+            type="text"
+            value={editsentiment}
+            onChange={(event) => setEditSentiment(event.target.value)}
+            fullWidth
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Mood"
+            type="text"
+            value={editMood}
+            // error={helpertext}
+            // helperText={helpertext ? helpertext1 : null}
+            onChange={(event) => setEditMood(event)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.root} onClick={updatedata}>
+            Update
+          </Button>
+
+          <Button className={classes.root} onClick={handleEditClose}>
             Close
           </Button>
         </DialogActions>

@@ -1,4 +1,4 @@
-import { Button, capitalize, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Select, Slide, } from '@material-ui/core';
+import { Button, capitalize,TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Select, Slide, } from '@material-ui/core';
 import React, { useState } from 'react'
 import ChipInput from 'material-ui-chip-input';
 import Axios from 'axios';
@@ -9,6 +9,7 @@ import Image from 'material-ui-image'
 import Cookies from "js-cookie";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import EditIcon from "@material-ui/icons/Edit";
 
 const dateFormatter = (unix) => {
     var date = new Date(unix);
@@ -50,6 +51,73 @@ function GlobalSearch() {
     const [open, setopen] = useState(false)
     const [imageUrl, setImageUrl] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
+    const [editData, setEditData] = useState([]);
+    const [editsentiment, setEditSentiment] = useState("");
+    const [editMood, setEditMood] = useState("");
+    const [editlanguage, setEditLanguage] = useState("");
+
+    const handleEditClose = () => {
+      setEditOpen(false);
+    };
+    const handleEditData = async (rowData) => {
+      setEditData(rowData);
+      setEditSentiment(rowData.sentiment);
+      setEditMood(rowData.mood);
+      setEditLanguage(rowData.language);
+
+      setEditOpen(true);
+    };
+    const updatedata = () => {
+      handleEditClose(false);
+      let token = Cookies.get("token");
+      let data = "";
+      if (source !== "newspaper") {
+        data = JSON.stringify({
+          predictedRecordForUpdate: {
+            id: editData.id,
+            text: editData.post,
+            oldPredictedLanguage: editData.language,
+            newPredictedLanguage: editlanguage,
+            oldPredictedSentiment: editData.sentiment,
+            newPredictedSentiment: editsentiment,
+            oldPredictedMood: editData.mood,
+            newPredictedMood: editMood,
+          },
+        });
+      } else {
+        data = JSON.stringify({
+          predictedRecordForUpdate: {
+            id: editData.id,
+            textBody: editData.post,
+            oldPredictedLanguage: editData.language,
+            newPredictedLanguage: editlanguage,
+            oldPredictedSentiment: editData.sentiment,
+            newPredictedSentiment: editsentiment,
+            oldPredictedMood: editData.mood,
+            newPredictedMood: editMood,
+          },
+        });
+      }
+
+      let config = {
+        method: "post",
+        url: process.env.REACT_APP_URL + "query/updatedata",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: data,
+      };
+
+      Axios(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
 
     const submitData = () => {
         let token=Cookies.get("token")
@@ -142,6 +210,7 @@ function GlobalSearch() {
                                sentiment: postObj._source.predictedSentiment,
                                mood: postObj._source.predictedMood,
                                language: postObj._source.predictedLang,
+                               id: postObj._id,
                              };
                            } else {
                              return {
@@ -156,6 +225,7 @@ function GlobalSearch() {
                                location: postObj._source.User.Location,
                                name: postObj._source.User.Name,
                                screenName: postObj._source.User.ScreenName,
+                               id: postObj._id,
                              };
                            }
                          })
@@ -190,12 +260,25 @@ function GlobalSearch() {
                            field: "sentiment",
                          },
                          {
-                             title:'Mood',
-                             field:'mood',
+                           title: "Mood",
+                           field: "mood",
                          },
                          {
                            title: "Language",
                            field: "language",
+                         },
+                         {
+                           title: "Reset Password",
+                           editable: "never",
+                           render: (rowData) => (
+                             <Button
+                               onClick={() => {
+                                 handleEditData(rowData);
+                               }}
+                             >
+                               <EditIcon />
+                             </Button>
+                           ),
                          },
                        ]);
                        setopen(false);
@@ -296,6 +379,7 @@ function GlobalSearch() {
                             mood: postObj._source.predictedMood,
                             language: postObj._source.predictedLang,
                             screenName: postObj._source.SubSource,
+                            id: postObj._id,
                           };
                         })
                       );
@@ -317,12 +401,25 @@ function GlobalSearch() {
                           field: "sentiment",
                         },
                         {
-                            title:'Mood',
-                            field:'mood',
+                          title: "Mood",
+                          field: "mood",
                         },
                         {
                           title: "Language",
                           field: "language",
+                        },
+                        {
+                          title: "Reset Password",
+                          editable: "never",
+                          render: (rowData) => (
+                            <Button
+                              onClick={() => {
+                                handleEditData(rowData);
+                              }}
+                            >
+                              <EditIcon />
+                            </Button>
+                          ),
                         },
                       ]);
                       setopen(false);
@@ -430,6 +527,7 @@ function GlobalSearch() {
                             mood: postObj._source.predictedMood,
                             language: postObj._source.predictedLang,
                             screenName: postObj._source.SubSource,
+                            id: postObj._id,
                             image: postObj._source.MediaEntities.map(
                               (image) => {
                                 if (!image.MediaURL) {
@@ -461,6 +559,7 @@ function GlobalSearch() {
                             mood: postObj._source.predictedMood,
                             language: postObj._source.predictedLang,
                             screenName: postObj._source.SubSource,
+                            id: postObj._id,
                           };
                         }
                       })
@@ -483,8 +582,8 @@ function GlobalSearch() {
                         field: "sentiment",
                       },
                       {
-                          title:'Mood',
-                          field:'mood',
+                        title: "Mood",
+                        field: "mood",
                       },
                       {
                         title: "Language",
@@ -493,6 +592,19 @@ function GlobalSearch() {
                       {
                         title: "Media Urls",
                         field: "image",
+                      },
+                      {
+                        title: "Reset Password",
+                        editable: "never",
+                        render: (rowData) => (
+                          <Button
+                            onClick={() => {
+                              handleEditData(rowData);
+                            }}
+                          >
+                            <EditIcon />
+                          </Button>
+                        ),
                       },
                     ]);
                     setopen(false);
@@ -585,6 +697,7 @@ function GlobalSearch() {
                           mood: postObj._source.predictedMood,
                           language: postObj._source.predictedLang,
                           screenName: postObj._source.SubSource,
+                          id: postObj._id,
                         };
                       })
                     );
@@ -606,12 +719,25 @@ function GlobalSearch() {
                         field: "sentiment",
                       },
                       {
-                          title:'Mood',
-                          field:'mood',
+                        title: "Mood",
+                        field: "mood",
                       },
                       {
                         title: "Language",
                         field: "language",
+                      },
+                      {
+                        title: "Reset Password",
+                        editable: "never",
+                        render: (rowData) => (
+                          <Button
+                            onClick={() => {
+                              handleEditData(rowData);
+                            }}
+                          >
+                            <EditIcon />
+                          </Button>
+                        ),
                       },
                     ]);
                     setopen(false);
@@ -704,6 +830,7 @@ function GlobalSearch() {
                           mood: postObj._source.predictedMood,
                           language: postObj._source.predictedLang,
                           screenName: postObj._source.SubSource,
+                          id: postObj._id,
                         };
                       })
                     );
@@ -725,12 +852,25 @@ function GlobalSearch() {
                         field: "sentiment",
                       },
                       {
-                          title:'Mood',
-                          field:'mood',
+                        title: "Mood",
+                        field: "mood",
                       },
                       {
                         title: "Language",
                         field: "language",
+                      },
+                      {
+                        title: "Reset Password",
+                        editable: "never",
+                        render: (rowData) => (
+                          <Button
+                            onClick={() => {
+                              handleEditData(rowData);
+                            }}
+                          >
+                            <EditIcon />
+                          </Button>
+                        ),
                       },
                     ]);
                     setopen(false);
@@ -823,6 +963,7 @@ function GlobalSearch() {
                           mood: postObj._source.predictedMood,
                           language: postObj._source.predictedLang,
                           screenName: postObj._source.SubSource,
+                          id: postObj._id,
                         };
                       })
                     );
@@ -844,12 +985,25 @@ function GlobalSearch() {
                         field: "sentiment",
                       },
                       {
-                          title:'Mood',
-                          field:'mood',
+                        title: "Mood",
+                        field: "mood",
                       },
                       {
                         title: "Language",
                         field: "language",
+                      },
+                      {
+                        title: "Reset Password",
+                        editable: "never",
+                        render: (rowData) => (
+                          <Button
+                            onClick={() => {
+                              handleEditData(rowData);
+                            }}
+                          >
+                            <EditIcon />
+                          </Button>
+                        ),
                       },
                     ]);
                     setopen(false);
@@ -1010,7 +1164,7 @@ function GlobalSearch() {
         </Grid>
         <Snackbar open={open1} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error">
-           Something went wrong please try again. 
+            Something went wrong please try again.
           </Alert>
         </Snackbar>
         <Dialog
@@ -1034,6 +1188,66 @@ function GlobalSearch() {
               className={classes.root}
               onClick={() => setDialogOpen(false)}
             >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          fullWidth
+          style={{ height: "700px" }}
+          open={editOpen}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleEditClose}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle
+            style={{ background: "rgb(67,176,42)", color: "white" }}
+            id="alert-dialog-slide-title"
+          >
+            Edit
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="password"
+              label="Language"
+              type="text"
+              value={editlanguage}
+              onChange={(event) => setEditLanguage(event)}
+              fullWidth
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="password"
+              label="Sentiment"
+              type="text"
+              value={editsentiment}
+              onChange={(event) => setEditSentiment(event.target.value)}
+              fullWidth
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="password"
+              label="Mood"
+              type="text"
+              value={editMood}
+              // error={helpertext}
+              // helperText={helpertext ? helpertext1 : null}
+              onChange={(event) => setEditMood(event)}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button className={classes.root} onClick={updatedata}>
+              Update
+            </Button>
+
+            <Button className={classes.root} onClick={handleEditClose}>
               Close
             </Button>
           </DialogActions>
