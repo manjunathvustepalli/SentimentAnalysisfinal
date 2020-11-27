@@ -121,6 +121,7 @@ function LiveAnalysis() {
 
   const handleClose = () => {
     setOpen(false);
+    setsentiment("")
   };
   function fetchData() {
     // Axios.post(
@@ -248,17 +249,18 @@ function LiveAnalysis() {
                     if (post.MediaURLHttps) {
                       setactualUrl(post.MediaURLHttps);
                       setImageUrl(post.MediaURLHttps);
-                      
-                      setsentiment(
-                        user._source.PredictedImageSentiment[i]
-                      );
+                      if (user._source.PredictedImageSentiment){
+
+                        setsentiment(user._source.PredictedImageSentiment[i]);
+                      }
                     } else {
                       setactualUrl(post.MediaURL);
                       setImageUrl(post.MediaURL);
-                     
+                      if (user._source.PredictedImageSentiment){
                       setsentiment(
                         user._source.PredictedImageSentiment[i]
                       );
+                      }
                     }
                   }}
                 >

@@ -13,6 +13,11 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+   
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
@@ -29,7 +34,13 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { makeStyles } from "@material-ui/core/styles";
-import moment from "moment"
+import moment from "moment";
+import LaunchIcon from "@material-ui/icons/Launch";
+import GridListTileBar from "@material-ui/core/GridListTileBar";
+import GridListTile from "@material-ui/core/GridListTile";
+import Image from "material-ui-image";
+import { Tweet } from "react-twitter-widgets";
+
 const dateFormatter = (unix) => {
   var date = new Date(unix);
   var hours = date.getHours();
@@ -72,12 +83,21 @@ function SearchFromDB() {
   const [startDate, setStartDate] = useState(makeDate);
   const [endDate, setEndDate] = useState(new Date());
   const [numberOfRecordsToFetch, setnumberofrecords] = useState(10);
+  const [open, setOpen] = React.useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [type, setType] = useState("image");
+  const [actualUrl, setactualUrl] = useState("");
+  const [content, setContent] = useState("");
+
   const handleStartDateChange = (date) => {
     setStartDate(date);
   };
   const handleEndDateChange = (date) => {
     setEndDate(date);
   };
+   const handleClose = () => {
+     setOpen(false);
+   };
   const [columns, setColumns] = useState([
     {
       title: "Date",
@@ -117,7 +137,7 @@ function SearchFromDB() {
     },
   ]);
 
-  const fetchData = async() => {
+  const fetchData = async () => {
     // let query = {
     //     "query": {
     //       "bool": {
@@ -163,7 +183,7 @@ function SearchFromDB() {
     // let data = JSON.stringify({ querySources: selectedSources });
     let startdate = await addMonths(startDate, 0);
     let enddate = await addMonths(endDate, 0);
-    console.log(startdate,enddate)
+    console.log(startdate, enddate);
     let data = "";
     if (selectedSources.length > 0) {
       if (
@@ -205,6 +225,104 @@ function SearchFromDB() {
         .then((fetchedData) => {
           setData(
             fetchedData.data.hits.hits.map((postObj) => {
+              let obj = { mediaUrl: "", predictedSentiment: "" };
+              if (postObj._source.PredictedImageSentiment) {
+                console.log(postObj._source.PredictedImageSentiment);
+                obj.predictedSentiment = postObj._source.PredictedImageSentiment.map(
+                  (image) =>
+                    image.sentiment === "neutral" ? (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "#424242",
+                          color: "white",
+                        }}
+                      />
+                    ) : image.sentiment === "positive" ? (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "rgb(67,176,42)",
+                          color: "white",
+                        }}
+                      />
+                    ) : (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "#ff1744",
+                          color: "white",
+                        }}
+                      />
+                    )
+                );
+              }
+              if (
+                postObj._source.MediaEntities &&
+                postObj._source.MediaEntities.length
+              ) {
+                obj.mediaUrl = postObj._source.MediaEntities.map((post, i) => {
+                  // console.log("mediaurl",post)
+                  return (
+                    <IconButton
+                      className={classes.root}
+                      onClick={() => {
+                        setOpen(true);
+                        setType("image");
+                        if (post.MediaURLHttps) {
+                          setactualUrl(post.MediaURLHttps);
+                          setImageUrl(post.MediaURLHttps);
+
+                          // setsentiment(
+                          //   user._source.PredictedImageSentiment[i]
+                          // );
+                        } else {
+                          setactualUrl(post.MediaURL);
+                          setImageUrl(post.MediaURL);
+
+                          // setsentiment(
+                          //   user._source.PredictedImageSentiment[i]
+                          // );
+                        }
+                      }}
+                    >
+                      <LaunchIcon />
+                    </IconButton>
+                  );
+                });
+              }
+              if (postObj._source.MediaEntities[0].ExpandedURL) {
+                console.log(
+                  "post",
+                  postObj._source.MediaEntities[0].ExpandedURL
+                );
+                obj.postUrl = (
+                  <IconButton
+                    onClick={() => {
+                      setOpen(true);
+                      setType("post");
+                      let splittedUrl = postObj._source.MediaEntities[0].ExpandedURL.split(
+                        "/photo"
+                      )[0].split("/");
+                      let id = splittedUrl[splittedUrl.length - 1];
+                      setContent(id);
+                      setactualUrl(
+                        postObj._source.MediaEntities[0].ExpandedURL
+                      );
+                    }}
+                    className={classes.root}
+                  >
+                    {" "}
+                    <LaunchIcon />{" "}
+                  </IconButton>
+                );
+              }
               if (!postObj._source.User) {
                 return {
                   date: dateFormatter(postObj._source.CreatedAt),
@@ -215,6 +333,8 @@ function SearchFromDB() {
                   sentiment: postObj._source.predictedSentiment,
                   mood: postObj._source.predictedMood,
                   language: postObj._source.predictedLang,
+                  mediaUrl: obj.mediaUrl,
+                  predictedSentiment: obj.predictedSentiment,
                 };
               } else {
                 return {
@@ -230,6 +350,8 @@ function SearchFromDB() {
                   location: postObj._source.User.Location,
                   name: postObj._source.User.Name,
                   screenName: postObj._source.User.ScreenName,
+                  mediaUrl: obj.mediaUrl,
+                  predictedSentiment: obj.predictedSentiment,
                 };
               }
             })
@@ -272,6 +394,13 @@ function SearchFromDB() {
                 title: "Language",
                 field: "language",
               },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                // width: "1%",
+                // headerStyle: { whiteSpace: "nowrap" },
+              },
             ]);
           } else {
             setColumns([
@@ -295,13 +424,20 @@ function SearchFromDB() {
                 title: "Sentiment",
                 field: "sentiment",
               },
-              // {
-              //     title:'Mood',
-              //     field:'mood',
-              // },
+              {
+                  title:'Mood',
+                  field:'mood',
+              },
               {
                 title: "Language",
                 field: "language",
+              },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                // width: "1%",
+                // headerStyle: { whiteSpace: "nowrap" },
               },
             ]);
           }
@@ -488,11 +624,11 @@ function SearchFromDB() {
                 onChange={(e) => setnumberofrecords(e.target.value)}
                 label="Number of records to fetch "
               >
-                <MenuItem value={10}>100</MenuItem>
-                <MenuItem value={20}>200</MenuItem>
-                <MenuItem value={30}>500</MenuItem>
-                <MenuItem value={40}>1000</MenuItem>
-                <MenuItem value={50}>2000</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+                <MenuItem value={200}>200</MenuItem>
+                <MenuItem value={500}>500</MenuItem>
+                <MenuItem value={1000}>1000</MenuItem>
+                <MenuItem value={2000}>2000</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -504,7 +640,7 @@ function SearchFromDB() {
           title="Search Results"
           columns={columns}
           data={data}
-          style={{ padding: "20px" }}
+          style={{ padding: "15px" }}
           options={{
             tableLayout: "fixed",
             maxBodyHeight: 500,
@@ -517,6 +653,98 @@ function SearchFromDB() {
           }}
         />
       </Grid>
+      <Dialog
+        fullWidth
+        style={{ height: "700px" }}
+        open={open}
+        // TransitionComponent={Transition}
+        // keepMounted
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle
+          style={{ background: "rgb(67,176,42)", color: "white" }}
+          id="alert-dialog-slide-title"
+        >
+          {" "}
+          {type === "image" ? "Image" : "Post"}{" "}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            {type === "image" ? (
+              <>
+                {" "}
+                <GridListTile>
+                  <Image src={imageUrl} style={{ width: "100%" }} />
+                  <GridListTileBar
+                    subtitle={
+                      <>
+                        <span>
+                          {/* <br></br>CONFIDENCE: {sentiment.confidence} */}
+                        </span>
+                      </>
+                    }
+                    // actionIcon={
+                    //   <IconButton
+                    //     aria-label={`info about `}
+                    //     className={classes.icon}
+                    //   >
+                    //     {sentiment.sentiment === "positive" ? (
+                    //       <Chip
+                    //         size="small"
+                    //         label="Positive"
+                    //         style={{ backgroundColor: "#008000" }}
+                    //       />
+                    //     ) : sentiment.sentiment === "negative" ? (
+                    //       <Chip
+                    //         size="small"
+                    //         label="Negative"
+                    //         style={{ backgroundColor: "#FF0000" }}
+                    //       />
+                    //     ) : (
+                    //       <Chip
+                    //         size="small"
+                    //         label={sentiment.sentiment}
+                    //         color="#FF0000"
+                    //       />
+                    //     )}
+                    //   </IconButton>
+                    // }
+                  />
+                </GridListTile>
+              </>
+            ) : selectedSources === "twitter" ? (
+              <Tweet
+                style={{ width: "100%", height: "70vh" }}
+                tweetId={content}
+              />
+            ) : (
+              <iframe
+                border={0}
+                frameborder={0}
+                style={{ width: "500px", height: "70vh" }}
+                sandbox=""
+                title={"post"}
+                src={content}
+              ></iframe>
+            )}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <a
+            href={actualUrl}
+            style={{ textDecoration: "none" }}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button className={classes.root}>Visit</Button>
+          </a>
+          <Button className={classes.root} onClick={handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }
