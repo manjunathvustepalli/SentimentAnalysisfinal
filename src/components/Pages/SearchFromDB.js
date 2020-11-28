@@ -78,7 +78,7 @@ function SearchFromDB() {
   makeDate.setMonth(makeDate.getMonth() - 1);
   const [keywords, setKeywords] = useState();
   const [data, setData] = useState([]);
-  const [sources, setSources] = useState([]);
+  const [sources, setSources] = useState(["twitter","facebook","newspaper","instagram"]);
   const [selectedSources, setSelectedSources] = useState([]);
   const [handles, setHandles] = useState();
   const [startDate, setStartDate] = useState(makeDate);
@@ -514,7 +514,7 @@ function SearchFromDB() {
           if(editDataAcess==="true"){
           
             let editicon = {
-              title: "Edit",
+              title: "Suggest Corrections",
               editable: "never",
               render: (rowData) => (
                 <Button
@@ -562,7 +562,7 @@ function SearchFromDB() {
 
     Axios(config)
       .then((data) => {
-        setSources(getKeyArray(data.data.aggregations.Source.buckets));
+        // setSources(getKeyArray(data.data.aggregations.Source.buckets));
       })
       .catch((err) => {
         console.log(err);

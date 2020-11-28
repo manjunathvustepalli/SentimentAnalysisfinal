@@ -271,18 +271,18 @@ function GlobalSearch() {
                        ]);
                        if (editDataAcess === "true") {
                          let editicon = {
-                           title: "Edit",
+                           title: "Suggest Corrections",
                            editable: "never",
                            render: (rowData) => (
                              <Button
-                                onClick={() => {
-                                  handleEditData(rowData);
-                                }}
-                              >
-                                <EditIcon />
-                              </Button>
-                            ),
-                          };
+                               onClick={() => {
+                                 handleEditData(rowData);
+                               }}
+                             >
+                               <EditIcon />
+                             </Button>
+                           ),
+                         };
                           setColumns((oldArray) => [...oldArray, editicon]);
                         }
                         setopen(false);
@@ -415,7 +415,7 @@ function GlobalSearch() {
                       ]);
                        if (editDataAcess === "true") {
                          let editicon = {
-                           title: "Edit",
+                           title: "Suggest Corrections",
                            editable: "never",
                            render: (rowData) => (
                              <Button
@@ -603,7 +603,7 @@ function GlobalSearch() {
                     ]);
                      if (editDataAcess === "true") {
                        let editicon = {
-                         title: "Edit",
+                         title: "Suggest Corrections",
                          editable: "never",
                          render: (rowData) => (
                            <Button
@@ -740,7 +740,7 @@ function GlobalSearch() {
                     ]);
                      if (editDataAcess === "true") {
                        let editicon = {
-                         title: "Edit",
+                         title: "Suggest Corrections",
                          editable: "never",
                          render: (rowData) => (
                            <Button
@@ -876,7 +876,7 @@ function GlobalSearch() {
                     ]);
                      if (editDataAcess === "true") {
                        let editicon = {
-                         title: "Edit",
+                         title: "Suggest Corrections",
                          editable: "never",
                          render: (rowData) => (
                            <Button
@@ -1012,7 +1012,7 @@ function GlobalSearch() {
                     ]);
                      if (editDataAcess === "true") {
                        let editicon = {
-                         title: "Edit",
+                         title: "Suggest Corrections",
                          editable: "never",
                          render: (rowData) => (
                            <Button
@@ -1085,9 +1085,9 @@ function GlobalSearch() {
                   "facebook",
                   "twitter",
                   "instagram",
-                  "telegram",
-                  "blogger",
-                  "google news",
+                  // "telegram",
+                  // "blogger",
+                  // "google news",
                 ].map((source, i) => (
                   <MenuItem value={source} key={i}>
                     {" "}

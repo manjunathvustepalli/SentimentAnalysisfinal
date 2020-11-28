@@ -439,10 +439,9 @@ function LiveAnalysis() {
                 width: "1%",
                 headerStyle: { whiteSpace: "nowrap" },
               },
-              
-               
+
               {
-                title: "Edit",
+                title: "Suggest Corrections",
                 editable: "never",
                 render: (rowData) => (
                   <Button
@@ -454,9 +453,6 @@ function LiveAnalysis() {
                   </Button>
                 ),
               },
-            
-          
-        
             ]);
           }else{
             setColumns([
@@ -543,12 +539,12 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
             {
-              title: "Edit",
+              title: "Suggest Corrections",
               editable: "never",
               render: (rowData) => (
                 <Button
                   onClick={() => {
-                  handleEditData(rowData);
+                    handleEditData(rowData);
                   }}
                 >
                   <EditIcon />
@@ -619,12 +615,12 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
             {
-              title: "Edit",
+              title: "Suggest Corrections",
               editable: "never",
               render: (rowData) => (
                 <Button
                   onClick={() => {
-                  handleEditData(rowData);
+                    handleEditData(rowData);
                   }}
                 >
                   <EditIcon />
@@ -1037,16 +1033,24 @@ function LiveAnalysis() {
             Edit
           </DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Language"
-              type="text"
-              value={editlanguage}
-              onChange={(event) => setEditLanguage(event)}
-              fullWidth
-            />
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Language
+              </InputLabel>
+              <Select
+              
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editlanguage}
+                onChange={(event) => setEditLanguage(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"english"}>english</MenuItem>
+                <MenuItem value={"bengali"}>bengali</MenuItem>
+                <MenuItem value={"banglish"}>banglish</MenuItem>
+              </Select>
+            
+            </FormControl>
             <TextField
               autoFocus
               margin="dense"
@@ -1066,16 +1070,15 @@ function LiveAnalysis() {
               value={editMood}
               // error={helpertext}
               // helperText={helpertext ? helpertext1 : null}
-              onChange={(event) => setEditMood(event)}
+              onChange={(event) => setEditMood(event.target.value)}
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            
-              <Button className={classes.root} onClick={updatedata}>
-                Update
-              </Button>
-            
+            <Button className={classes.root} onClick={updatedata}>
+              Update
+            </Button>
+
             <Button className={classes.root} onClick={handleEditClose}>
               Close
             </Button>
