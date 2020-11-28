@@ -228,6 +228,7 @@ function LiveAnalysis() {
     //   Auth
     // )
     let token = Cookies.get("token");
+    let editDataAcess = Cookies.get("Update Data");
     let data = JSON.stringify({
       querySources: [source],
       queryLanguages: languages,
@@ -392,64 +393,124 @@ function LiveAnalysis() {
         });
         setData(final);
         if (source === "twitter") {
-          setColumns([
-            { title: "Date", field: "date" },
-            { title: "Name", field: "name" },
-            { title: "Screen Name", field: "screenName" },
-            { title: "Post", field: "tweet" },
-            { title: "Mood", field: "mood" },
-            { title: "Sentiment", field: "sentiment" },
-            { title: "Location", field: "location" },
-            { title: "HashTags", field: "hashTags" },
-            {
-              title: "Followers Count",
-              field: "followersCount",
-              width: "1%",
-              cellStyle: { whiteSpace: "nowrap" },
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Retweet Count",
-              field: "retweetCount",
-              width: "1%",
-              cellStyle: { whiteSpace: "nowrap" },
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            { title: "Media Sentiment", field: "predictedSentiment" },
-            {
-              title: "Media",
-              field: "mediaUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Post",
-              field: "postUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Language",
-              field: "language",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Reset Password",
-              editable: "never",
-              render: (rowData) => (
-                <Button
-                  onClick={() => {
+          if(editDataAcess==="true"){
 
-                 handleEditData(rowData);
-                  }}
-                >
-                  <EditIcon />
-                </Button>
-              ),
-            },
-          ]);
+          
+         
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Name", field: "name" },
+              { title: "Screen Name", field: "screenName" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              { title: "Location", field: "location" },
+              { title: "HashTags", field: "hashTags" },
+              {
+                title: "Followers Count",
+                field: "followersCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Retweet Count",
+                field: "retweetCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              
+               
+              {
+                title: "Edit",
+                editable: "never",
+                render: (rowData) => (
+                  <Button
+                    onClick={() => {
+                      handleEditData(rowData);
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                ),
+              },
+            
+          
+        
+            ]);
+          }else{
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Name", field: "name" },
+              { title: "Screen Name", field: "screenName" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              { title: "Location", field: "location" },
+              { title: "HashTags", field: "hashTags" },
+              {
+                title: "Followers Count",
+                field: "followersCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Retweet Count",
+                field: "retweetCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+
+            
+            ]);
+          }
+          
         } else if (source === "instagram"||"facebook") {
+          if(editDataAcess==="true"){
+
+          
+        
           setColumns([
             { title: "Date", field: "date" },
             { title: "Post", field: "tweet" },
@@ -482,7 +543,7 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
             {
-              title: "Reset Password",
+              title: "Edit",
               editable: "never",
               render: (rowData) => (
                 <Button
@@ -495,7 +556,44 @@ function LiveAnalysis() {
               ),
             },
           ]);
+        }else{
+           setColumns([
+             { title: "Date", field: "date" },
+             { title: "Post", field: "tweet" },
+             { title: "Mood", field: "mood" },
+             { title: "Sentiment", field: "sentiment" },
+             {
+               title: "Replies",
+               field: "retweetCount",
+               width: "1%",
+               cellStyle: { whiteSpace: "nowrap" },
+               headerStyle: { whiteSpace: "nowrap" },
+             },
+             { title: "Media Sentiment", field: "predictedSentiment" },
+             {
+               title: "Media",
+               field: "mediaUrl",
+               width: "1%",
+               headerStyle: { whiteSpace: "nowrap" },
+             },
+             {
+               title: "Post",
+               field: "postUrl",
+               width: "1%",
+               headerStyle: { whiteSpace: "nowrap" },
+             },
+             {
+               title: "Language",
+               field: "language",
+               width: "1%",
+               headerStyle: { whiteSpace: "nowrap" },
+             },
+           ]);
+        }
         } else if (source === "newspaper") {
+          if(editDataAcess==="true"){
+
+          
           setColumns([
             { title: "Date", field: "date" },
             { title: "Post", field: "tweet" },
@@ -521,7 +619,7 @@ function LiveAnalysis() {
               headerStyle: { whiteSpace: "nowrap" },
             },
             {
-              title: "Reset Password",
+              title: "Edit",
               editable: "never",
               render: (rowData) => (
                 <Button
@@ -535,6 +633,35 @@ function LiveAnalysis() {
             },
           ]);
         }
+        else{
+          setColumns([
+            { title: "Date", field: "date" },
+            { title: "Post", field: "tweet" },
+            { title: "Mood", field: "mood" },
+            { title: "Sentiment", field: "sentiment" },
+            { title: "Media Sentiment", field: "predictedSentiment" },
+            {
+              title: "Media",
+              field: "mediaUrl",
+              width: "1%",
+              headerStyle: { whiteSpace: "nowrap" },
+            },
+            {
+              title: "Post",
+              field: "postUrl",
+              width: "1%",
+              headerStyle: { whiteSpace: "nowrap" },
+            },
+            {
+              title: "Language",
+              field: "language",
+              width: "1%",
+              headerStyle: { whiteSpace: "nowrap" },
+            },
+          ]);
+
+        }
+      }
       })
       .catch((err) => {
         console.log(err.response, err);

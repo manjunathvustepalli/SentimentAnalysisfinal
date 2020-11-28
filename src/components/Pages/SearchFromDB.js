@@ -253,6 +253,7 @@ function SearchFromDB() {
     let enddate = await addMonths(endDate, 0);
     console.log(startdate, enddate);
     let data = "";
+    let editDataAcess = Cookies.get("Update Data");
     if (selectedSources.length > 0) {
       if (
         selectedSources[0] === "twitter" ||
@@ -469,19 +470,6 @@ function SearchFromDB() {
                 title: "Media",
                 field: "mediaUrl",
               },
-              {
-                title: "Reset Password",
-                editable: "never",
-                render: (rowData) => (
-                  <Button
-                    onClick={() => {
-                      handleEditData(rowData);
-                    }}
-                  >
-                    <EditIcon />
-                  </Button>
-                ),
-              },
             ]);
           } else {
             setColumns([
@@ -520,20 +508,25 @@ function SearchFromDB() {
                 // width: "1%",
                 // headerStyle: { whiteSpace: "nowrap" },
               },
-              {
-                title: "Reset Password",
-                editable: "never",
-                render: (rowData) => (
-                  <Button
-                    onClick={() => {
-                      handleEditData(rowData);
-                    }}
-                  >
-                    <EditIcon />
-                  </Button>
-                ),
-              },
+             
             ]);
+          }
+          if(editDataAcess==="true"){
+          
+            let editicon = {
+              title: "Edit",
+              editable: "never",
+              render: (rowData) => (
+                <Button
+                  onClick={() => {
+                    handleEditData(rowData);
+                  }}
+                >
+                  <EditIcon />
+                </Button>
+              ),
+            };
+            setColumns((oldArray) => [...oldArray, editicon]);
           }
         })
         .catch((err) => {

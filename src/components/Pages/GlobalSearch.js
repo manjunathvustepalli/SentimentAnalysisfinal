@@ -120,6 +120,7 @@ function GlobalSearch() {
     };
 
     const submitData = () => {
+      let editDataAcess=Cookies.get("Update Data")
         let token=Cookies.get("token")
         setopen(true)
         let keywordsString = keywords.join(',')
@@ -267,21 +268,24 @@ function GlobalSearch() {
                            title: "Language",
                            field: "language",
                          },
-                         {
-                           title: "Reset Password",
+                       ]);
+                       if (editDataAcess === "true") {
+                         let editicon = {
+                           title: "Edit",
                            editable: "never",
                            render: (rowData) => (
                              <Button
-                               onClick={() => {
-                                 handleEditData(rowData);
-                               }}
-                             >
-                               <EditIcon />
-                             </Button>
-                           ),
-                         },
-                       ]);
-                       setopen(false);
+                                onClick={() => {
+                                  handleEditData(rowData);
+                                }}
+                              >
+                                <EditIcon />
+                              </Button>
+                            ),
+                          };
+                          setColumns((oldArray) => [...oldArray, editicon]);
+                        }
+                        setopen(false);
                      })
                      .catch((err) => {
                        console.log(err);
@@ -408,20 +412,23 @@ function GlobalSearch() {
                           title: "Language",
                           field: "language",
                         },
-                        {
-                          title: "Reset Password",
-                          editable: "never",
-                          render: (rowData) => (
-                            <Button
-                              onClick={() => {
-                                handleEditData(rowData);
-                              }}
-                            >
-                              <EditIcon />
-                            </Button>
-                          ),
-                        },
                       ]);
+                       if (editDataAcess === "true") {
+                         let editicon = {
+                           title: "Edit",
+                           editable: "never",
+                           render: (rowData) => (
+                             <Button
+                               onClick={() => {
+                                 handleEditData(rowData);
+                               }}
+                             >
+                               <EditIcon />
+                             </Button>
+                           ),
+                         };
+                         setColumns((oldArray) => [...oldArray, editicon]);
+                       }
                       setopen(false);
                     })
                     .catch((err) => {
@@ -593,20 +600,23 @@ function GlobalSearch() {
                         title: "Media Urls",
                         field: "image",
                       },
-                      {
-                        title: "Reset Password",
-                        editable: "never",
-                        render: (rowData) => (
-                          <Button
-                            onClick={() => {
-                              handleEditData(rowData);
-                            }}
-                          >
-                            <EditIcon />
-                          </Button>
-                        ),
-                      },
                     ]);
+                     if (editDataAcess === "true") {
+                       let editicon = {
+                         title: "Edit",
+                         editable: "never",
+                         render: (rowData) => (
+                           <Button
+                             onClick={() => {
+                               handleEditData(rowData);
+                             }}
+                           >
+                             <EditIcon />
+                           </Button>
+                         ),
+                       };
+                       setColumns((oldArray) => [...oldArray, editicon]);
+                     }
                     setopen(false);
                   }
                 );
@@ -726,20 +736,24 @@ function GlobalSearch() {
                         title: "Language",
                         field: "language",
                       },
-                      {
-                        title: "Reset Password",
-                        editable: "never",
-                        render: (rowData) => (
-                          <Button
-                            onClick={() => {
-                              handleEditData(rowData);
-                            }}
-                          >
-                            <EditIcon />
-                          </Button>
-                        ),
-                      },
+                    
                     ]);
+                     if (editDataAcess === "true") {
+                       let editicon = {
+                         title: "Edit",
+                         editable: "never",
+                         render: (rowData) => (
+                           <Button
+                             onClick={() => {
+                               handleEditData(rowData);
+                             }}
+                           >
+                             <EditIcon />
+                           </Button>
+                         ),
+                       };
+                       setColumns((oldArray) => [...oldArray, editicon]);
+                     }
                     setopen(false);
                   }
                 );
@@ -859,20 +873,23 @@ function GlobalSearch() {
                         title: "Language",
                         field: "language",
                       },
-                      {
-                        title: "Reset Password",
-                        editable: "never",
-                        render: (rowData) => (
-                          <Button
-                            onClick={() => {
-                              handleEditData(rowData);
-                            }}
-                          >
-                            <EditIcon />
-                          </Button>
-                        ),
-                      },
                     ]);
+                     if (editDataAcess === "true") {
+                       let editicon = {
+                         title: "Edit",
+                         editable: "never",
+                         render: (rowData) => (
+                           <Button
+                             onClick={() => {
+                               handleEditData(rowData);
+                             }}
+                           >
+                             <EditIcon />
+                           </Button>
+                         ),
+                       };
+                       setColumns((oldArray) => [...oldArray, editicon]);
+                     }
                     setopen(false);
                   }
                 );
@@ -992,20 +1009,23 @@ function GlobalSearch() {
                         title: "Language",
                         field: "language",
                       },
-                      {
-                        title: "Reset Password",
-                        editable: "never",
-                        render: (rowData) => (
-                          <Button
-                            onClick={() => {
-                              handleEditData(rowData);
-                            }}
-                          >
-                            <EditIcon />
-                          </Button>
-                        ),
-                      },
                     ]);
+                     if (editDataAcess === "true") {
+                       let editicon = {
+                         title: "Edit",
+                         editable: "never",
+                         render: (rowData) => (
+                           <Button
+                             onClick={() => {
+                               handleEditData(rowData);
+                             }}
+                           >
+                             <EditIcon />
+                           </Button>
+                         ),
+                       };
+                       setColumns((oldArray) => [...oldArray, editicon]);
+                     }
                     setopen(false);
                   }
                 );

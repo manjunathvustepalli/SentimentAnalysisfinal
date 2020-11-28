@@ -104,12 +104,13 @@ function Login(props) {
       pages.push(page.pageUrl);
     })
     await Cookies.set("pages", pages);
+              Cookies.set("Update Data", "false");
+
+     
     await Cookies.set("name",response.data.displayName);
     if (response.status === 201) {
       setIncorrectFlag(false);
       for(var i=0;i<response.data.pages.length;i++){
-        
-      
         if (response.data.pages[i].pageUrl === "Summary Dashboard") {
            props.history.push({
             pathname: "/summary-dashboard",
@@ -117,11 +118,19 @@ function Login(props) {
           break;
         }
         if(i===pages.length-1){
+           
            props.history.push({
              pathname: "/add-user",
            });
         }
       }
+       for(var i=0;i<response.data.pages.length;i++){
+        if (response.data.pages[i].pageUrl === "Update Data") {
+         
+          Cookies.set("Update Data", "true");
+
+        }
+       }
       
     } else {
       setIncorrectFlag(true);
