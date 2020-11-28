@@ -125,10 +125,8 @@ function Login(props) {
         }
       }
        for(var i=0;i<response.data.pages.length;i++){
-        if (response.data.pages[i].pageUrl === "Update Data") {
-         
+        if (response.data.pages[i].pageUrl === "Suggest Corrections") {
           Cookies.set("Update Data", "true");
-
         }
        }
       
