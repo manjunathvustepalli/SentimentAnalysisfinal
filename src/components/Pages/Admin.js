@@ -282,7 +282,7 @@ function Admin() {
               <MenuItem value={"telegram"}> {"Telegram"} </MenuItem>
               <MenuItem value={"googlenews"}> {"Google News"} </MenuItem>
               <MenuItem value={"blogger"}> {"Blogger"} </MenuItem>
-              <MenuItem value={"twitter"}> {"twitter"} </MenuItem>
+              <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
             </Select>
           </FormControl>
         </Grid>
