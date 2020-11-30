@@ -179,7 +179,7 @@ export default function Changedeleterole() {
 
     axios(config)
       .then((response) => {
-         return getRoles();
+        return getRoles();
       })
       .catch((error) => {
         console.log(error);
@@ -380,7 +380,7 @@ export default function Changedeleterole() {
                             {...params}
                             variant="outlined"
                             style={{ color: "white" }}
-                            label="Select Subsource"
+                            label="Select one or more roles"
                             placeholder="Subsources"
                           />
                         )}

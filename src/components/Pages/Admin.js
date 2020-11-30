@@ -19,6 +19,7 @@ function Admin() {
     blogger: "getaddedbloggerpages",
     telegram: "getaddedtelegramchannels",
     googlenews: "getaddedgooglenewspages",
+    twitter: "getasynctwitterconfig",
   };
   const [source, setSource] = useState("facebook");
   const [columns, setColumns] = useState([
@@ -28,11 +29,62 @@ function Admin() {
     },
   ]);
   const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
   const [newlyAddedWord, setNewlyAddedWord] = useState([]);
+  const [newlyAddedWord1, setNewlyAddedWord1] = useState([]);
+  const [deletedWord1, setDeletedWord1] = useState("");
   const [deletedWord, setDeletedWord] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [loaderOpen, setLoaderOpen] = useState(true);
-
+  const [pagedata, setpagedata] = useState([]);
+  const [keyworddata, setkeyworddata] = useState([]);
+  const addnewkeyword = async (data) => {
+    if (source === "twitter") {
+      await setpagedata((oldArray) => [...oldArray, data]);
+    }
+    await setNewlyAddedWord(data);
+  };
+  const deletekeyword = async (data) => {
+    if (source === "twitter") {
+      // await setpagedata((oldArray) => );
+     await setpagedata((items) =>
+       items.filter(function (item) {
+         if (item !== data) {
+           return item;
+         }
+       })
+     );
+   
+    //   let pagedatas = await pagedata.filter(function (item) {
+    //     if (item !== data) {
+    //       return item;
+    //     }
+    //   });
+    //   console.log(pagedatas);
+    //  await setpagedata(pagedatas)
+   
+    
+    }
+    await setDeletedWord(data);
+  };
+  const addnewkeyword1 = async (data) => {
+    if (source === "twitter") {
+      await setkeyworddata((oldArray) => [...oldArray, data]);
+    }
+    await setNewlyAddedWord1(data);
+  };
+  const deletekeyword1 = async (data) => {
+    if (source === "twitter") {
+        await setkeyworddata((items) =>
+          items.filter(function (item) {
+            if (item !== data) {
+              return item;
+            }
+          })
+        );
+    }
+    await setDeletedWord1(data);
+  };
   useEffect(() => {
     let token = Cookies.get("token");
     setLoaderOpen(true);
@@ -50,13 +102,32 @@ function Admin() {
 
     Axios(config)
       .then((data) => {
-        setData(
-          data.data[Object.keys(data.data)[1]].map((item) => {
-            return {
-              name: item,
-            };
-          })
-        );
+        if (source !== "twitter") {
+          setData(
+            data.data[Object.keys(data.data)[1]].map((item) => {
+              return {
+                name: item,
+              };
+            })
+          );
+        } else {
+          setpagedata(data.data[Object.keys(data.data)[2]]);
+          setkeyworddata(data.data[Object.keys(data.data)[1]]);
+          setData(
+            data.data[Object.keys(data.data)[2]].map((item) => {
+              return {
+                name: item,
+              };
+            })
+          );
+          setData1(
+            data.data[Object.keys(data.data)[1]].map((item) => {
+              return {
+                name: item,
+              };
+            })
+          );
+        }
         setLoaderOpen(false);
       })
       .catch((err) => {
@@ -67,39 +138,39 @@ function Admin() {
 
   useEffect(() => {
     let token = Cookies.get("token");
+
     setLoaderOpen(true);
-    console.log("//////////////", newlyAddedWord);
-    if (newlyAddedWord.length!==0) {
+
+    if (newlyAddedWord.length !== 0 || newlyAddedWord1.length !== 0) {
       const sourceAddQueryStrings = {
         facebook: "startcrawlingfbpage",
         instagram: "startcrawlinginstagrampage",
         blogger: "startcrawlingbloggerpage",
         telegram: "startcrawlingtelegramchannel",
         googlenews: "startcrawlinggooglenewspage",
+        twitter: "setasynctwitterconfig",
       };
-      const sourcechannel = {
-        facebook: "fbpage",
-        instagram: "instapage",
-        blogger: "bloggerpage",
-        telegram: "telegramchannel",
-        googlenews: "googlenewspage",
-      };
-
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`,
       //     Auth
       //   )
-      let data="";
+
+      let jsondata = "";
       if (source === "facebook") {
-         data = JSON.stringify({ fbpages: [newlyAddedWord] });
+        jsondata = JSON.stringify({ fbpages: [newlyAddedWord] });
       } else if (source === "instagram") {
-         data = JSON.stringify({ instapages: [newlyAddedWord] });
+        jsondata = JSON.stringify({ instapages: [newlyAddedWord] });
       } else if (source === "blogger") {
-         data = JSON.stringify({ bloggerpages: [newlyAddedWord] });
+        jsondata = JSON.stringify({ bloggerpages: [newlyAddedWord] });
       } else if (source === "telegram") {
-         data = JSON.stringify({ telegramchannels: [newlyAddedWord] });
+        jsondata = JSON.stringify({ telegramchannels: [newlyAddedWord] });
+      } else if (source === "twitter") {
+        jsondata = JSON.stringify({
+          keywords: keyworddata,
+          handles: pagedata,
+        });
       } else {
-         data = JSON.stringify({ googlenewspages: [newlyAddedWord] });
+        jsondata = JSON.stringify({ googlenewspages: [newlyAddedWord] });
       }
 
       let config = {
@@ -109,32 +180,37 @@ function Admin() {
           "Content-Type": "application/json",
           token: token,
         },
-        data: data,
+        data: jsondata,
       };
 
       Axios(config)
         .then((data) => {
           setRefresh((prev) => !prev);
           setLoaderOpen(false);
+          //      setNewlyAddedWord1("");
+          //      setNewlyAddedWord("");
         })
         .catch((err) => {
           setRefresh((prev) => !prev);
           setLoaderOpen(false);
           console.log(err, err.response);
         });
+    } else {
+      setLoaderOpen(false);
     }
-  }, [newlyAddedWord]);
+  }, [newlyAddedWord, newlyAddedWord1]);
 
   useEffect(() => {
     let token = Cookies.get("token");
     setLoaderOpen(true);
-    if (deletedWord) {
+    if (deletedWord || deletedWord1) {
       const sourceDeleteQueryStrings = {
         facebook: "stopcrawlingfbpage",
         instagram: "stopcrawlinginstagrampage",
         blogger: "stopcrawlingbloggerpage",
         telegram: "stopcrawlingtelegramchannel",
         googlenews: "stopcrawlinggooglenewspage",
+        twitter: "setasynctwitterconfig",
       };
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceDeleteQueryStrings[source]}${deletedWord}`,
@@ -149,6 +225,11 @@ function Admin() {
         data = JSON.stringify({ bloggerpages: [deletedWord] });
       } else if (source === "telegram") {
         data = JSON.stringify({ telegramchannels: [deletedWord] });
+      } else if (source === "twitter") {
+        data = JSON.stringify({
+          keywords: keyworddata,
+          handles: pagedata,
+        });
       } else {
         data = JSON.stringify({ googlenewspages: [deletedWord] });
       }
@@ -174,7 +255,7 @@ function Admin() {
           console.log(err, err.response);
         });
     }
-  }, [deletedWord]);
+  }, [deletedWord, deletedWord1]);
 
   return (
     <div style={{ width: "100%" }}>
@@ -201,6 +282,7 @@ function Admin() {
               <MenuItem value={"telegram"}> {"Telegram"} </MenuItem>
               <MenuItem value={"googlenews"}> {"Google News"} </MenuItem>
               <MenuItem value={"blogger"}> {"Blogger"} </MenuItem>
+              <MenuItem value={"twitter"}> {"twitter"} </MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -213,9 +295,20 @@ function Admin() {
             source={source}
             loaderOpen={loaderOpen}
             columns={columns}
-            setNewlyAddedWord={setNewlyAddedWord}
-            setDeletedWord={setDeletedWord}
+            setNewlyAddedWord={addnewkeyword}
+            setDeletedWord={deletekeyword}
           />
+          {source === "twitter" ? (
+            <AdminTable
+              name={`${capitalize(source)} Keywords`}
+              data={data1}
+              source={source}
+              loaderOpen={loaderOpen}
+              columns={columns}
+              setNewlyAddedWord={addnewkeyword1}
+              setDeletedWord={deletekeyword1}
+            />
+          ) : null}
         </Grid>
         <Grid item xs={1} />
       </Grid>

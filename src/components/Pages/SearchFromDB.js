@@ -275,7 +275,7 @@ function SearchFromDB() {
           queryUserScreenNames: handles,
           queryHashtagEntities: keywords,
           queryStartDate: startdate,
-          queryEndDate: startdate,
+          queryEndDate: enddate,
           numberOfRecordsToFetch: numberOfRecordsToFetch,
         });
       }
