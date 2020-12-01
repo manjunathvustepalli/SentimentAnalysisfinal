@@ -279,9 +279,9 @@ function Admin() {
             >
               <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
               <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
-              <MenuItem value={"telegram"}> {"Telegram"} </MenuItem>
-              <MenuItem value={"googlenews"}> {"Google News"} </MenuItem>
-              <MenuItem value={"blogger"}> {"Blogger"} </MenuItem>
+              {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
+              {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
+              {/* <MenuItem value={"blogger"}> {"Blogger"} </MenuItem> */}
               <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
             </Select>
           </FormControl>

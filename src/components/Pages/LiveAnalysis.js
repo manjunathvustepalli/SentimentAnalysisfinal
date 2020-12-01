@@ -104,8 +104,8 @@ function LiveAnalysis() {
   const [languages, setLanguages] = useState(["english"]);
   const [source, setSource] = useState("twitter");
   const [dataObject, setDataObject] = useState({});
-  const[sentiment,setsentiment]=useState([]);
-  
+  const [sentiment, setsentiment] = useState([]);
+
   const [columns, setColumns] = useState([
     { title: "Name", field: "name" },
     { title: "Screen Name", field: "screenName" },
@@ -121,54 +121,55 @@ function LiveAnalysis() {
   const [content, setContent] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [editData, setEditData] = useState([]);
-  const[editsentiment,setEditSentiment]=useState("");
-  const[editMood,setEditMood]=useState("");
-  const[editlanguage,setEditLanguage]=useState("");
+  const [editsentiment, setEditSentiment] = useState("");
+  const [editMood, setEditMood] = useState("");
+  const [editlanguage, setEditLanguage] = useState("");
 
- 
-  const handleEditClose=()=>{
+  const handleEditClose = () => {
+    setEditLanguage("");
+    setEditMood("");
+    setEditSentiment("");
     setEditOpen(false);
-  }
-  const handleEditData=async(rowData)=>{
-      setEditData(rowData);
-      setEditSentiment(rowData.sentiment);
-      setEditMood(rowData.mood);
-      setEditLanguage(rowData.language);
-     
-     setEditOpen(true);
-  }
-  const updatedata=()=>{
-    handleEditClose(false)
-    let token = Cookies.get("token");
-    let data=""
-    if(source!=="newspaper"){
+  };
+  const handleEditData = async (rowData) => {
+    setEditData(rowData);
+    setEditSentiment(rowData.sentiment);
+    setEditMood(rowData.mood);
+    setEditLanguage(rowData.language);
 
-       data = JSON.stringify({
+    setEditOpen(true);
+  };
+  const updatedata = () => {
+    handleEditClose(false);
+    let token = Cookies.get("token");
+    let data = "";
+    if (source !== "newspaper") {
+      data = JSON.stringify({
         predictedRecordForUpdate: {
           id: editData.id,
           text: editData.tweet,
-        oldPredictedLanguage: editData.language,
-        newPredictedLanguage: editlanguage,
-        oldPredictedSentiment: editData.sentiment,
-        newPredictedSentiment: editsentiment,
-        oldPredictedMood: editData.mood,
-        newPredictedMood: editMood,
-      },
-    });
-  }else{
-     data = JSON.stringify({
-      predictedRecordForUpdate: {
-        id: editData.id,
-        textBody: editData.tweet,
-        oldPredictedLanguage: editData.language,
-        newPredictedLanguage: editlanguage,
-        oldPredictedSentiment: editData.sentiment,
-        newPredictedSentiment: editsentiment,
-        oldPredictedMood: editData.mood,
-        newPredictedMood: editMood,
-      },
-    });
-  }
+          oldPredictedLanguage: editData.language,
+          newPredictedLanguage: editlanguage,
+          oldPredictedSentiment: editData.sentiment,
+          newPredictedSentiment: editsentiment,
+          oldPredictedMood: editData.mood,
+          newPredictedMood: editMood,
+        },
+      });
+    } else {
+      data = JSON.stringify({
+        predictedRecordForUpdate: {
+          id: editData.id,
+          textBody: editData.tweet,
+          oldPredictedLanguage: editData.language,
+          newPredictedLanguage: editlanguage,
+          oldPredictedSentiment: editData.sentiment,
+          newPredictedSentiment: editsentiment,
+          oldPredictedMood: editData.mood,
+          newPredictedMood: editMood,
+        },
+      });
+    }
 
     let config = {
       method: "post",
@@ -187,14 +188,11 @@ function LiveAnalysis() {
       .catch((error) => {
         console.log(error);
       });
-
-
-
-  }
-   const handleClose = () => {
-     setOpen(false);
-     setsentiment("");
-   };
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setsentiment("");
+  };
   function fetchData() {
     // Axios.post(
 
@@ -249,7 +247,7 @@ function LiveAnalysis() {
         console.log("live analysis", fetchedData);
         let final = fetchedData.data.hits.hits.map((user) => {
           let obj = {};
-          obj.id=user._id;
+          obj.id = user._id;
           if (user._source.User) {
             obj.name = user._source.User.Name;
             obj.screenName = user._source.User.ScreenName;
@@ -258,22 +256,22 @@ function LiveAnalysis() {
           if (user._source.Place) {
             obj.location = user._source.Place.FullName;
           }
-          if (user._source.predictedLang){
+          if (user._source.predictedLang) {
             obj.language = user._source.predictedLang;
           }
-            if (user._source.HashtagEntities) {
-              obj.hashTags = user._source.HashtagEntities.map((hashTag) => (
-                <Chip
-                  label={hashTag.Text}
-                  size="small"
-                  style={{
-                    margin: "5px",
-                    backgroundColor: "rgb(67,176,42)",
-                    color: "white",
-                  }}
-                />
-              ));
-            }
+          if (user._source.HashtagEntities) {
+            obj.hashTags = user._source.HashtagEntities.map((hashTag) => (
+              <Chip
+                label={hashTag.Text}
+                size="small"
+                style={{
+                  margin: "5px",
+                  backgroundColor: "rgb(67,176,42)",
+                  color: "white",
+                }}
+              />
+            ));
+          }
           if (user._source.PredictedImageSentiment) {
             console.log(user._source.PredictedImageSentiment);
             obj.predictedSentiment = user._source.PredictedImageSentiment.map(
@@ -323,17 +321,14 @@ function LiveAnalysis() {
                     if (post.MediaURLHttps) {
                       setactualUrl(post.MediaURLHttps);
                       setImageUrl(post.MediaURLHttps);
-                      if (user._source.PredictedImageSentiment){
-
+                      if (user._source.PredictedImageSentiment) {
                         setsentiment(user._source.PredictedImageSentiment[i]);
                       }
                     } else {
                       setactualUrl(post.MediaURL);
                       setImageUrl(post.MediaURL);
-                      if (user._source.PredictedImageSentiment){
-                      setsentiment(
-                        user._source.PredictedImageSentiment[i]
-                      );
+                      if (user._source.PredictedImageSentiment) {
+                        setsentiment(user._source.PredictedImageSentiment[i]);
                       }
                     }
                   }}
@@ -393,10 +388,7 @@ function LiveAnalysis() {
         });
         setData(final);
         if (source === "twitter") {
-          if(editDataAcess==="true"){
-
-          
-         
+          if (editDataAcess === "true") {
             setColumns([
               { title: "Date", field: "date" },
               { title: "Name", field: "name" },
@@ -454,7 +446,7 @@ function LiveAnalysis() {
                 ),
               },
             ]);
-          }else{
+          } else {
             setColumns([
               { title: "Date", field: "date" },
               { title: "Name", field: "name" },
@@ -497,167 +489,157 @@ function LiveAnalysis() {
                 width: "1%",
                 headerStyle: { whiteSpace: "nowrap" },
               },
-
-            
             ]);
           }
-          
-        } else if (source === "instagram"||"facebook") {
-          if(editDataAcess==="true"){
-
-          
-        
-          setColumns([
-            { title: "Date", field: "date" },
-            { title: "Post", field: "tweet" },
-            { title: "Mood", field: "mood" },
-            { title: "Sentiment", field: "sentiment" },
-            {
-              title: "Replies",
-              field: "retweetCount",
-              width: "1%",
-              cellStyle: { whiteSpace: "nowrap" },
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            { title: "Media Sentiment", field: "predictedSentiment" },
-            {
-              title: "Media",
-              field: "mediaUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Post",
-              field: "postUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Language",
-              field: "language",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Suggest Corrections",
-              editable: "never",
-              render: (rowData) => (
-                <Button
-                  onClick={() => {
-                    handleEditData(rowData);
-                  }}
-                >
-                  <EditIcon />
-                </Button>
-              ),
-            },
-          ]);
-        }else{
-           setColumns([
-             { title: "Date", field: "date" },
-             { title: "Post", field: "tweet" },
-             { title: "Mood", field: "mood" },
-             { title: "Sentiment", field: "sentiment" },
-             {
-               title: "Replies",
-               field: "retweetCount",
-               width: "1%",
-               cellStyle: { whiteSpace: "nowrap" },
-               headerStyle: { whiteSpace: "nowrap" },
-             },
-             { title: "Media Sentiment", field: "predictedSentiment" },
-             {
-               title: "Media",
-               field: "mediaUrl",
-               width: "1%",
-               headerStyle: { whiteSpace: "nowrap" },
-             },
-             {
-               title: "Post",
-               field: "postUrl",
-               width: "1%",
-               headerStyle: { whiteSpace: "nowrap" },
-             },
-             {
-               title: "Language",
-               field: "language",
-               width: "1%",
-               headerStyle: { whiteSpace: "nowrap" },
-             },
-           ]);
-        }
+        } else if (source === "instagram" || "facebook") {
+          if (editDataAcess === "true") {
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              {
+                title: "Replies",
+                field: "retweetCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Suggest Corrections",
+                editable: "never",
+                render: (rowData) => (
+                  <Button
+                    onClick={() => {
+                      handleEditData(rowData);
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                ),
+              },
+            ]);
+          } else {
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              {
+                title: "Replies",
+                field: "retweetCount",
+                width: "1%",
+                cellStyle: { whiteSpace: "nowrap" },
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+            ]);
+          }
         } else if (source === "newspaper") {
-          if(editDataAcess==="true"){
-
-          
-          setColumns([
-            { title: "Date", field: "date" },
-            { title: "Post", field: "tweet" },
-            { title: "Mood", field: "mood" },
-            { title: "Sentiment", field: "sentiment" },
-            { title: "Media Sentiment", field: "predictedSentiment" },
-            {
-              title: "Media",
-              field: "mediaUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Post",
-              field: "postUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Language",
-              field: "language",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Suggest Corrections",
-              editable: "never",
-              render: (rowData) => (
-                <Button
-                  onClick={() => {
-                    handleEditData(rowData);
-                  }}
-                >
-                  <EditIcon />
-                </Button>
-              ),
-            },
-          ]);
+          if (editDataAcess === "true") {
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Suggest Corrections",
+                editable: "never",
+                render: (rowData) => (
+                  <Button
+                    onClick={() => {
+                      handleEditData(rowData);
+                    }}
+                  >
+                    <EditIcon />
+                  </Button>
+                ),
+              },
+            ]);
+          } else {
+            setColumns([
+              { title: "Date", field: "date" },
+              { title: "Post", field: "tweet" },
+              { title: "Mood", field: "mood" },
+              { title: "Sentiment", field: "sentiment" },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Post",
+                field: "postUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+              {
+                title: "Language",
+                field: "language",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
+            ]);
+          }
         }
-        else{
-          setColumns([
-            { title: "Date", field: "date" },
-            { title: "Post", field: "tweet" },
-            { title: "Mood", field: "mood" },
-            { title: "Sentiment", field: "sentiment" },
-            { title: "Media Sentiment", field: "predictedSentiment" },
-            {
-              title: "Media",
-              field: "mediaUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Post",
-              field: "postUrl",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-            {
-              title: "Language",
-              field: "language",
-              width: "1%",
-              headerStyle: { whiteSpace: "nowrap" },
-            },
-          ]);
-
-        }
-      }
       })
       .catch((err) => {
         console.log(err.response, err);
@@ -1038,7 +1020,6 @@ function LiveAnalysis() {
                 Language
               </InputLabel>
               <Select
-              
                 labelId="demo-simple-select-required-label"
                 id="demo-simple-select-required"
                 value={editlanguage}
@@ -1049,19 +1030,45 @@ function LiveAnalysis() {
                 <MenuItem value={"bengali"}>bengali</MenuItem>
                 <MenuItem value={"banglish"}>banglish</MenuItem>
               </Select>
-            
             </FormControl>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Sentiment"
-              type="text"
-              value={editsentiment}
-              onChange={(event) => setEditSentiment(event.target.value)}
-              fullWidth
-            />
-            <TextField
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Sentiment
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editsentiment}
+                onChange={(event) => setEditSentiment(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"positive"}>Positive</MenuItem>
+                <MenuItem value={"negative"}>Negative</MenuItem>
+                <MenuItem value={"neutral"}>Neutral</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Mood
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editMood}
+                onChange={(event) => setEditMood(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"joy"}>joy</MenuItem>
+                <MenuItem value={"fear"}>fear</MenuItem>
+                <MenuItem value={"sad"}>sad</MenuItem>
+                <MenuItem value={"trust"}>trust</MenuItem>
+                <MenuItem value={"anticipation"}>anticipation</MenuItem>
+                <MenuItem value={"disgust"}>disgust</MenuItem>
+                <MenuItem value={"surprise"}>surprise</MenuItem>
+                <MenuItem value={"anger"}>anger</MenuItem>
+              </Select>
+            </FormControl>
+            {/* <TextField
               autoFocus
               margin="dense"
               id="password"
@@ -1072,7 +1079,7 @@ function LiveAnalysis() {
               // helperText={helpertext ? helpertext1 : null}
               onChange={(event) => setEditMood(event.target.value)}
               fullWidth
-            />
+            /> */}
           </DialogContent>
           <DialogActions>
             <Button className={classes.root} onClick={updatedata}>

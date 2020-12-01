@@ -78,7 +78,7 @@ function SearchFromDB() {
   makeDate.setMonth(makeDate.getMonth() - 1);
   const [keywords, setKeywords] = useState();
   const [data, setData] = useState([]);
-  const [sources, setSources] = useState(["twitter","facebook","newspaper","instagram"]);
+  const [sources, setSources] = useState([]);
   const [selectedSources, setSelectedSources] = useState([]);
   const [handles, setHandles] = useState();
   const [startDate, setStartDate] = useState(makeDate);
@@ -294,104 +294,133 @@ function SearchFromDB() {
         .then((fetchedData) => {
           setData(
             fetchedData.data.hits.hits.map((postObj) => {
-              // let obj = { mediaUrl: "", predictedSentiment: "" };
-              // if (postObj._source.PredictedImageSentiment) {
-              //   console.log(postObj._source.PredictedImageSentiment);
-              //   obj.predictedSentiment = postObj._source.PredictedImageSentiment.map(
-              //     (image) =>
-              //       image.sentiment === "neutral" ? (
-              //         <Chip
-              //           label={image.sentiment}
-              //           size="small"
-              //           style={{
-              //             margin: "5px",
-              //             backgroundColor: "#424242",
-              //             color: "white",
-              //           }}
-              //         />
-              //       ) : image.sentiment === "positive" ? (
-              //         <Chip
-              //           label={image.sentiment}
-              //           size="small"
-              //           style={{
-              //             margin: "5px",
-              //             backgroundColor: "rgb(67,176,42)",
-              //             color: "white",
-              //           }}
-              //         />
-              //       ) : (
-              //         <Chip
-              //           label={image.sentiment}
-              //           size="small"
-              //           style={{
-              //             margin: "5px",
-              //             backgroundColor: "#ff1744",
-              //             color: "white",
-              //           }}
-              //         />
-              //       )
-              //   );
-              // }
-              // if (
-              //   postObj._source.MediaEntities &&
-              //   postObj._source.MediaEntities.length
-              // ) {
-              //   obj.mediaUrl = postObj._source.MediaEntities.map((post, i) => {
-              //     // console.log("mediaurl",post)
-              //     return (
-              //       <IconButton
-              //         className={classes.root}
-              //         onClick={() => {
-              //           setOpen(true);
-              //           setType("image");
-              //           if (post.MediaURLHttps) {
-              //             setactualUrl(post.MediaURLHttps);
-              //             setImageUrl(post.MediaURLHttps);
+              let obj = {  };
+              if (postObj._source.PredictedImageSentiment) {
+                obj.predictedSentiment = postObj._source.PredictedImageSentiment.map(
+                  (image) =>
+                    image.sentiment === "neutral" ? (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "#424242",
+                          color: "white",
+                        }}
+                      />
+                    ) : image.sentiment === "positive" ? (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "rgb(67,176,42)",
+                          color: "white",
+                        }}
+                      />
+                    ) : (
+                      <Chip
+                        label={image.sentiment}
+                        size="small"
+                        style={{
+                          margin: "5px",
+                          backgroundColor: "#ff1744",
+                          color: "white",
+                        }}
+                      />
+                    )
+                );
+              }
+              else{
+                  obj.predictedSentiment = <span />;
+              }
+              if (
+                postObj._source.MediaEntities &&
+                postObj._source.MediaEntities.length
+              ) {
+                obj.mediaUrl = postObj._source.MediaEntities.map((post, i) => {
+                  // console.log("mediaurl",post)
+                  return (
+                    <IconButton
+                      className={classes.root}
+                      onClick={() => {
+                        setOpen(true);
+                        setType("image");
+                        if (post.MediaURLHttps) {
+                          setactualUrl(post.MediaURLHttps);
+                          setImageUrl(post.MediaURLHttps);
 
-              //             // setsentiment(
-              //             //   user._source.PredictedImageSentiment[i]
-              //             // );
-              //           } else {
-              //             setactualUrl(post.MediaURL);
-              //             setImageUrl(post.MediaURL);
+                          // setsentiment(
+                          //   user._source.PredictedImageSentiment[i]
+                          // );
+                        } else {
+                          setactualUrl(post.MediaURL);
+                          setImageUrl(post.MediaURL);
 
-              //             // setsentiment(
-              //             //   user._source.PredictedImageSentiment[i]
-              //             // );
-              //           }
-              //         }}
-              //       >
-              //         <LaunchIcon />
-              //       </IconButton>
-              //     );
-              //   });
-              // }
-              // if (postObj._source.MediaEntities[0]) {
-              //   console.log(
-              //     "post",
-              //     postObj._source.MediaEntities[0].ExpandedURL
-              //   );
-              //   obj.postUrl = (
-              //     <IconButton
-              //       onClick={() => {
-              //         setOpen(true);
-              //         setType("post");
-              //         let splittedUrl = postObj._source.MediaEntities[0].ExpandedURL.split(
-              //           "/photo"
-              //         )[0].split("/");
-              //         let id = splittedUrl[splittedUrl.length - 1];
-              //         setContent(id);
-              //         setactualUrl(
-              //           postObj._source.MediaEntities[0].ExpandedURL
-              //         );
-              //       }}
-              //       className={classes.root}
-              //     >
-              //       {" "}
-              //       <LaunchIcon />{" "}
-              //     </IconButton>
-              //   );
-              // }
+                          // setsentiment(
+                          //   user._source.PredictedImageSentiment[i]
+                          // );
+                        }
+                      }}
+                    >
+                      <LaunchIcon />
+                    </IconButton>
+                  );
+                });
+                if (postObj._source.MediaEntities[0].ExpandedURL) {
+                  obj.postUrl = (
+                    <IconButton
+                      onClick={() => {
+                        setOpen(true);
+                        setType("post");
+                        let splittedUrl = postObj._source.MediaEntities[0].ExpandedURL.split(
+                          "/photo"
+                        )[0].split("/");
+                        let id = splittedUrl[splittedUrl.length - 1];
+                        setContent(id);
+                        setactualUrl(
+                          postObj._source.MediaEntities[0].ExpandedURL
+                        );
+                      }}
+                      className={classes.root}
+                    >
+                      {" "}
+                      <LaunchIcon />{" "}
+                    </IconButton>
+                  );
+                } else {
+                  obj.postUrl = <span />;
+                }
+                 if (postObj._source.MediaEntities[0]) {
+                   obj.postUrl = (
+                     <IconButton
+                       onClick={() => {
+                         setOpen(true);
+                         setType("post");
+                         let splittedUrl = postObj._source.MediaEntities[0].ExpandedURL.split(
+                           "/photo"
+                         )[0].split("/");
+                         let id = splittedUrl[splittedUrl.length - 1];
+                         setContent(id);
+                         setactualUrl(
+                           postObj._source.MediaEntities[0].ExpandedURL
+                         );
+                       }}
+                       className={classes.root}
+                     >
+                       {" "}
+                       <LaunchIcon />{" "}
+                     </IconButton>
+                   );
+                 } else {
+                   obj.postUrl = <span />;
+                 }
+              }
+              else{
+                  obj.mediaUrl=( <span />);
+              }
+               
+             
               if (!postObj._source.User) {
                 return {
                   date: dateFormatter(postObj._source.CreatedAt),
@@ -402,8 +431,27 @@ function SearchFromDB() {
                   sentiment: postObj._source.predictedSentiment,
                   mood: postObj._source.predictedMood,
                   language: postObj._source.predictedLang,
-                  // mediaUrl: obj.mediaUrl,
-                  // predictedSentiment: obj.predictedSentiment,
+                  // mediaUrl: postObj._source.MediaEntities.map((image) => {
+                  //   if (!image.MediaURL) {
+                  //     return <span />;
+                  //   }
+                  //   return (
+                  //     <IconButton
+                  //       onClick={() => {
+                  //         setImageUrl(image.MediaURL);
+                  //         setOpen(true);
+                  //       }}
+                  //       style={{
+                  //         backgroundColor: "rgb(67, 176, 42)",
+                  //         color: "white",
+                  //       }}
+                  //     >
+                  //       <LaunchIcon />
+                  //     </IconButton>
+                  //   );
+                  // }),
+                  mediaUrl: obj.mediaUrl,
+                  predictedSentiment: obj.predictedSentiment,
                   id: postObj._id,
                 };
               } else {
@@ -420,8 +468,27 @@ function SearchFromDB() {
                   location: postObj._source.User.Location,
                   name: postObj._source.User.Name,
                   screenName: postObj._source.User.ScreenName,
-                  // mediaUrl: obj.mediaUrl,
-                  // predictedSentiment: obj.predictedSentiment,
+                  mediaUrl: obj.mediaUrl,
+                  // mediaUrl: postObj._source.MediaEntities.map((image) => {
+                  //   if (!image.MediaURL) {
+                  //     return <span />;
+                  //   }
+                  //   return (
+                  //     <IconButton
+                  //       onClick={() => {
+                  //         setImageUrl(image.MediaURL);
+                  //         setOpen(true);
+                  //       }}
+                  //       style={{
+                  //         backgroundColor: "rgb(67, 176, 42)",
+                  //         color: "white",
+                  //       }}
+                  //     >
+                  //       <LaunchIcon />
+                  //     </IconButton>
+                  //   );
+                  // }),
+                  predictedSentiment: obj.predictedSentiment,
                   id: postObj._id,
                 };
               }
@@ -465,11 +532,11 @@ function SearchFromDB() {
                 title: "Language",
                 field: "language",
               },
-              // { title: "Media Sentiment", field: "predictedSentiment" },
-              // {
-              //   title: "Media",
-              //   field: "mediaUrl",
-              // },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+              },
             ]);
           } else {
             setColumns([
@@ -501,13 +568,13 @@ function SearchFromDB() {
                 title: "Language",
                 field: "language",
               },
-              // { title: "Media Sentiment", field: "predictedSentiment" },
-              // {
-              //   title: "Media",
-              //   field: "mediaUrl",
-                // width: "1%",
-                // headerStyle: { whiteSpace: "nowrap" },
-              // },
+              { title: "Media Sentiment", field: "predictedSentiment" },
+              {
+                title: "Media",
+                field: "mediaUrl",
+                width: "1%",
+                headerStyle: { whiteSpace: "nowrap" },
+              },
              
             ]);
           }
@@ -562,7 +629,7 @@ function SearchFromDB() {
 
     Axios(config)
       .then((data) => {
-        // setSources(getKeyArray(data.data.aggregations.Source.buckets));
+        setSources(getKeyArray(data.data.aggregations.Source.buckets));
       })
       .catch((err) => {
         console.log(err);
