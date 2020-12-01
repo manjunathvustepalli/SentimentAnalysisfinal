@@ -236,9 +236,10 @@ function LiveAnalysis() {
     })}
     else{
        data = JSON.stringify({
-      querySources: [source],
-      queryLanguages: languages,
-    })}
+         querySources: [source],
+         queryLanguages: languages,
+         queryFirstTime: "false",
+       });}
 
     let config = {
       method: "post",
@@ -1074,6 +1075,7 @@ function LiveAnalysis() {
                 <MenuItem value={"disgust"}>disgust</MenuItem>
                 <MenuItem value={"surprise"}>surprise</MenuItem>
                 <MenuItem value={"anger"}>anger</MenuItem>
+                <MenuItem value={"neutral"}>neutral</MenuItem>
               </Select>
             </FormControl>
             {/* <TextField

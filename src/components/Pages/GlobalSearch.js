@@ -1229,38 +1229,60 @@ function GlobalSearch() {
             Edit
           </DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Language"
-              type="text"
-              value={editlanguage}
-              onChange={(event) => setEditLanguage(event)}
-              fullWidth
-            />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Sentiment"
-              type="text"
-              value={editsentiment}
-              onChange={(event) => setEditSentiment(event.target.value)}
-              fullWidth
-            />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Mood"
-              type="text"
-              value={editMood}
-              // error={helpertext}
-              // helperText={helpertext ? helpertext1 : null}
-              onChange={(event) => setEditMood(event)}
-              fullWidth
-            />
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Language
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editlanguage}
+                onChange={(event) => setEditLanguage(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"english"}>english</MenuItem>
+                <MenuItem value={"bengali"}>bengali</MenuItem>
+                <MenuItem value={"banglish"}>banglish</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Sentiment
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editsentiment}
+                onChange={(event) => setEditSentiment(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"positive"}>Positive</MenuItem>
+                <MenuItem value={"negative"}>Negative</MenuItem>
+                <MenuItem value={"neutral"}>Neutral</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl required fullWidth className={classes.formControl}>
+              <InputLabel id="demo-simple-select-required-label">
+                Mood
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-required-label"
+                id="demo-simple-select-required"
+                value={editMood}
+                onChange={(event) => setEditMood(event.target.value)}
+                // className={classes.selectEmpty}
+              >
+                <MenuItem value={"joy"}>joy</MenuItem>
+                <MenuItem value={"fear"}>fear</MenuItem>
+                <MenuItem value={"sad"}>sad</MenuItem>
+                <MenuItem value={"trust"}>trust</MenuItem>
+                <MenuItem value={"anticipation"}>anticipation</MenuItem>
+                <MenuItem value={"disgust"}>disgust</MenuItem>
+                <MenuItem value={"surprise"}>surprise</MenuItem>
+                <MenuItem value={"anger"}>anger</MenuItem>
+                <MenuItem value={"neutral"}>neutral</MenuItem>
+              </Select>
+            </FormControl>
           </DialogContent>
           <DialogActions>
             <Button className={classes.root} onClick={updatedata}>
