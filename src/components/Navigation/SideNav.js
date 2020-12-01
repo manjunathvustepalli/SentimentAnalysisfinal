@@ -39,10 +39,10 @@ import StorageIcon from "@material-ui/icons/Storage";
 import SearchIcon from "@material-ui/icons/Search";
 import Cookies from "js-cookie";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import DeleteIcon from '@material-ui/icons/Delete';
-import LockIcon from '@material-ui/icons/Lock';
-import UpdateIcon from '@material-ui/icons/Update';
-import {header} from "../Pages/Auth";
+import DeleteIcon from "@material-ui/icons/Delete";
+import LockIcon from "@material-ui/icons/Lock";
+import UpdateIcon from "@material-ui/icons/Update";
+import { header } from "../Pages/Auth";
 import axios from "axios";
 import { SentimentAnalysisContext } from "../../contexts/SentimentAnalysisContext";
 import { TrendingSubjectContext } from "../../contexts/TrendingSubjectContext";
@@ -94,14 +94,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideNavBar =  (props) => {
+const SideNavBar = (props) => {
   const { window, children, history } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pages] = useState(JSON.parse(Cookies.get("pages")));
-  const [token]=useState(Cookies.get("token"))
-  const [isloading,setIsloading]=useState(true)
+  const [token] = useState(Cookies.get("token"));
+  const [isloading, setIsloading] = useState(true);
   const [name] = useState(Cookies.get("name"));
   const currentTab = (history, path) => {
     if (path.includes(history.location.pathname)) {
@@ -128,7 +128,7 @@ const SideNavBar =  (props) => {
     axios(config)
       .then((response) => {
         Cookies.remove("token");
-        props.history.push("/")
+        props.history.push("/");
         // console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
@@ -266,9 +266,8 @@ const SideNavBar =  (props) => {
       path: ["/updateDelete-role"],
     },
   ];
- 
+
   const menus1 = [
-    
     {
       name: "Summary Dashboard",
       icon: <BallotIcon />,
@@ -309,11 +308,10 @@ const SideNavBar =  (props) => {
       name: "Trending Subjects",
       icon: <TrendingUpIcon />,
       path: ["/trending-subject/sentiment", "/trending-subject/mood"],
-    },]
-
+    },
+  ];
 
   const drawer = (
-    
     <div className={classes.drawerScroller}>
       <div id="userMenuHeader">
         <Grid container>
@@ -326,9 +324,9 @@ const SideNavBar =  (props) => {
             />
           </Grid>
           <Grid item align="right" className="grid-user" xs={8}>
-  <Typography> Welcome {name}</Typography>
+            <Typography> Welcome {name}</Typography>
           </Grid>
-        
+
           {/* <Grid item align="left" className="grid-user" xs={4}>
             <Typography align="left">
               <ArrowDropDownIcon />
@@ -338,35 +336,36 @@ const SideNavBar =  (props) => {
       </div>
       <Divider style={{ marginTop: "120px" }} />
       <List>
-          {
-            menus.map((menuItem, index) => (
-          pages.map((page,index1)=>
-          // console.log(menuItem.name,page)
-          menuItem.name===page?
-          (<Link
-            to={menuItem.path[0]}
-            key={index}
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <ListItem button key={index}>
-              <ListItemIcon style={currentTab(history, menuItem.path)}>
-                {" "}
-                {menuItem.icon}{" "}
-              </ListItemIcon>
-              <ListItemText
-                style={currentTab(history, menuItem.path)}
-                classes={{ primary: classes.listItemText }}
-                primary={menuItem.name}
-              />
-            </ListItem>
-            <Divider />
-          </Link>)
-          :"")))}
-        
+        {menus.map((menuItem, index) =>
+          pages.map((page, index1) =>
+            // console.log(menuItem.name,page)
+            menuItem.name === page ? (
+              <Link
+                to={menuItem.path[0]}
+                key={index}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem button key={index}>
+                  <ListItemIcon style={currentTab(history, menuItem.path)}>
+                    {" "}
+                    {menuItem.icon}{" "}
+                  </ListItemIcon>
+                  <ListItemText
+                    style={currentTab(history, menuItem.path)}
+                    classes={{ primary: classes.listItemText }}
+                    primary={menuItem.name}
+                  />
+                </ListItem>
+                <Divider />
+              </Link>
+            ) : (
+              ""
+            )
+          )
+        )}
       </List>
     </div>
   );
-
 
   const container =
     window !== undefined ? () => window().document.body : undefined;

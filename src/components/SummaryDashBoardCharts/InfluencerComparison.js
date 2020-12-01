@@ -32,6 +32,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function InfluencerComparison({ from, to, refresh }) {
+   const [pages] = useState(JSON.parse(Cookies.get("pages")));
+   const [linkAcess, setLinkAccess] = useState(false);
   const classes = useStyles();
   const [source, setSource] = useState("twitter");
   const [type, setType] = useState("Sentiment");
@@ -163,6 +165,11 @@ function InfluencerComparison({ from, to, refresh }) {
   ];
 
   useEffect(() => {
+     pages.map((page) => {
+       if (page === "Influencer Analysis") {
+         setLinkAccess(true);
+       }
+     });
     setData([]);
     if (source === "twitter") {
       // Axios.post(process.env.REACT_APP_URL,
@@ -462,7 +469,49 @@ function InfluencerComparison({ from, to, refresh }) {
             </Grid>
           </Grid>
         </Grid>
-        <Link style={{ width: "100%" }} to="/influencer-analysis">
+        {linkAcess ? (
+          <Link style={{ width: "100%" }} to="/influencer-analysis">
+            <Grid item xs={12}>
+              <TreeMap
+                title={`${capitalizeString(source)} Influencer Comparison`}
+                data={data}
+              />
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {type === "Sentiment"
+                  ? ["positive", "negative", "neutral"].map((sentiment, i) => (
+                      <CustomLegend
+                        key={i}
+                        word={capitalizeString(sentiment)}
+                        color={colors[sentiment]}
+                      />
+                    ))
+                  : [
+                      "joy",
+                      "surprise",
+                      "anticipation",
+                      "sad",
+                      "anger",
+                      "disgust",
+                      "fear",
+                      "trust",
+                    ].map((mood, i) => (
+                      <CustomLegend
+                        key={i}
+                        word={capitalizeString(mood)}
+                        color={colors[mood]}
+                      />
+                    ))}
+              </div>
+            </Grid>
+          </Link>
+        ) : (
           <Grid item xs={12}>
             <TreeMap
               title={`${capitalizeString(source)} Influencer Comparison`}
@@ -502,7 +551,7 @@ function InfluencerComparison({ from, to, refresh }) {
                   ))}
             </div>
           </Grid>
-        </Link>
+        )}
       </Grid>
     </Card>
   );

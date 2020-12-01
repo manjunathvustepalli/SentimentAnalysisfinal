@@ -12,11 +12,18 @@ function SentimentAnalysis({
   keywordType,
   refresh,
 }) {
+  const [pages] = useState(JSON.parse(Cookies.get("pages")));
+  const [linkAcess, setLinkAccess] = useState(false);
   const [from, to] = toFromDateHandlers;
   const [data, setData] = useState([]);
   const [dates, setDates] = useState([]);
 
   useEffect(() => {
+    pages.map((page) => {
+      if (page === "Sentiment Analysis") {
+        setLinkAccess(true);
+      }
+    });
     setData([]);
     setDates([]);
     // let query = {
@@ -130,16 +137,29 @@ if (keywordType === "Hash Tags") {
   }, [from, to, keywords, keywordType, refresh]);
 
   return (
-    <Link to="/sentimental-analysis/area-chart" style={{ width: "100%" }}>
-      <div>
-        <AreaChart
-          title="Date wise Sentiment Trend"
-          dates={dates}
-          data={data}
-          sorted={true}
-        />
-      </div>
-    </Link>
+    <>
+      {linkAcess ? (
+        <Link to="/sentimental-analysis/area-chart" style={{ width: "100%" }}>
+          <div>
+            <AreaChart
+              title="Date wise Sentiment Trend"
+              dates={dates}
+              data={data}
+              sorted={true}
+            />
+          </div>
+        </Link>
+      ) : (
+        <div>
+          <AreaChart
+            title="Date wise Sentiment Trend"
+            dates={dates}
+            data={data}
+            sorted={true}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
