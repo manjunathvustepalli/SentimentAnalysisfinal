@@ -193,7 +193,7 @@ function LiveAnalysis() {
     setOpen(false);
     setsentiment("");
   };
-  function fetchData() {
+  function fetchData(param) {
     // Axios.post(
 
     //     process.env.REACT_APP_SEARCH_URL,
@@ -227,10 +227,18 @@ function LiveAnalysis() {
     // )
     let token = Cookies.get("token");
     let editDataAcess = Cookies.get("Update Data");
-    let data = JSON.stringify({
+    let data=""
+    if(param==="queryFirstTime"){
+       data = JSON.stringify({
       querySources: [source],
       queryLanguages: languages,
-    });
+      queryFirstTime:"true"
+    })}
+    else{
+       data = JSON.stringify({
+      querySources: [source],
+      queryLanguages: languages,
+    })}
 
     let config = {
       method: "post",
@@ -646,10 +654,10 @@ function LiveAnalysis() {
       });
   }
   useEffect(() => {
-    fetchData();
+    fetchData("queryFirstTime");
     const interval = setInterval(() => {
       if (liveReloading) {
-        fetchData();
+        fetchData("");
       }
     }, reloadInterval);
     return () => clearInterval(interval);
