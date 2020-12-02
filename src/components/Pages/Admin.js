@@ -47,23 +47,21 @@ function Admin() {
   const deletekeyword = async (data) => {
     if (source === "twitter") {
       // await setpagedata((oldArray) => );
-     await setpagedata((items) =>
-       items.filter(function (item) {
-         if (item !== data) {
-           return item;
-         }
-       })
-     );
-   
-    //   let pagedatas = await pagedata.filter(function (item) {
-    //     if (item !== data) {
-    //       return item;
-    //     }
-    //   });
-    //   console.log(pagedatas);
-    //  await setpagedata(pagedatas)
-   
-    
+      await setpagedata((items) =>
+        items.filter(function (item) {
+          if (item !== data) {
+            return item;
+          }
+        })
+      );
+
+      //   let pagedatas = await pagedata.filter(function (item) {
+      //     if (item !== data) {
+      //       return item;
+      //     }
+      //   });
+      //   console.log(pagedatas);
+      //  await setpagedata(pagedatas)
     }
     await setDeletedWord(data);
   };
@@ -75,13 +73,13 @@ function Admin() {
   };
   const deletekeyword1 = async (data) => {
     if (source === "twitter") {
-        await setkeyworddata((items) =>
-          items.filter(function (item) {
-            if (item !== data) {
-              return item;
-            }
-          })
-        );
+      await setkeyworddata((items) =>
+        items.filter(function (item) {
+          if (item !== data) {
+            return item;
+          }
+        })
+      );
     }
     await setDeletedWord1(data);
   };
@@ -113,20 +111,30 @@ function Admin() {
         } else {
           setpagedata(data.data[Object.keys(data.data)[2]]);
           setkeyworddata(data.data[Object.keys(data.data)[1]]);
-          setData(
-            data.data[Object.keys(data.data)[2]].map((item) => {
-              return {
-                name: item,
-              };
-            })
-          );
-          setData1(
-            data.data[Object.keys(data.data)[1]].map((item) => {
-              return {
-                name: item,
-              };
-            })
-          );
+          if (data.data[Object.keys(data.data)[2]]) {
+            setData(
+              data.data[Object.keys(data.data)[2]].map((item) => {
+                return {
+                  name: item,
+                };
+              })
+            );
+          } else {
+            setData([]);
+            setpagedata([])
+          }
+          if (data.data[Object.keys(data.data)[1]]) {
+            setData1(
+              data.data[Object.keys(data.data)[1]].map((item) => {
+                return {
+                  name: item,
+                };
+              })
+            );
+          } else {
+            setData1([]);
+            setkeyworddata([])
+          }
         }
         setLoaderOpen(false);
       })

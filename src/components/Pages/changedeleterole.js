@@ -27,6 +27,8 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { DeleteForeverOutlined } from "@material-ui/icons";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -71,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 export default function Changedeleterole() {
   let roles = {};
   let uroles = {};
@@ -85,8 +90,22 @@ export default function Changedeleterole() {
   const [edit, setedit] = useState(false);
   const [editrowdata, seteditrowdata] = useState();
   const [editid, seteditid] = useState();
+  const [open1, setOpen1] = React.useState(false);
+  const [message, setmessage] = useState();
+  const [severity, setseverity] = useState();
   const classes = useStyles();
   let mroles = {};
+  const handleClick = () => {
+    setOpen1(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen1(false);
+  };
   const handleChange = (event, arr) => {
     console.log(arr);
     setPersonName(arr);
@@ -158,9 +177,20 @@ export default function Changedeleterole() {
     await axios(config)
       .then((response) => {
         getRoles();
+        setOpen1(true);
+        if (response.data.status === "Success") {
+          setmessage("Role update successfully");
+          setseverity("success");
+        } else {
+          setmessage(response.data.errMsg);
+          setseverity("error");
+        }
       })
       .catch((error) => {
         console.log(error);
+        setOpen1(true);
+        setmessage("Something went wrong please try again later");
+        setseverity("error");
       });
   };
   const Deleterole = (olddata) => {
@@ -179,10 +209,21 @@ export default function Changedeleterole() {
 
     axios(config)
       .then((response) => {
+        setOpen1(true);
+        if (response.data.status === "Success") {
+          setmessage("Role update successfully");
+          setseverity("success");
+        } else {
+          setmessage(response.data.errMsg);
+          setseverity("error");
+        }
         return getRoles();
       })
       .catch((error) => {
         console.log(error);
+        setOpen1(true);
+        setmessage("Something went wrong please try again later");
+        setseverity("error");
       });
   };
   const handleedit = async (rowData) => {
@@ -308,7 +349,11 @@ export default function Changedeleterole() {
               },
             }}
           />
-
+          <Snackbar open={open1} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity={severity}>
+              {message}
+            </Alert>
+          </Snackbar>
           <Dialog
             fullWidth
             style={{ height: "700px" }}
@@ -318,8 +363,7 @@ export default function Changedeleterole() {
             aria-describedby="alert-dialog-slide-description"
           >
             <DialogTitle id="alert-dialog-slide-title">
-              {" "}
-              Update Role{" "}
+              Update Role
             </DialogTitle>
             {dloading ? (
               <Grid
