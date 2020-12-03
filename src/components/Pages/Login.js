@@ -97,39 +97,174 @@ function Login(props) {
   const handleIncorrectEntry = () => {
     setIncorrectFlag(!IncorrectFlag);
   };
+  const menus = [
+    {
+      name: "Summary Dashboard",
+
+      path: ["/summary-dashboard"],
+    },
+    {
+      name: "Sentiment Analysis",
+
+      path: [
+        "/sentimental-analysis/area-chart",
+        "/sentimental-analysis/pie-chart",
+        "/sentimental-analysis/line-chart",
+        "/sentimental-analysis/semi-donut-chart",
+        "/sentimental-analysis/bar-chart",
+        "/sentimental-analysis/stack-chart",
+      ],
+    },
+    {
+      name: "Mood Analysis",
+
+      path: [
+        "/mood-analysis/area-chart",
+        "/mood-analysis/pie-chart",
+        "/mood-analysis/line-chart",
+      ],
+    },
+    {
+      name: "Influencer Analysis",
+
+      path: ["/influencer-analysis"],
+    },
+    {
+      name: "Word Cloud",
+
+      path: ["/word-cloud/sentiment" /*,'/word-cloud/mood'*/],
+    },
+    {
+      name: "Trending Subject",
+
+      path: ["/trending-subject/sentiment", "/trending-subject/mood"],
+    },
+
+    {
+      name: "Trend Analysis",
+
+      path: [
+        "/trend-analysis/line-chart",
+        "/trend-analysis/bar-chart",
+        "/trend-analysis/area-chart",
+        "/trend-analysis/pie-chart",
+        "/trend-analysis/stacked-bar-chart",
+        "/trend-analysis/semi-pie-chart",
+      ],
+    },
+    {
+      name: "Live Analysis",
+
+      path: ["/Live-analysis"],
+    },
+    {
+      name: "Export Data",
+
+      path: ["/export-data"],
+    },
+    {
+      name: "Administration",
+
+      path: ["/admin"],
+    },
+    {
+      name: "Fetch",
+
+      path: ["/global-search"],
+    },
+    {
+      name: "Search",
+
+      path: ["/search-from-db"],
+    },
+    {
+      name: "Image Sentiment Analysis",
+
+      path: ["/image-gallery"],
+    },
+    {
+      name: "Geo HotSpot Analysis",
+
+      path: ["/geo-hotspot"],
+    },
+    {
+      name: "Demography",
+
+      path: ["/demography"],
+    },
+    {
+      name: "Behavior Analysis",
+
+      path: ["/behavior-analysis"],
+    },
+    {
+      name: "Add User",
+
+      path: ["/add-user"],
+    },
+    {
+      name: "Update/Delete User",
+
+      path: ["/updateDelete-user"],
+    },
+    // {
+    //   name: "Delete User",
+    //   icon: <DeleteIcon/>,
+    //   path: ["/delete-user"]
+    // },
+    {
+      name: "Change Password",
+
+      path: ["/change-password"],
+    },
+    {
+      name: "Add Role",
+
+      path: ["/add-role"],
+    },
+    {
+      name: "Update/delete Role",
+
+      path: ["/updateDelete-role"],
+    },
+  ];
   const setCookies = async (response) => {
     await Cookies.set("token", response.data.token);
-    let pages=[];
-    response.data.pages.map((page)=>{
+    let pages = [];
+    response.data.pages.map((page) => {
       pages.push(page.pageUrl);
-    })
+    });
     await Cookies.set("pages", pages);
-              Cookies.set("Update Data", "false");
+    Cookies.set("Update Data", "false");
 
-     
-    await Cookies.set("name",response.data.displayName);
+    await Cookies.set("name", response.data.displayName);
     if (response.status === 201) {
       setIncorrectFlag(false);
-      for(var i=0;i<response.data.pages.length;i++){
+      for (var i = 0; i < response.data.pages.length; i++) {
         if (response.data.pages[i].pageUrl === "Summary Dashboard") {
-           props.history.push({
+          props.history.push({
             pathname: "/summary-dashboard",
           });
           break;
-        }
-        if(i===pages.length-1){
-           
-           props.history.push({
-             pathname: "/add-user",
-           });
+        } else {
+          if (i === pages.length - 1) {
+            for (var i = 0; i < menus.length; i++) {
+              if (response.data.pages[0].pageUrl === menus[i].name) {
+                props.history.push({
+                  pathname: menus[i].path[0],
+                });
+                break;
+              }
+            }
+          }
         }
       }
-       for(var i=0;i<response.data.pages.length;i++){
+      
+      for (var i = 0; i < response.data.pages.length; i++) {
         if (response.data.pages[i].pageUrl === "Suggest Corrections") {
           Cookies.set("Update Data", "true");
         }
-       }
-      
+      }
     } else {
       setIncorrectFlag(true);
     }
@@ -164,8 +299,7 @@ function Login(props) {
     if (response.data.token) {
       // console.log(response);
       await setCookies(response);
-    }
-    else{
+    } else {
       setIncorrectFlag(true);
     }
   };

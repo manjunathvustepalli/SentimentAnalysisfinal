@@ -268,7 +268,7 @@ export default function Changedeleterole() {
     { title: "Role Description", field: "roleDescription" },
 
     {
-      title: "Page Ids",
+      title: "Page Names",
       field: "pageIds",
       render: (rowData) =>
         rowData.pageIds.map((data, index) =>
@@ -424,7 +424,7 @@ export default function Changedeleterole() {
                             {...params}
                             variant="outlined"
                             style={{ color: "white" }}
-                            label="Select one or more roles"
+                            label="Select one or more pages"
                             placeholder="Subsources"
                           />
                         )}
