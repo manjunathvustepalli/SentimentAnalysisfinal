@@ -121,7 +121,7 @@ function Admin() {
             );
           } else {
             setData([]);
-            setpagedata([])
+            setpagedata([]);
           }
           if (data.data[Object.keys(data.data)[1]]) {
             setData1(
@@ -133,7 +133,7 @@ function Admin() {
             );
           } else {
             setData1([]);
-            setkeyworddata([])
+            setkeyworddata([]);
           }
         }
         setLoaderOpen(false);

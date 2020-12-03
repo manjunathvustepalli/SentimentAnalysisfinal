@@ -183,7 +183,7 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
         console.log(error);
@@ -227,19 +227,20 @@ function LiveAnalysis() {
     // )
     let token = Cookies.get("token");
     let editDataAcess = Cookies.get("Update Data");
-    let data=""
-    if(param==="queryFirstTime"){
-       data = JSON.stringify({
-      querySources: [source],
-      queryLanguages: languages,
-      queryFirstTime:"true"
-    })}
-    else{
-       data = JSON.stringify({
-         querySources: [source],
-         queryLanguages: languages,
-         queryFirstTime: "false",
-       });}
+    let data = "";
+    if (param === "queryFirstTime") {
+      data = JSON.stringify({
+        querySources: [source],
+        queryLanguages: languages,
+        queryFirstTime: "true",
+      });
+    } else {
+      data = JSON.stringify({
+        querySources: [source],
+        queryLanguages: languages,
+        queryFirstTime: "false",
+      });
+    }
 
     let config = {
       method: "post",
@@ -253,14 +254,18 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((fetchedData) => {
-        console.log("live analysis", fetchedData);
+        // console.log("live analysis", fetchedData);
         let final = fetchedData.data.hits.hits.map((user) => {
           let obj = {};
           obj.id = user._id;
           if (user._source.User) {
             obj.name = user._source.User.Name;
             obj.screenName = user._source.User.ScreenName;
+            console.log("user._source.User.ScreenName",user._source.User.ScreenName);
             obj.followersCount = user._source.User.FollowersCount;
+          }
+          if (user._source.SubSource) {
+            obj.SubSource = user._source.SubSource;
           }
           if (user._source.Place) {
             obj.location = user._source.Place.FullName;
@@ -282,7 +287,7 @@ function LiveAnalysis() {
             ));
           }
           if (user._source.PredictedImageSentiment) {
-            console.log(user._source.PredictedImageSentiment);
+            // console.log(user._source.PredictedImageSentiment);
             obj.predictedSentiment = user._source.PredictedImageSentiment.map(
               (image) =>
                 image.sentiment === "neutral" ? (
@@ -347,7 +352,7 @@ function LiveAnalysis() {
               );
             });
             if (user._source.MediaEntities[0].ExpandedURL) {
-              console.log("post", user._source.MediaEntities[0].ExpandedURL);
+              // console.log("post", user._source.MediaEntities[0].ExpandedURL);
               obj.postUrl = (
                 <IconButton
                   onClick={() => {
@@ -404,6 +409,7 @@ function LiveAnalysis() {
               { title: "Screen Name", field: "screenName" },
               { title: "Post", field: "tweet" },
               { title: "Mood", field: "mood" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Sentiment", field: "sentiment" },
               { title: "Location", field: "location" },
               { title: "HashTags", field: "hashTags" },
@@ -460,6 +466,7 @@ function LiveAnalysis() {
               { title: "Date", field: "date" },
               { title: "Name", field: "name" },
               { title: "Screen Name", field: "screenName" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Post", field: "tweet" },
               { title: "Mood", field: "mood" },
               { title: "Sentiment", field: "sentiment" },
@@ -506,6 +513,7 @@ function LiveAnalysis() {
               { title: "Date", field: "date" },
               { title: "Post", field: "tweet" },
               { title: "Mood", field: "mood" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Sentiment", field: "sentiment" },
               {
                 title: "Replies",
@@ -551,6 +559,7 @@ function LiveAnalysis() {
             setColumns([
               { title: "Date", field: "date" },
               { title: "Post", field: "tweet" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Mood", field: "mood" },
               { title: "Sentiment", field: "sentiment" },
               {
@@ -586,6 +595,7 @@ function LiveAnalysis() {
             setColumns([
               { title: "Date", field: "date" },
               { title: "Post", field: "tweet" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Mood", field: "mood" },
               { title: "Sentiment", field: "sentiment" },
               { title: "Media Sentiment", field: "predictedSentiment" },
@@ -625,6 +635,7 @@ function LiveAnalysis() {
             setColumns([
               { title: "Date", field: "date" },
               { title: "Post", field: "tweet" },
+              { title: "Sub Source", field: "SubSource" },
               { title: "Mood", field: "mood" },
               { title: "Sentiment", field: "sentiment" },
               { title: "Media Sentiment", field: "predictedSentiment" },

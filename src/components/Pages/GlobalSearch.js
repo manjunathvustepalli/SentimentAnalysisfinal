@@ -89,7 +89,7 @@ function GlobalSearch() {
   const [editMood, setEditMood] = useState("");
   const [editlanguage, setEditLanguage] = useState("");
   const [liveReloading, setLiveReloading] = useState(false);
-  const [reloadInterval, setReloadInterval] = useState(10000);
+  const [reloadInterval, setReloadInterval] = useState(20000);
   const [editDataAcess] = useState(Cookies.get("Update Data"));
   const handleEditClose = () => {
     setEditOpen(false);
@@ -759,7 +759,9 @@ function GlobalSearch() {
             // }
             // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
             console.log("//////////////////////////////");
-            twittersearch();
+            setTimeout(() => {
+              twittersearch();
+            }, 10000);
           } else {
             handleClick();
             setopen(false);
@@ -882,7 +884,9 @@ function GlobalSearch() {
           // }
 
           // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
-          Instagramsearch();
+          setTimeout(() => {
+            Instagramsearch();
+          }, 10000);
         } else {
           handleClick();
           setopen(false);
@@ -939,7 +943,9 @@ function GlobalSearch() {
           // }
 
           // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
-          telegramsearch();
+          setTimeout(() => {
+            telegramsearch();
+          }, 10000);
         } else {
           handleClick();
           setopen(false);
@@ -996,7 +1002,9 @@ function GlobalSearch() {
           // }
 
           // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
-          bloggersearch();
+          setTimeout(() => {
+            bloggersearch();
+          }, 10000);
         } else {
           handleClick();
           setopen(false);
@@ -1052,7 +1060,9 @@ function GlobalSearch() {
           // }
 
           // Axios.post(process.env.REACT_APP_SEARCH_URL, query)
-          googlenewssearch();
+          setTimeout(() => {
+            googlenewssearch();
+          }, 10000);
         } else {
           handleClick();
           setopen(false);
@@ -1222,7 +1232,7 @@ function GlobalSearch() {
             />
           </Grid>
           <Grid item>
-            {liveReloading && (
+            {/* {liveReloading && (
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="demo-simple-select-outlined-label">
                   Reload Interval
@@ -1239,7 +1249,7 @@ function GlobalSearch() {
                   <MenuItem value={30000}>30 Seconds</MenuItem>
                 </Select>
               </FormControl>
-            )}
+            )} */}
           </Grid>
         </Grid>
         <Grid item xs={12}>
