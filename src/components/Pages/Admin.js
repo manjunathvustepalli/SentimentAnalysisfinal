@@ -162,7 +162,6 @@ function Admin() {
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`,
       //     Auth
       //   )
-
       let jsondata = "";
       if (source === "facebook") {
         jsondata = JSON.stringify({ fbpages: [newlyAddedWord] });
