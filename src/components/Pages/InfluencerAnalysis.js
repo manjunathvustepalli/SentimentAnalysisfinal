@@ -218,7 +218,20 @@ function InfluencerAnalysis() {
           textOutline:'none'
       }
   }
-    }]
+    }
+  ,{
+    id:'neutral',
+    name:'neutral',
+    color:colors['neutral'],
+    dataLabels:{
+      color:'#000',
+      style:{
+          textOutline:'none'
+      }
+  }
+    }
+  
+  ]
 
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
@@ -649,7 +662,7 @@ function InfluencerAnalysis() {
                                         </CardContent>
                                     </Grid>
                                     <Grid xs={12} md={5}>
-                                    <FormControl variant="outlined" className={classes.formControl}>
+                                    {/* <FormControl variant="outlined" className={classes.formControl}>
 							                        <InputLabel id="top-influencers">Select Influencers Count</InputLabel>
 							                        <Select
 							                        	labelId="top-influencers"
@@ -664,7 +677,7 @@ function InfluencerAnalysis() {
 							                        <MenuItem value={25}> Top 25 Influencers </MenuItem>
 							                        <MenuItem value={50}> Top 50 Influencers </MenuItem>
 							                        </Select>
-							                      </FormControl>
+							                      </FormControl> */}
                                     </Grid>
                                     <Grid item xs={12}>
                                         {
@@ -679,7 +692,7 @@ function InfluencerAnalysis() {
                                 <Grid item xs={12}>
                                     <Grid container spacing={2} style={{marginTop:'20px'}}>
                                         <Grid item xs={5}>
-                                            <CardContent>Influncers Comparison</CardContent>
+                                            <CardContent>Influencers Comparison</CardContent>
                                         </Grid>
                                         <Grid item xs={7} align={'right'}>
                                             <Tabs
@@ -713,7 +726,7 @@ function InfluencerAnalysis() {
                                       </div>
                                         <div style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
                                           {
-                                            ['joy','surprise','anticipation','sad','anger','disgust','fear','trust'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
+                                            ['joy','surprise','anticipation','sad','anger','disgust','fear','trust','neutral'].map((mood)=> <CustomLegend word={capitalizeString(mood)} color={colors[mood]} />)
                                           }
                                         </div>
                                     </TabPanel>

@@ -172,6 +172,7 @@ export const MoodAnalysisContext = ({ children }) => {
                   surprise: true,
                   trust: true,
                   anger: true,
+                  neutral:true,
                 };
               }
             });

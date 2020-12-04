@@ -282,6 +282,14 @@ function MoodAnalysisLineChart() {
                     "anger"
                   )
                 );
+                sortedData[key][source][subSource][
+                  "neutral"
+                ] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "neutral"
+                  )
+                );
               });
             });
           });
@@ -323,6 +331,7 @@ function MoodAnalysisLineChart() {
                   surprise: true,
                   trust: true,
                   anger: true,
+                  neutral:true,
                 };
               }
             });
@@ -360,6 +369,7 @@ function MoodAnalysisLineChart() {
                   surprise: true,
                   trust: true,
                   anger: true,
+                  neutral:true,
                 };
               }
             });

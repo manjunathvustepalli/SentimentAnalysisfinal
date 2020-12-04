@@ -283,6 +283,7 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
                     <MenuItem value={"fear"}>Fear</MenuItem>
                     <MenuItem value={"sad"}>Sad</MenuItem>
                     <MenuItem value={"disgust"}>Disgust</MenuItem>
+                    <MenuItem value={"neutral"}>neutral</MenuItem>
                   </Select>
                 </FormControl>
               )}

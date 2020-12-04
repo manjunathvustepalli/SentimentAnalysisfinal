@@ -276,9 +276,19 @@ Axios(config)
                     "anger"
                   )
                 );
+                sortedData[key][source][subSource][
+                  "neutral"
+                ] = perDayBuckets.map((item) =>
+                  getDocCountByKey(
+                    item["Daily-Sentiment-Distro"].buckets,
+                    "neutral"
+                  )
+                );
+                  console.log("neutral check",sortedData[key][source][subSource]["neutral"]);
               });
             });
           });
+        
           if (changeInState) {
             setSources((prev) => {
               let availableSourceKeys = {};
@@ -306,6 +316,7 @@ Axios(config)
 
             setMoods((prev) => {
               if (Object.keys(prev).length) {
+                console.log(prev)
                 return prev;
               } else {
                 return {
@@ -317,6 +328,7 @@ Axios(config)
                   surprise: true,
                   trust: true,
                   anger: true,
+                  neutral:true,
                 };
               }
             });
@@ -343,6 +355,7 @@ Axios(config)
 
             setMoods((prev) => {
               if (Object.keys(prev).length) {
+                 console.log(prev);
                 return prev;
               } else {
                 return {
@@ -354,6 +367,7 @@ Axios(config)
                   surprise: true,
                   trust: true,
                   anger: true,
+                  neutral: true,
                 };
               }
             });

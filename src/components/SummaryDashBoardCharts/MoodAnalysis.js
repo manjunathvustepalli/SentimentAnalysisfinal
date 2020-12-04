@@ -116,6 +116,7 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh }) {
           "fear",
           "sad",
           "trust",
+          "neutral"
         ];
         moods.forEach((mood, i) => {
           sortedData.push({

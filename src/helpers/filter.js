@@ -148,6 +148,9 @@ export const MoodAnalysisAreaChartFilter = (languages,moods,sources,subSources,d
         if(moods['anger']){
             obj['anger'] = item.anger
         }
+        if(moods['neutral']){
+            obj["neutral"] = item.neutral;
+        }
         dataArray.push(obj)
     })
     let allDates = getDatesArray(from,to)
@@ -485,6 +488,7 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
     var surpriseData = [...joyData]
     var trustData = [...joyData]
     var angerData = [...joyData]
+    var neutralData=[...joyData]
         dataArray.forEach(item => {
             item.dates.forEach((date,i) => {
                 let index = allDates.indexOf(date)
@@ -511,6 +515,9 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
                 }
                 if(moods['anger']){
                     angerData[index] = angerData[index] + item.anger[i]
+                }
+                if(moods['neutral']){
+                    neutralData[index] = angerData[index] + item.neutral[i];
                 }
             })
         })
@@ -570,6 +577,13 @@ export const moodAnalysisLineChartFilter = (languages,subSources,sources,moods,s
                 color:colors['anger'],
                 data:angerData
             })
+        }
+        if (moods["neutral"]) {
+          finalData.push({
+            name: "neutral",
+            color: colors["neutral"],
+            data: neutralData,
+          });
         }
         return [finalData,allDates,uniqueSubSources] 
 }
