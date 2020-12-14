@@ -1209,7 +1209,7 @@ function GlobalSearch() {
             onClick={() => submitData("queryFirstTime")}
             fullWidth
           >
-            Search
+            Fetch
           </Button>
         </Grid>
         <Grid

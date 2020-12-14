@@ -124,14 +124,37 @@ function LiveAnalysis() {
   const [editsentiment, setEditSentiment] = useState("");
   const [editMood, setEditMood] = useState("");
   const [editlanguage, setEditLanguage] = useState("");
-
+  const [imageSentiment1, setImageSentiment1] = useState([]);
+  const [imageSentiment2, setImageSentiment2] = useState([]);
+  const [image1, setImage1] = useState([]);
+  const [imageCorrection, setimageCorrections] = useState([]);
   const handleEditClose = () => {
     setEditLanguage("");
     setEditMood("");
     setEditSentiment("");
     setEditOpen(false);
   };
+  const setEditimageSentiment = (i) => (e) => {
+    console.log(i, e.target.value);
+    let newArr = [...imageSentiment1];
+    newArr[i] = e.target.value;
+    setImageSentiment1(newArr);
+    
+  };
   const handleEditData = async (rowData) => {
+    console.log(rowData);
+    let isentiment = [];
+    let image = [];
+    if (rowData.pimageSentiment) {
+      rowData.pimageSentiment.map((post, i) => {
+        isentiment.push(post.sentiment);
+        image.push(post.externalURL);
+      });
+    }
+    setImageSentiment1(isentiment);
+    setImageSentiment2(isentiment);
+
+    setImage1(image);
     setEditData(rowData);
     setEditSentiment(rowData.sentiment);
     setEditMood(rowData.mood);
@@ -139,7 +162,20 @@ function LiveAnalysis() {
 
     setEditOpen(true);
   };
-  const updatedata = () => {
+  const updatedata = async() => {
+    let imagecorrection = [];
+    let image = {};
+    await image1.map(
+      (image, i) => (
+        (image = {
+          imageUrl: image,
+          newPredictedSentiment: imageSentiment1[i],
+          oldPredictedSentiment: imageSentiment2[i],
+        }),
+        imagecorrection.push(image)
+      )
+    );
+    console.log(imagecorrection);
     handleEditClose(false);
     let token = Cookies.get("token");
     let data = "";
@@ -154,6 +190,7 @@ function LiveAnalysis() {
           newPredictedSentiment: editsentiment,
           oldPredictedMood: editData.mood,
           newPredictedMood: editMood,
+          imageCorrections: imagecorrection,
         },
       });
     } else {
@@ -167,6 +204,7 @@ function LiveAnalysis() {
           newPredictedSentiment: editsentiment,
           oldPredictedMood: editData.mood,
           newPredictedMood: editMood,
+          imageCorrections: imagecorrection,
         },
       });
     }
@@ -254,14 +292,13 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((fetchedData) => {
-        // console.log("live analysis", fetchedData);
+        console.log("live analysis", fetchedData);
         let final = fetchedData.data.hits.hits.map((user) => {
           let obj = {};
           obj.id = user._id;
           if (user._source.User) {
             obj.name = user._source.User.Name;
             obj.screenName = user._source.User.ScreenName;
-            console.log("user._source.User.ScreenName",user._source.User.ScreenName);
             obj.followersCount = user._source.User.FollowersCount;
           }
           if (user._source.SubSource) {
@@ -288,6 +325,7 @@ function LiveAnalysis() {
           }
           if (user._source.PredictedImageSentiment) {
             // console.log(user._source.PredictedImageSentiment);
+            obj.pimageSentiment = user._source.PredictedImageSentiment;
             obj.predictedSentiment = user._source.PredictedImageSentiment.map(
               (image) =>
                 image.sentiment === "neutral" ? (
@@ -1035,6 +1073,24 @@ function LiveAnalysis() {
             Edit
           </DialogTitle>
           <DialogContent>
+            {imageSentiment1.map((sentiment, i) => (
+              <FormControl required fullWidth className={classes.formControl}>
+                <InputLabel id="demo-simple-select-required-label">
+                  Image Sentiment
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-required-label"
+                  id="demo-simple-select-required"
+                  value={sentiment}
+                  onChange={setEditimageSentiment(i)}
+                  // className={classes.selectEmpty}
+                >
+                  <MenuItem value={"positive"}>Positive</MenuItem>
+                  <MenuItem value={"negative"}>Negative</MenuItem>
+                  <MenuItem value={"neutral"}>Neutral</MenuItem>
+                </Select>
+              </FormControl>
+            ))}
             <FormControl required fullWidth className={classes.formControl}>
               <InputLabel id="demo-simple-select-required-label">
                 Language
