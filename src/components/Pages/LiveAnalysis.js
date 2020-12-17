@@ -31,6 +31,8 @@ import Cookies from "js-cookie";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
 import GridListTile from "@material-ui/core/GridListTile";
 import EditIcon from "@material-ui/icons/Edit";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -92,7 +94,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 var sortedData = {};
-
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 function LiveAnalysis() {
   const classes = useStyles();
   const [data, setData] = useState([]);
@@ -128,18 +132,27 @@ function LiveAnalysis() {
   const [imageSentiment2, setImageSentiment2] = useState([]);
   const [image1, setImage1] = useState([]);
   const [imageCorrection, setimageCorrections] = useState([]);
+  const [open1, setOpen1] = React.useState(false);
+  const [message, setmessage] = useState();
+  const [severity, setseverity] = useState();
   const handleEditClose = () => {
     setEditLanguage("");
     setEditMood("");
     setEditSentiment("");
     setEditOpen(false);
   };
+   const handleCloseSnackbar = (event, reason) => {
+     if (reason === "clickaway") {
+       return;
+     }
+
+     setOpen1(false);
+   };
   const setEditimageSentiment = (i) => (e) => {
     console.log(i, e.target.value);
     let newArr = [...imageSentiment1];
     newArr[i] = e.target.value;
     setImageSentiment1(newArr);
-    
   };
   const handleEditData = async (rowData) => {
     console.log(rowData);
@@ -162,7 +175,7 @@ function LiveAnalysis() {
 
     setEditOpen(true);
   };
-  const updatedata = async() => {
+  const updatedata = async () => {
     let imagecorrection = [];
     let image = {};
     await image1.map(
@@ -221,9 +234,20 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((response) => {
+        setOpen1(true);
+        if (response.data.status === "Success") {
+          setmessage("updated successfully");
+          setseverity("success");
+        } else {
+          setmessage(response.data.errMsg);
+          setseverity("error");
+        }
         // console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
+        setOpen1(true);
+        setmessage("Something went wrong please try again later");
+        setseverity("error");
         console.log(error);
       });
   };
@@ -947,6 +971,15 @@ function LiveAnalysis() {
               }}
             />
           </Grid>
+          <Snackbar
+            open={open1}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+          >
+            <Alert onClose={handleCloseSnackbar} severity={severity}>
+              {message}
+            </Alert>
+          </Snackbar>
           {/* <div style={{width:'26vw',padding:'20px'}}  >
                     <Grid container spacing={3} style={{position:'sticky',top:'60px'}} >
                         <Grid item xs={12} >
@@ -1074,22 +1107,40 @@ function LiveAnalysis() {
           </DialogTitle>
           <DialogContent>
             {imageSentiment1.map((sentiment, i) => (
-              <FormControl required fullWidth className={classes.formControl}>
-                <InputLabel id="demo-simple-select-required-label">
-                  Image Sentiment
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-required-label"
-                  id="demo-simple-select-required"
-                  value={sentiment}
-                  onChange={setEditimageSentiment(i)}
-                  // className={classes.selectEmpty}
-                >
-                  <MenuItem value={"positive"}>Positive</MenuItem>
-                  <MenuItem value={"negative"}>Negative</MenuItem>
-                  <MenuItem value={"neutral"}>Neutral</MenuItem>
-                </Select>
-              </FormControl>
+              <Grid container>
+                <Grid item xs={10}>
+                  <FormControl
+                    required
+                    fullWidth
+                    className={classes.formControl}
+                  >
+                    <InputLabel id="demo-simple-select-required-label">
+                      Image Sentiment
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-required-label"
+                      id="demo-simple-select-required"
+                      value={sentiment}
+                      onChange={setEditimageSentiment(i)}
+                      // className={classes.selectEmpty}
+                    >
+                      <MenuItem value={"positive"}>Positive</MenuItem>
+                      <MenuItem value={"negative"}>Negative</MenuItem>
+                      <MenuItem value={"neutral"}>Neutral</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                  <a
+                    href={image1[i]}
+                    style={{ textDecoration: "none" }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className={classes.root}>View</Button>
+                  </a>
+                </Grid>
+              </Grid>
             ))}
             <FormControl required fullWidth className={classes.formControl}>
               <InputLabel id="demo-simple-select-required-label">
