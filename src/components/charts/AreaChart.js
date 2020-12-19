@@ -25,77 +25,77 @@ function AreaChart(props) {
         setseries(data)
     },[props.data])
 
-    let config =  {
-        chart: {
-            type: 'areaspline'
-        },
+    let config = {
+      chart: {
+        type: "areaspline",
+        height: props.height||"60%",
+      },
+      title: {
+        text: props.title || "",
+      },
+      xAxis: {
+        categories: props.data.dates || props.dates,
+        tickmarkPlacement: "on",
         title: {
-            text:props.title || '',
+          text: "Dates",
         },
-        xAxis: {
-            categories: props.data.dates || props.dates,
-            tickmarkPlacement: 'on',
-            title:{
-                text:'Dates'
-            }
+      },
+      yAxis: {
+        title: {
+          text: "Data",
         },
-        yAxis: {
-            title: {
-                text: 'Data'
+        labels: {
+          formatter: function () {
+            return this.value;
+          },
+        },
+      },
+      credits: {
+        enabled: false,
+      },
+      plotOptions: {
+        area: {
+          marker: {
+            enabled: true,
+            symbol: "circle",
+            radius: 2,
+            states: {
+              hover: {
+                enabled: true,
+              },
             },
-            labels: {
-                formatter: function () {
-                    return this.value
-                }
-            }
+          },
+          showInLegend: true,
         },
-        credits: {
-            enabled: false
-        },
-        plotOptions: {
-            area: {
-                marker: {
-                    enabled: true,
-                    symbol: 'circle',
-                    radius: 2,
-                    states: {
-                        hover: {
-                            enabled: true
-                        }
-                    }
-                },
-                showInLegend: true
-            }
-        },
-        series,
-        exporting: {
-            chartOptions: {
-                title:{
-                    style:{
-                        fontSize:'10px'
-                    }
-                },
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: true,
-                            style:{
-                                fontSize:'6px'
-                            }
-                        }
-                        
-                    }
-                }
+      },
+      series,
+      exporting: {
+        chartOptions: {
+          title: {
+            style: {
+              fontSize: "10px",
             },
-            scale: 4,
-            fallbackToExportServer: false,
-            buttons: {
-                contextButton: {
-                    symbol: 'download'
-                }
-            }
+          },
+          plotOptions: {
+            series: {
+              dataLabels: {
+                enabled: true,
+                style: {
+                  fontSize: "6px",
+                },
+              },
+            },
+          },
         },
-    } 
+        scale: 4,
+        fallbackToExportServer: false,
+        buttons: {
+          contextButton: {
+            symbol: "download",
+          },
+        },
+      },
+    }; 
     return <HighchartsReact  options={config}> </HighchartsReact>
 }
 

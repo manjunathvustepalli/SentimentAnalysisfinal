@@ -24,67 +24,73 @@ function WordCloud(props) {
     
         highchartsWordCloud(Highcharts)
     
-        let config =  {
+        let config = {
+          chart: {
+            // type: "column",
+            height: props.height || "60%",
+          },
 
-            plotOptions: {
-                series: {
-                    events: {
-                        legendItemClick: function() {
-                          return false;
-                        }
-                    }
-                }
-            },            
-            series: [{
-                type: 'wordcloud',
-                events: {
-                    click: props.clickable && (function (event) {
-                        props.setWord(event.point.name)
-                        props.setOpen(true)                            
-                    })
+          plotOptions: {
+            series: {
+              events: {
+                legendItemClick: function () {
+                  return false;
                 },
-                data: props.data,
-                name: 'Occurrences',
-            }],
-            title: {
-                text: props.title || ''
-            },
-            credits: {
-                enabled: false
-            },
-            tooltip: {
-                headerFormat: '',
-                pointFormat:
-                  '<span>{point.name} : </span><b>{point.weight}',
               },
-              exporting: {
-                chartOptions: {
-                    title:{
-                        style:{
-                            fontSize:'10px'
-                        }
-                    },
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                enabled: true,
-                                style:{
-                                    fontSize:'6px'
-                                }
-                            }
-                            
-                        }
-                    }
-                },
-                scale: 4,
-                fallbackToExportServer: false,
-                buttons: {
-                    contextButton: {
-                        symbol: 'download'
-                    }
-                }
             },
-        }        
+          },
+          series: [
+            {
+              type: "wordcloud",
+              events: {
+                click:
+                  props.clickable &&
+                  function (event) {
+                    props.setWord(event.point.name);
+                    props.setOpen(true);
+                  },
+              },
+              data: props.data,
+              name: "Occurrences",
+            },
+          ],
+          title: {
+            text: props.title || "",
+          },
+          credits: {
+            enabled: false,
+          },
+          tooltip: {
+            headerFormat: "",
+            pointFormat: "<span>{point.name} : </span><b>{point.weight}",
+          },
+          exporting: {
+            chartOptions: {
+              title: {
+                style: {
+                  fontSize: "10px",
+                },
+              },
+              plotOptions: {
+                series: {
+                  dataLabels: {
+                    enabled: true,
+                    style: {
+                      fontSize: "6px",
+                    },
+                  },
+                },
+              },
+            },
+            scale: 4,
+            fallbackToExportServer: false,
+            buttons: {
+              contextButton: {
+                symbol: "download",
+              },
+            },
+          },
+        };        
         Highcharts.chart('container',config)
     }, [props.data,props.title])
 

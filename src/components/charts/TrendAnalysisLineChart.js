@@ -24,6 +24,11 @@ function TrendAnalysisLineChart(props) {
     title: {
       text: props.title || "",
     },
+    chart: {
+     
+        height: props.height || "60%",
+  
+    },
     yAxis: {
       title: {
         text: "Data",
@@ -42,36 +47,35 @@ function TrendAnalysisLineChart(props) {
       verticalAlign: "bottom",
     },
     credits: {
-      enabled: false
-  },
+      enabled: false,
+    },
     series: data,
     exporting: {
       chartOptions: {
-          title:{
-              style:{
-                  fontSize:'10px'
-              }
+        title: {
+          style: {
+            fontSize: "10px",
           },
-          plotOptions: {
-              series: {
-                  dataLabels: {
-                      enabled: true,
-                      style:{
-                          fontSize:'6px'
-                      }
-                  }
-                  
-              }
-          }
+        },
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+              style: {
+                fontSize: "6px",
+              },
+            },
+          },
+        },
       },
       scale: 4,
       fallbackToExportServer: false,
       buttons: {
-          contextButton: {
-              symbol: 'download'
-          }
-      }
-  },
+        contextButton: {
+          symbol: "download",
+        },
+      },
+    },
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;

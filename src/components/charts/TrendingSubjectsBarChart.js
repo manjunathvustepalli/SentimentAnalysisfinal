@@ -5,21 +5,42 @@ import HighchartsReact from "highcharts-react-official";
 function TrendingSubjectsBarChart(props) {
   Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
     var path = [
-        'M', x + w * 0.5, y,
-        'L', x + w * 0.5, y + h * 0.7,
-        'M', x + w * 0.3, y + h * 0.5,
-        'L', x + w * 0.5, y + h * 0.7,
-        'L', x + w * 0.7, y + h * 0.5,
-        'M', x, y + h * 0.9,
-        'L', x, y + h,
-        'L', x + w, y + h,
-        'L', x + w, y + h * 0.9
+      "M",
+      x + w * 0.5,
+      y,
+      "L",
+      x + w * 0.5,
+      y + h * 0.7,
+      "M",
+      x + w * 0.3,
+      y + h * 0.5,
+      "L",
+      x + w * 0.5,
+      y + h * 0.7,
+      "L",
+      x + w * 0.7,
+      y + h * 0.5,
+      "M",
+      x,
+      y + h * 0.9,
+      "L",
+      x,
+      y + h,
+      "L",
+      x + w,
+      y + h,
+      "L",
+      x + w,
+      y + h * 0.9,
     ];
     return path;
-};
+  };
   const options = {
     chart: {
       type: "column",
+     
+        height: props.height || "60%",
+      
     },
     title: {
       text: props.title || "",
@@ -33,13 +54,13 @@ function TrendingSubjectsBarChart(props) {
       },
     },
     credits: {
-      enabled: false
-  },
+      enabled: false,
+    },
     xAxis: {
       type: "category",
-      title:{
-        text:'Keywords'
-      }
+      title: {
+        text: "Keywords",
+      },
     },
     yAxis: {
       title: {
@@ -60,31 +81,30 @@ function TrendingSubjectsBarChart(props) {
     },
     exporting: {
       chartOptions: {
-          title:{
-              style:{
-                  fontSize:'10px'
-              }
+        title: {
+          style: {
+            fontSize: "10px",
           },
-          plotOptions: {
-              series: {
-                  dataLabels: {
-                      enabled: true,
-                      style:{
-                          fontSize:'6px'
-                      }
-                  }
-                  
-              }
-          }
+        },
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+              style: {
+                fontSize: "6px",
+              },
+            },
+          },
+        },
       },
       scale: 4,
       fallbackToExportServer: false,
       buttons: {
-          contextButton: {
-              symbol: 'download'
-          }
-      }
-  },
+        contextButton: {
+          symbol: "download",
+        },
+      },
+    },
 
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
@@ -96,7 +116,7 @@ function TrendingSubjectsBarChart(props) {
       {
         name: "Words",
         colorByPoint: true,
-        data:props.data
+        data: props.data,
       },
     ],
   };

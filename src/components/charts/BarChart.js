@@ -20,9 +20,10 @@ function BarChart(props) {
   const options = {
     chart: {
       type: "column",
+      height: props.height || "100%",
     },
     title: {
-      text: props.title || '',
+      text: props.title || "",
     },
     subtitle: {
       text: "",
@@ -33,14 +34,14 @@ function BarChart(props) {
       },
     },
     credits: {
-      enabled: false
-  },
+      enabled: false,
+    },
     xAxis: {
       type: "category",
-      categories:props.categories,
-      title:{
-        text:'Dates',
-      }
+      categories: props.categories,
+      title: {
+        text: "Dates",
+      },
     },
     yAxis: {
       title: {
@@ -51,8 +52,8 @@ function BarChart(props) {
       enabled: true,
     },
     plotOptions: {
-      column:{
-        stacking:props.stacking || ''
+      column: {
+        stacking: props.stacking || "",
       },
       series: {
         borderWidth: 0,
@@ -60,42 +61,41 @@ function BarChart(props) {
           enabled: false,
           format: "{point.y}",
           style: {
-            fontWeight: 'bold',
-            color: 'black',
-            fontSize:'0.8rem',
-            textOutline:'none',
-            border:'none'
+            fontWeight: "bold",
+            color: "black",
+            fontSize: "0.8rem",
+            textOutline: "none",
+            border: "none",
           },
         },
       },
     },
     exporting: {
       chartOptions: {
-          title:{
-              style:{
-                  fontSize:'10px'
-              }
+        title: {
+          style: {
+            fontSize: "10px",
           },
-          plotOptions: {
-              series: {
-                  dataLabels: {
-                      enabled: true,
-                      style:{
-                          fontSize:'6px'
-                      }
-                  }
-                  
-              }
-          }
+        },
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+              style: {
+                fontSize: "6px",
+              },
+            },
+          },
+        },
       },
       scale: 4,
       fallbackToExportServer: false,
       buttons: {
-          contextButton: {
-              symbol: 'download'
-          }
-      }
-  },
+        contextButton: {
+          symbol: "download",
+        },
+      },
+    },
 
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
@@ -103,7 +103,7 @@ function BarChart(props) {
         '<span style="color:{point.color}">{point.name}</span><b>{point.y}',
     },
 
-    series: props.data
+    series: props.data,
   };
 
   return(

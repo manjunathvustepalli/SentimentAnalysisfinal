@@ -146,6 +146,7 @@ if (keywordType === "Hash Tags") {
               dates={dates}
               data={data}
               sorted={true}
+              height={"400px"}
             />
           </div>
         </Link>
@@ -156,6 +157,7 @@ if (keywordType === "Hash Tags") {
             dates={dates}
             data={data}
             sorted={true}
+            height={"400px"}
           />
         </div>
       )}

@@ -24,73 +24,80 @@ function TreeMap(props) {
     HighchartsTreeMap(Highcharts)
 
     let config = {
-        credits: {
-            enabled: false
-        },
-        exporting: {
-            chartOptions: {
-                title:{
-                    style:{
-                        fontSize:'10px'
-                    }
+      chart: {
+        // type: "column",
+        height: props.height || "55%",
+      },
+      credits: {
+        enabled: false,
+      },
+      exporting: {
+        chartOptions: {
+          title: {
+            style: {
+              fontSize: "10px",
+            },
+          },
+          plotOptions: {
+            series: {
+              dataLabels: {
+                enabled: true,
+                style: {
+                  fontSize: "6px",
                 },
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: true,
-                            style:{
-                                fontSize:'6px'
-                            }
-                        }
-                        
-                    }
-                }
+              },
             },
-            scale: 4,
-            fallbackToExportServer: false,
-            buttons: {
-                contextButton: {
-                    symbol: 'download'
-                }
-            }
+          },
         },
-        series: [{
-            type: "treemap",
-            enableMouseTracking: false,
-            layoutAlgorithm: 'stripes',
-            alternateStartingDirection: true,
-            treemap:{
-                label:{
-                    style:{
-                        fontWeight: 'bold',
-                        color: 'black',
-                        fontSize:'0.8rem',
-                        textOutline:'none',
-                        border:'none'
-                    }
-                }
+        scale: 4,
+        fallbackToExportServer: false,
+        buttons: {
+          contextButton: {
+            symbol: "download",
+          },
+        },
+      },
+      series: [
+        {
+          type: "treemap",
+          enableMouseTracking: false,
+          layoutAlgorithm: "stripes",
+          alternateStartingDirection: true,
+          treemap: {
+            label: {
+              style: {
+                fontWeight: "bold",
+                color: "black",
+                fontSize: "0.8rem",
+                textOutline: "none",
+                border: "none",
+              },
             },
-            levels: [{
-                level: 1,
-                dataLabels: {
-                    enabled: false,
-                    align: 'left',
-                    verticalAlign: 'top',
-                    style: {
-                        fontWeight: 'bold',
-                        color: 'black',
-                        fontSize:'0.8rem',
-                        textOutline:'none',
-                        border:'none'
-                      },
-                }
-            }],
-            data: props.data,
-        }],
-        title: {
-            text: props.title || ''
-        }
-    }
+          },
+          levels: [
+            {
+              level: 1,
+              dataLabels: {
+                enabled: false,
+                align: "left",
+                verticalAlign: "top",
+                style: {
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "0.8rem",
+                  textOutline: "none",
+                  border: "none",
+                },
+              },
+            },
+          ],
+          data: props.data,
+        },
+      ],
+      title: {
+        text: props.title || "",
+      },
+    };
     
     return <HighchartsReact highcharts={Highcharts} options={config} />
 }

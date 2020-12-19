@@ -23,6 +23,9 @@ function TrendAnalysisChart(props) {
   const options = {
     chart: {
       type: "column",
+      
+        height: props.height || "60%",
+
     },
     title: {
       text: props.title || "",
@@ -33,9 +36,9 @@ function TrendAnalysisChart(props) {
     xAxis: {
       categories: dates,
       crosshair: true,
-      title:{
-        text:"Dates",
-      }
+      title: {
+        text: "Dates",
+      },
     },
     yAxis: {
       min: 0,
@@ -44,27 +47,26 @@ function TrendAnalysisChart(props) {
       },
     },
     credits: {
-      enabled: false
-  },
-  exporting: {
-    chartOptions: {
-        plotOptions: {
-            series: {
-                dataLabels: {
-                    enabled: true
-                }
-                
-            }
-        }
+      enabled: false,
     },
-    scale: 1,
-    fallbackToExportServer: false,
-    buttons: {
+    exporting: {
+      chartOptions: {
+        plotOptions: {
+          series: {
+            dataLabels: {
+              enabled: true,
+            },
+          },
+        },
+      },
+      scale: 1,
+      fallbackToExportServer: false,
+      buttons: {
         contextButton: {
-            symbol: 'download'
-        }
-    }
-},
+          symbol: "download",
+        },
+      },
+    },
     colors: [
       "rgba(3, 240, 252)",
       "rgba(252, 3, 65)",
@@ -80,15 +82,15 @@ function TrendAnalysisChart(props) {
       column: {
         pointPadding: 0,
         borderWidth: 0,
-        stacking:props.stacking || ''
+        stacking: props.stacking || "",
       },
     },
     series,
     buttons: {
       contextButton: {
-          symbol: 'download'
-      }
-  }
+        symbol: "download",
+      },
+    },
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
