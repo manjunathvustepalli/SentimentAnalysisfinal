@@ -470,7 +470,7 @@ function InfluencerComparison({ from, to, refresh }) {
           </Grid>
         </Grid>
         {linkAcess ? (
-          <Link style={{ width: "100%" }} to="/influencer-analysis">
+          // <Link style={{ width: "100%" }} to="/influencer-analysis">
             <Grid item xs={12}>
               <TreeMap
                 title={`${capitalizeString(source)} Influencer Comparison`}
@@ -511,7 +511,7 @@ function InfluencerComparison({ from, to, refresh }) {
                     ))}
               </div>
             </Grid>
-          </Link>
+          // </Link>
         ) : (
           <Grid item xs={12}>
             <TreeMap
