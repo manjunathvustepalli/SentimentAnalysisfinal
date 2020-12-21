@@ -65,6 +65,7 @@ function WordCloud(props) {
             pointFormat: "<span>{point.name} : </span><b>{point.weight}",
           },
           exporting: {
+            enabled: props.options,
             chartOptions: {
               title: {
                 style: {

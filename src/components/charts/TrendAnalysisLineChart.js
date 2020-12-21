@@ -25,9 +25,7 @@ function TrendAnalysisLineChart(props) {
       text: props.title || "",
     },
     chart: {
-     
-        height: props.height || "60%",
-  
+      height: props.height || "60%",
     },
     yAxis: {
       title: {
@@ -51,6 +49,7 @@ function TrendAnalysisLineChart(props) {
     },
     series: data,
     exporting: {
+      enabled: props.options,
       chartOptions: {
         title: {
           style: {

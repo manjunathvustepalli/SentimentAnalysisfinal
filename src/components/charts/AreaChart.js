@@ -70,6 +70,7 @@ function AreaChart(props) {
       },
       series,
       exporting: {
+        enabled: props.options,
         chartOptions: {
           title: {
             style: {

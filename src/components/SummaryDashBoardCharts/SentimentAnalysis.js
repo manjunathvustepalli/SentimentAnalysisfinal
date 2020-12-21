@@ -139,7 +139,7 @@ if (keywordType === "Hash Tags") {
   return (
     <>
       {linkAcess ? (
-        // <Link to="/sentimental-analysis/area-chart" style={{ width: "100%" }}>
+        <Link to="/sentimental-analysis/area-chart" style={{ width: "100%" }}>
           <div>
             <AreaChart
               title="Date wise Sentiment Trend"
@@ -147,9 +147,10 @@ if (keywordType === "Hash Tags") {
               data={data}
               sorted={true}
               height={"400px"}
+              options={false}
             />
           </div>
-        // </Link>
+         </Link>
       ) : (
         <div>
           <AreaChart

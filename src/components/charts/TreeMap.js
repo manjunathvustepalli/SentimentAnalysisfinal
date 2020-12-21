@@ -32,6 +32,7 @@ function TreeMap(props) {
         enabled: false,
       },
       exporting: {
+        enabled: props.options,
         chartOptions: {
           title: {
             style: {

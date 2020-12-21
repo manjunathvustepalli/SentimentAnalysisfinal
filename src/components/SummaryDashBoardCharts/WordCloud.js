@@ -292,39 +292,41 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
         )}
       </Grid>
       {linkAcess ? (
-        <Grid item xs={12} >
-            {/* <Link style={{ width: "100%" }} to="/word-cloud/sentiment"> */}
-            <WordCloudChart
-              height={"400px"}
-              title={`${capitalizeString(source)}  ${
+        <Grid item xs={12}>
+          <Link style={{ width: "100%" }} to="/word-cloud/sentiment">
+          <WordCloudChart
+            height={"400px"}
+            options={false}
+            title={`${capitalizeString(source)}  ${
+              type === "sentiment"
+                ? capitalizeString(sentiment)
+                : capitalizeString(mood)
+            } ${capitalizeString(type)} Word Cloud`}
+            data={data}
+          />
+          </Link>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CustomLegend
+              color={type === "sentiment" ? colors[sentiment] : colors[mood]}
+              word={
                 type === "sentiment"
                   ? capitalizeString(sentiment)
                   : capitalizeString(mood)
-              } ${capitalizeString(type)} Word Cloud`}
-              data={data}
+              }
             />
-                {/* </Link> */}
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CustomLegend
-                color={type === "sentiment" ? colors[sentiment] : colors[mood]}
-                word={
-                  type === "sentiment"
-                    ? capitalizeString(sentiment)
-                    : capitalizeString(mood)
-                }
-              />
-            </div>
-          </Grid>
+          </div>
+        </Grid>
       ) : (
         <Grid item xs={12}>
           <WordCloudChart
+            options={false}
             height={"400px"}
             title={`${capitalizeString(source)}  ${
               type === "sentiment"

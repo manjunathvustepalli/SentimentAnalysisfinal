@@ -144,19 +144,21 @@ function MoodAnalysis({ toFromDateHandlers, keywords, keywordType, refresh }) {
   return (
     <>
       {linkAcess ? (
-        // <Link to="/mood-analysis/line-chart" style={{ width: "100%" }}>
-          <div>
-            <TrendAnalysisLineChart
-              title="Date wise Mood Trend"
-              dates={dates}
-              data={data}
-              height={"400px"}
-            />
-          </div>
-        // </Link>
+        <div>
+          <Link to="/mood-analysis/line-chart" style={{ width: "100%" }}>
+          <TrendAnalysisLineChart
+            options={false}
+            title="Date wise Mood Trend"
+            dates={dates}
+            data={data}
+            height={"400px"}
+          />
+         </Link>
+        </div>
       ) : (
         <div>
           <TrendAnalysisLineChart
+            options={false}
             title="Date wise Mood Trend"
             dates={dates}
             data={data}

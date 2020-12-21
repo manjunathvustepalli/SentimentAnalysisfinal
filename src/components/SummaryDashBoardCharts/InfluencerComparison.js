@@ -470,51 +470,53 @@ function InfluencerComparison({ from, to, refresh }) {
           </Grid>
         </Grid>
         {linkAcess ? (
-          // <Link style={{ width: "100%" }} to="/influencer-analysis">
-            <Grid item xs={12}>
+          <Grid item xs={12}>
+            <Link style={{ width: "100%" }} to="/influencer-analysis">
               <TreeMap
+                options={false}
                 title={`${capitalizeString(source)} Influencer Comparison`}
                 data={data}
                 height={"400px"}
-              />
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {type === "Sentiment"
-                  ? ["positive", "negative", "neutral"].map((sentiment, i) => (
-                      <CustomLegend
-                        key={i}
-                        word={capitalizeString(sentiment)}
-                        color={colors[sentiment]}
-                      />
-                    ))
-                  : [
-                      "joy",
-                      "surprise",
-                      "anticipation",
-                      "sad",
-                      "anger",
-                      "disgust",
-                      "fear",
-                      "trust",
-                    ].map((mood, i) => (
-                      <CustomLegend
-                        key={i}
-                        word={capitalizeString(mood)}
-                        color={colors[mood]}
-                      />
-                    ))}
-              </div>
-            </Grid>
-          // </Link>
+              />{" "}
+            </Link>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {type === "Sentiment"
+                ? ["positive", "negative", "neutral"].map((sentiment, i) => (
+                    <CustomLegend
+                      key={i}
+                      word={capitalizeString(sentiment)}
+                      color={colors[sentiment]}
+                    />
+                  ))
+                : [
+                    "joy",
+                    "surprise",
+                    "anticipation",
+                    "sad",
+                    "anger",
+                    "disgust",
+                    "fear",
+                    "trust",
+                  ].map((mood, i) => (
+                    <CustomLegend
+                      key={i}
+                      word={capitalizeString(mood)}
+                      color={colors[mood]}
+                    />
+                  ))}
+            </div>
+          </Grid>
         ) : (
           <Grid item xs={12}>
             <TreeMap
+              options={false}
               title={`${capitalizeString(source)} Influencer Comparison`}
               data={data}
               height={"400px"}
