@@ -475,7 +475,7 @@ function InfluencerComparison({ from, to, refresh }) {
               <TreeMap
                 title={`${capitalizeString(source)} Influencer Comparison`}
                 data={data}
-                height={"100%"}
+                height={"400px"}
               />
               <div
                 style={{
@@ -517,7 +517,7 @@ function InfluencerComparison({ from, to, refresh }) {
             <TreeMap
               title={`${capitalizeString(source)} Influencer Comparison`}
               data={data}
-              height={"100%"}
+              height={"400px"}
             />
             <div
               style={{

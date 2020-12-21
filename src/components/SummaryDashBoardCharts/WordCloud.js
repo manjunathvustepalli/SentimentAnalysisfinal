@@ -292,10 +292,10 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
         )}
       </Grid>
       {linkAcess ? (
-        <Grid item xs={12}>
+        <Grid item xs={12} >
             {/* <Link style={{ width: "100%" }} to="/word-cloud/sentiment"> */}
             <WordCloudChart
-              height={"100%"}
+              height={"400px"}
               title={`${capitalizeString(source)}  ${
                 type === "sentiment"
                   ? capitalizeString(sentiment)
@@ -325,7 +325,7 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
       ) : (
         <Grid item xs={12}>
           <WordCloudChart
-            height={"100%"}
+            height={"400px"}
             title={`${capitalizeString(source)}  ${
               type === "sentiment"
                 ? capitalizeString(sentiment)

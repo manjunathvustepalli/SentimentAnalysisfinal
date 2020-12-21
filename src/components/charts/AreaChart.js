@@ -28,7 +28,7 @@ function AreaChart(props) {
     let config = {
       chart: {
         type: "areaspline",
-        height: props.height||"60%",
+        height: props.height || "60%",
       },
       title: {
         text: props.title || "",
