@@ -178,6 +178,7 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
   }, [to, from, keywords, keywordType]);
 
   useDidUpdateEffect(() => {
+    console.log("checkodsfdsf")
     setData((prev) => {
       try {
         if (type === "sentiment") {
@@ -190,7 +191,7 @@ function WordCloud({ from, to, keywords, keywordType, refresh }) {
         return [];
       }
     });
-  }, [source, sentiment, mood, type]);
+  }, [source, sentiment, mood, type,from,to]);
 
   return (
     <Grid container spacing={3}>
