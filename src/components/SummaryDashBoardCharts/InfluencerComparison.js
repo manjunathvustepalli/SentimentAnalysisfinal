@@ -110,7 +110,7 @@ function InfluencerComparison({ from, to, refresh }) {
     {
       id: "anticipation",
       name: "anticipation",
-      color: "#111D31",
+      color: "#964B00",
       dataLabels: {
         color: "#000",
         style: {
