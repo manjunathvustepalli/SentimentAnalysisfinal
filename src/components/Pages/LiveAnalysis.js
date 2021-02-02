@@ -141,13 +141,13 @@ function LiveAnalysis() {
     setEditSentiment("");
     setEditOpen(false);
   };
-   const handleCloseSnackbar = (event, reason) => {
-     if (reason === "clickaway") {
-       return;
-     }
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
 
-     setOpen1(false);
-   };
+    setOpen1(false);
+  };
   const setEditimageSentiment = (i) => (e) => {
     console.log(i, e.target.value);
     let newArr = [...imageSentiment1];
@@ -316,10 +316,13 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((fetchedData) => {
-        console.log("live analysis", fetchedData);
         let final = fetchedData.data.hits.hits.map((user) => {
+          user = [];
           let obj = {};
-          obj.id = user._id;
+          if (user._id) {
+            obj.id = user._id;
+          }
+
           if (user._source.User) {
             obj.name = user._source.User.Name;
             obj.screenName = user._source.User.ScreenName;
@@ -452,14 +455,25 @@ function LiveAnalysis() {
               );
             }
           }
-
-          obj.date = dateFormatter(user._source.CreatedAt);
-          obj.tweet = user._source.Text;
-          obj.retweetCount = user._source.RetweetCount;
-          obj.mood = user._source.predictedMood;
-          obj.sentiment = user._source.predictedSentiment;
+          if (user._source.CreatedAt) {
+            obj.date = dateFormatter(user._source.CreatedAt);
+          }
+          if (user._source.Text) {
+            obj.tweet = user._source.Text;
+          }
+          if (user._source.RetweetCount) {
+            obj.retweetCount = user._source.RetweetCount;
+          }
+          if (user._source.predictedMood) {
+            obj.mood = user._source.predictedMood;
+          }
+          if (user._source.predictedSentiment) {
+            obj.sentiment = user._source.predictedSentiment;
+          }
           // obj.mediaSentiment = user._source.predictedSentiment;
-          obj.language = user._source.predictedLang;
+          if (user._source.predictedLang) {
+            obj.language = user._source.predictedLang;
+          }
           return obj;
         });
         setData(final);
