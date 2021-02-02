@@ -316,6 +316,9 @@ function LiveAnalysis() {
 
     Axios(config)
       .then((fetchedData) => {
+      if(fetchedData.data.hits.hits.length>0){
+
+      
         let final = fetchedData.data.hits.hits.map((user) => {
           let obj = {};
           if (user._id) {
@@ -476,6 +479,7 @@ function LiveAnalysis() {
           return obj;
         });
         setData(final);
+      }
         if (source === "twitter") {
           if (editDataAcess === "true") {
             setColumns([
