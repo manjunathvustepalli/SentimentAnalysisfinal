@@ -317,7 +317,6 @@ function LiveAnalysis() {
     Axios(config)
       .then((fetchedData) => {
         let final = fetchedData.data.hits.hits.map((user) => {
-          user = [];
           let obj = {};
           if (user._id) {
             obj.id = user._id;
