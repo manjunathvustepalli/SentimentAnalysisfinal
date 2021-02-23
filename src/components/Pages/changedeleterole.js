@@ -21,6 +21,7 @@ import {
   Grid,
   IconButton,
   Slide,
+  Box
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -310,45 +311,46 @@ export default function Changedeleterole() {
         </Grid>
       ) : (
         <>
-          <MaterialTable
-            title="Users"
-            columns={columns}
-            data={data}
-            editable={{
-              onRowDelete: (oldData, newData) =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    Deleterole(oldData);
-                    resolve();
-                  }, 1000);
-                }),
-            }}
-            style={{
-              padding: "20px",
-            }}
-            title="Users"
-            columns={columns}
-            data={data}
-            localization={{
-              body: {
-                editRow: {
-                  deleteText: "Are you sure you want to delete the Role?",
+          <Box py={2}>
+            <MaterialTable
+              title="Roles"
+              columns={columns}
+              data={data}
+              editable={{
+                onRowDelete: (oldData, newData) =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      Deleterole(oldData);
+                      resolve();
+                    }, 1000);
+                  }),
+              }}
+              style={{
+                padding: "20px",
+              }}
+              columns={columns}
+              data={data}
+              localization={{
+                body: {
+                  editRow: {
+                    deleteText: "Are you sure you want to delete the Role?",
+                  },
                 },
-              },
-            }}
-            options={{
-              paging: false,
-              // tableLayout: "fixed",
-              actionsColumnIndex: -1,
-              maxBodyHeight: 500,
-              headerStyle: {
-                backgroundColor: "rgb(67, 176, 42)",
-                color: "white",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-              },
-            }}
-          />
+              }}
+              options={{
+                paging: false,
+                // tableLayout: "fixed",
+                actionsColumnIndex: -1,
+                maxBodyHeight: 500,
+                headerStyle: {
+                  backgroundColor: "rgb(67, 176, 42)",
+                  color: "white",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
+                },
+              }}
+            />
+          </Box>
           <Snackbar open={open1} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity={severity}>
               {message}
@@ -362,9 +364,7 @@ export default function Changedeleterole() {
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
           >
-            <DialogTitle id="alert-dialog-slide-title">
-              Update Role
-            </DialogTitle>
+            <DialogTitle id="alert-dialog-slide-title">Update Role</DialogTitle>
             {dloading ? (
               <Grid
                 container

@@ -121,13 +121,13 @@ export default function InteractiveList() {
     <div className={classes.root}>
       <Grid container spacing={2} style={{ padding: 20 }} direction="column">
         <Grid item xs={12}>
-          <Typography
+          {/* <Typography
             variant="h"
             className={classes.title}
             style={{ color: "#43B02A", fontSize: "30px" }}
           >
             Delete Users
-          </Typography>
+          </Typography> */}
         </Grid>
         <Grid item xs={12}>
           <Paper variant="outlined"></Paper>

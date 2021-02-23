@@ -1,5 +1,7 @@
 import {
+  Button,
   capitalize,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -12,6 +14,26 @@ import AdminTable from "../Tables/AdminTable";
 import Loader from "../LoaderWithBackDrop";
 import { Auth } from "./Auth";
 import Cookies from "js-cookie";
+import AddUser from "./AddUser";
+import UpdateDeleteUser from "./DeleteUser";
+import AddRole from "./AddRole";
+import ChangeDeleteRole from "./changedeleterole";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import { makeStyles } from "@material-ui/core/styles";
+const useStyles = makeStyles((theme) => ({
+   button: {
+    margin: theme.spacing(1),
+    padding: "15px 0",
+    color: "white",
+    display: "block",
+    textAlign: "center",
+    backgroundColor: `rgb(67,176,42)`,
+    "&:hover": {
+      backgroundColor: `rgb(67,176,42)`,
+    },
+  },
+}))
 function Admin() {
   const sourcesQueryKeys = {
     facebook: "getaddedfbpages",
@@ -21,6 +43,7 @@ function Admin() {
     googlenews: "getaddedgooglenewspages",
     twitter: "getasynctwitterconfig",
   };
+   const classes = useStyles();
   const [source, setSource] = useState("facebook");
   const [columns, setColumns] = useState([
     {
@@ -37,6 +60,8 @@ function Admin() {
   const [refresh, setRefresh] = useState(false);
   const [loaderOpen, setLoaderOpen] = useState(true);
   const [pagedata, setpagedata] = useState([]);
+  const[showadduser,setshowadduser]=useState(false);
+  const[showaddrole,setshowaddrole]=useState(false);
   const [keyworddata, setkeyworddata] = useState([]);
   const addnewkeyword = async (data) => {
     if (source === "twitter") {
@@ -263,63 +288,126 @@ function Admin() {
         });
     }
   }, [deletedWord, deletedWord1]);
+const handleuser=(e)=>{
 
+  setshowadduser((showadduser => !showadduser));
+}
+const handlerole=(e)=>{
+
+  setshowaddrole(( v=> !v));
+}
   return (
-    <div style={{ width: "100%" }}>
-      <Grid container spacing={2}>
-        <Grid item xs={false} sm={3} />
-        <Grid item xs={10} sm={6}>
-          <FormControl
-            variant="outlined"
-            style={{ width: "100%", marginTop: "30px" }}
-          >
-            <InputLabel id={"select-source"}> Select Source </InputLabel>
-            <Select
-              labelId="select-source"
-              value={source}
-              label={"Select Source"}
-              onChange={(e) => {
-                setSource(e.target.value);
-              }}
+    <>
+      <div style={{ width: "100%" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={false} sm={3} />
+          <Grid item xs={10} sm={6}>
+            <FormControl
               variant="outlined"
-              fullWidth
+              style={{ width: "100%", marginTop: "30px" }}
             >
-              <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
-              <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
-              {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
-              {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
-              {/* <MenuItem value={"blogger"}> {"Blogger"} </MenuItem> */}
-              <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
-            </Select>
-          </FormControl>
+              <InputLabel id={"select-source"}> Select Source </InputLabel>
+              <Select
+                labelId="select-source"
+                value={source}
+                label={"Select Source"}
+                onChange={(e) => {
+                  setSource(e.target.value);
+                }}
+                variant="outlined"
+                fullWidth
+              >
+                <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
+                <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
+                {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
+                {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
+                <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
+                <Divider variant="middle" />
+                <MenuItem value={"User"}> {"User"} </MenuItem>
+                <MenuItem value={"Role"}> {"Role"} </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={false} sm={3} />
+          <Grid item xs={1} />
+          <Grid item xs={10}>
+            {source === "facebook" || source === "instagram" ? (
+              <AdminTable
+                name={`${capitalize(source)} Pages `}
+                data={data}
+                source={source}
+                loaderOpen={loaderOpen}
+                columns={columns}
+                setNewlyAddedWord={addnewkeyword}
+                setDeletedWord={deletekeyword}
+              />
+            ) : null}
+            {source === "twitter" ? (
+              <AdminTable
+                name={`${capitalize(source)} Keywords`}
+                data={data1}
+                source={source}
+                loaderOpen={loaderOpen}
+                columns={columns}
+                setNewlyAddedWord={addnewkeyword1}
+                setDeletedWord={deletekeyword1}
+              />
+            ) : null}
+            {source === "User" ? (
+              <>
+                <Grid
+                  container
+                  direction="column"
+                  justify="flex-start"
+                  alignItems="flex-end"
+                >
+                  <Button
+                  size="small"
+                    style={{
+                      backgroundColor: "rgb(67, 176, 42)",
+                      color: "white",
+                    }}
+                    onClick={(e) => {
+                      handleuser(e);
+                    }}
+                  >
+                   {showadduser?<IconButton><CloseIcon fontSize="small"/></IconButton>:" Add User"}
+                  </Button>
+                </Grid>
+
+                {showadduser ? <AddUser /> : <UpdateDeleteUser />}
+              </>
+            ) : null}
+            {source === "Role" ? (
+              <>
+                <Grid
+                  container
+                  direction="column"
+                  justify="flex-start"
+                  alignItems="flex-end"
+                >
+                  <Button
+                    style={{
+                      backgroundColor: "rgb(67, 176, 42)",
+                      color: "white",
+                    }}
+                    onClick={(e) => {
+                      handlerole(e);
+                    }}
+                  >
+                    {showaddrole?"back":"Add Role"}
+                  </Button>
+                </Grid>
+{showaddrole?
+                <AddRole />:
+                <ChangeDeleteRole />}
+              </>
+            ) : null}
+          </Grid>
+          <Grid item xs={1} />
         </Grid>
-        <Grid item xs={false} sm={3} />
-        <Grid item xs={1} />
-        <Grid item xs={10}>
-          <AdminTable
-            name={`${capitalize(source)} Pages `}
-            data={data}
-            source={source}
-            loaderOpen={loaderOpen}
-            columns={columns}
-            setNewlyAddedWord={addnewkeyword}
-            setDeletedWord={deletekeyword}
-          />
-          {source === "twitter" ? (
-            <AdminTable
-              name={`${capitalize(source)} Keywords`}
-              data={data1}
-              source={source}
-              loaderOpen={loaderOpen}
-              columns={columns}
-              setNewlyAddedWord={addnewkeyword1}
-              setDeletedWord={deletekeyword1}
-            />
-          ) : null}
-        </Grid>
-        <Grid item xs={1} />
-      </Grid>
-    </div>
+      </div>
+    </>
   );
 }
 

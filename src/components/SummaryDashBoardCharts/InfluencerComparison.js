@@ -35,7 +35,7 @@ function InfluencerComparison({ from, to, refresh }) {
    const [pages] = useState(JSON.parse(Cookies.get("pages")));
    const [linkAcess, setLinkAccess] = useState(false);
   const classes = useStyles();
-  const [source, setSource] = useState("twitter");
+  const [source, setSource] = useState("newspaper");
   const [type, setType] = useState("Sentiment");
   const [data, setData] = useState([]);
   const [size, setSize] = useState(10);
