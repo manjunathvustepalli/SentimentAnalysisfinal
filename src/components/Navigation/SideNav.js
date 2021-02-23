@@ -235,16 +235,16 @@ const SideNavBar = (props) => {
       icon: <HdrWeakIcon />,
       path: ["/behavior-analysis"],
     },
-    {
-      name: "Add User",
-      icon: <PersonAddIcon />,
-      path: ["/add-user"],
-    },
-    {
-      name: "Update/Delete User",
-      icon: <UpdateIcon />,
-      path: ["/updateDelete-user"],
-    },
+    // {
+    //   name: "Add User",
+    //   icon: <PersonAddIcon />,
+    //   path: ["/add-user"],
+    // },
+    // {
+    //   name: "Update/Delete User",
+    //   icon: <UpdateIcon />,
+    //   path: ["/updateDelete-user"],
+    // },
     // {
     //   name: "Delete User",
     //   icon: <DeleteIcon/>,
@@ -255,16 +255,16 @@ const SideNavBar = (props) => {
       icon: <LockIcon />,
       path: ["/change-password"],
     },
-    {
-      name: "Add Role",
-      icon: <PersonAddIcon />,
-      path: ["/add-role"],
-    },
-    {
-      name: "Update/delete Role",
-      icon: <UpdateIcon />,
-      path: ["/updateDelete-role"],
-    },
+    // {
+    //   name: "Add Role",
+    //   icon: <PersonAddIcon />,
+    //   path: ["/add-role"],
+    // },
+    // {
+    //   name: "Update/delete Role",
+    //   icon: <UpdateIcon />,
+    //   path: ["/updateDelete-role"],
+    // },
   ];
 
   const menus1 = [
