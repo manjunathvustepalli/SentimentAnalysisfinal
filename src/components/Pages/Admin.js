@@ -19,7 +19,7 @@ import UpdateDeleteUser from "./DeleteUser";
 import AddRole from "./AddRole";
 import ChangeDeleteRole from "./changedeleterole";
 import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
    button: {
@@ -361,18 +361,28 @@ const handlerole=(e)=>{
                   justify="flex-start"
                   alignItems="flex-end"
                 >
-                  <Button
-                  size="small"
-                    style={{
-                      backgroundColor: "rgb(67, 176, 42)",
-                      color: "white",
-                    }}
-                    onClick={(e) => {
-                      handleuser(e);
-                    }}
-                  >
-                   {showadduser?<IconButton><CloseIcon fontSize="small"/></IconButton>:" Add User"}
-                  </Button>
+                  {showadduser ? (
+                    <IconButton
+                      fontSize="large"
+                      onClick={(e) => {
+                        handleuser(e);
+                      }}
+                    >
+                      <CancelOutlinedIcon />
+                    </IconButton>
+                  ) : (
+                    <Button
+                      style={{
+                        backgroundColor: "rgb(67, 176, 42)",
+                        color: "white",
+                      }}
+                      onClick={(e) => {
+                        handleuser(e);
+                      }}
+                    >
+                      Add User
+                    </Button>
+                  )}
                 </Grid>
 
                 {showadduser ? <AddUser /> : <UpdateDeleteUser />}
@@ -386,21 +396,30 @@ const handlerole=(e)=>{
                   justify="flex-start"
                   alignItems="flex-end"
                 >
-                  <Button
-                    style={{
-                      backgroundColor: "rgb(67, 176, 42)",
-                      color: "white",
-                    }}
-                    onClick={(e) => {
-                      handlerole(e);
-                    }}
-                  >
-                    {showaddrole?"back":"Add Role"}
-                  </Button>
+                  {showaddrole ? (
+                    <IconButton
+                      fontSize="large"
+                      onClick={(e) => {
+                        handlerole(e);
+                      }}
+                    >
+                      <CancelOutlinedIcon />
+                    </IconButton>
+                  ) : (
+                    <Button
+                      style={{
+                        backgroundColor: "rgb(67, 176, 42)",
+                        color: "white",
+                      }}
+                      onClick={(e) => {
+                        handlerole(e);
+                      }}
+                    >
+                      Add Role
+                    </Button>
+                  )}
                 </Grid>
-{showaddrole?
-                <AddRole />:
-                <ChangeDeleteRole />}
+                {showaddrole ? <AddRole /> : <ChangeDeleteRole />}
               </>
             ) : null}
           </Grid>
