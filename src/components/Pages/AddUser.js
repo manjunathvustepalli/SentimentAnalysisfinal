@@ -227,7 +227,7 @@ const passwordmatchcheck=(e)=>{
                     </Grid>
                     <Grid item xs={12}>
                       <FormControl variant="outlined" style={{ width: "100%" }}>
-                        <InputLabel>UserType</InputLabel>
+                        <InputLabel>User Role</InputLabel>
                         <Select
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
