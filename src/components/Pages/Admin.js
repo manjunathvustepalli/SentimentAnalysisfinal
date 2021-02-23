@@ -109,6 +109,9 @@ function Admin() {
     await setDeletedWord1(data);
   };
   useEffect(() => {
+    if(source==="twitter"||source==="facebook"||source==="instagram"){
+
+    
     let token = Cookies.get("token");
     setLoaderOpen(true);
     // Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
@@ -167,6 +170,7 @@ function Admin() {
         setLoaderOpen(false);
         console.log(err, err.response);
       });
+    }
   }, [source, refresh]);
 
   useEffect(() => {
