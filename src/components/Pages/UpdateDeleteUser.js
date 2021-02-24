@@ -159,6 +159,7 @@ export default function UpdateDeleteUser() {
 
   const getUsers = () => {
     let token = Cookies.get("token");
+    console.log({token})
     let config = {
       method: "post",
       url: process.env.REACT_APP_URL + "admin/getusers",

@@ -163,7 +163,10 @@ function Login(props) {
       path: ["/export-data"],
     },
     {
-      name: "Administration",
+      name:
+        "Administration" ||
+        "Administration - User Management" ||
+        "Administration -Role Management",
 
       path: ["/admin"],
     },
@@ -235,7 +238,7 @@ function Login(props) {
       pages.push(page.pageUrl);
     });
     await Cookies.set("pages", pages);
-    Cookies.set("Update Data", "false");
+    await Cookies.set("Update Data", "false");
 
     await Cookies.set("name", response.data.displayName);
     if (response.status === 201) {
@@ -248,18 +251,31 @@ function Login(props) {
           break;
         } else {
           if (i === pages.length - 1) {
-            for (var i = 0; i < menus.length; i++) {
-              if (response.data.pages[0].pageUrl === menus[i].name) {
-                props.history.push({
-                  pathname: menus[i].path[0],
-                });
-                break;
+            if (
+              response.data.pages[0].pageUrl !==
+                "Administration - User Management" &&
+              "Administration -Role Management"
+            ) {
+                console.log("/////");
+              for (var i = 0; i < menus.length; i++) {
+                if (response.data.pages[0].pageUrl === menus[i].name) {
+                  props.history.push({
+                    pathname: menus[i].path[0],
+                  });
+                  break;
+                }
               }
+            } else {
+              console.log("/////")
+               props.history.push({
+                 pathname: menus[9].path[0],
+               });
+
             }
           }
         }
       }
-      
+
       for (var i = 0; i < response.data.pages.length; i++) {
         if (response.data.pages[i].pageUrl === "Suggest Corrections") {
           Cookies.set("Update Data", "true");

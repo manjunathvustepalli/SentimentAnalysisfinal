@@ -15,14 +15,14 @@ import Loader from "../LoaderWithBackDrop";
 import { Auth } from "./Auth";
 import Cookies from "js-cookie";
 import AddUser from "./AddUser";
-import UpdateDeleteUser from "./DeleteUser";
+import UpdateDeleteUser from "./UpdateDeleteUser";
 import AddRole from "./AddRole";
 import ChangeDeleteRole from "./changedeleterole";
 import IconButton from "@material-ui/core/IconButton";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
-   button: {
+  button: {
     margin: theme.spacing(1),
     padding: "15px 0",
     color: "white",
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: `rgb(67,176,42)`,
     },
   },
-}))
+}));
 function Admin() {
   const sourcesQueryKeys = {
     facebook: "getaddedfbpages",
@@ -43,7 +43,7 @@ function Admin() {
     googlenews: "getaddedgooglenewspages",
     twitter: "getasynctwitterconfig",
   };
-   const classes = useStyles();
+  const classes = useStyles();
   const [source, setSource] = useState("facebook");
   const [columns, setColumns] = useState([
     {
@@ -60,15 +60,37 @@ function Admin() {
   const [refresh, setRefresh] = useState(false);
   const [loaderOpen, setLoaderOpen] = useState(true);
   const [pagedata, setpagedata] = useState([]);
-  const[showadduser,setshowadduser]=useState(false);
-  const[showaddrole,setshowaddrole]=useState(false);
+  const [showadduser, setshowadduser] = useState(false);
+  const [showaddrole, setshowaddrole] = useState(false);
   const [keyworddata, setkeyworddata] = useState([]);
+  const [pages] = useState(JSON.parse(Cookies.get("pages")));
+  const[usermanagementpage,setusermanagementpage]=useState(false);
+  const[rolemanagementpage,setrolemanagementpage]=useState(false);
+  const[adminmanagementpage,setadminmanagementpage]=useState(false);
   const addnewkeyword = async (data) => {
     if (source === "twitter") {
       await setpagedata((oldArray) => [...oldArray, data]);
     }
     await setNewlyAddedWord(data);
   };
+  useEffect(() => {
+    pages.map((page)=>{
+if (page === "Administration - Role Management") {
+  setrolemanagementpage(true);
+  setSource("Role")
+}
+if (page === "Administration - User Management") {
+  setusermanagementpage(true);
+  setSource("User");
+}
+if (page === "Administration - Source Type Management") {
+  setadminmanagementpage(true);
+  setSource("facebook")
+}
+    })
+    
+
+  }, [])
   const deletekeyword = async (data) => {
     if (source === "twitter") {
       // await setpagedata((oldArray) => );
@@ -109,50 +131,29 @@ function Admin() {
     await setDeletedWord1(data);
   };
   useEffect(() => {
-    if(source==="twitter"||source==="facebook"||source==="instagram"){
+    if (
+      source === "twitter" ||
+      source === "facebook" ||
+      source === "instagram"
+    ) {
+      let token = Cookies.get("token");
+      setLoaderOpen(true);
+      // Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
 
-    
-    let token = Cookies.get("token");
-    setLoaderOpen(true);
-    // Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
+      let config = {
+        method: "post",
+        url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+        },
+        data: "",
+      };
 
-    let config = {
-      method: "post",
-      url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
-      headers: {
-        "Content-Type": "application/json",
-        token: token,
-      },
-      data: "",
-    };
-
-    Axios(config)
-      .then((data) => {
-        if (source !== "twitter") {
-          setData(
-            data.data[Object.keys(data.data)[1]].map((item) => {
-              return {
-                name: item,
-              };
-            })
-          );
-        } else {
-          setpagedata(data.data[Object.keys(data.data)[2]]);
-          setkeyworddata(data.data[Object.keys(data.data)[1]]);
-          if (data.data[Object.keys(data.data)[2]]) {
+      Axios(config)
+        .then((data) => {
+          if (source !== "twitter") {
             setData(
-              data.data[Object.keys(data.data)[2]].map((item) => {
-                return {
-                  name: item,
-                };
-              })
-            );
-          } else {
-            setData([]);
-            setpagedata([]);
-          }
-          if (data.data[Object.keys(data.data)[1]]) {
-            setData1(
               data.data[Object.keys(data.data)[1]].map((item) => {
                 return {
                   name: item,
@@ -160,16 +161,39 @@ function Admin() {
               })
             );
           } else {
-            setData1([]);
-            setkeyworddata([]);
+            setpagedata(data.data[Object.keys(data.data)[2]]);
+            setkeyworddata(data.data[Object.keys(data.data)[1]]);
+            if (data.data[Object.keys(data.data)[2]]) {
+              setData(
+                data.data[Object.keys(data.data)[2]].map((item) => {
+                  return {
+                    name: item,
+                  };
+                })
+              );
+            } else {
+              setData([]);
+              setpagedata([]);
+            }
+            if (data.data[Object.keys(data.data)[1]]) {
+              setData1(
+                data.data[Object.keys(data.data)[1]].map((item) => {
+                  return {
+                    name: item,
+                  };
+                })
+              );
+            } else {
+              setData1([]);
+              setkeyworddata([]);
+            }
           }
-        }
-        setLoaderOpen(false);
-      })
-      .catch((err) => {
-        setLoaderOpen(false);
-        console.log(err, err.response);
-      });
+          setLoaderOpen(false);
+        })
+        .catch((err) => {
+          setLoaderOpen(false);
+          console.log(err, err.response);
+        });
     }
   }, [source, refresh]);
 
@@ -292,21 +316,19 @@ function Admin() {
         });
     }
   }, [deletedWord, deletedWord1]);
-const handleuser=(e)=>{
-
-  setshowadduser((showadduser => !showadduser));
-}
-const handlerole=(e)=>{
-
-  setshowaddrole(( v=> !v));
-}
+  const handleuser = (e) => {
+    setshowadduser((showadduser) => !showadduser);
+  };
+  const handlerole = (e) => {
+    setshowaddrole((v) => !v);
+  };
   return (
     <>
       <div style={{ width: "100%" }}>
         <Grid container spacing={2}>
           <Grid item xs={false} sm={3} />
           <Grid item xs={10} sm={6}>
-            <FormControl
+            {adminmanagementpage?(<>  <FormControl
               variant="outlined"
               style={{ width: "100%", marginTop: "30px" }}
             >
@@ -321,16 +343,63 @@ const handlerole=(e)=>{
                 variant="outlined"
                 fullWidth
               >
-                <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
+               <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
                 <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
                 {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
                 {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
                 <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
                 <Divider variant="middle" />
-                <MenuItem value={"User"}> {"User"} </MenuItem>
-                <MenuItem value={"Role"}> {"Role"} </MenuItem>
+                
+                      
+
+              
+               
+                
+                   {usermanagementpage? (
+                     <MenuItem value={"User"}> {"User"} </MenuItem>):null
+                  }
+                
+              
+                {rolemanagementpage?(<MenuItem value={"Role"}> {"Role"} </MenuItem>):null}
+                  
+                     
+                  
+              
               </Select>
-            </FormControl>
+            </FormControl></>):<><FormControl
+              variant="outlined"
+              style={{ width: "100%", marginTop: "30px" }}
+            >
+              <InputLabel id={"select-source"}> Select Source </InputLabel>
+              <Select
+                labelId="select-source"
+                value={source}
+                label={"Select Source"}
+                onChange={(e) => {
+                  setSource(e.target.value);
+                }}
+                variant="outlined"
+                fullWidth
+              >
+
+                
+                      
+
+              
+               
+                
+                   {usermanagementpage? (
+                     <MenuItem value={"User"}> {"User"} </MenuItem>):null
+                  }
+                
+              
+                {rolemanagementpage?(<MenuItem value={"Role"}> {"Role"} </MenuItem>):null}
+                  
+                     
+                  
+              
+              </Select>
+            </FormControl></>}
           </Grid>
           <Grid item xs={false} sm={3} />
           <Grid item xs={1} />

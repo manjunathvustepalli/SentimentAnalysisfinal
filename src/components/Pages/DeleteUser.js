@@ -34,6 +34,8 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import Cookies from "js-cookie";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1
@@ -70,10 +72,14 @@ export default function InteractiveList() {
     console.log(id)
   }
  const getUsers=()=>{
+   let token = Cookies.get("token");
    let config = {
      method: "post",
      url: process.env.REACT_APP_URL + "admin/getusers",
-     headers: header,
+     headers: { 
+    'Content-Type': 'application/json', 
+    'token': token,
+  },
      data: "",
    };
 

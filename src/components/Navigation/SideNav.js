@@ -135,6 +135,19 @@ const SideNavBar = (props) => {
         console.log(error);
       });
   };
+//   useEffect(() => {
+//     pages.map((page,index)=>{
+//       if(page==="Administration"){
+//         break;
+//       }else if(index===pages.length-1){
+// pages.map((page)=>{
+//   if(page==="User Management" || "Role Management"){
+
+//   }
+// })
+//       }
+//     })
+//   }, [])
   const menus = [
     {
       name: "Summary Dashboard",
@@ -201,7 +214,7 @@ const SideNavBar = (props) => {
       path: ["/export-data"],
     },
     {
-      name: "Administration",
+      name: "Administration" || "User Management" || "Role Management",
       icon: <PermDataSettingIcon />,
       path: ["/admin"],
     },
@@ -339,6 +352,7 @@ const SideNavBar = (props) => {
         {menus.map((menuItem, index) =>
           pages.map((page, index1) =>
             // console.log(menuItem.name,page)
+          
             menuItem.name === page ? (
               <Link
                 to={menuItem.path[0]}
