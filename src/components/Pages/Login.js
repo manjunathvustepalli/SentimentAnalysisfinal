@@ -255,7 +255,7 @@ function Login(props) {
               response.data.pages[0].pageUrl !==
                 "Administration - User Management" &&
               response.data.pages[0].pageUrl !==
-                "Administration -Role Management" &&
+                "Administration - Role Management" &&
               response.data.pages[0].pageUrl !==
                 "Administration - Source Type Management"
             ) {
