@@ -254,9 +254,12 @@ function Login(props) {
             if (
               response.data.pages[0].pageUrl !==
                 "Administration - User Management" &&
-              "Administration -Role Management"
+              response.data.pages[0].pageUrl !==
+                "Administration -Role Management" &&
+              response.data.pages[0].pageUrl !==
+                "Administration - Source Type Management"
             ) {
-                console.log("/////");
+              console.log("/////");
               for (var i = 0; i < menus.length; i++) {
                 if (response.data.pages[0].pageUrl === menus[i].name) {
                   props.history.push({
@@ -266,11 +269,10 @@ function Login(props) {
                 }
               }
             } else {
-              console.log("/////")
-               props.history.push({
-                 pathname: menus[9].path[0],
-               });
-
+              console.log("/////");
+              props.history.push({
+                pathname: menus[9].path[0],
+              });
             }
           }
         }
