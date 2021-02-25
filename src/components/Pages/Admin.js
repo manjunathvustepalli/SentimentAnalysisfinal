@@ -21,6 +21,8 @@ import ChangeDeleteRole from "./changedeleterole";
 import IconButton from "@material-ui/core/IconButton";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import { makeStyles } from "@material-ui/core/styles";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1),
@@ -32,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: `rgb(67,176,42)`,
     },
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
   },
 }));
 function Admin() {
@@ -64,9 +70,10 @@ function Admin() {
   const [showaddrole, setshowaddrole] = useState(false);
   const [keyworddata, setkeyworddata] = useState([]);
   const [pages] = useState(JSON.parse(Cookies.get("pages")));
-  const[usermanagementpage,setusermanagementpage]=useState(false);
-  const[rolemanagementpage,setrolemanagementpage]=useState(false);
-  const[adminmanagementpage,setadminmanagementpage]=useState(false);
+  const [usermanagementpage, setusermanagementpage] = useState(false);
+  const [rolemanagementpage, setrolemanagementpage] = useState(false);
+  const [adminmanagementpage, setadminmanagementpage] = useState(false);
+   const [open, setOpen] = React.useState(false);
   const addnewkeyword = async (data) => {
     if (source === "twitter") {
       await setpagedata((oldArray) => [...oldArray, data]);
@@ -74,23 +81,21 @@ function Admin() {
     await setNewlyAddedWord(data);
   };
   useEffect(() => {
-    pages.map((page)=>{
-if (page === "Administration - Role Management") {
-  setrolemanagementpage(true);
-  setSource("Role")
-}
-if (page === "Administration - User Management") {
-  setusermanagementpage(true);
-  setSource("User");
-}
-if (page === "Administration - Source Type Management") {
-  setadminmanagementpage(true);
-  setSource("facebook")
-}
-    })
-    
-
-  }, [])
+    pages.map((page) => {
+      if (page === "Administration - Role Management") {
+        setrolemanagementpage(true);
+        setSource("Role");
+      }
+      if (page === "Administration - User Management") {
+        setusermanagementpage(true);
+        setSource("User");
+      }
+      if (page === "Administration - Source Type Management") {
+        setadminmanagementpage(true);
+        setSource("facebook");
+      }
+    });
+  }, []);
   const deletekeyword = async (data) => {
     if (source === "twitter") {
       // await setpagedata((oldArray) => );
@@ -322,98 +327,153 @@ if (page === "Administration - Source Type Management") {
   const handlerole = (e) => {
     setshowaddrole((v) => !v);
   };
+  const handlefileupload=(e)=>{
+     setOpen(!open);
+     let token = Cookies.get("token");
+    console.log(e.target.files[0])
+    let data = new FormData();
+    data.append(
+      "fbpagesfile",
+      e.target.files[0]
+    );
+
+    let config = {
+      method: "post",
+      url:
+        
+        process.env.REACT_APP_URL +
+        "admin/bulkupload",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    Axios(config)
+      .then((response) => {
+        
+
+          setOpen(false);
+        
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        setOpen(false);
+        console.log(error);
+      });
+
+
+  }
   return (
     <>
       <div style={{ width: "100%" }}>
         <Grid container spacing={2}>
           <Grid item xs={false} sm={3} />
           <Grid item xs={10} sm={6}>
-            {adminmanagementpage?(<>  <FormControl
-              variant="outlined"
-              style={{ width: "100%", marginTop: "30px" }}
-            >
-              <InputLabel id={"select-source"}> Select Source </InputLabel>
-              <Select
-                labelId="select-source"
-                value={source}
-                label={"Select Source"}
-                onChange={(e) => {
-                  setSource(e.target.value);
-                }}
-                variant="outlined"
-                fullWidth
-              >
-               <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
-                <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
-                {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
-                {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
-                <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
-                <Divider variant="middle" />
-                
-                      
+            {adminmanagementpage ? (
+              <>
+                <Backdrop className={classes.backdrop} open={open}>
+                  <CircularProgress color="inherit" />
+                </Backdrop>
+                <FormControl
+                  variant="outlined"
+                  style={{ width: "100%", marginTop: "30px" }}
+                >
+                  <InputLabel id={"select-source"}> Select Source </InputLabel>
+                  <Select
+                    labelId="select-source"
+                    value={source}
+                    label={"Select Source"}
+                    onChange={(e) => {
+                      setSource(e.target.value);
+                    }}
+                    variant="outlined"
+                    fullWidth
+                  >
+                    <MenuItem value={"facebook"}> {"Facebook"} </MenuItem>
+                    <MenuItem value={"instagram"}> {"Instagram"} </MenuItem>
+                    {/* <MenuItem value={"telegram"}> {"Telegram"} </MenuItem> */}
+                    {/* <MenuItem value={"googlenews"}> {"Google News"} </MenuItem> */}
+                    <MenuItem value={"twitter"}> {"Twitter"} </MenuItem>
+                    <Divider variant="middle" />
 
-              
-               
-                
-                   {usermanagementpage? (
-                     <MenuItem value={"User"}> {"User"} </MenuItem>):null
-                  }
-                
-              
-                {rolemanagementpage?(<MenuItem value={"Role"}> {"Role"} </MenuItem>):null}
-                  
-                     
-                  
-              
-              </Select>
-            </FormControl></>):<><FormControl
-              variant="outlined"
-              style={{ width: "100%", marginTop: "30px" }}
-            >
-              <InputLabel id={"select-source"}> Select Source </InputLabel>
-              <Select
-                labelId="select-source"
-                value={source}
-                label={"Select Source"}
-                onChange={(e) => {
-                  setSource(e.target.value);
-                }}
-                variant="outlined"
-                fullWidth
-              >
+                    {usermanagementpage ? (
+                      <MenuItem value={"User"}> {"User"} </MenuItem>
+                    ) : null}
 
-                
-                      
+                    {rolemanagementpage ? (
+                      <MenuItem value={"Role"}> {"Role"} </MenuItem>
+                    ) : null}
+                  </Select>
+                </FormControl>
+              </>
+            ) : (
+              <>
+                <FormControl
+                  variant="outlined"
+                  style={{ width: "100%", marginTop: "30px" }}
+                >
+                  <InputLabel id={"select-source"}> Select Source </InputLabel>
+                  <Select
+                    labelId="select-source"
+                    value={source}
+                    label={"Select Source"}
+                    onChange={(e) => {
+                      setSource(e.target.value);
+                    }}
+                    variant="outlined"
+                    fullWidth
+                  >
+                    {usermanagementpage ? (
+                      <MenuItem value={"User"}> {"User"} </MenuItem>
+                    ) : null}
 
-              
-               
-                
-                   {usermanagementpage? (
-                     <MenuItem value={"User"}> {"User"} </MenuItem>):null
-                  }
-                
-              
-                {rolemanagementpage?(<MenuItem value={"Role"}> {"Role"} </MenuItem>):null}
-                  
-                     
-                  
-              
-              </Select>
-            </FormControl></>}
+                    {rolemanagementpage ? (
+                      <MenuItem value={"Role"}> {"Role"} </MenuItem>
+                    ) : null}
+                  </Select>
+                </FormControl>
+              </>
+            )}
           </Grid>
           <Grid item xs={false} sm={3} />
           <Grid item xs={1} />
           <Grid item xs={10}>
             {source === "facebook" || source === "instagram" ? (
-              <AdminTable
-                name={`${capitalize(source)} Pages `}
-                data={data}
-                source={source}
-                loaderOpen={loaderOpen}
-                columns={columns}
-                setNewlyAddedWord={addnewkeyword}
-                setDeletedWord={deletekeyword}
-              />
+              <>
+                {source === "facebook" ? (
+                  <>
+                    <Grid
+                      container
+                      direction="column"
+                      justify="flex-start"
+                      alignItems="flex-end"
+                    >
+                      <Button
+                        variant="contained"
+                        component="label"
+                        style={{
+                          backgroundColor: "rgb(67, 176, 42)",
+                          color: "white",
+                        }}
+                      >
+                        Upload File
+                        <input type="file" hidden onChange={handlefileupload} />
+                      </Button>
+                    </Grid>
+                  </>
+                ) : null}
+                <AdminTable
+                  name={`${capitalize(source)} Pages `}
+                  data={data}
+                  source={source}
+                  loaderOpen={loaderOpen}
+                  columns={columns}
+                  setNewlyAddedWord={addnewkeyword}
+                  setDeletedWord={deletekeyword}
+                />
+              </>
             ) : null}
             {source === "twitter" ? (
               <AdminTable
