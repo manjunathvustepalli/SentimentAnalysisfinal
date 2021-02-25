@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
+    color: "#fff",
   },
 }));
 function Admin() {
@@ -73,7 +73,7 @@ function Admin() {
   const [usermanagementpage, setusermanagementpage] = useState(false);
   const [rolemanagementpage, setrolemanagementpage] = useState(false);
   const [adminmanagementpage, setadminmanagementpage] = useState(false);
-   const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const addnewkeyword = async (data) => {
     if (source === "twitter") {
       await setpagedata((oldArray) => [...oldArray, data]);
@@ -135,30 +135,48 @@ function Admin() {
     }
     await setDeletedWord1(data);
   };
-  useEffect(() => {
-    if (
-      source === "twitter" ||
-      source === "facebook" ||
-      source === "instagram"
-    ) {
-      let token = Cookies.get("token");
-      setLoaderOpen(true);
-      // Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
+  const getdata = () => {
+    let token = Cookies.get("token");
+    setLoaderOpen(true);
+    // Axios.get(`${process.env.REACT_APP_TUNNEL_URL}${sourcesQueryKeys[source]}`, Auth)
 
-      let config = {
-        method: "post",
-        url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
-        headers: {
-          "Content-Type": "application/json",
-          token: token,
-        },
-        data: "",
-      };
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + `${sourcesQueryKeys[source]}`,
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: "",
+    };
 
-      Axios(config)
-        .then((data) => {
-          if (source !== "twitter") {
+    Axios(config)
+      .then((data) => {
+        if (source !== "twitter") {
+          setData(
+            data.data[Object.keys(data.data)[1]].map((item) => {
+              return {
+                name: item,
+              };
+            })
+          );
+        } else {
+          setpagedata(data.data[Object.keys(data.data)[2]]);
+          setkeyworddata(data.data[Object.keys(data.data)[1]]);
+          if (data.data[Object.keys(data.data)[2]]) {
             setData(
+              data.data[Object.keys(data.data)[2]].map((item) => {
+                return {
+                  name: item,
+                };
+              })
+            );
+          } else {
+            setData([]);
+            setpagedata([]);
+          }
+          if (data.data[Object.keys(data.data)[1]]) {
+            setData1(
               data.data[Object.keys(data.data)[1]].map((item) => {
                 return {
                   name: item,
@@ -166,39 +184,24 @@ function Admin() {
               })
             );
           } else {
-            setpagedata(data.data[Object.keys(data.data)[2]]);
-            setkeyworddata(data.data[Object.keys(data.data)[1]]);
-            if (data.data[Object.keys(data.data)[2]]) {
-              setData(
-                data.data[Object.keys(data.data)[2]].map((item) => {
-                  return {
-                    name: item,
-                  };
-                })
-              );
-            } else {
-              setData([]);
-              setpagedata([]);
-            }
-            if (data.data[Object.keys(data.data)[1]]) {
-              setData1(
-                data.data[Object.keys(data.data)[1]].map((item) => {
-                  return {
-                    name: item,
-                  };
-                })
-              );
-            } else {
-              setData1([]);
-              setkeyworddata([]);
-            }
+            setData1([]);
+            setkeyworddata([]);
           }
-          setLoaderOpen(false);
-        })
-        .catch((err) => {
-          setLoaderOpen(false);
-          console.log(err, err.response);
-        });
+        }
+        setLoaderOpen(false);
+      })
+      .catch((err) => {
+        setLoaderOpen(false);
+        console.log(err, err.response);
+      });
+  };
+  useEffect(() => {
+    if (
+      source === "twitter" ||
+      source === "facebook" ||
+      source === "instagram"
+    ) {
+      getdata();
     }
   }, [source, refresh]);
 
@@ -327,22 +330,16 @@ function Admin() {
   const handlerole = (e) => {
     setshowaddrole((v) => !v);
   };
-  const handlefileupload=(e)=>{
-     setOpen(!open);
-     let token = Cookies.get("token");
-    console.log(e.target.files[0])
+  const handlefileupload = (e) => {
+    setOpen(!open);
+    let token = Cookies.get("token");
+    console.log(e.target.files[0]);
     let data = new FormData();
-    data.append(
-      "fbpagesfile",
-      e.target.files[0]
-    );
+    data.append("fbpagesfile", e.target.files[0]);
 
     let config = {
       method: "post",
-      url:
-        
-        process.env.REACT_APP_URL +
-        "admin/bulkupload",
+      url: process.env.REACT_APP_URL + "admin/bulkupload",
       headers: {
         "Content-Type": "application/json",
         token: token,
@@ -352,19 +349,20 @@ function Admin() {
 
     Axios(config)
       .then((response) => {
-        
-
+        if (response.status === 200) {
+          getdata();
           setOpen(false);
-        
+        } else {
+          setOpen(false);
+        }
+
         console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
         setOpen(false);
         console.log(error);
       });
-
-
-  }
+  };
   return (
     <>
       <div style={{ width: "100%" }}>
