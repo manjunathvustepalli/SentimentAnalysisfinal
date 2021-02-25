@@ -182,7 +182,9 @@ function Admin() {
                   name: item,
                 };
               })
+
             );
+            
           } else {
             setData1([]);
             setkeyworddata([]);
@@ -352,6 +354,7 @@ function Admin() {
         if (response.status === 200) {
           getdata();
           setOpen(false);
+          document.getElementById("myInput").value = "";
         } else {
           setOpen(false);
         }
@@ -457,7 +460,12 @@ function Admin() {
                         }}
                       >
                         Upload File
-                        <input type="file" hidden onChange={handlefileupload} />
+                        <input
+                          type="file"
+                          hidden
+                          onChange={handlefileupload}
+                          id="myInput"
+                        />
                       </Button>
                     </Grid>
                   </>
