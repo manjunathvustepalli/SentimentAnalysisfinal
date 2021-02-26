@@ -441,7 +441,9 @@ function Admin() {
           <Grid item xs={false} sm={3} />
           <Grid item xs={1} />
           <Grid item xs={10}>
-            {source === "facebook" || source === "instagram" ? (
+            {source === "facebook" ||
+            source === "instagram" ||
+            source === "twitter" ? (
               <>
                 {source === "facebook" ? (
                   <>
