@@ -33,6 +33,9 @@ import GridListTile from "@material-ui/core/GridListTile";
 import EditIcon from "@material-ui/icons/Edit";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import ShowMoreText from "react-show-more-text";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -109,6 +112,10 @@ function LiveAnalysis() {
   const [source, setSource] = useState("twitter");
   const [dataObject, setDataObject] = useState({});
   const [sentiment, setsentiment] = useState([]);
+  const [expand, setExpand] = useState(false);
+  const onClick = () => {
+    setExpand(!expand);
+  };
 
   const [columns, setColumns] = useState([
     { title: "Name", field: "name" },
@@ -486,7 +493,22 @@ function LiveAnalysis() {
               { title: "Date", field: "date" },
               { title: "Name", field: "name" },
               { title: "Screen Name", field: "screenName" },
-              { title: "Post", field: "tweet" },
+              {
+                title: "Post",
+                field: "tweet",
+                render: (rowData) => (
+                  <ShowMoreText
+                    lines={3}
+                    more={<ExpandMore />}
+                    less={<ExpandLess />}
+                    onClick={onClick}
+                    expanded={expand}
+                    // width={100}
+                  >
+                    {rowData.tweet}
+                  </ShowMoreText>
+                ),
+              },
               { title: "Mood", field: "mood" },
               { title: "Sub Source", field: "SubSource" },
               { title: "Sentiment", field: "sentiment" },

@@ -125,7 +125,7 @@ export default function UpdateDeleteUser() {
     console.log(data);
   };
 
-  const updateuser = (id, usernmae, displayName, role) => {
+  const updateuser = (id, usernmae, displayName, role,useremail) => {
     let token = Cookies.get("token");
     let data = JSON.stringify({
       user: {
@@ -133,6 +133,7 @@ export default function UpdateDeleteUser() {
         userName: usernmae,
         displayName: displayName,
         roles: role,
+        userEmail: useremail,
       },
     });
 
@@ -216,6 +217,7 @@ export default function UpdateDeleteUser() {
   const [columns, setColumns] = useState([
     { title: "Username", field: "userName", editable: "never" },
     { title: "Display name", field: "displayName" },
+    { title: "User email", field: "userEmail" },
     {
       title: "Roles",
       field: "roles",
@@ -306,7 +308,8 @@ export default function UpdateDeleteUser() {
                               newData.userId,
                               newData.userName,
                               newData.displayName,
-                              newData.roles
+                              newData.roles,
+                              newData.userEmail
                             );
                             // dataUpdate[index] = newData;
                             // setData([...dataUpdate]);

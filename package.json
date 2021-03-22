@@ -26,6 +26,7 @@
     "react-mapbox-gl": "^4.8.6",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "react-show-more-text": "^1.4.6",
     "react-twitter-widgets": "^1.9.5",
     "styled-components": "^5.1.1"
   },

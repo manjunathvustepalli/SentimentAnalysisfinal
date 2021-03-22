@@ -69,6 +69,7 @@ export default function AddUser() {
   const classes = useStyles();
   const [Username, setUsername] = useState();
   const [email, setEmail] = useState();
+  const [useremail, setUserEmail] = useState();
   const [Password, setPassword] = useState();
   const [Password2, setPassword2] = useState();
   const [UserType, setUserType] = useState();
@@ -127,6 +128,7 @@ const passwordmatchcheck=(e)=>{
         password: Password,
         displayName: email,
         roles: UserType,
+        userEmail: useremail,
       },
     });
 
@@ -254,6 +256,19 @@ const passwordmatchcheck=(e)=>{
                         name="Display Name"
                         autoComplete="email"
                         onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        value={useremail}
+                        id="display name"
+                        label="User email"
+                        name="Display Name"
+                        autoComplete="email"
+                        onChange={(e) => setUserEmail(e.target.value)}
                       />
                     </Grid>
                     <Grid item xs={12}>
