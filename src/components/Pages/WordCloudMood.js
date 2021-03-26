@@ -173,7 +173,6 @@ function WordCloudMood() {
   const [tableData, setTableData] = useState([]);
   const searchWordData = () => {
     //     Axios.post(
-
     //         process.env.REACT_APP_SEARCH_URL,
     //       {
     //         query: {
