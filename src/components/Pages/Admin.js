@@ -48,6 +48,9 @@ function Admin() {
     telegram: "getaddedtelegramchannels",
     googlenews: "getaddedgooglenewspages",
     twitter: "getasynctwitterconfig",
+    englishstopwords: "getenglishstopwords",
+    banglishstopwords: "getbanglishstopwords",
+    bengalistopwords: "getbengalistopwords",
   };
   const classes = useStyles();
   const [source, setSource] = useState("facebook");
@@ -201,7 +204,10 @@ function Admin() {
     if (
       source === "twitter" ||
       source === "facebook" ||
-      source === "instagram"
+      source === "instagram"||
+      source === "englishstopwords"||
+      source === "banglishstopwords"||
+      source === "bengalistopwords"
     ) {
       getdata();
     }
@@ -220,6 +226,9 @@ function Admin() {
         telegram: "startcrawlingtelegramchannel",
         googlenews: "startcrawlinggooglenewspage",
         twitter: "setasynctwitterconfig",
+        banglishstopwords: "addbanglishstopword",
+        englishstopwords: "addenglishstopword",
+        bengalistopwords: "addbengalistopword",
       };
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceAddQueryStrings[source]}${newlyAddedWord}`,
@@ -239,7 +248,16 @@ function Admin() {
           keywords: keyworddata,
           handles: pagedata,
         });
-      } else {
+      } else if (source === "englishstopwords") {
+        jsondata = JSON.stringify({ englishStopWords: [newlyAddedWord] });
+      
+      } else if (source === "banglishstopwords") {
+        jsondata = JSON.stringify({ banglishStopWords: [newlyAddedWord] });
+      
+      } else if (source === "bengalistopwords") {
+        jsondata = JSON.stringify({ bengaliStopWords: [newlyAddedWord] });
+      }
+      else {
         jsondata = JSON.stringify({ googlenewspages: [newlyAddedWord] });
       }
 
@@ -281,6 +299,9 @@ function Admin() {
         telegram: "stopcrawlingtelegramchannel",
         googlenews: "stopcrawlinggooglenewspage",
         twitter: "setasynctwitterconfig",
+        englishstopwords: "deleteenglishstopword",
+        banglishstopwords: "deletebanglishstopword",
+        bengalistopwords: "deletebengalistopword",
       };
       //   Axios.get(
       //     `${process.env.REACT_APP_TUNNEL_URL}${sourceDeleteQueryStrings[source]}${deletedWord}`,
@@ -300,7 +321,17 @@ function Admin() {
           keywords: keyworddata,
           handles: pagedata,
         });
-      } else {
+      }
+      else if (source === "englishstopwords") {
+        data = JSON.stringify({ englishStopWords: [deletedWord] });
+      
+      } else if (source === "banglishstopwords") {
+        data = JSON.stringify({ banglishStopWords: [deletedWord] });
+      
+      } else if (source === "bengalistopwords") {
+        data = JSON.stringify({ bengaliStopWords: [deletedWord] });
+      }
+      else {
         data = JSON.stringify({ googlenewspages: [deletedWord] });
       }
 
@@ -337,7 +368,17 @@ function Admin() {
     let token = Cookies.get("token");
     console.log(e.target.files[0]);
     let data = new FormData();
-    data.append("fbpagesfile", e.target.files[0]);
+    if(source=="facebook"){
+      data.append("fbpagesfile", e.target.files[0]);
+    }else if(source=="banglishstopwords"){
+      data.append("banglishstopwordsfile", e.target.files[0]);
+    }
+    else if(source=="bengalistopwords"){
+      data.append("bengalistopwordsfile", e.target.files[0]);
+    }
+    else if(source=="englishstopwords"){
+      data.append("englishstopwordsfile", e.target.files[0]);
+    }
 
     let config = {
       method: "post",
@@ -405,7 +446,10 @@ function Admin() {
 
                     {rolemanagementpage ? (
                       <MenuItem value={"Role"}> {"Role"} </MenuItem>
-                    ) : null}
+                      ) : null}
+                      <MenuItem value={"banglishstopwords"}> {" Banglish Stop Words Management"} </MenuItem>
+                      <MenuItem value={"bengalistopwords"}> {"Bengali Stop Words Management"} </MenuItem>
+                      <MenuItem value={"englishstopwords"}> {"English Stop Words Management"} </MenuItem>
                   </Select>
                 </FormControl>
               </>
@@ -443,9 +487,17 @@ function Admin() {
           <Grid item xs={10}>
             {source === "facebook" ||
             source === "instagram" ||
-            source === "twitter" ? (
+            source === "twitter"   ||
+            source=="banglishstopwords" ||
+            source=="englishstopwords"   ||
+            source=="bengalistopwords"
+             ? (
               <>
-                {source === "facebook" ? (
+                {source === "facebook" ||
+                source=="banglishstopwords" ||
+                source=="englishstopwords"   ||
+                source=="bengalistopwords"
+                ? (
                   <>
                     <Grid
                       container
