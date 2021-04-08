@@ -37,12 +37,12 @@ function AreaChart(props) {
         categories: props.data.dates || props.dates,
         tickmarkPlacement: "on",
         title: {
-          text: "Dates",
+          text: "Date Range",
         },
       },
       yAxis: {
         title: {
-          text: "Data",
+          text: "Article/posts count",
         },
         labels: {
           formatter: function () {

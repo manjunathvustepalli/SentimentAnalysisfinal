@@ -40,12 +40,12 @@ function BarChart(props) {
       type: "category",
       categories: props.categories,
       title: {
-        text: "Dates",
+        text: "Date Range",
       },
     },
     yAxis: {
       title: {
-        text: "data",
+        text: "Article/posts count",
       },
     },
     legend: {

@@ -36,6 +36,9 @@ import MuiAlert from "@material-ui/lab/Alert";
 import ShowMoreText from "react-show-more-text";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
+import { clearStorage } from "mapbox-gl";
+import { Link } from "react-router-dom";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -100,6 +103,18 @@ var sortedData = {};
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+// function urlify(text) {
+//   var urlRegex = /(https?:\/\/[^\s]+)/g;
+//   var finallink= text.replace(urlRegex, function(url) {
+//     var link='<a href="' + url + '">' + url + '</a>'
+//     return link;
+//   })
+//   // console.log(finallink)
+// return <div>{finallink}</div>;
+
+//   // or alternatively
+//   // return text.replace(urlRegex, '<a href="$1">$1</a>')
+// }
 function LiveAnalysis() {
   const classes = useStyles();
   const [data, setData] = useState([]);
@@ -468,7 +483,17 @@ function LiveAnalysis() {
             obj.date = dateFormatter(user._source.CreatedAt);
           }
           if (user._source.Text) {
+           
+            
+            
             obj.tweet = user._source.Text;
+            var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+            obj.url=user._source.Text.match(urlRegex)
+            if(obj.url!==null){
+
+              console.log(obj.url[0])
+            }
+            
           }
           if (user._source.RetweetCount) {
             obj.retweetCount = user._source.RetweetCount;
@@ -505,9 +530,16 @@ function LiveAnalysis() {
                     expanded={expand}
                     // width={100}
                   >
-                    {rowData.tweet}
-                  </ShowMoreText>
+                   {rowData.tweet}
+                   </ShowMoreText>
                 ),
+              },
+              { 
+                title: 'Post Link', 
+                render: ( row ) => (
+                row.url==null?<p></p>:
+                <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+                )
               },
               { title: "Mood", field: "mood" },
               { title: "Sub Source", field: "SubSource" },
@@ -568,7 +600,29 @@ function LiveAnalysis() {
               { title: "Name", field: "name" },
               { title: "Screen Name", field: "screenName" },
               { title: "Sub Source", field: "SubSource" },
-              { title: "Post", field: "tweet" },
+              {
+                title: "Post",
+                field: "tweet",
+                render: (rowData) => (
+                  <ShowMoreText
+                    lines={3}
+                    more={<ExpandMore />}
+                    less={<ExpandLess />}
+                    onClick={onClick}
+                    expanded={expand}
+                    // width={100}
+                  >
+                   {rowData.tweet}
+                   </ShowMoreText>
+                ),
+              },
+              { 
+                title: 'Post Link', 
+                render: ( row ) => (
+                row.url==null?<p></p>:
+                <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+                )
+              },
               { title: "Mood", field: "mood" },
               { title: "Sentiment", field: "sentiment" },
               { title: "Location", field: "location" },

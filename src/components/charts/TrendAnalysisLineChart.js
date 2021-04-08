@@ -29,14 +29,14 @@ function TrendAnalysisLineChart(props) {
     },
     yAxis: {
       title: {
-        text: "Data",
+        text: "Article/posts count",
       },
     },
     xAxis: {
       categories: dates,
       crosshair: true,
       title: {
-        text: "Dates",
+        text: "Date Range",
       },
     },
     legend: {
