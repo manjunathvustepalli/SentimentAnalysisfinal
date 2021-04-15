@@ -48,6 +48,18 @@ function TrendAnalysisLineChart(props) {
       enabled: false,
     },
     series: data,
+    plotOptions: {
+      series: {
+          cursor: 'pointer',
+          point: {
+              events: {
+                  click: function(event) {
+                    props.onClick(event.point.category)
+                  }
+              }
+          }
+      }
+      },
     exporting: {
       enabled: props.options,
       chartOptions: {

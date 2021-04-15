@@ -54,6 +54,15 @@ function AreaChart(props) {
         enabled: false,
       },
       plotOptions: {
+        series: {
+          trackByArea: true,
+          events: {
+            click: function(event) {
+              props.onClick(event.point.category)
+              
+            }
+          }
+        },
         area: {
           marker: {
             enabled: true,

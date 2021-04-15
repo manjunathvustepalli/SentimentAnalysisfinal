@@ -12,7 +12,7 @@ import Axios from 'axios';
 import FilterHeader from '../Filters/FilterHeader';
 import FilterWrapper from '../Filters/FilterWrapper';
 import AccordianFilters from '../Filters/AccordianFilters';
-import { Typography } from '@material-ui/core';
+import { Dialog,Typography } from '@material-ui/core';
 import { getKeyArray, getDocCountByKey } from '../../helpers';
 import { sentimentAnalysisLineChartFilter } from '../../helpers/filter';
 import Loader from '../LoaderWithBackDrop';
@@ -22,7 +22,12 @@ import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import { SentimentAnalysisFiltersContext } from '../../contexts/SentimentAnalysisContext';
 import { Auth, header } from "./Auth";
  import Cookies from "js-cookie";
-
+ import AppBar from "@material-ui/core/AppBar";
+ import Toolbar from "@material-ui/core/Toolbar";
+ import IconButton from "@material-ui/core/IconButton";
+ import CloseIcon from "@material-ui/icons/Close";
+ import TableWithData from "../Tables/TableWithData";
+ import Box from '@material-ui/core/box'
 const useStyles = makeStyles((theme) => ({
     main: {
 
@@ -53,7 +58,28 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 var sortedData = {}
-
+const dateFormatter = (unix) => {
+  var date = new Date(unix);
+  var hours = date.getHours();
+  var minutes = "0" + date.getMinutes();
+  var seconds = "0" + date.getSeconds();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  var todayDate = date.getDate();
+  return (
+    todayDate +
+    "/" +
+    month +
+    "/" +
+    year +
+    " " +
+    hours +
+    ":" +
+    minutes.substr(-2) +
+    ":" +
+    seconds.substr(-2)
+  );
+};
 export default function SentimentalAnalysisLineChart() {
     const sentimentFilters = useContext(SentimentAnalysisFiltersContext)
     const {
@@ -78,11 +104,110 @@ export default function SentimentalAnalysisLineChart() {
     const [refresh, setRefresh] = useState(true)
     const [data, setData] = useState({})
     const [dates, setDates] = useState([])
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(true);
+    const [tableData, setTableData] = useState([]);
+    // const [open, setOpen] = useState(true)
+    const [dialogopen, setDialogOpen] = useState(false);
+  const [dialogclose, setDialogClose] = useState(false);
+  const[searchword,setSearchword]=useState();
     const classes = useStyles();
     const handleChange = (e) => {
         setChartType(e.target.value)
     }
+    function handleCellClick(date){
+  
+      let dt=date.split("-").reverse().join("-");;
+      
+     
+       setSearchword(date)
+       setDialogOpen(true)
+       
+       let token = Cookies.get("token");
+      console.log(sources)
+      let src=Object.entries(sources).map((data)=>{
+        if(data[1]){
+          return data[0]
+        }
+       console.log(data[1])
+      })
+      let lan=Object.entries(languages).map((data)=>{
+        if(data[1]){
+          return data[0]
+        }
+       console.log(data[1])
+      })
+      let sen=Object.entries(sentiments).map((data)=>{
+        if(data[1]){
+          return data[0]
+        }
+       console.log(data[1])
+      })
+      let key=Object.entries(keywords).map((data)=>{
+        if(data[1]){
+          return data[0]
+        }
+       console.log(data[1])
+      })
+    
+   
+       let data = JSON.stringify({
+         querySources: src,
+         queryLanguages:lan,
+         querySearchFromSentiment: true,
+         querySentiments: sen,
+         queryHashtagEntities:key,
+         queryStartDate:dt,
+         queryEndDate:dt
+       });
+       let config = {
+         method: "post",
+         url: process.env.REACT_APP_URL + "query/search",
+         headers: {
+           "Content-Type": "application/json",
+           token: token,
+         },
+         data: data,
+       };
+   
+       Axios(config)
+         .then((fetchedData) => {
+           console.log(fetchedData)
+           setTableData(
+             fetchedData.data.hits.hits.map((postObj) => {
+               if (!postObj._source.User) {
+                 return {
+                   date: dateFormatter(postObj._source.CreatedAt),
+                   post: postObj._source.Text,
+                   source: postObj._source.Source,
+                   subSource: postObj._source.SubSource,
+                   favouriteCount: postObj._source.FavoriteCount,
+                   sentiment: postObj._source.predictedSentiment,
+                   mood: postObj._source.predictedMood,
+                   language: postObj._source.predictedLang,
+                 };
+               } else {
+                 return {
+                   date: dateFormatter(postObj._source.CreatedAt),
+                   post: postObj._source.Text,
+                   source: postObj._source.Source,
+                   subSource: postObj._source.SubSource,
+                   favouriteCount: postObj._source.FavoriteCount,
+                   sentiment: postObj._source.predictedSentiment,
+                   mood: postObj._source.predictedMood,
+                   language: postObj._source.predictedLang,
+                   followersCount: postObj._source.User.FollowersCount,
+                   location: postObj._source.User.Location,
+                   name: postObj._source.User.Name,
+                   screenName: postObj._source.User.ScreenName,
+                 };
+               }
+             })
+           );
+         })
+       }
+       const handleClose=()=>{
+         setDialogOpen(false)
+             }
 
     const fetchData = (changeInState) => {
       //   let query = {
@@ -404,7 +529,7 @@ if (keywordType === "Entire Data") {
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <TrendAnalysisLineChart title='Date wise Sentiment Line Chart' dates={dates} data={data} />
+                            <TrendAnalysisLineChart title='Date wise Sentiment Line Chart' dates={dates} data={data} onClick={handleCellClick}/>
                         </Grid>
                     </Card>
                 </Grid>
@@ -430,6 +555,33 @@ if (keywordType === "Entire Data") {
                     </Grid>
                 </Grid>
             </Grid>
+
+            <Dialog
+          fullScreen
+          open={dialogopen}
+          onClose={handleClose}
+          // TransitionComponent={Transition}
+        >
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                {searchword}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Box p={4}>
+
+          <TableWithData rows={tableData} />
+          </Box>
+        </Dialog>
         </div>
         </>
     );

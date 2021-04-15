@@ -14,6 +14,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+
 } from "@material-ui/core";
 import FilterWrapper from "../Filters/FilterWrapper";
 import AccordianFilters from "../Filters/AccordianFilters";
@@ -35,6 +37,33 @@ import UseDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
 import useDidUpdateEffect from "../custom Hooks/useDidUpdateEffect";
 import { Auth } from "./Auth";
 import Cookies from "js-cookie";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import TableWithData from "../Tables/TableWithData";
+const dateFormatter = (unix) => {
+  var date = new Date(unix);
+  var hours = date.getHours();
+  var minutes = "0" + date.getMinutes();
+  var seconds = "0" + date.getSeconds();
+  var month = date.getMonth() + 1;
+  var year = date.getFullYear();
+  var todayDate = date.getDate();
+  return (
+    todayDate +
+    "/" +
+    month +
+    "/" +
+    year +
+    " " +
+    hours +
+    ":" +
+    minutes.substr(-2) +
+    ":" +
+    seconds.substr(-2)
+  );
+};
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -72,6 +101,8 @@ function InfluencerAnalysis() {
   const [open, setOpen] = useState(true);
   const [sources, setSources] = useState(["Twitter", "Newspaper", "Facebook"]);
   const [source, setSource] = useState("Twitter");
+  const [dialogopen, setDialogOpen] = useState(false);
+  const [dialogclose, setDialogClose] = useState(false);
   const [sentiments, setSentiments] = useState({
     negative: true,
     neutral: true,
@@ -83,6 +114,69 @@ function InfluencerAnalysis() {
   const [moodData, setMoodData] = useState([]);
   const [sentimentData, setSentimentData] = useState([]);
   const [size, setSize] = useState(10);
+  const [tableData, setTableData] = useState([]);
+  const[searchword,setSearchword]=useState();
+  function handleCellClick(row){
+    setSearchword(row)
+    setDialogOpen(true)
+    console.log("////",row)
+    let token = Cookies.get("token");
+    let data = JSON.stringify({
+      querySources: [ source ],
+     queryUserScreenNames: [ row ],
+     queryStartDate: from,
+     queryEndDate: to,
+     numberOfRecordsToFetch: 100
+    });
+    let config = {
+      method: "post",
+      url: process.env.REACT_APP_URL + "query/search",
+      headers: {
+        "Content-Type": "application/json",
+        token: token,
+      },
+      data: data,
+    };
+
+    Axios(config)
+      .then((fetchedData) => {
+        console.log(fetchedData)
+        setTableData(
+          fetchedData.data.hits.hits.map((postObj) => {
+            if (!postObj._source.User) {
+              return {
+                date: dateFormatter(postObj._source.CreatedAt),
+                post: postObj._source.Text,
+                source: postObj._source.Source,
+                subSource: postObj._source.SubSource,
+                favouriteCount: postObj._source.FavoriteCount,
+                sentiment: postObj._source.predictedSentiment,
+                mood: postObj._source.predictedMood,
+                language: postObj._source.predictedLang,
+              };
+            } else {
+              return {
+                date: dateFormatter(postObj._source.CreatedAt),
+                post: postObj._source.Text,
+                source: postObj._source.Source,
+                subSource: postObj._source.SubSource,
+                favouriteCount: postObj._source.FavoriteCount,
+                sentiment: postObj._source.predictedSentiment,
+                mood: postObj._source.predictedMood,
+                language: postObj._source.predictedLang,
+                followersCount: postObj._source.User.FollowersCount,
+                location: postObj._source.User.Location,
+                name: postObj._source.User.Name,
+                screenName: postObj._source.User.ScreenName,
+              };
+            }
+          })
+        );
+      })
+    }
+    const handleClose=()=>{
+setDialogOpen(false)
+    }
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -679,7 +773,7 @@ console.log({finaldata})
     setMoodData([]);
     fetchData();
   }, [refresh]);
-
+  
   return (
     <>
       <div
@@ -722,7 +816,7 @@ console.log({finaldata})
                     </Grid>
                     <Grid item xs={12}>
                       {source === "Twitter" ? (
-                        <Table2 data={data} />
+                        <Table2 data={data} onClick={handleCellClick}/>
                       ) : (
                         <Table3 data={data} facebook={source === "Facebook"} />
                       )}
@@ -858,6 +952,35 @@ console.log({finaldata})
               </Grid>
             </Grid>
           </Grid>
+          <Dialog
+          fullScreen
+          open={dialogopen}
+          onClose={handleClose}
+          // TransitionComponent={Transition}
+        >
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                {searchword}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Box p={4}>
+
+          <TableWithData rows={tableData} />
+          </Box>
+        </Dialog>
+
+
+
         </Grid>
       </div>
     </>

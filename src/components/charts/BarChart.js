@@ -70,6 +70,18 @@ function BarChart(props) {
         },
       },
     },
+    plotOptions: {
+      series: {
+          cursor: 'pointer',
+          point: {
+              events: {
+                  click: function(event) {
+                    props.onClick(event.point.category)
+                  }
+              }
+          }
+      }
+      },
     exporting: {
       chartOptions: {
         title: {

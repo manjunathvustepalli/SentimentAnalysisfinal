@@ -87,6 +87,7 @@ export default function StickyHeadTable(props) {
             <TableRow>
               {columns.map((column) => (
                 <StyledTableCell
+           
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
@@ -103,7 +104,7 @@ export default function StickyHeadTable(props) {
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
-                      <StyledTableCell key={column.id} align={column.align}>
+                      <StyledTableCell key={column.id} align={column.align}      onClick={()=>props.onClick(row.influencer.props.children[4])}>
                         {column.format && typeof value === 'number' ? column.format(value) : value}
                       </StyledTableCell>
                     );
