@@ -38,3 +38,12 @@ export const getDatesArray = (startDate, endDate) =>{
   dates.push(moment(currDate.clone().toDate()).format('YYYY-MM-DD'));
   return dates
 }
+export const getkeyvaluedata=(userdata)=>{
+  let finaldata=Object.entries(userdata).filter(function(data) {
+    if (!data[1]) {
+      return false; // skip
+    }
+    return true;
+  }).map(function(data) { return data[0] });
+  return finaldata;
+}

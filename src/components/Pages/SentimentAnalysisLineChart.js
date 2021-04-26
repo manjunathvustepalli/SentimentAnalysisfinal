@@ -27,7 +27,9 @@ import { Auth, header } from "./Auth";
  import IconButton from "@material-ui/core/IconButton";
  import CloseIcon from "@material-ui/icons/Close";
  import TableWithData from "../Tables/TableWithData";
- import Box from '@material-ui/core/box'
+ import Box from '@material-ui/core/box';
+ import {getkeyvaluedata} from "../../helpers/index";
+
 const useStyles = makeStyles((theme) => ({
     main: {
 
@@ -124,30 +126,10 @@ export default function SentimentalAnalysisLineChart() {
        
        let token = Cookies.get("token");
       console.log(sources)
-      let src=Object.entries(sources).map((data)=>{
-        if(data[1]){
-          return data[0]
-        }
-       console.log(data[1])
-      })
-      let lan=Object.entries(languages).map((data)=>{
-        if(data[1]){
-          return data[0]
-        }
-       console.log(data[1])
-      })
-      let sen=Object.entries(sentiments).map((data)=>{
-        if(data[1]){
-          return data[0]
-        }
-       console.log(data[1])
-      })
-      let key=Object.entries(keywords).map((data)=>{
-        if(data[1]){
-          return data[0]
-        }
-       console.log(data[1])
-      })
+      let src=getkeyvaluedata(sources)
+      let lan=getkeyvaluedata(languages)
+      let sen=getkeyvaluedata(sentiments)
+      let key=getkeyvaluedata(keywords)
     
    
        let data = JSON.stringify({

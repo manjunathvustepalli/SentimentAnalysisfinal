@@ -24,6 +24,7 @@ import useMountAndUpdateEffect from '../custom Hooks/useMountAndUpdateEffect';
 import colors from '../../helpers/colors';
 import {Auth, header} from './Auth'
  import Cookies from "js-cookie";
+ import {getkeyvaluedata} from "../../helpers/index";
  import AppBar from "@material-ui/core/AppBar";
  import Toolbar from "@material-ui/core/Toolbar";
  import IconButton from "@material-ui/core/IconButton";
@@ -122,30 +123,10 @@ export default function SentimentalAnalysisAreaChart() {
     
     let token = Cookies.get("token");
    console.log(sources)
-   let src=Object.entries(sources).map((data)=>{
-     if(data[1]){
-       return data[0]
-     }
-    console.log(data[1])
-   })
-   let lan=Object.entries(languages).map((data)=>{
-     if(data[1]){
-       return data[0]
-     }
-    console.log(data[1])
-   })
-   let sen=Object.entries(sentiments).map((data)=>{
-     if(data[1]){
-       return data[0]
-     }
-    console.log(data[1])
-   })
-   let key=Object.entries(keywords).map((data)=>{
-     if(data[1]){
-       return data[0]
-     }
-    console.log(data[1])
-   })
+   let src=getkeyvaluedata(sources)
+   let lan=getkeyvaluedata(languages)
+   let sen=getkeyvaluedata(sentiments);
+   let key=getkeyvaluedata(keywords)
  
 
     let data = JSON.stringify({
