@@ -41,7 +41,10 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Image from "material-ui-image";
 import { Tweet } from "react-twitter-widgets";
 import EditIcon from "@material-ui/icons/Edit";
-
+import { Link } from "react-router-dom";
+import ShowMoreText from "react-show-more-text";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 const dateFormatter = (unix) => {
   var date = new Date(unix);
   var hours = date.getHours();
@@ -94,7 +97,10 @@ function SearchFromDB() {
   const [editsentiment, setEditSentiment] = useState("");
   const [editMood, setEditMood] = useState("");
   const [editlanguage, setEditLanguage] = useState("");
-
+  const [expand, setExpand] = useState(false);
+  const onClick = () => {
+    setExpand(!expand);
+  };
   const handleEditClose = () => {
     setEditOpen(false);
   };
@@ -190,6 +196,25 @@ function SearchFromDB() {
     {
       title: "Post",
       field: "post",
+      render: (rowData) => (
+        <ShowMoreText
+          lines={2}
+          more={<ExpandMore />}
+          less={<ExpandLess />}
+          onClick={onClick}
+          expanded={expand}
+          // width={100}
+        >
+         {rowData.post}
+         </ShowMoreText>
+      ),
+    },
+    { 
+      title: 'Post Link',
+      render: ( row ) => (
+      row.url==null?<p></p>:
+      <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+      )
     },
     {
       title: "Sentiment",
@@ -295,6 +320,13 @@ function SearchFromDB() {
           setData(
             fetchedData.data.hits.hits.map((postObj) => {
               let obj = {  };
+              if (postObj._source.Text) {
+                obj.tweet = postObj._source.Text;
+                var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+                obj.url=postObj._source.Text.match(urlRegex)
+                console.log(obj.url[0])
+                
+              }
               if (postObj._source.PredictedImageSentiment) {
                 obj.predictedSentiment = postObj._source.PredictedImageSentiment.map(
                   (image) =>
@@ -431,6 +463,7 @@ function SearchFromDB() {
                   sentiment: postObj._source.predictedSentiment,
                   mood: postObj._source.predictedMood,
                   language: postObj._source.predictedLang,
+                  url:obj.url,
                   // mediaUrl: postObj._source.MediaEntities.map((image) => {
                   //   if (!image.MediaURL) {
                   //     return <span />;
@@ -469,6 +502,7 @@ function SearchFromDB() {
                   name: postObj._source.User.Name,
                   screenName: postObj._source.User.ScreenName,
                   mediaUrl: obj.mediaUrl,
+                  url:obj.url,
                   // mediaUrl: postObj._source.MediaEntities.map((image) => {
                   //   if (!image.MediaURL) {
                   //     return <span />;
@@ -519,6 +553,26 @@ function SearchFromDB() {
               {
                 title: "Post",
                 field: "post",
+                render: (rowData) => (
+                  <ShowMoreText
+                    lines={2}
+                    more={<ExpandMore />}
+                    less={<ExpandLess />}
+                    onClick={onClick}
+                    expanded={expand}
+                    // width={100}
+                  >
+                   {rowData.post}
+                   </ShowMoreText>
+                ),
+              },
+              { 
+                title: 'Post Link', 
+                
+                render: ( row ) => (
+                row.url==null?<p></p>:
+                <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+                )
               },
               {
                 title: "Sentiment",
@@ -555,6 +609,26 @@ function SearchFromDB() {
               {
                 title: "Post",
                 field: "post",
+                render: (rowData) => (
+                  <ShowMoreText
+                    lines={2}
+                    more={<ExpandMore />}
+                    less={<ExpandLess />}
+                    onClick={onClick}
+                    expanded={expand}
+                    // width={100}
+                  >
+                   {rowData.post}
+                   </ShowMoreText>
+                ),
+              },
+              { 
+                title: 'Post Link', 
+               
+                render: ( row ) => (
+                row.url==null?<p></p>:
+                <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+                )
               },
               {
                 title: "Sentiment",
@@ -796,7 +870,7 @@ function SearchFromDB() {
           data={data}
           style={{ padding: "15px" }}
           options={{
-            tableLayout: "fixed",
+            tableLayout: "auto",
             maxBodyHeight: 500,
             headerStyle: {
               backgroundColor: "rgb(67, 176, 42)",

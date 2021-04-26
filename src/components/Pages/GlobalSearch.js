@@ -30,7 +30,10 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import EditIcon from "@material-ui/icons/Edit";
 import { Instagram } from "@material-ui/icons";
-
+import { Link } from "react-router-dom";
+import ShowMoreText from "react-show-more-text";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 const dateFormatter = (unix) => {
   var date = new Date(unix);
   var hours = date.getHours();
@@ -91,6 +94,10 @@ function GlobalSearch() {
   const [liveReloading, setLiveReloading] = useState(false);
   const [reloadInterval, setReloadInterval] = useState(20000);
   const [editDataAcess] = useState(Cookies.get("Update Data"));
+  const [expand, setExpand] = useState(false);
+  const onClick = () => {
+    setExpand(!expand);
+  };
   const handleEditClose = () => {
     setEditOpen(false);
   };
@@ -125,10 +132,19 @@ function GlobalSearch() {
         console.log(data);
         setData(
           data.data.hits.hits.map((postObj) => {
+            let obj = {  };
+            if (postObj._source.Text) {
+              obj.tweet = postObj._source.Text;
+              var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+              obj.url=postObj._source.Text.match(urlRegex)
+              console.log(obj.url[0])
+              
+            }
             if (!postObj._source.User) {
               return {
                 date: dateFormatter(postObj._source.CreatedAt),
                 post: postObj._source.Text,
+                url:obj.url,
                 favouriteCount: postObj._source.FavoriteCount,
                 sentiment: postObj._source.predictedSentiment,
                 mood: postObj._source.predictedMood,
@@ -139,6 +155,7 @@ function GlobalSearch() {
               return {
                 date: dateFormatter(postObj._source.CreatedAt),
                 post: postObj._source.Text,
+                url:obj.url,
                 favouriteCount: postObj._source.FavoriteCount,
                 sentiment: postObj._source.predictedSentiment,
                 mood: postObj._source.predictedMood,
@@ -168,6 +185,26 @@ function GlobalSearch() {
           {
             title: "Post",
             field: "post",
+            render: (rowData) => (
+              <ShowMoreText
+                lines={2}
+                more={<ExpandMore />}
+                less={<ExpandLess />}
+                onClick={onClick}
+                expanded={expand}
+                // width={100}
+              >
+               {rowData.post}
+               </ShowMoreText>
+            ),
+          },
+          { 
+            title: 'Post Link', 
+            
+            render: ( row ) => (
+            row.url==null?<p></p>:
+            <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+            )
           },
           {
             title: "Followers Count",
@@ -234,9 +271,18 @@ function GlobalSearch() {
       .then((data) => {
         setData(
           data.data.hits.hits.map((postObj, i) => {
+            let obj = {  };
+            if (postObj._source.Text) {
+              obj.tweet = postObj._source.Text;
+              var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+              obj.url=postObj._source.Text.match(urlRegex)
+              console.log(obj.url[0])
+              
+            }
             return {
               date: dateFormatter(postObj._source.CreatedAt),
               post: postObj._source.Text,
+              url:obj.url,
               favouriteCount: postObj._source.FavoriteCount,
               sentiment: postObj._source.predictedSentiment,
               mood: postObj._source.predictedMood,
@@ -258,6 +304,26 @@ function GlobalSearch() {
           {
             title: "Post",
             field: "post",
+            render: (rowData) => (
+              <ShowMoreText
+                lines={2}
+                more={<ExpandMore />}
+                less={<ExpandLess />}
+                onClick={onClick}
+                expanded={expand}
+                // width={100}
+              >
+               {rowData.post}
+               </ShowMoreText>
+            ),
+          },
+          { 
+            title: 'Post Link', 
+            
+            render: ( row ) => (
+            row.url==null?<p></p>:
+            <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+            )
           },
           {
             title: "Sentiment",
@@ -316,6 +382,14 @@ function GlobalSearch() {
       console.log(data.data.hits.hits);
       setData(
         data.data.hits.hits.map((postObj, i) => {
+          let obj = {  };
+          if (postObj._source.Text) {
+            obj.tweet = postObj._source.Text;
+            var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+            obj.url=postObj._source.Text.match(urlRegex)
+            console.log(obj.url[0])
+            
+          }
           if (
             postObj._source.MediaEntities &&
             postObj._source.MediaEntities.length
@@ -323,6 +397,7 @@ function GlobalSearch() {
             return {
               date: dateFormatter(postObj._source.CreatedAt),
               post: postObj._source.Text,
+              url:obj.url,
               favouriteCount: postObj._source.FavoriteCount,
               sentiment: postObj._source.predictedSentiment,
               mood: postObj._source.predictedMood,
@@ -353,6 +428,7 @@ function GlobalSearch() {
             return {
               date: dateFormatter(postObj._source.CreatedAt),
               post: postObj._source.Text,
+              url:obj.url,
               favouriteCount: postObj._source.FavoriteCount,
               sentiment: postObj._source.predictedSentiment,
               mood: postObj._source.predictedMood,
@@ -375,6 +451,26 @@ function GlobalSearch() {
         {
           title: "Post",
           field: "post",
+          render: (rowData) => (
+            <ShowMoreText
+              lines={2}
+              more={<ExpandMore />}
+              less={<ExpandLess />}
+              onClick={onClick}
+              expanded={expand}
+              // width={100}
+            >
+             {rowData.post}
+             </ShowMoreText>
+          ),
+        },
+        { 
+          title: 'Post Link', 
+          
+          render: ( row ) => (
+          row.url==null?<p></p>:
+          <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+          )
         },
         {
           title: "Sentiment",
@@ -430,12 +526,21 @@ function GlobalSearch() {
     };
 
     Axios(config).then((data) => {
+      let obj = {  };
+      if (data._source.Text) {
+        obj.tweet = data._source.Text;
+        var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        obj.url=data._source.Text.match(urlRegex)
+        console.log(obj.url[0])
+        
+      }
       console.log(data);
       setData(
         data.data.hits.hits.map((postObj, i) => {
           return {
             date: dateFormatter(postObj._source.CreatedAt),
             post: postObj._source.Text,
+            url:obj.url,
             favouriteCount: postObj._source.FavoriteCount,
             sentiment: postObj._source.predictedSentiment,
             mood: postObj._source.predictedMood,
@@ -457,6 +562,26 @@ function GlobalSearch() {
         {
           title: "Post",
           field: "post",
+          render: (rowData) => (
+            <ShowMoreText
+              lines={2}
+              more={<ExpandMore />}
+              less={<ExpandLess />}
+              onClick={onClick}
+              expanded={expand}
+              // width={100}
+            >
+             {rowData.post}
+             </ShowMoreText>
+          ),
+        },
+        { 
+          title: 'Post Link', 
+          
+          render: ( row ) => (
+          row.url==null?<p></p>:
+          <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+          )
         },
         {
           title: "Sentiment",
@@ -508,12 +633,21 @@ function GlobalSearch() {
     };
 
     Axios(config).then((data) => {
+      let obj = {  };
+      if (data._source.Text) {
+        obj.tweet = data._source.Text;
+        var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        obj.url=data._source.Text.match(urlRegex)
+        console.log(obj.url[0])
+        
+      }
       console.log(data);
       setData(
         data.data.hits.hits.map((postObj, i) => {
           return {
             date: dateFormatter(postObj._source.CreatedAt),
             post: postObj._source.Text,
+            url:obj.url,
             favouriteCount: postObj._source.FavoriteCount,
             sentiment: postObj._source.predictedSentiment,
             mood: postObj._source.predictedMood,
@@ -535,6 +669,26 @@ function GlobalSearch() {
         {
           title: "Post",
           field: "post",
+          render: (rowData) => (
+            <ShowMoreText
+              lines={2}
+              more={<ExpandMore />}
+              less={<ExpandLess />}
+              onClick={onClick}
+              expanded={expand}
+              // width={100}
+            >
+             {rowData.post}
+             </ShowMoreText>
+          ),
+        },
+        { 
+          title: 'Post Link', 
+          
+          render: ( row ) => (
+          row.url==null?<p></p>:
+          <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+          )
         },
         {
           title: "Sentiment",
@@ -586,12 +740,21 @@ function GlobalSearch() {
     };
 
     Axios(config).then((data) => {
+      let obj = {  };
+      if (data._source.Text) {
+        obj.tweet = data._source.Text;
+        var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        obj.url=data._source.Text.match(urlRegex)
+        console.log(obj.url[0])
+        
+      }
       console.log(data);
       setData(
         data.data.hits.hits.map((postObj, i) => {
           return {
             date: dateFormatter(postObj._source.CreatedAt),
             post: postObj._source.Text,
+            url:obj.url,
             favouriteCount: postObj._source.FavoriteCount,
             sentiment: postObj._source.predictedSentiment,
             mood: postObj._source.predictedMood,
@@ -613,6 +776,26 @@ function GlobalSearch() {
         {
           title: "Post",
           field: "post",
+          render: (rowData) => (
+            <ShowMoreText
+              lines={2}
+              more={<ExpandMore />}
+              less={<ExpandLess />}
+              onClick={onClick}
+              expanded={expand}
+              // width={100}
+            >
+             {rowData.post}
+             </ShowMoreText>
+          ),
+        },
+        { 
+          title: 'Post Link', 
+          
+          render: ( row ) => (
+          row.url==null?<p></p>:
+          <Link to={{ pathname: `${row.url[0]}` }} target="_blank">{row.url[0]}</Link>
+          )
         },
         {
           title: "Sentiment",
@@ -1263,7 +1446,7 @@ function GlobalSearch() {
               data={data}
               options={{
                 paging: false,
-                tableLayout: "fixed",
+                tableLayout: "auto",
                 maxBodyHeight: 500,
                 headerStyle: {
                   backgroundColor: "rgb(67, 176, 42)",
